@@ -7,7 +7,7 @@ import { Sidebar } from "./components/Sidebar";
 
 // Auth & Landing
 import { LandingPageInteractive } from "./components/LandingPageInteractive";
-import { LoginScreen } from "./components/LoginScreen";
+import { LoginPage } from "@presentation/pages/LoginPage";
 import { RegisterScreen } from "./components/RegisterScreen";
 
 // Dashboard
@@ -115,7 +115,7 @@ export default function App() {
       case "/":
         return <LandingPageInteractive onNavigate={handleNavigate} />;
       case "/login":
-        return <LoginScreen onNavigate={handleNavigate} />;
+        return <LoginPage onNavigate={handleNavigate} />;
       case "/register":
         return <RegisterScreen onNavigate={handleNavigate} />;
       
