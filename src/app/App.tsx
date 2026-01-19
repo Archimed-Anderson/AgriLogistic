@@ -10,7 +10,7 @@ import { Navbar } from "./components/Navbar";
 import { Sidebar } from "./components/Sidebar";
 
 // Auth & Landing
-import { AgroLogisticLandingPage } from "./components/landing/AgroDeepLandingPage";
+import { AgroLogisticLandingPage } from "./components/landing/AgroLogisticLandingPage";
 import { LoginPage } from "@presentation/pages/LoginPage";
 import { RegisterPage } from "@presentation/pages/RegisterPage";
 import { ModernAuthPage } from "@presentation/pages/ModernAuthPage";
