@@ -30,6 +30,56 @@ services:
       retries: 3
       start_period: 40s
 
+  # Auth Service (Backend)
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: agrodeep-auth-service
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      # PostgreSQL (auth database)
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: agrodeep_auth
+      DB_USER: agrodeep
+      DB_PASSWORD: ${DB_PASSWORD:-agrodeep_secure_2026}
+      # Redis (sessions/refresh tokens/blacklist)
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_secure_2026}
+      REDIS_USE_PASSWORD: "true"
+      REDIS_URL: redis://redis:6379
+      # JWT
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev_access_secret_change_me_please_32_chars_minimum}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-dev_refresh_secret_change_me_please_32_chars_minimum}
+      JWT_ACCESS_EXPIRY: 15m
+      JWT_REFRESH_EXPIRY: 7d
+      # Security / CORS
+      CORS_ORIGIN: http://localhost:5173
+      FRONTEND_URL: http://localhost:5173
+      # Require DB in docker (we want a fully functional auth API)
+      REQUIRE_DB: "true"
+      # CSRF enforcement is optional; enable when front integrates it.
+      CSRF_ENFORCE: ${CSRF_ENFORCE:-false}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - agrodeep-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:3001/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
   # =============================================================================
   # DATABASES
   # =============================================================================
@@ -46,8 +96,11 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./scripts/init-multiple-dbs.sh:/docker-entrypoint-initdb.d/init-multiple-dbs.sh:ro
+      - ./scripts/zz_auth_schema.sql:/docker-entrypoint-initdb.d/zz_auth_schema.sql:ro
+    # Map to a configurable host port to avoid conflicts with a local Postgres install.
+    # Internal port remains 5432 for other containers.
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5433}:5432"
     networks:
       - agrodeep-network
     restart: unless-stopped

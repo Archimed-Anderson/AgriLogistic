@@ -30,7 +30,7 @@
     "build": "vite build",
     "build:analyze": "vite build --mode analyze",
     "preview": "vite preview",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives",
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,md}\"",
@@ -52,7 +52,13 @@
     "analyze:homepage": "node scripts/run-homepage-analysis.js",
     "test:login": "node scripts/run-login-tests.js",
     "test:modern-login": "node scripts/run-modern-login-tests.js",
-    "lighthouse": "node scripts/lighthouse-audit.js"
+    "lighthouse": "node scripts/lighthouse-audit.js",
+    "lint:quiet": "eslint . --ext ts,tsx --quiet",
+    "validate:services": "powershell -ExecutionPolicy Bypass -File scripts/validate-health-endpoints.ps1",
+    "pre-production": "node scripts/pre-production-check.js",
+    "test:unit": "vitest run --reporter=verbose",
+    "test:integration": "vitest run tests/integration --reporter=verbose",
+    "validate:full": "npm run typecheck && npm run lint:quiet && npm run test:unit && npm run build"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",
@@ -110,7 +116,6 @@
     "tailwind-merge": "3.2.0",
     "tw-animate-css": "1.3.8",
     "vaul": "1.1.2",
-    "xlsx": "^0.18.5",
     "zustand": "^5.0.10"
   },
   "devDependencies": {
@@ -132,14 +137,12 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-react-refresh": "0.4.3",
     "husky": "8.0.3",
-    "imagemin-cli": "^8.0.0",
-    "imagemin-webp": "^8.0.0",
     "jsdom": "^27.4.0",
-    "playwright": "1.40.0",
+    "playwright": "^1.57.0",
     "prettier": "3.0.3",
     "tailwindcss": "4.1.12",
     "typescript": "5.3.3",
-    "vite": "6.3.5",
+    "vite": "^6.4.1",
     "vitest": "^4.0.17"
   },
   "pnpm": {

@@ -1,24 +1,34 @@
 import { Pool, PoolConfig } from 'pg';
 
 export class Database {
-  private static instance: Pool;
+  private static instance: Pool | undefined;
 
   static getInstance(): Pool {
     if (!Database.instance) {
-      const password = process.env.DB_PASSWORD;
+      let password = process.env.DB_PASSWORD;
       
       if (!password || password.trim() === '' || password === 'your_secure_db_password') {
-        console.error('❌ DB_PASSWORD is not set or is a placeholder value');
-        console.error('💡 Please set DB_PASSWORD in your .env file');
-        console.error('💡 Or use Docker Compose: docker-compose up -d');
-        throw new Error('Database password is not configured. Please set DB_PASSWORD in .env file.');
+        if (process.env.NODE_ENV === 'production') {
+          console.error('❌ DB_PASSWORD is not set or is a placeholder value');
+          console.error('💡 Please set DB_PASSWORD in your .env file');
+          console.error('💡 Or use Docker Compose: docker-compose up -d');
+          throw new Error('Database password is not configured. Please set DB_PASSWORD in .env file.');
+        }
+
+        // Developer-friendly fallback: allow service to start without a configured DB password.
+        // The connection will fail until proper env vars are provided (health will reflect it).
+        console.warn(
+          '[auth-service] DB_PASSWORD missing; using a development fallback password. ' +
+            'Set DB_PASSWORD (and DB_HOST/DB_USER/DB_NAME) in your .env to connect to Postgres.'
+        );
+        password = 'dev_password';
       }
 
       const config: PoolConfig = {
         host: process.env.DB_HOST || 'localhost',
         port: parseInt(process.env.DB_PORT || '5432', 10),
-        database: process.env.DB_NAME || 'AgroLogistic_auth',
-        user: process.env.DB_USER || 'AgroLogistic',
+        database: process.env.DB_NAME || 'agrodeep_auth',
+        user: process.env.DB_USER || 'agrodeep',
         password: password,
         max: 20,
         idleTimeoutMillis: 30000,
@@ -41,7 +51,9 @@ export class Database {
 
   static async close(): Promise<void> {
     if (Database.instance) {
-      await Database.instance.end();
+      const instance = Database.instance;
+      Database.instance = undefined;
+      await instance.end();
       console.log('Database connection closed');
     }
   }

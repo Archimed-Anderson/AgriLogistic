@@ -30,7 +30,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import { toast } from "sonner";
-import * as XLSX from "xlsx";
+import { downloadTextFile, parseCsvToObjects, toCsv } from "../../shared/utils/csv";
 
 // Types
 interface User {
@@ -318,59 +318,24 @@ export function UserManagement() {
     toast.success("Filtres réinitialisés");
   };
 
-  // Export Excel avec mise en forme
-  const handleExportExcel = () => {
-    const exportData = filteredUsers.map((user) => ({
-      "ID": user.id,
-      "Nom": user.name,
-      "Email": user.email,
-      "Rôle": user.role,
-      "Statut": user.status,
-      "Date d'inscription": user.registrationDate,
-      "Dernière connexion": user.lastLogin,
-      "Téléphone": user.phone || "",
-      "Adresse": user.address || "",
-      "Ville": user.city || "",
-      "Pays": user.country || "",
-      "Commandes totales": user.totalOrders || 0,
-      "Dépenses totales (€)": user.totalSpent || 0,
-    }));
-
-    // Créer un workbook
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.json_to_sheet(exportData);
-
-    // Définir la largeur des colonnes
-    const colWidths = [
-      { wch: 6 },   // ID
-      { wch: 20 },  // Nom
-      { wch: 30 },  // Email
-      { wch: 12 },  // Rôle
-      { wch: 15 },  // Statut
-      { wch: 18 },  // Date d'inscription
-      { wch: 20 },  // Dernière connexion
-      { wch: 18 },  // Téléphone
-      { wch: 25 },  // Adresse
-      { wch: 15 },  // Ville
-      { wch: 12 },  // Pays
-      { wch: 18 },  // Commandes totales
-      { wch: 20 },  // Dépenses totales
-    ];
-    ws['!cols'] = colWidths;
-
-    // Ajouter la feuille au workbook
-    XLSX.utils.book_append_sheet(wb, ws, "Utilisateurs");
-
-    // Générer le fichier Excel
-    const filename = `AgroLogistic_Utilisateurs_${new Date().toISOString().split('T')[0]}.xlsx`;
-    XLSX.writeFile(wb, filename);
-
-    toast.success(`Export Excel réussi : ${filteredUsers.length} utilisateur(s) exporté(s)`);
-  };
-
   const handleExportCSV = () => {
-    const headers = ["ID", "Nom", "Email", "Rôle", "Statut", "Date d'inscription", "Dernière connexion", "Téléphone", "Adresse", "Ville", "Pays"];
-    const csvData = filteredUsers.map((user) => [
+    const headers = [
+      "ID",
+      "Nom",
+      "Email",
+      "Rôle",
+      "Statut",
+      "Date d'inscription",
+      "Dernière connexion",
+      "Téléphone",
+      "Adresse",
+      "Ville",
+      "Pays",
+      "Commandes totales",
+      "Dépenses totales (€)",
+    ];
+
+    const csvRows = filteredUsers.map((user) => [
       user.id,
       user.name,
       user.email,
@@ -382,33 +347,25 @@ export function UserManagement() {
       user.address || "",
       user.city || "",
       user.country || "",
+      user.totalOrders || 0,
+      user.totalSpent || 0,
     ]);
 
-    const csvContent = [
-      headers.join(","),
-      ...csvData.map((row) => row.map((cell) => `"${cell}"`).join(",")),
-    ].join("\n");
+    const csvContent = toCsv(headers, csvRows);
+    const filename = `AgroLogistic_Utilisateurs_${new Date().toISOString().split("T")[0]}.csv`;
+    downloadTextFile(filename, csvContent, "text/csv;charset=utf-8;");
 
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = `AgroLogistic_Utilisateurs_${new Date().toISOString().split('T')[0]}.csv`;
-    link.click();
-
-    toast.success("Export CSV lancé (250 utilisateurs)");
+    toast.success(`Export CSV réussi : ${filteredUsers.length} utilisateur(s) exporté(s)`);
   };
 
-  // Import CSV
+  // Import CSV (les imports Excel ont été retirés pour réduire la surface d'attaque)
   const handleFileUpload = (file: File) => {
     const reader = new FileReader();
 
     reader.onload = (e) => {
       try {
-        const data = e.target?.result;
-        const workbook = XLSX.read(data, { type: "binary" });
-        const sheetName = workbook.SheetNames[0];
-        const sheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(sheet);
+        const data = (e.target?.result ?? "").toString();
+        const jsonData = parseCsvToObjects(data);
 
         setImportPreview(jsonData.slice(0, 10)); // Aperçu des 10 premières lignes
         toast.success(`${jsonData.length} utilisateur(s) détecté(s) dans le fichier`);
@@ -417,7 +374,7 @@ export function UserManagement() {
       }
     };
 
-    reader.readAsBinaryString(file);
+    reader.readAsText(file);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -462,12 +419,9 @@ export function UserManagement() {
       },
     };
 
-    if (format === "excel") {
-      // Créer un rapport Excel détaillé
-      const wb = XLSX.utils.book_new();
-
-      // Feuille de résumé
-      const summaryData = [
+    if (format === "excel" || format === "csv") {
+      // Export CSV (remplace Excel pour réduire la surface d'attaque)
+      const summaryRows: Array<Array<string | number | null>> = [
         ["Rapport d'activité utilisateurs", ""],
         ["Date de génération", reportData.generatedAt],
         ["", ""],
@@ -483,31 +437,38 @@ export function UserManagement() {
         ["Logistics", reportData.usersByRole.Logistics],
       ];
 
-      const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
-      wsSummary['!cols'] = [{ wch: 30 }, { wch: 20 }];
-      XLSX.utils.book_append_sheet(wb, wsSummary, "Résumé");
+      const detailsHeaders = [
+        "ID",
+        "Nom",
+        "Email",
+        "Rôle",
+        "Statut",
+        "Date d'inscription",
+        "Dernière connexion",
+        "Commandes",
+        "Dépenses (€)",
+      ];
+      const detailsRows = mockUsers.map((user) => [
+        user.id,
+        user.name,
+        user.email,
+        user.role,
+        user.status,
+        user.registrationDate,
+        user.lastLogin,
+        user.totalOrders || 0,
+        user.totalSpent || 0,
+      ]);
 
-      // Feuille des données détaillées
-      const detailData = mockUsers.map((user) => ({
-        "ID": user.id,
-        "Nom": user.name,
-        "Email": user.email,
-        "Rôle": user.role,
-        "Statut": user.status,
-        "Date d'inscription": user.registrationDate,
-        "Dernière connexion": user.lastLogin,
-        "Commandes": user.totalOrders || 0,
-        "Dépenses (€)": user.totalSpent || 0,
-      }));
+      const summaryCsv = toCsv(["Champ", "Valeur"], summaryRows);
+      const detailsCsv = toCsv(detailsHeaders, detailsRows);
+      const combined = `${summaryCsv}\n\n${detailsCsv}\n`;
 
-      const wsDetail = XLSX.utils.json_to_sheet(detailData);
-      wsDetail['!cols'] = Array(9).fill({ wch: 15 });
-      XLSX.utils.book_append_sheet(wb, wsDetail, "Détails");
-
-      const filename = `Rapport_AgroLogistic_${reportType}_${new Date().toISOString().split('T')[0]}.xlsx`;
-      XLSX.writeFile(wb, filename);
-
-      toast.success(`Rapport Excel "${reportType}" généré avec succès`);
+      const filename = `Rapport_AgroLogistic_${reportType}_${new Date()
+        .toISOString()
+        .split("T")[0]}.csv`;
+      downloadTextFile(filename, combined, "text/csv;charset=utf-8;");
+      toast.success(`Rapport CSV "${reportType}" généré avec succès`);
     } else if (format === "pdf") {
       // Simuler la génération d'un PDF
       toast.info("Génération du rapport PDF en cours...");
@@ -708,25 +669,17 @@ export function UserManagement() {
           {/* Export Buttons */}
           <div className="flex gap-2">
             <button
-              onClick={handleExportExcel}
-              className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-accent transition-colors"
-              title="Export Excel"
-            >
-              <FileSpreadsheet className="h-4 w-4 text-green-600" />
-              <span>Excel</span>
-            </button>
-            <button
               onClick={handleExportCSV}
               className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-accent transition-colors"
               title="Export CSV"
             >
-              <Download className="h-4 w-4" />
+              <FileSpreadsheet className="h-4 w-4 text-green-600" />
               <span>CSV</span>
             </button>
             <button
               onClick={() => setShowImportModal(true)}
               className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-accent transition-colors"
-              title="Import CSV/Excel"
+              title="Import CSV"
             >
               <Upload className="h-4 w-4" />
               <span>Import</span>
@@ -1073,12 +1026,12 @@ export function UserManagement() {
                     Glissez-déposez un fichier ici
                   </h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Formats acceptés : CSV, XLSX, XLS
+                    Format accepté : CSV
                   </p>
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept=".csv,.xlsx,.xls"
+                    accept=".csv"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) handleFileUpload(file);
@@ -1161,16 +1114,20 @@ export function UserManagement() {
                         Pays: "France",
                       },
                     ];
-                    const wb = XLSX.utils.book_new();
-                    const ws = XLSX.utils.json_to_sheet(templateData);
-                    XLSX.utils.book_append_sheet(wb, ws, "Template");
-                    XLSX.writeFile(wb, "AgroLogistic_Template_Import.xlsx");
-                    toast.success("Template téléchargé");
+                    const headers = Object.keys(templateData[0]);
+                    const rows = templateData.map((row) => headers.map((h) => (row as any)[h]));
+                    const csv = toCsv(headers, rows);
+                    downloadTextFile(
+                      "AgroLogistic_Template_Import.csv",
+                      csv,
+                      "text/csv;charset=utf-8;"
+                    );
+                    toast.success("Template CSV téléchargé");
                   }}
                   className="text-sm text-[#2563eb] hover:underline flex items-center gap-1"
                 >
                   <FileSpreadsheet className="h-4 w-4" />
-                  Télécharger le template Excel
+                  Télécharger le template CSV
                 </button>
               </div>
             </div>

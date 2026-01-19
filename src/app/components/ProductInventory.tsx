@@ -20,7 +20,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import { toast } from "sonner";
-import * as XLSX from "xlsx";
+import { downloadTextFile, parseCsvToObjects, toCsv } from "../../shared/utils/csv";
 import {
   LineChart,
   Line,
@@ -479,16 +479,13 @@ export function ProductInventory() {
 
     reader.onload = (e) => {
       try {
-        const data = e.target?.result;
+        const data = (e.target?.result ?? "").toString();
         if (!data) {
           toast.error("Fichier vide ou illisible");
           return;
         }
 
-        const workbook = XLSX.read(data, { type: "binary" });
-        const sheetName = workbook.SheetNames[0];
-        const sheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(sheet);
+        const jsonData = parseCsvToObjects(data);
 
         if (!Array.isArray(jsonData) || jsonData.length === 0) {
           toast.error("Aucune donnée trouvée dans le fichier");
@@ -532,7 +529,7 @@ export function ProductInventory() {
       toast.error("Erreur lors de la lecture du fichier");
     };
 
-    reader.readAsBinaryString(file);
+    reader.readAsText(file);
   };
 
   const handleExport = () => {
@@ -542,28 +539,14 @@ export function ProductInventory() {
     }
 
     const exportData = buildInventoryExportData(products);
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const headers = Object.keys(exportData[0] || {});
+    const rows = exportData.map((row) => headers.map((h) => (row as any)[h]));
+    const csvContent = toCsv(headers, rows);
 
-    const colWidths = [
-      { wch: 6 },
-      { wch: 24 },
-      { wch: 16 },
-      { wch: 16 },
-      { wch: 26 },
-      { wch: 16 },
-      { wch: 18 },
-      { wch: 24 },
-      { wch: 40 },
-    ];
-    (worksheet as any)["!cols"] = colWidths;
+    const filename = `AgroLogistic_Inventaire_${new Date().toISOString().split("T")[0]}.csv`;
+    downloadTextFile(filename, csvContent, "text/csv;charset=utf-8;");
 
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Inventaire");
-
-    const filename = `AgroLogistic_Inventaire_${new Date().toISOString().split("T")[0]}.xlsx`;
-    XLSX.writeFile(workbook, filename);
-
-    toast.success(`Export Excel réussi : ${products.length} produit(s)`);
+    toast.success(`Export CSV réussi : ${products.length} produit(s)`);
   };
 
   const categories = ["Légumes", "Fruits", "Produits Laitiers", "Autres"];
@@ -582,7 +565,7 @@ export function ProductInventory() {
           <input
             ref={fileInputRef}
             type="file"
-            accept=".csv,.xlsx,.xls"
+            accept=".csv"
             className="hidden"
             onChange={handleImportChange}
           />

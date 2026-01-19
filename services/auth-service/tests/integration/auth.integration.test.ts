@@ -6,17 +6,20 @@ import { PasswordService } from '../../src/services/password.service';
 import authRoutes from '../../src/routes/auth.routes';
 
 // Mock Redis service
+const mockRedisService = {
+  connect: async () => undefined,
+  disconnect: async () => undefined,
+  blacklistToken: async () => undefined,
+  isTokenBlacklisted: async () => false,
+  storeRefreshToken: async () => undefined,
+  hasRefreshToken: async () => true,
+  removeRefreshToken: async () => undefined,
+  removeAllRefreshTokens: async () => undefined,
+};
+
 jest.mock('../../src/services/redis.service', () => ({
-  getRedisService: jest.fn(() => ({
-    connect: jest.fn().mockResolvedValue(undefined),
-    disconnect: jest.fn().mockResolvedValue(undefined),
-    blacklistToken: jest.fn().mockResolvedValue(undefined),
-    isTokenBlacklisted: jest.fn().mockResolvedValue(false),
-    storeRefreshToken: jest.fn().mockResolvedValue(undefined),
-    hasRefreshToken: jest.fn().mockResolvedValue(true),
-    removeRefreshToken: jest.fn().mockResolvedValue(undefined),
-    removeAllRefreshTokens: jest.fn().mockResolvedValue(undefined),
-  })),
+  // Do not wrap with jest.fn(): resetMocks would wipe the implementation.
+  getRedisService: () => mockRedisService,
 }));
 
 describe('Auth Integration Tests', () => {

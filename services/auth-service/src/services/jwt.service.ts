@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 export interface JWTPayload {
   sub: string;        // User ID
@@ -18,19 +19,39 @@ export interface TokenPair {
 }
 
 export class JWTService {
-  private readonly accessTokenSecret: string;
-  private readonly refreshTokenSecret: string;
+  private accessTokenSecret: string;
+  private refreshTokenSecret: string;
   private readonly accessTokenExpiry: string;
   private readonly refreshTokenExpiry: string;
 
   constructor() {
-    this.accessTokenSecret = process.env.JWT_ACCESS_SECRET!;
-    this.refreshTokenSecret = process.env.JWT_REFRESH_SECRET!;
+    const envAccessSecret = process.env.JWT_ACCESS_SECRET;
+    const envRefreshSecret = process.env.JWT_REFRESH_SECRET;
+
+    this.accessTokenSecret = envAccessSecret || '';
+    this.refreshTokenSecret = envRefreshSecret || '';
     this.accessTokenExpiry = process.env.JWT_ACCESS_EXPIRY || '15m';
     this.refreshTokenExpiry = process.env.JWT_REFRESH_EXPIRY || '7d';
 
     if (!this.accessTokenSecret || !this.refreshTokenSecret) {
-      throw new Error('JWT secrets must be defined in environment variables');
+      // In production we must never start without proper secrets.
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error('JWT secrets must be defined in environment variables');
+      }
+
+      // Developer-friendly fallback: generate ephemeral secrets for local runs/tests.
+      // These secrets are NOT persisted and will invalidate tokens on restart.
+      const generatedAccess = crypto.randomBytes(64).toString('hex');
+      const generatedRefresh = crypto.randomBytes(64).toString('hex');
+
+      // eslint-disable-next-line no-console
+      console.warn(
+        '[auth-service] JWT secrets missing; using ephemeral in-memory secrets for non-production runtime. ' +
+          'Set JWT_ACCESS_SECRET/JWT_REFRESH_SECRET in your .env to persist sessions.'
+      );
+
+      this.accessTokenSecret = generatedAccess;
+      this.refreshTokenSecret = generatedRefresh;
     }
   }
 

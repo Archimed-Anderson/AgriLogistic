@@ -24,6 +24,8 @@ if (result.error) {
 
 const app: Application = express();
 const PORT = process.env.PORT || 3001;
+let dbConnected: boolean = false;
+let redisConnected: boolean = false;
 
 // Middleware
 // Configure Helmet for local development - disable CSP upgrade-insecure-requests
@@ -51,9 +53,13 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 // Health check
 app.get('/health', (_req: Request, res: Response) => {
   res.status(200).json({
-    status: 'healthy',
+    status: dbConnected ? 'healthy' : 'degraded',
     service: 'auth-service',
     timestamp: new Date().toISOString(),
+    dependencies: {
+      database: dbConnected ? 'connected' : 'disconnected',
+      redis: redisConnected ? 'connected' : 'disconnected',
+    },
   });
 });
 
@@ -84,19 +90,29 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 // Start server
 const startServer = async () => {
   try {
+    const env = (process.env.NODE_ENV || 'development').toLowerCase();
+    const requireDb = (process.env.REQUIRE_DB || '').toLowerCase() === 'true' || env === 'production';
+
     // Test database connection
-    const dbConnected = await Database.testConnection();
+    dbConnected = await Database.testConnection();
     if (!dbConnected) {
-      console.error('❌ Failed to connect to database');
-      process.exit(1);
+      const msg = '❌ Failed to connect to database';
+      if (requireDb) {
+        console.error(msg);
+        process.exit(1);
+      } else {
+        console.warn(`${msg} (continuing in degraded mode)`);
+      }
     }
 
     // Initialize Redis connection
     try {
       const redisService = getRedisService();
       await redisService.connect();
+      redisConnected = true;
       console.log('✅ Redis: Connected');
     } catch (error) {
+      redisConnected = false;
       console.warn('⚠️  Redis connection failed (continuing without Redis):', error);
       // Continue without Redis - some features won't work but service can still run
     }
@@ -105,7 +121,7 @@ const startServer = async () => {
       console.log('=================================');
       console.log(`🚀 Auth Service running on port ${PORT}`);
       console.log(`🔒 Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`💚 Database: Connected`);
+      console.log(`💚 Database: ${dbConnected ? 'Connected' : 'Disconnected (degraded)'}`);
       console.log(`📝 Health check: http://localhost:${PORT}/health`);
       console.log(`🔐 API Base: http://localhost:${PORT}/api/v1`);
       console.log('=================================');

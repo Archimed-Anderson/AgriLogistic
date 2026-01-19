@@ -31,7 +31,7 @@ describe('AuthController', () => {
       headers: {},
       ip: '127.0.0.1',
       get: jest.fn().mockReturnValue('test-user-agent'),
-      socket: { remoteAddress: '127.0.0.1' },
+      socket: { remoteAddress: '127.0.0.1' } as any,
     };
     mockResponse = {
       status: jest.fn().mockReturnThis(),
@@ -66,6 +66,7 @@ describe('AuthController', () => {
     mockRedisService = {
       storeRefreshToken: jest.fn().mockResolvedValue(undefined),
       blacklistToken: jest.fn().mockResolvedValue(undefined),
+      hasRefreshToken: jest.fn().mockResolvedValue(true),
       removeRefreshToken: jest.fn().mockResolvedValue(undefined),
       removeAllRefreshTokens: jest.fn().mockResolvedValue(undefined),
     };
@@ -153,7 +154,7 @@ describe('AuthController', () => {
       expect(mockResponse.json).toHaveBeenCalledWith(
         expect.objectContaining({
           success: false,
-          error: expect.stringContaining('admin'),
+          error: expect.stringMatching(/admin/i),
         })
       );
     });

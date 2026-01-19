@@ -226,6 +226,7 @@ export class AuthController {
       res.status(201).json({
         success: true,
         token: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
         user: {
           id: user.id,
           email: user.email,
@@ -351,6 +352,7 @@ export class AuthController {
       res.status(200).json({
         success: true,
         token: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
         user: {
           id: user.id,
           email: user.email,

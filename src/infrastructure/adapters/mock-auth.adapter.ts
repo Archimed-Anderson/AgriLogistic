@@ -86,8 +86,10 @@ const initializeMockUsers = () => {
   ];
 
   demoUsers.forEach(user => {
-    mockUserDatabase.set(user.email!, {
+    const normalizedEmail = user.email!.toLowerCase();
+    mockUserDatabase.set(normalizedEmail, {
       ...user,
+      email: normalizedEmail,
       newsletterSubscribed: false,
       createdAt: new Date(),
     } as StoredUser);

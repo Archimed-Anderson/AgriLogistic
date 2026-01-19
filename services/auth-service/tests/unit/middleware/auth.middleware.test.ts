@@ -1,23 +1,41 @@
-import { Request, Response, NextFunction } from 'express';
-import { authenticateToken, optionalAuth } from '../../../src/middleware/auth.middleware';
-import { JWTService } from '../../../src/services/jwt.service';
+import type { Request, Response, NextFunction } from 'express';
 
-// Mock Redis service
+const verifyAccessTokenMock = jest.fn();
 const mockRedisService = {
   isTokenBlacklisted: jest.fn().mockResolvedValue(false),
 };
 
-jest.mock('../../../src/services/redis.service', () => ({
-  getRedisService: jest.fn(() => mockRedisService),
-}));
+type AuthMiddlewareModule = typeof import('../../../src/middleware/auth.middleware');
 
 describe('Authentication Middleware', () => {
+  let authenticateToken: AuthMiddlewareModule['authenticateToken'];
+  let optionalAuth: AuthMiddlewareModule['optionalAuth'];
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
   let mockNext: NextFunction;
-  let jwtService: jest.Mocked<JWTService>;
 
   beforeEach(() => {
+    jest.resetModules();
+    verifyAccessTokenMock.mockReset();
+    mockRedisService.isTokenBlacklisted.mockReset().mockResolvedValue(false);
+
+    // Ensure mocks are applied BEFORE importing the middleware module (it imports JWT/Redis at module load).
+    jest.doMock('../../../src/services/redis.service', () => ({
+      getRedisService: jest.fn(() => mockRedisService),
+    }));
+
+    jest.doMock('../../../src/services/jwt.service', () => ({
+      JWTService: jest.fn().mockImplementation(() => ({
+        verifyAccessToken: verifyAccessTokenMock,
+      })),
+    }));
+
+    // Import after mocks
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const mod = require('../../../src/middleware/auth.middleware') as AuthMiddlewareModule;
+    authenticateToken = mod.authenticateToken;
+    optionalAuth = mod.optionalAuth;
+
     mockRequest = {
       headers: {},
       ip: '127.0.0.1',
@@ -27,7 +45,6 @@ describe('Authentication Middleware', () => {
       json: jest.fn().mockReturnThis(),
     };
     mockNext = jest.fn();
-    mockRedisService.isTokenBlacklisted.mockResolvedValue(false);
   });
 
   afterEach(() => {
@@ -50,8 +67,7 @@ describe('Authentication Middleware', () => {
         permissions: ['product:browse'],
       };
 
-      // Mock JWTService
-      jest.spyOn(JWTService.prototype, 'verifyAccessToken').mockReturnValue(decoded);
+      verifyAccessTokenMock.mockReturnValue(decoded);
       mockRedisService.isTokenBlacklisted.mockResolvedValue(false);
 
       await authenticateToken(
@@ -103,7 +119,7 @@ describe('Authentication Middleware', () => {
         authorization: `Bearer ${token}`,
       };
 
-      jest.spyOn(JWTService.prototype, 'verifyAccessToken').mockImplementation(() => {
+      verifyAccessTokenMock.mockImplementation(() => {
         throw new Error('Invalid token');
       });
       mockRedisService.isTokenBlacklisted.mockResolvedValue(false);
@@ -135,7 +151,7 @@ describe('Authentication Middleware', () => {
         permissions: ['product:browse'],
       };
 
-      jest.spyOn(JWTService.prototype, 'verifyAccessToken').mockReturnValue(decoded);
+      verifyAccessTokenMock.mockReturnValue(decoded);
       mockRedisService.isTokenBlacklisted.mockResolvedValue(false);
 
       await optionalAuth(
@@ -167,7 +183,7 @@ describe('Authentication Middleware', () => {
         authorization: `Bearer ${token}`,
       };
 
-      jest.spyOn(JWTService.prototype, 'verifyAccessToken').mockImplementation(() => {
+      verifyAccessTokenMock.mockImplementation(() => {
         throw new Error('Invalid token');
       });
 

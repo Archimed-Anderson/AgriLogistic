@@ -128,7 +128,7 @@ describe('API Client Enhanced', () => {
       });
 
       try {
-        await apiClient.get('/test');
+        await apiClient.get('/test', { skipRetry: true });
         expect.fail('Should have thrown an error');
       } catch (error) {
         expect(error).toBeInstanceOf(APIError);

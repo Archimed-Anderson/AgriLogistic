@@ -17,10 +17,7 @@ export function useLogin() {
     try {
       const response = await authLogin(credentials);
       setIsLoading(false);
-      toast.success(`Bienvenue, ${response.user.firstName} !`, {
-        description: 'Connexion réussie',
-        duration: 3000,
-      });
+      toast.success(`Bienvenue, ${response.user.firstName} !`);
       return response;
     } catch (err) {
       setIsLoading(false);

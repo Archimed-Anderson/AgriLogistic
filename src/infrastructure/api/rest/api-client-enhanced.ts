@@ -70,6 +70,18 @@ class EnhancedAPIClient {
     };
   }
 
+  private resolveEndpoint(endpoint: string): string {
+    // Normalize relative endpoints (e.g. "/api/v1") to an absolute URL for diagnostics/UI.
+    if (endpoint.startsWith('/')) {
+      const origin =
+        (typeof window !== 'undefined' && window.location?.origin)
+          ? window.location.origin
+          : 'http://localhost';
+      return `${origin}${endpoint}`;
+    }
+    return endpoint;
+  }
+
   private log(level: 'info' | 'warn' | 'error', message: string, data?: any) {
     if (!this.enableLogs) return;
     const timestamp = new Date().toISOString();
@@ -329,20 +341,20 @@ class EnhancedAPIClient {
       clearTimeout(timeoutId);
       
       if (response.ok) {
-        return { isReachable: true, endpoint: this.baseURL };
+        return { isReachable: true, endpoint: this.resolveEndpoint(this.baseURL) };
       }
       
       return {
         isReachable: false,
-        endpoint: this.baseURL,
+        endpoint: this.resolveEndpoint(this.baseURL),
         error: `HTTP ${response.status}`,
-        suggestion: 'Le serveur est accessible mais ne répond pas correctement.',
+        suggestion: 'Le serveur est accessible mais les services backend ne répondent pas correctement.',
       };
     } catch (error: any) {
       if (error.name === 'AbortError' || error.name === 'TimeoutError') {
         return {
           isReachable: false,
-          endpoint: this.baseURL,
+          endpoint: this.resolveEndpoint(this.baseURL),
           error: 'Timeout',
           suggestion: 'Le serveur met trop de temps à répondre.',
         };
@@ -350,9 +362,9 @@ class EnhancedAPIClient {
       
       return {
         isReachable: false,
-        endpoint: this.baseURL,
+        endpoint: this.resolveEndpoint(this.baseURL),
         error: 'Connection failed',
-        suggestion: `Impossible de joindre le serveur à ${this.baseURL}. Vérifiez que le backend est démarré.`,
+        suggestion: `Impossible de joindre le serveur à ${this.resolveEndpoint(this.baseURL)}. Vérifiez que le backend est démarré et que votre configuration \`.env\` (VITE_API_GATEWAY_URL) est correcte.`,
       };
     }
   }

@@ -30,7 +30,7 @@ export const requireRole = (...roles: UserRole[]) => {
  * Middleware to require specific permission
  */
 export const requirePermission = (permission: string) => {
-  return (req: Request, res: Response, next: NextFunction): void => {
+  return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
     if (!req.user) {
       res.status(401).json({
         success: false,

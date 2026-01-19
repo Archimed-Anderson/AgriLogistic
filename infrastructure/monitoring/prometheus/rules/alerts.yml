@@ -1,151 +1,300 @@
 groups:
-  # Service Availability Alerts
-  - name: service_availability
-    interval: 30s
+  # =============================================================================
+  # Service Health Alerts
+  # =============================================================================
+  - name: service-health
     rules:
+      # Service Down Alert
       - alert: ServiceDown
         expr: up{job=~".*-service"} == 0
         for: 2m
         labels:
           severity: critical
+          team: platform
         annotations:
           summary: "Service {{ $labels.job }} is down"
-          description: "{{ $labels.job }} has been down for more than 2 minutes"
-
-      - alert: HighErrorRate
-        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+          description: "The service {{ $labels.job }} has been unreachable for more than 2 minutes."
+          runbook_url: "https://docs.agrologistic.com/runbooks/service-down"
+          
+      # Service Restarting
+      - alert: ServiceRestarting
+        expr: changes(up{job=~".*-service"}[15m]) > 3
         for: 5m
         labels:
           severity: warning
+          team: platform
+        annotations:
+          summary: "Service {{ $labels.job }} is restarting frequently"
+          description: "The service {{ $labels.job }} has restarted more than 3 times in the last 15 minutes."
+
+  # =============================================================================
+  # API Performance Alerts
+  # =============================================================================
+  - name: api-performance
+    rules:
+      # High Error Rate
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(http_requests_total{status=~"5.."}[5m])) by (service) 
+          / sum(rate(http_requests_total[5m])) by (service) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
         annotations:
           summary: "High error rate on {{ $labels.service }}"
-          description: "Error rate is {{ $value | humanizePercentage }}"
-
-      - alert: HighLatency
-        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 1
-        for: 10m
-        labels:
-          severity: warning
-        annotations:
-          summary: "High latency on {{ $labels.service }}"
-          description: "95th percentile latency is {{ $value }}s"
-
-      - alert: KongGatewayDown
-        expr: up{job="kong"} == 0
-        for: 1m
+          description: "The error rate for {{ $labels.service }} is above 5% (current: {{ $value | humanizePercentage }})."
+          
+      # Critical Error Rate
+      - alert: CriticalErrorRate
+        expr: |
+          sum(rate(http_requests_total{status=~"5.."}[5m])) by (service) 
+          / sum(rate(http_requests_total[5m])) by (service) > 0.10
+        for: 2m
         labels:
           severity: critical
+          team: backend
         annotations:
-          summary: "Kong API Gateway is down"
-          description: "Kong Gateway has been unreachable for more than 1 minute"
+          summary: "Critical error rate on {{ $labels.service }}"
+          description: "The error rate for {{ $labels.service }} is above 10% (current: {{ $value | humanizePercentage }})."
 
-  # Resource Usage Alerts
-  - name: resource_usage
-    interval: 30s
-    rules:
-      - alert: HighCPUUsage
-        expr: rate(process_cpu_seconds_total[5m]) > 0.8
+      # Slow Response Time (P95)
+      - alert: SlowResponseTimeP95
+        expr: |
+          histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (service, le)) > 0.5
         for: 10m
         labels:
           severity: warning
+          team: backend
         annotations:
-          summary: "High CPU usage on {{ $labels.job }}"
-          description: "CPU usage is {{ $value | humanizePercentage }}"
+          summary: "Slow P95 response time on {{ $labels.service }}"
+          description: "The P95 response time for {{ $labels.service }} is above 500ms (current: {{ $value | humanizeDuration }})."
 
-      - alert: HighMemoryUsage
-        expr: process_resident_memory_bytes / 1024 / 1024 / 1024 > 2
-        for: 10m
-        labels:
-          severity: warning
-        annotations:
-          summary: "High memory usage on {{ $labels.job }}"
-          description: "Memory usage is {{ $value }}GB"
-
-      - alert: DiskSpaceRunningLow
-        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 < 15
+      # Very Slow Response Time (P99)
+      - alert: VerySlowResponseTimeP99
+        expr: |
+          histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket[5m])) by (service, le)) > 2
         for: 5m
         labels:
-          severity: warning
+          severity: critical
+          team: backend
         annotations:
-          summary: "Disk space running low"
-          description: "Only {{ $value }}% disk space available"
+          summary: "Very slow P99 response time on {{ $labels.service }}"
+          description: "The P99 response time for {{ $labels.service }} is above 2s (current: {{ $value | humanizeDuration }})."
 
+      # High Request Rate
+      - alert: HighRequestRate
+        expr: sum(rate(http_requests_total[5m])) by (service) > 1000
+        for: 5m
+        labels:
+          severity: info
+          team: backend
+        annotations:
+          summary: "High request rate on {{ $labels.service }}"
+          description: "The request rate for {{ $labels.service }} is above 1000 req/s."
+
+  # =============================================================================
   # Database Alerts
-  - name: database_alerts
-    interval: 30s
+  # =============================================================================
+  - name: database-alerts
     rules:
-      - alert: DatabaseConnectionsHigh
-        expr: pg_stat_database_numbackends / pg_settings_max_connections > 0.8
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          summary: "High database connections"
-          description: "{{ $value | humanizePercentage }} of max connections used"
-
-      - alert: SlowQueries
-        expr: rate(pg_stat_statements_mean_time_seconds[5m]) > 1
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          summary: "Slow database queries detected"
-          description: "Average query time: {{ $value }}s"
-
+      # PostgreSQL Down
       - alert: PostgreSQLDown
         expr: pg_up == 0
         for: 1m
         labels:
           severity: critical
+          team: database
         annotations:
           summary: "PostgreSQL is down"
-          description: "PostgreSQL database is not responding"
+          description: "PostgreSQL database is not responding."
+          runbook_url: "https://docs.agrologistic.com/runbooks/postgres-down"
 
+      # High PostgreSQL Connection Usage
+      - alert: PostgreSQLHighConnections
+        expr: |
+          pg_stat_database_numbackends / pg_settings_max_connections > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          team: database
+        annotations:
+          summary: "PostgreSQL connection usage is high"
+          description: "PostgreSQL is using more than 80% of available connections."
+
+      # Redis Down
       - alert: RedisDown
         expr: redis_up == 0
         for: 1m
         labels:
           severity: critical
+          team: database
         annotations:
           summary: "Redis is down"
-          description: "Redis cache is not responding"
+          description: "Redis cache is not responding."
+          runbook_url: "https://docs.agrologistic.com/runbooks/redis-down"
 
-      - alert: ElasticsearchDown
-        expr: elasticsearch_cluster_health_status{color="red"} == 1
+      # Redis High Memory Usage
+      - alert: RedisHighMemoryUsage
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.9
         for: 5m
         labels:
-          severity: critical
+          severity: warning
+          team: database
         annotations:
-          summary: "Elasticsearch cluster is unhealthy"
-          description: "Elasticsearch cluster status is RED"
+          summary: "Redis memory usage is high"
+          description: "Redis is using more than 90% of available memory."
 
-  # Business Metrics Alerts
-  - name: business_alerts
-    interval: 60s
+  # =============================================================================
+  # Infrastructure Alerts
+  # =============================================================================
+  - name: infrastructure-alerts
     rules:
-      - alert: OrderFailureRateHigh
-        expr: sum(rate(orders_failed_total[5m])) / sum(rate(orders_created_total[5m])) > 0.05
+      # High CPU Usage
+      - alert: HighCPUUsage
+        expr: |
+          100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 15m
+        labels:
+          severity: warning
+          team: infrastructure
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is above 80% on {{ $labels.instance }}."
+
+      # Critical CPU Usage
+      - alert: CriticalCPUUsage
+        expr: |
+          100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 95
+        for: 5m
+        labels:
+          severity: critical
+          team: infrastructure
+        annotations:
+          summary: "Critical CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is above 95% on {{ $labels.instance }}."
+
+      # High Memory Usage
+      - alert: HighMemoryUsage
+        expr: |
+          (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) 
+          / node_memory_MemTotal_bytes > 0.85
         for: 10m
         labels:
           severity: warning
+          team: infrastructure
         annotations:
-          summary: "High order failure rate"
-          description: "Order failure rate is {{ $value | humanizePercentage }}"
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is above 85% on {{ $labels.instance }}."
 
-      - alert: PaymentFailureRateHigh
-        expr: sum(rate(payments_failed_total[5m])) / sum(rate(payments_processed_total[5m])) > 0.02
-        for: 10m
+      # Disk Space Low
+      - alert: DiskSpaceLow
+        expr: |
+          (node_filesystem_size_bytes - node_filesystem_free_bytes) 
+          / node_filesystem_size_bytes > 0.85
+        for: 15m
+        labels:
+          severity: warning
+          team: infrastructure
+        annotations:
+          summary: "Disk space is low on {{ $labels.instance }}"
+          description: "Disk usage is above 85% on {{ $labels.instance }}:{{ $labels.mountpoint }}."
+
+      # Disk Space Critical
+      - alert: DiskSpaceCritical
+        expr: |
+          (node_filesystem_size_bytes - node_filesystem_free_bytes) 
+          / node_filesystem_size_bytes > 0.95
+        for: 5m
         labels:
           severity: critical
+          team: infrastructure
         annotations:
-          summary: "High payment failure rate"
-          description: "Payment failure rate is {{ $value | humanizePercentage }}"
+          summary: "Disk space is critical on {{ $labels.instance }}"
+          description: "Disk usage is above 95% on {{ $labels.instance }}:{{ $labels.mountpoint }}."
 
-      - alert: AuthenticationFailuresHigh
-        expr: sum(rate(auth_login_failures_total[5m])) > 10
+  # =============================================================================
+  # Kong API Gateway Alerts
+  # =============================================================================
+  - name: kong-alerts
+    rules:
+      # Kong Gateway Down
+      - alert: KongGatewayDown
+        expr: up{job="kong"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Kong API Gateway is down"
+          description: "Kong API Gateway has been unreachable for more than 1 minute."
+          runbook_url: "https://docs.agrologistic.com/runbooks/kong-down"
+
+      # Kong High Latency
+      - alert: KongHighLatency
+        expr: kong_latency_bucket > 1000
         for: 5m
         labels:
           severity: warning
+          team: platform
         annotations:
-          summary: "High authentication failure rate"
-          description: "More than 10 login failures per second"
+          summary: "Kong gateway experiencing high latency"
+          description: "Kong gateway latency is above 1000ms."
+
+  # =============================================================================
+  # Message Queue Alerts (Kafka)
+  # =============================================================================
+  - name: kafka-alerts
+    rules:
+      # Kafka Broker Down
+      - alert: KafkaBrokerDown
+        expr: kafka_brokers < 1
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Kafka broker is down"
+          description: "No Kafka brokers are available."
+
+      # Kafka Consumer Lag
+      - alert: KafkaConsumerLag
+        expr: kafka_consumer_lag > 10000
+        for: 10m
+        labels:
+          severity: warning
+          team: backend
+        annotations:
+          summary: "High Kafka consumer lag"
+          description: "Kafka consumer lag is above 10000 messages."
+
+  # =============================================================================
+  # Authentication Alerts
+  # =============================================================================
+  - name: auth-alerts
+    rules:
+      # High Login Failure Rate
+      - alert: HighLoginFailureRate
+        expr: |
+          sum(rate(auth_login_failures_total[5m])) 
+          / sum(rate(auth_login_attempts_total[5m])) > 0.20
+        for: 5m
+        labels:
+          severity: warning
+          team: security
+        annotations:
+          summary: "High login failure rate detected"
+          description: "More than 20% of login attempts are failing."
+
+      # Potential Brute Force Attack
+      - alert: PotentialBruteForce
+        expr: |
+          sum(rate(auth_login_failures_total[1m])) by (ip) > 10
+        for: 2m
+        labels:
+          severity: critical
+          team: security
+        annotations:
+          summary: "Potential brute force attack from {{ $labels.ip }}"
+          description: "More than 10 failed login attempts per minute from IP {{ $labels.ip }}."
+          runbook_url: "https://docs.agrologistic.com/runbooks/brute-force"

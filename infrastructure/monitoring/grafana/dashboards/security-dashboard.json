@@ -1,0 +1,356 @@
+{
+  "dashboard": {
+    "title": "AgroDeep Security Dashboard",
+    "tags": ["security", "auth", "monitoring"],
+    "timezone": "browser",
+    "schemaVersion": 27,
+    "version": 1,
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Failed Login Attempts (Last 24h)",
+        "type": "graph",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(auth_login_failures_total[5m])) by (reason)",
+            "legendFormat": "{{reason}}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "Failed Attempts/sec",
+            "format": "short"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Successful Logins (Last 24h)",
+        "type": "graph",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(auth_login_success_total[5m])) by (role)",
+            "legendFormat": "{{role}}",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Active Sessions",
+        "type": "stat",
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 0,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "sum(auth_active_sessions)",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "value"
+        }
+      },
+      {
+        "id": 4,
+        "title": "Tokens Issued (Last Hour)",
+        "type": "stat",
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 6,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "sum(increase(auth_tokens_issued_total[1h]))",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Tokens Blacklisted (Last Hour)",
+        "type": "stat",
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 12,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "sum(increase(auth_tokens_blacklisted_total[1h]))",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "value": 0, "color": "green" },
+              { "value": 10, "color": "yellow" },
+              { "value": 50, "color": "red" }
+            ]
+          }
+        }
+      },
+      {
+        "id": 6,
+        "title": "Rate Limit Violations",
+        "type": "stat",
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 18,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "sum(increase(http_requests_rate_limited_total[1h]))",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "value": 0, "color": "green" },
+              { "value": 100, "color": "orange" },
+              { "value": 500, "color": "red" }
+            ]
+          }
+        }
+      },
+      {
+        "id": 7,
+        "title": "Failed Login Attempts by IP",
+        "type": "table",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 12
+        },
+        "targets": [
+          {
+            "expr": "topk(10, sum by (ip) (increase(auth_login_failures_total[1h])))",
+            "format": "table",
+            "instant": true,
+            "refId": "A"
+          }
+        ],
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "renameByName": {
+                "ip": "IP Address",
+                "Value": "Failed Attempts"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Authentication Latency (p95)",
+        "type": "graph",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 12
+        },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(auth_request_duration_seconds_bucket[5m])) by (le, endpoint))",
+            "legendFormat": "{{endpoint}} (p95)",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "Latency (seconds)",
+            "format": "s"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "CSRF Validation Failures",
+        "type": "graph",
+        "gridPos": {
+          "h": 6,
+          "w": 12,
+          "x": 0,
+          "y": 20
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(csrf_validation_failures_total[5m])) by (reason)",
+            "legendFormat": "{{reason}}",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Permission Denied Events",
+        "type": "graph",
+        "gridPos": {
+          "h": 6,
+          "w": 12,
+          "x": 12,
+          "y": 20
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(auth_permission_denied_total[5m])) by (role, permission)",
+            "legendFormat": "{{role}} - {{permission}}",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "title": "Password Reset Requests",
+        "type": "stat",
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 0,
+          "y": 26
+        },
+        "targets": [
+          {
+            "expr": "sum(increase(auth_password_reset_requests_total[24h]))",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "title": "Account Lockouts",
+        "type": "stat",
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 6,
+          "y": 26
+        },
+        "targets": [
+          {
+            "expr": "sum(increase(auth_account_lockouts_total[24h]))",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "colorMode": "background",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "value": 0, "color": "green" },
+              { "value": 5, "color": "yellow" },
+              { "value": 20, "color": "red" }
+            ]
+          }
+        }
+      },
+      {
+        "id": 13,
+        "title": "OAuth2 Authentications",
+        "type": "stat",
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 12,
+          "y": 26
+        },
+        "targets": [
+          {
+            "expr": "sum(increase(auth_oauth2_success_total[24h]))",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "title": "Database Connection Errors",
+        "type": "stat",
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 18,
+          "y": 26
+        },
+        "targets": [
+          {
+            "expr": "sum(increase(database_connection_errors_total[1h]))",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "colorMode": "background",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "value": 0, "color": "green" },
+              { "value": 1, "color": "red" }
+            ]
+          }
+        }
+      }
+    ],
+    "templating": {
+      "list": [
+        {
+          "name": "datasource",
+          "type": "datasource",
+          "query": "prometheus"
+        },
+        {
+          "name": "time_range",
+          "type": "interval",
+          "query": "1m,5m,15m,1h,6h,24h",
+          "current": {
+            "text": "5m",
+            "value": "5m"
+          }
+        }
+      ]
+    },
+    "annotations": {
+      "list": [
+        {
+          "datasource": "-- Grafana --",
+          "enable": true,
+          "name": "Security Events",
+          "iconColor": "red"
+        }
+      ]
+    }
+  }
+}

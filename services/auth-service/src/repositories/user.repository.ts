@@ -61,7 +61,7 @@ export class UserRepository {
       userData.passwordHash || null,
       userData.firstName,
       userData.lastName,
-      userData.role || 'user',
+      userData.role || 'buyer',
       userData.phone || null,
       userData.avatarUrl || null,
     ];

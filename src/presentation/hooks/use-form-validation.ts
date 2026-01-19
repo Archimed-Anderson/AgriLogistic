@@ -124,10 +124,13 @@ export function useFormValidation(isRegister: boolean = false) {
         error = validatePassword(value, isRegister);
         break;
       case 'confirmPassword':
-        // Nécessite aussi le password pour validation
-        const password = (document.querySelector('[name="password"]') as HTMLInputElement)?.value || '';
-        error = validatePasswordConfirmation(password, value);
-        break;
+        {
+          // Nécessite aussi le password pour validation
+          const password =
+            (document.querySelector('[name="password"]') as HTMLInputElement)?.value || '';
+          error = validatePasswordConfirmation(password, value);
+          break;
+        }
       case 'firstName':
         error = validateName(value, 'firstName');
         break;

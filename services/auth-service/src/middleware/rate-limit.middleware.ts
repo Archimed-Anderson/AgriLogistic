@@ -1,9 +1,21 @@
 import rateLimit from 'express-rate-limit';
+
+const isTestEnv = (process.env.NODE_ENV || '').toLowerCase() === 'test';
+const disableRateLimit = (process.env.DISABLE_RATE_LIMIT || '').toLowerCase() === 'true';
+
+// In tests we disable rate limiting to avoid cross-test interference and flaky 429s.
+const maybeRateLimit = <T extends Parameters<typeof rateLimit>[0]>(options: T) => {
+  if (isTestEnv || disableRateLimit) {
+    return (_req: any, _res: any, next: any) => next();
+  }
+  return rateLimit(options);
+};
+
 /**
  * Rate limiter for admin routes
  * Higher limits for administrators
  */
-export const adminLimiter = rateLimit({
+export const adminLimiter = maybeRateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 1000, // 1000 requests per window
   message: {
@@ -16,7 +28,7 @@ export const adminLimiter = rateLimit({
 /**
  * Rate limiter for buyer routes
  */
-export const buyerLimiter = rateLimit({
+export const buyerLimiter = maybeRateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // 100 requests per window
   message: {
@@ -29,7 +41,7 @@ export const buyerLimiter = rateLimit({
 /**
  * Rate limiter for transporter routes
  */
-export const transporterLimiter = rateLimit({
+export const transporterLimiter = maybeRateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 200, // 200 requests per window
   message: {
@@ -42,7 +54,7 @@ export const transporterLimiter = rateLimit({
 /**
  * Rate limiter for public routes (visitor)
  */
-export const publicLimiter = rateLimit({
+export const publicLimiter = maybeRateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 50, // 50 requests per window
   message: {
@@ -55,7 +67,7 @@ export const publicLimiter = rateLimit({
 /**
  * Strict rate limiter for auth endpoints (login, register)
  */
-export const authLimiter = rateLimit({
+export const authLimiter = maybeRateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // 5 attempts per window
   message: {

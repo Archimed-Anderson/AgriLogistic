@@ -1,0 +1,159 @@
+{
+  "timestamp": "2026-01-19T17:01:36.180Z",
+  "sections": 10,
+  "images": [
+    {
+      "src": "/src/app/assets/landing/hero.webp",
+      "alt": "Agriculture moderne et produits frais",
+      "width": 582,
+      "height": 298
+    },
+    {
+      "src": "/src/app/assets/landing/story-1.webp",
+      "alt": "Produits agricoles et culture",
+      "width": 282,
+      "height": 178
+    },
+    {
+      "src": "/src/app/assets/landing/story-2.webp",
+      "alt": "Équipement et innovation agricole",
+      "width": 282,
+      "height": 178
+    },
+    {
+      "src": "/src/app/assets/landing/story-1.webp",
+      "alt": "Agriculteur et exploitation agricole",
+      "width": 392,
+      "height": 250
+    },
+    {
+      "src": "/src/app/assets/landing/story-2.webp",
+      "alt": "Culture et croissance des plantes",
+      "width": 392,
+      "height": 250
+    },
+    {
+      "src": "/src/app/assets/landing/story-3.webp",
+      "alt": "Produits frais et récolte",
+      "width": 392,
+      "height": 250
+    },
+    {
+      "src": "/src/app/assets/landing/story-4.webp",
+      "alt": "Agriculture durable et terroir",
+      "width": 392,
+      "height": 250
+    },
+    {
+      "src": "/src/app/assets/landing/practices.webp",
+      "alt": "Pratiques agricoles durables",
+      "width": 584,
+      "height": 500
+    },
+    {
+      "src": "/src/app/assets/landing/project-4.webp",
+      "alt": "Innovation et agriculture",
+      "width": 184,
+      "height": 184
+    },
+    {
+      "src": "/src/app/assets/landing/project-1.webp",
+      "alt": "Projet de ferme biologique",
+      "width": 596,
+      "height": 300
+    },
+    {
+      "src": "/src/app/assets/landing/project-2.webp",
+      "alt": "Serre intelligente et capteurs IoT",
+      "width": 596,
+      "height": 300
+    },
+    {
+      "src": "/src/app/assets/landing/project-3.webp",
+      "alt": "Maraîchage local et circuits courts",
+      "width": 596,
+      "height": 300
+    },
+    {
+      "src": "/src/app/assets/landing/project-4.webp",
+      "alt": "Exploitation céréalière et grande culture",
+      "width": 596,
+      "height": 300
+    },
+    {
+      "src": "/src/app/assets/landing/story-1.webp",
+      "alt": "Photo de Marie Dupont",
+      "width": 46,
+      "height": 46
+    },
+    {
+      "src": "/src/app/assets/landing/story-2.webp",
+      "alt": "Photo de Jean-Pierre Martin",
+      "width": 46,
+      "height": 46
+    },
+    {
+      "src": "/src/app/assets/landing/story-3.webp",
+      "alt": "Photo de Sophie Bernard",
+      "width": 46,
+      "height": 46
+    },
+    {
+      "src": "/src/app/assets/landing/project-1.webp",
+      "alt": "Logo partenaire 1",
+      "width": 64,
+      "height": 40
+    },
+    {
+      "src": "/src/app/assets/landing/project-2.webp",
+      "alt": "Logo partenaire 2",
+      "width": 64,
+      "height": 40
+    },
+    {
+      "src": "/src/app/assets/landing/project-3.webp",
+      "alt": "Logo partenaire 3",
+      "width": 64,
+      "height": 40
+    },
+    {
+      "src": "/src/app/assets/landing/project-4.webp",
+      "alt": "Logo partenaire 4",
+      "width": 64,
+      "height": 40
+    },
+    {
+      "src": "/src/app/assets/landing/blog-1.webp",
+      "alt": "Illustration agriculture connectée",
+      "width": 382,
+      "height": 192
+    },
+    {
+      "src": "/src/app/assets/landing/blog-2.webp",
+      "alt": "Produits frais et nutrition",
+      "width": 382,
+      "height": 192
+    },
+    {
+      "src": "/src/app/assets/landing/blog-3.webp",
+      "alt": "Élevage durable",
+      "width": 382,
+      "height": 192
+    },
+    {
+      "src": "/src/app/assets/landing/contact.webp",
+      "alt": "Agriculteur utilisant une tablette pour gérer son exploitation",
+      "width": 552,
+      "height": 500
+    },
+    {
+      "src": "/src/app/assets/landing/story-1.webp",
+      "alt": "Logo AgroLogistic",
+      "width": 36,
+      "height": 40
+    }
+  ],
+  "svgIcons": 60,
+  "buttons": 29,
+  "navLinks": 0
+}

@@ -194,25 +194,27 @@ export function MultiStepRegisterForm({ onSuccess, onSwitchToLogin }: MultiStepR
         break;
 
       case 2:
-        const firstNameErr = validateName(firstName, 'prénom');
-        if (firstNameErr) errors.firstName = firstNameErr;
+        {
+          const firstNameErr = validateName(firstName, 'prénom');
+          if (firstNameErr) errors.firstName = firstNameErr;
 
-        const lastNameErr = validateName(lastName, 'nom');
-        if (lastNameErr) errors.lastName = lastNameErr;
+          const lastNameErr = validateName(lastName, 'nom');
+          if (lastNameErr) errors.lastName = lastNameErr;
 
-        const emailErr = validateEmail(email);
-        if (emailErr) errors.email = emailErr;
+          const emailErr = validateEmail(email);
+          if (emailErr) errors.email = emailErr;
 
-        const phoneErr = validatePhone(phone);
-        if (phoneErr) errors.phone = phoneErr;
+          const phoneErr = validatePhone(phone);
+          if (phoneErr) errors.phone = phoneErr;
 
-        const passwordErr = validatePassword(password);
-        if (passwordErr) errors.password = passwordErr;
+          const passwordErr = validatePassword(password);
+          if (passwordErr) errors.password = passwordErr;
 
-        if (password !== confirmPassword) {
-          errors.confirmPassword = 'Les mots de passe ne correspondent pas';
+          if (password !== confirmPassword) {
+            errors.confirmPassword = 'Les mots de passe ne correspondent pas';
+          }
+          break;
         }
-        break;
 
       case 3:
         // Business information - conditional validation

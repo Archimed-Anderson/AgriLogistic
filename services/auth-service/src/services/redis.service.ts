@@ -1,8 +1,8 @@
-import { createClient, RedisClientType } from 'redis';
+import { createClient } from 'redis';
 import { logger } from './logger.service';
 
 export class RedisService {
-  private client: RedisClientType | null = null;
+  private client: ReturnType<typeof createClient> | null = null;
   private isConnected: boolean = false;
 
   constructor() {
@@ -13,9 +13,8 @@ export class RedisService {
     const redisUrl = process.env.REDIS_URL || `redis://${process.env.REDIS_HOST || 'localhost'}:${process.env.REDIS_PORT || 6379}`;
     const redisPassword = process.env.REDIS_PASSWORD;
 
-    this.client = createClient({
+    const clientOptions: Parameters<typeof createClient>[0] = {
       url: redisUrl,
-      password: redisPassword,
       socket: {
         reconnectStrategy: (retries) => {
           if (retries > 10) {
@@ -25,23 +24,35 @@ export class RedisService {
           return Math.min(retries * 100, 3000);
         },
       },
-    });
+    };
 
-    this.client.on('error', (err) => {
+    // Only send AUTH when it is explicitly required/encoded.
+    // In local dev it's common to run Redis without auth; sending AUTH causes hard failures.
+    const urlIncludesPassword = /redis(s)?:\/\/:.*@/i.test(redisUrl);
+    const shouldUsePassword = urlIncludesPassword || process.env.REDIS_USE_PASSWORD === 'true';
+
+    if (shouldUsePassword && redisPassword && redisPassword.trim() !== '') {
+      (clientOptions as any).password = redisPassword;
+    }
+
+    const client = createClient(clientOptions);
+    this.client = client;
+
+    client.on('error', (err) => {
       logger.error('Redis Client Error:', err);
       this.isConnected = false;
     });
 
-    this.client.on('connect', () => {
+    client.on('connect', () => {
       logger.info('Redis client connecting...');
     });
 
-    this.client.on('ready', () => {
+    client.on('ready', () => {
       logger.info('Redis client ready');
       this.isConnected = true;
     });
 
-    this.client.on('end', () => {
+    client.on('end', () => {
       logger.warn('Redis client connection ended');
       this.isConnected = false;
     });

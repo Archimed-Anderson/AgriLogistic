@@ -1,4 +1,4 @@
-import { apiClient, APIError } from './api-client-enhanced';
+import { apiClient } from './api-client';
 import { AuthProvider } from '../../adapters/auth-provider.interface';
 import { User } from '../../../domain/entities/user.entity';
 import { Email } from '../../../domain/value-objects/email.vo';
@@ -27,97 +27,83 @@ export class RealAuthAdapter implements AuthProvider {
   readonly name = 'real-auth-api';
 
   async login(email: string, password: string): Promise<{ user: User; token: string }> {
-    try {
-      const response = await apiClient.post<AuthResponse>('/auth/login', {
-        email,
-        password,
-      });
+    const response = await apiClient.post<AuthResponse>('/auth/login', {
+      email,
+      password,
+    });
 
-      if (!response.success) {
-        throw new APIError('Identifiants invalides. Veuillez vérifier votre email et mot de passe.', 401);
-      }
-
-      const accessToken = response.token;
-      localStorage.setItem('accessToken', accessToken);
-      
-      if (response.refreshToken) {
-        localStorage.setItem('refreshToken', response.refreshToken);
-      }
-
-      const user = User.create({
-        firstName: response.user.firstName,
-        lastName: response.user.lastName,
-        email: new Email(response.user.email),
-        role: response.user.role as any,
-        avatarUrl: response.user.avatarUrl,
-      });
-
-      Object.defineProperty(user, 'id', {
-        value: response.user.id,
-        writable: false,
-        enumerable: true,
-        configurable: false,
-      });
-
-      return { user, token: accessToken };
-    } catch (error) {
-      if (error instanceof APIError) {
-        throw error;
-      }
-      throw new APIError('Erreur lors de la connexion. Veuillez réessayer.', 0, error, true);
+    if (!response.success) {
+      throw new Error('Login failed');
     }
+
+    const accessToken = response.token;
+    localStorage.setItem('accessToken', accessToken);
+
+    if (response.refreshToken) {
+      localStorage.setItem('refreshToken', response.refreshToken);
+    }
+
+    const user = User.create({
+      firstName: response.user.firstName,
+      lastName: response.user.lastName,
+      email: new Email(response.user.email),
+      role: response.user.role as any,
+      avatarUrl: response.user.avatarUrl,
+    });
+
+    Object.defineProperty(user, 'id', {
+      value: response.user.id,
+      writable: false,
+      enumerable: true,
+      configurable: false,
+    });
+
+    return { user, token: accessToken };
   }
 
   async register(request: RegisterRequestDTO): Promise<{ user: User; token: string }> {
-    try {
-      const response = await apiClient.post<AuthResponse>('/auth/register', {
-        email: request.email,
-        password: request.password,
-        firstName: request.firstName,
-        lastName: request.lastName,
-        role: request.accountType,
-        phone: request.phone,
-        businessType: request.businessType,
-        farmSize: request.farmSize,
-        farmerSpecialization: request.farmerSpecialization,
-        logisticsSpecialization: request.logisticsSpecialization,
-        defaultShippingAddress: request.defaultShippingAddress,
-        newsletterSubscribed: request.newsletterSubscribed,
-      });
+    const response = await apiClient.post<AuthResponse>('/auth/register', {
+      email: request.email,
+      password: request.password,
+      firstName: request.firstName,
+      lastName: request.lastName,
+      role: request.accountType,
+      phone: request.phone,
+      businessType: request.businessType,
+      farmSize: request.farmSize,
+      farmerSpecialization: request.farmerSpecialization,
+      logisticsSpecialization: request.logisticsSpecialization,
+      defaultShippingAddress: request.defaultShippingAddress,
+      newsletterSubscribed: request.newsletterSubscribed,
+    });
 
-      if (!response.success) {
-        throw new APIError('Inscription échouée. Veuillez vérifier vos informations.', 400);
-      }
-
-      const accessToken = response.token;
-      localStorage.setItem('accessToken', accessToken);
-      
-      if (response.refreshToken) {
-        localStorage.setItem('refreshToken', response.refreshToken);
-      }
-
-      const user = User.create({
-        firstName: response.user.firstName,
-        lastName: response.user.lastName,
-        email: new Email(response.user.email),
-        role: response.user.role as any,
-        avatarUrl: response.user.avatarUrl,
-      });
-
-      Object.defineProperty(user, 'id', {
-        value: response.user.id,
-        writable: false,
-        enumerable: true,
-        configurable: false,
-      });
-
-      return { user, token: accessToken };
-    } catch (error) {
-      if (error instanceof APIError) {
-        throw error;
-      }
-      throw new APIError('Erreur lors de l\'inscription. Veuillez réessayer.', 0, error, true);
+    if (!response.success) {
+      throw new Error('Registration failed');
     }
+
+    const accessToken = response.token;
+    localStorage.setItem('accessToken', accessToken);
+
+    if (response.refreshToken) {
+      localStorage.setItem('refreshToken', response.refreshToken);
+    }
+
+    const user = User.create({
+      firstName: response.user.firstName,
+      lastName: response.user.lastName,
+      email: new Email(response.user.email),
+      role: response.user.role as any,
+      avatarUrl: response.user.avatarUrl,
+    });
+
+    Object.defineProperty(user, 'id', {
+      value: response.user.id,
+      writable: false,
+      enumerable: true,
+      configurable: false,
+    });
+
+    return { user, token: accessToken };
   }
 
   async logout(): Promise<void> {
@@ -139,18 +125,19 @@ export class RealAuthAdapter implements AuthProvider {
     }
 
     try {
-      const response = await apiClient.get<AuthResponse['user']>('/auth/me');
+      const response = await apiClient.get<AuthResponse['user'] | { success: boolean; user: AuthResponse['user'] }>('/auth/me');
+      const userPayload = 'user' in response ? response.user : response;
 
       const user = User.create({
-        firstName: response.firstName,
-        lastName: response.lastName,
-        email: new Email(response.email),
-        role: response.role as any,
-        avatarUrl: response.avatarUrl,
+        firstName: userPayload.firstName,
+        lastName: userPayload.lastName,
+        email: new Email(userPayload.email),
+        role: userPayload.role as any,
+        avatarUrl: userPayload.avatarUrl,
       });
 
       Object.defineProperty(user, 'id', {
-        value: response.id,
+        value: userPayload.id,
         writable: false,
         enumerable: true,
         configurable: false,
