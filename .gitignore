@@ -34,10 +34,14 @@ yarn-error.log*
 # Testing
 coverage/
 .nyc_output/
+test-results/
+playwright-report/
+*.spec.ts-snapshots/
 
 # Temp
 *.tmp
 *.temp
+*.cache
 
 # Package locks (using one only)
 yarn.lock

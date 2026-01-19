@@ -36,7 +36,7 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: LoginForm
             <span className="text-2xl font-bold text-white">A</span>
           </div>
         </div>
-        <CardTitle className="text-2xl">Bienvenue sur AgroDeep</CardTitle>
+        <CardTitle className="text-2xl">Bienvenue sur AgroLogistic</CardTitle>
         <CardDescription>
           Connectez-vous à votre compte pour continuer
         </CardDescription>
@@ -48,7 +48,7 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: LoginForm
             <Input
               id="email"
               type="email"
-              placeholder="exemple@agrodeep.com"
+              placeholder="exemple@AgroLogistic.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

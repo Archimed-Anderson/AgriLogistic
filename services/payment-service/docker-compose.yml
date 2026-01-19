@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  payment-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: AgroLogistic-payment-service
+    environment:
+      NODE_ENV: production
+      PORT: 3004
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: AgroLogistic_payments
+      DB_USER: AgroLogistic
+      DB_PASSWORD: ${DB_PASSWORD:-AgroLogistic_secure_2026}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      ORDER_SERVICE_URL: http://order-service:3003
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+    ports:
+      - "3004:3004"
+    networks:
+      - AgroLogistic-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  AgroLogistic-network:
+    external: true

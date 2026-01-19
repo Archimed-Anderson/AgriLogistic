@@ -28,6 +28,11 @@ import {
   Code,
   FileText,
   DollarSign,
+  Sparkles,
+  Brain,
+  Target,
+  ArrowRight,
+  Save,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -53,9 +58,55 @@ interface ExecutionLog {
   duration: number;
 }
 
+// Advanced Rule Engine Interfaces
+interface RuleTrigger {
+  type: "sensor" | "schedule" | "manual" | "event" | "threshold";
+  condition: string;
+  value?: any;
+  operator?: "=" | ">" | "<" | ">=" | "<=" | "!=" | "contains";
+}
+
+interface RuleCondition {
+  id: string;
+  type: "if" | "else_if" | "else";
+  field: string;
+  operator: "=" | ">" | "<" | ">=" | "<=" | "!=" | "contains" | "between";
+  value: any;
+  logicGate?: "AND" | "OR";
+}
+
+interface RuleAction {
+  id: string;
+  type: "notification" | "command" | "api_call" | "data_log" | "alert";
+  target: string;
+  parameters: Record<string, any>;
+  delay?: number;
+}
+
+interface AdvancedRule {
+  id: string;
+  name: string;
+  description: string;
+  enabled: boolean;
+  priority: "low" | "medium" | "high" | "critical";
+  trigger: RuleTrigger;
+  conditions: RuleCondition[];
+  actions: RuleAction[];
+  createdAt: string;
+  lastExecuted?: string;
+  executionCount: number;
+  successRate: number;
+}
+
 export function AutomationWorkflows() {
   const [activeView, setActiveView] = useState<"overview" | "builder" | "scheduled" | "triggers" | "logs">("overview");
   const [showBuilder, setShowBuilder] = useState(false);
+  
+  // Advanced Rule Engine State
+  const [showRuleBuilder, setShowRuleBuilder] = useState(false);
+  const [advancedRules, setAdvancedRules] = useState<AdvancedRule[]>([]);
+  const [selectedRule, setSelectedRule] = useState<AdvancedRule | null>(null);
+  const [ruleEngineEnabled, setRuleEngineEnabled] = useState(true);
 
   // KPIs Data
   const kpis = [
@@ -189,6 +240,144 @@ export function AutomationWorkflows() {
     },
   ];
 
+  // Sample Advanced Rules
+  const sampleRules: AdvancedRule[] = [
+    {
+      id: "RULE-001",
+      name: "Irrigation Intelligente Multi-Conditions",
+      description: "Déclenche l'irrigation si humidité < 30% ET température > 25°C ET pas de pluie prévue",
+      enabled: true,
+      priority: "high",
+      trigger: {
+        type: "sensor",
+        condition: "Humidité Sol",
+        value: 30,
+        operator: "<",
+      },
+      conditions: [
+        {
+          id: "COND-001",
+          type: "if",
+          field: "temperature",
+          operator: ">",
+          value: 25,
+          logicGate: "AND",
+        },
+        {
+          id: "COND-002",
+          type: "if",
+          field: "rain_forecast",
+          operator: "=",
+          value: false,
+          logicGate: "AND",
+        },
+      ],
+      actions: [
+        {
+          id: "ACT-001",
+          type: "command",
+          target: "Système Irrigation Parcelle Nord",
+          parameters: { duration: 60, intensity: "medium" },
+        },
+        {
+          id: "ACT-002",
+          type: "notification",
+          target: "Responsable Agricole",
+          parameters: { channel: "sms", message: "Irrigation démarrée" },
+          delay: 2,
+        },
+      ],
+      createdAt: "2025-01-10",
+      lastExecuted: "Il y a 3h",
+      executionCount: 24,
+      successRate: 100,
+    },
+    {
+      id: "RULE-002",
+      name: "Alerte Maladie avec IA",
+      description: "Si IA détecte maladie avec confiance > 85% ALORS notifier + créer ticket",
+      enabled: true,
+      priority: "critical",
+      trigger: {
+        type: "event",
+        condition: "AI Disease Detection",
+      },
+      conditions: [
+        {
+          id: "COND-003",
+          type: "if",
+          field: "confidence",
+          operator: ">=",
+          value: 85,
+        },
+      ],
+      actions: [
+        {
+          id: "ACT-003",
+          type: "alert",
+          target: "Dashboard Principal",
+          parameters: { severity: "high", sound: true },
+        },
+        {
+          id: "ACT-004",
+          type: "api_call",
+          target: "Ticket System API",
+          parameters: { endpoint: "/tickets/create", method: "POST" },
+          delay: 1,
+        },
+        {
+          id: "ACT-005",
+          type: "notification",
+          target: "Agronome Chef",
+          parameters: { channel: "email", priority: "urgent" },
+          delay: 2,
+        },
+      ],
+      createdAt: "2025-01-08",
+      lastExecuted: "Il y a 5h",
+      executionCount: 7,
+      successRate: 100,
+    },
+    {
+      id: "RULE-003",
+      name: "Optimisation Coûts Énergie",
+      description: "Active équipements énergivores pendant heures creuses (22h-6h)",
+      enabled: true,
+      priority: "medium",
+      trigger: {
+        type: "schedule",
+        condition: "Tous les jours 22:00",
+      },
+      conditions: [
+        {
+          id: "COND-004",
+          type: "if",
+          field: "electricity_rate",
+          operator: "<",
+          value: 0.15,
+        },
+      ],
+      actions: [
+        {
+          id: "ACT-006",
+          type: "command",
+          target: "Pompes Irrigation",
+          parameters: { action: "start", mode: "eco" },
+        },
+        {
+          id: "ACT-007",
+          type: "data_log",
+          target: "Energy Database",
+          parameters: { metrics: ["consumption", "cost", "savings"] },
+        },
+      ],
+      createdAt: "2025-01-05",
+      lastExecuted: "Hier 22:00",
+      executionCount: 11,
+      successRate: 100,
+    },
+  ];
+
   const getStatusConfig = (status: string) => {
     const configs: { [key: string]: { icon: any; label: string; color: string; bgColor: string } } = {
       active: { icon: CheckCircle, label: "Actif", color: "text-green-700", bgColor: "bg-green-100 dark:bg-green-900/20" },
@@ -200,6 +389,66 @@ export function AutomationWorkflows() {
       running: { icon: Activity, label: "En cours", color: "text-blue-700", bgColor: "bg-blue-100 dark:bg-blue-900/20" },
     };
     return configs[status];
+  };
+
+  // Rule Engine Functions
+  const getPriorityConfig = (priority: string) => {
+    const configs: { [key: string]: { bg: string; text: string; border: string } } = {
+      low: { bg: "bg-gray-100 dark:bg-gray-900/20", text: "text-gray-700", border: "border-gray-300" },
+      medium: { bg: "bg-blue-100 dark:bg-blue-900/20", text: "text-blue-700", border: "border-blue-300" },
+      high: { bg: "bg-orange-100 dark:bg-orange-900/20", text: "text-orange-700", border: "border-orange-300" },
+      critical: { bg: "bg-red-100 dark:bg-red-900/20", text: "text-red-700", border: "border-red-300" },
+    };
+    return configs[priority] || configs.medium;
+  };
+
+  const getTriggerTypeIcon = (type: string) => {
+    const icons: { [key: string]: any } = {
+      sensor: Activity,
+      schedule: Clock,
+      manual: Target,
+      event: Zap,
+      threshold: AlertCircle,
+    };
+    return icons[type] || Zap;
+  };
+
+  const toggleRuleStatus = (ruleId: string) => {
+    const rule = [...sampleRules, ...advancedRules].find((r) => r.id === ruleId);
+    if (!rule) return;
+
+    toast.success(`Règle "${rule.name}" ${rule.enabled ? "désactivée" : "activée"}`);
+  };
+
+  const executeRule = async (ruleId: string) => {
+    const rule = [...sampleRules, ...advancedRules].find((r) => r.id === ruleId);
+    if (!rule) return;
+
+    toast.info(`Exécution de la règle "${rule.name}"...`);
+
+    // Simulate rule execution
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    toast.success(`Règle exécutée avec succès!`, {
+      description: `${rule.actions.length} actions effectuées`,
+    });
+  };
+
+  const duplicateRule = (ruleId: string) => {
+    const rule = [...sampleRules, ...advancedRules].find((r) => r.id === ruleId);
+    if (!rule) return;
+
+    const newRule: AdvancedRule = {
+      ...rule,
+      id: `RULE-${Date.now()}`,
+      name: `${rule.name} (copie)`,
+      enabled: false,
+      executionCount: 0,
+      createdAt: new Date().toISOString().split("T")[0],
+    };
+
+    setAdvancedRules((prev) => [newRule, ...prev]);
+    toast.success(`Règle dupliquée: ${newRule.name}`);
   };
 
   const renderOverview = () => (
@@ -334,117 +583,248 @@ export function AutomationWorkflows() {
 
   const renderBuilder = () => (
     <div className="space-y-6">
+      {/* Header with Rule Engine Toggle */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Workflow Builder</h2>
-          <p className="text-muted-foreground">Créez des automatisations drag & drop</p>
+          <h2 className="text-2xl font-bold">Moteur de Règles Avancé</h2>
+          <p className="text-muted-foreground">Créez des automatisations intelligentes avec conditions complexes</p>
         </div>
-        <button className="px-6 py-2 bg-[#16A085] text-white rounded-lg hover:bg-[#138D75] transition-colors font-semibold flex items-center gap-2">
-          <Plus className="h-5 w-5" />
-          Nouveau Workflow
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowRuleBuilder(true)}
+            className="px-6 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all font-semibold flex items-center gap-2"
+          >
+            <Plus className="h-5 w-5" />
+            Nouvelle Règle
+          </button>
+          <button
+            onClick={() => setRuleEngineEnabled(!ruleEngineEnabled)}
+            className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+              ruleEngineEnabled
+                ? "bg-green-100 text-green-700 dark:bg-green-900/30"
+                : "bg-gray-100 text-gray-700 dark:bg-gray-800"
+            }`}
+          >
+            {ruleEngineEnabled ? "Moteur Actif" : "Moteur Inactif"}
+          </button>
+        </div>
       </div>
 
-      {/* Builder Canvas */}
-      <div className="bg-card border rounded-xl p-6 min-h-[600px]">
-        <div className="grid grid-cols-4 gap-6 h-full">
-          {/* Actions Palette */}
-          <div className="border-r pr-6">
-            <h3 className="font-semibold mb-4">Actions Disponibles</h3>
-            <div className="space-y-2">
-              {[
-                { icon: Mail, label: "Envoyer Email", color: "blue" },
-                { icon: Webhook, label: "Appeler Webhook", color: "purple" },
-                { icon: Database, label: "Mise à jour BDD", color: "green" },
-                { icon: GitBranch, label: "Condition IF/ELSE", color: "orange" },
-                { icon: Clock, label: "Délai", color: "gray" },
-                { icon: Code, label: "Script Custom", color: "red" },
-              ].map((action, index) => {
-                const Icon = action.icon;
-                return (
-                  <div
-                    key={index}
-                    draggable
-                    className={`p-3 border-2 border-dashed rounded-lg cursor-move hover:border-[#16A085] transition-colors`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className={`p-2 rounded bg-${action.color}-100 dark:bg-${action.color}-900/20`}>
-                        <Icon className={`h-4 w-4 text-${action.color}-600`} />
+      {/* Rule Engine Status */}
+      <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 border-2 border-green-200 dark:border-green-800 rounded-xl p-6">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-green-100 dark:bg-green-900/40 rounded-lg">
+            <Brain className="h-8 w-8 text-green-600" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-bold text-lg mb-1">Moteur de Règles Intelligent</h3>
+            <p className="text-sm text-muted-foreground">
+              {[...sampleRules, ...advancedRules].length} règles actives | {[...sampleRules, ...advancedRules].filter(r => r.enabled).length} activées
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-6 w-6 text-green-600 animate-pulse" />
+            <span className="text-sm font-semibold text-green-700 dark:text-green-300">
+              Taux succès: {Math.round([...sampleRules, ...advancedRules].reduce((acc, r) => acc + r.successRate, 0) / ([...sampleRules, ...advancedRules].length || 1))}%
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Advanced Rules List */}
+      <div className="space-y-4">
+        {[...sampleRules, ...advancedRules].map((rule) => {
+          const priorityConfig = getPriorityConfig(rule.priority);
+          const TriggerIcon = getTriggerTypeIcon(rule.trigger.type);
+
+          return (
+            <div
+              key={rule.id}
+              className={`bg-card border-2 rounded-xl p-6 hover:shadow-lg transition-all ${priorityConfig.border}`}
+            >
+              <div className="flex items-start gap-4">
+                <div className={`p-3 rounded-lg ${priorityConfig.bg}`}>
+                  <TriggerIcon className={`h-6 w-6 ${priorityConfig.text}`} />
+                </div>
+
+                <div className="flex-1">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
+                        <h3 className="font-semibold text-lg">{rule.name}</h3>
+                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${priorityConfig.text} ${priorityConfig.bg}`}>
+                          Priorité: {rule.priority.toUpperCase()}
+                        </span>
+                        {rule.enabled ? (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900/30">
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            Active
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 dark:bg-gray-800">
+                            <Pause className="h-3 w-3 mr-1" />
+                            Inactive
+                          </span>
+                        )}
+                        <span className="text-xs text-muted-foreground">
+                          {rule.lastExecuted || "Jamais exécutée"}
+                        </span>
                       </div>
-                      <span className="text-sm font-medium">{action.label}</span>
+                      <p className="text-sm text-muted-foreground mb-3">{rule.description}</p>
+
+                      {/* Trigger */}
+                      <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Zap className="h-4 w-4 text-blue-600" />
+                          <span className="text-xs font-semibold text-blue-900 dark:text-blue-200">Déclencheur ({rule.trigger.type}):</span>
+                        </div>
+                        <div className="text-sm text-blue-800 dark:text-blue-300">
+                          {rule.trigger.condition}
+                          {rule.trigger.operator && rule.trigger.value !== undefined && (
+                            <span> {rule.trigger.operator} {JSON.stringify(rule.trigger.value)}</span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Conditions */}
+                      {rule.conditions.length > 0 && (
+                        <div className="mb-3">
+                          <div className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1">
+                            <GitBranch className="h-3 w-3" />
+                            Conditions ({rule.conditions.length}):
+                          </div>
+                          <div className="space-y-1">
+                            {rule.conditions.map((condition, idx) => (
+                              <div key={condition.id} className="flex items-start gap-2 text-sm">
+                                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs font-bold flex-shrink-0">
+                                  {condition.type === "if" ? "IF" : condition.type === "else_if" ? "ELSE IF" : "ELSE"}
+                                </span>
+                                <span>
+                                  {condition.field} {condition.operator} {JSON.stringify(condition.value)}
+                                  {condition.logicGate && <span className="font-bold text-purple-600"> {condition.logicGate}</span>}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Actions */}
+                      <div className="mb-3">
+                        <div className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1">
+                          <ArrowRight className="h-3 w-3" />
+                          Actions ({rule.actions.length}):
+                        </div>
+                        <div className="space-y-2">
+                          {rule.actions.map((action, idx) => (
+                            <div key={action.id} className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                              <div className="flex items-start justify-between">
+                                <div className="flex-1">
+                                  <div className="font-semibold text-sm text-green-900 dark:text-green-100">
+                                    {idx + 1}. {action.type.toUpperCase()}: {action.target}
+                                  </div>
+                                  <div className="text-xs text-muted-foreground mt-1">
+                                    Paramètres: {Object.keys(action.parameters).length} | {action.delay ? `Délai: ${action.delay}s` : "Immédiat"}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Stats */}
+                      <div className="grid grid-cols-3 gap-3 mb-3">
+                        <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                          <div className="text-xs text-muted-foreground">Exécutions</div>
+                          <div className="font-bold text-blue-700 dark:text-blue-400">{rule.executionCount}</div>
+                        </div>
+                        <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                          <div className="text-xs text-muted-foreground">Taux Succès</div>
+                          <div className="font-bold text-green-700 dark:text-green-400">{rule.successRate}%</div>
+                        </div>
+                        <div className="p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                          <div className="text-xs text-muted-foreground">Créée</div>
+                          <div className="font-bold text-orange-700 dark:text-orange-400">{rule.createdAt}</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </div>
 
-          {/* Canvas */}
-          <div className="col-span-3 bg-muted/30 rounded-lg p-8 relative">
-            <div className="text-center text-muted-foreground">
-              <GitBranch className="h-16 w-16 mx-auto mb-4 opacity-50" />
-              <p className="text-lg font-medium mb-2">Glissez des actions ici</p>
-              <p className="text-sm">Construisez votre workflow visuellement</p>
-            </div>
-
-            {/* Example Flow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-              <div className="flex items-center gap-4">
-                <div className="p-4 bg-card border-2 border-[#16A085] rounded-lg shadow-lg">
-                  <Zap className="h-8 w-8 text-[#16A085]" />
-                  <div className="text-xs mt-2">Déclencheur</div>
-                </div>
-                <ChevronRight className="h-6 w-6 text-muted-foreground" />
-                <div className="p-4 bg-card border-2 rounded-lg shadow">
-                  <Mail className="h-8 w-8 text-blue-600" />
-                  <div className="text-xs mt-2">Action 1</div>
-                </div>
-                <ChevronRight className="h-6 w-6 text-muted-foreground" />
-                <div className="p-4 bg-card border-2 rounded-lg shadow">
-                  <Database className="h-8 w-8 text-green-600" />
-                  <div className="text-xs mt-2">Action 2</div>
+                  {/* Actions */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <button
+                      onClick={() => executeRule(rule.id)}
+                      className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all font-semibold text-sm flex items-center gap-2"
+                    >
+                      <Play className="h-4 w-4" />
+                      Exécuter
+                    </button>
+                    <button
+                      onClick={() => toggleRuleStatus(rule.id)}
+                      className="px-4 py-2 border-2 border-green-200 dark:border-green-800 rounded-lg hover:border-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all font-medium text-sm flex items-center gap-2"
+                    >
+                      {rule.enabled ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                      {rule.enabled ? "Désactiver" : "Activer"}
+                    </button>
+                    <button
+                      onClick={() => duplicateRule(rule.id)}
+                      className="px-4 py-2 border rounded-lg hover:bg-muted transition-colors font-medium text-sm flex items-center gap-2"
+                    >
+                      <Copy className="h-4 w-4" />
+                      Dupliquer
+                    </button>
+                    <button
+                      onClick={() => setSelectedRule(rule)}
+                      className="px-4 py-2 border rounded-lg hover:bg-muted transition-colors font-medium text-sm flex items-center gap-2"
+                    >
+                      <Edit className="h-4 w-4" />
+                      Modifier
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          );
+        })}
       </div>
 
-      {/* Configuration Panel */}
-      <div className="bg-card border rounded-xl p-6">
-        <h3 className="font-semibold mb-4">Configuration du Workflow</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">Nom du Workflow</label>
-            <input
-              type="text"
-              placeholder="Ex: Alerte Irrigation Automatique"
-              className="w-full px-3 py-2 border rounded-lg bg-background"
-            />
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-card border rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <Target className="h-8 w-8 text-green-600" />
+            <div>
+              <div className="text-2xl font-bold">{sampleRules.length + advancedRules.length}</div>
+              <div className="text-xs text-muted-foreground">Règles Total</div>
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Description</label>
-            <input
-              type="text"
-              placeholder="Description courte..."
-              className="w-full px-3 py-2 border rounded-lg bg-background"
-            />
+        </div>
+        <div className="bg-card border rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <CheckCircle className="h-8 w-8 text-blue-600" />
+            <div>
+              <div className="text-2xl font-bold">{[...sampleRules, ...advancedRules].filter(r => r.enabled).length}</div>
+              <div className="text-xs text-muted-foreground">Règles Actives</div>
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Gestion des Erreurs</label>
-            <select className="w-full px-3 py-2 border rounded-lg bg-background">
-              <option>Retry 3 fois</option>
-              <option>Arrêter immédiatement</option>
-              <option>Continuer malgré erreurs</option>
-            </select>
+        </div>
+        <div className="bg-card border rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <Activity className="h-8 w-8 text-purple-600" />
+            <div>
+              <div className="text-2xl font-bold">{[...sampleRules, ...advancedRules].reduce((acc, r) => acc + r.executionCount, 0)}</div>
+              <div className="text-xs text-muted-foreground">Exécutions Total</div>
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Niveau de Logging</label>
-            <select className="w-full px-3 py-2 border rounded-lg bg-background">
-              <option>Détaillé</option>
-              <option>Normal</option>
-              <option>Minimal</option>
-            </select>
+        </div>
+        <div className="bg-card border rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <Zap className="h-8 w-8 text-orange-600" />
+            <div>
+              <div className="text-2xl font-bold">{[...sampleRules, ...advancedRules].reduce((acc, r) => acc + r.actions.length, 0)}</div>
+              <div className="text-xs text-muted-foreground">Actions Config</div>
+            </div>
           </div>
         </div>
       </div>

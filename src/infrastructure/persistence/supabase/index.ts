@@ -1,1 +1,3 @@
 // Supabase Persistence
+
+export {};

@@ -1,4 +1,4 @@
-// Mock data for AgroDeep platform
+// Mock data for AgroLogistic platform
 
 export const products = [
   {

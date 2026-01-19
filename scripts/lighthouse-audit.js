@@ -1,0 +1,122 @@
+/**
+ * Script d'audit Lighthouse pour la Landing Page AgroDeep
+ * Génère un rapport de performance, accessibilité, SEO et best practices
+ */
+
+const lighthouse = require('lighthouse');
+const chromeLauncher = require('chrome-launcher');
+const fs = require('fs');
+const path = require('path');
+
+const TARGET_URL = 'http://localhost:5173';
+const REPORT_DIR = path.join(process.cwd(), 'lighthouse-reports');
+
+// Créer le dossier de rapports s'il n'existe pas
+if (!fs.existsSync(REPORT_DIR)) {
+  fs.mkdirSync(REPORT_DIR, { recursive: true });
+}
+
+async function runLighthouse() {
+  console.log('🚀 Lancement de l\'audit Lighthouse...\n');
+
+  // Lancer Chrome
+  const chrome = await chromeLauncher.launch({ chromeFlags: ['--headless'] });
+  const options = {
+    logLevel: 'info',
+    output: ['html', 'json'],
+    onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
+    port: chrome.port,
+  };
+
+  try {
+    // Exécuter Lighthouse
+    const runnerResult = await lighthouse(TARGET_URL, options);
+
+    // Extraire les scores
+    const { lhr } = runnerResult;
+    const scores = {
+      performance: lhr.categories.performance.score * 100,
+      accessibility: lhr.categories.accessibility.score * 100,
+      bestPractices: lhr.categories['best-practices'].score * 100,
+      seo: lhr.categories.seo.score * 100,
+    };
+
+    // Afficher les résultats
+    console.log('📊 Scores Lighthouse:\n');
+    console.log(`  Performance:      ${scores.performance.toFixed(0)}/100 ${getScoreEmoji(scores.performance)}`);
+    console.log(`  Accessibility:    ${scores.accessibility.toFixed(0)}/100 ${getScoreEmoji(scores.accessibility)}`);
+    console.log(`  Best Practices:   ${scores.bestPractices.toFixed(0)}/100 ${getScoreEmoji(scores.bestPractices)}`);
+    console.log(`  SEO:              ${scores.seo.toFixed(0)}/100 ${getScoreEmoji(scores.seo)}\n`);
+
+    // Vérifier les objectifs
+    const allAbove90 = Object.values(scores).every(score => score >= 90);
+    if (allAbove90) {
+      console.log('✅ Tous les scores sont >= 90! Objectif atteint! 🎉\n');
+    } else {
+      console.log('⚠️  Certains scores sont < 90. Améliorations nécessaires.\n');
+    }
+
+    // Sauvegarder les rapports
+    const timestamp = Date.now();
+    const htmlReport = runnerResult.report[0];
+    const jsonReport = runnerResult.report[1];
+
+    const htmlPath = path.join(REPORT_DIR, `lighthouse-${timestamp}.html`);
+    const jsonPath = path.join(REPORT_DIR, `lighthouse-${timestamp}.json`);
+
+    fs.writeFileSync(htmlPath, htmlReport);
+    fs.writeFileSync(jsonPath, jsonReport);
+
+    console.log(`📄 Rapport HTML: ${htmlPath}`);
+    console.log(`📄 Rapport JSON: ${jsonPath}\n`);
+
+    // Afficher les principales opportunités d'amélioration
+    const opportunities = lhr.audits['diagnostics'] || {};
+    if (opportunities.details) {
+      console.log('💡 Principales opportunités d\'amélioration:\n');
+      // Afficher les 5 premières opportunités
+      Object.entries(lhr.audits)
+        .filter(([key, audit]) => 
+          audit.score !== null && 
+          audit.score < 1 && 
+          audit.details?.type === 'opportunity'
+        )
+        .slice(0, 5)
+        .forEach(([key, audit]) => {
+          console.log(`  - ${audit.title}`);
+        });
+      console.log('');
+    }
+
+    await chrome.kill();
+    process.exit(allAbove90 ? 0 : 1);
+
+  } catch (error) {
+    console.error('❌ Erreur lors de l\'audit Lighthouse:', error);
+    await chrome.kill();
+    process.exit(1);
+  }
+}
+
+function getScoreEmoji(score) {
+  if (score >= 90) return '🟢';
+  if (score >= 50) return '🟡';
+  return '🔴';
+}
+
+// Vérifier que l'application est démarrée
+console.log(`🔍 Vérification de l'application sur ${TARGET_URL}...\n`);
+
+require('http').get(TARGET_URL, (res) => {
+  if (res.statusCode === 200) {
+    console.log('✅ Application accessible, lancement de l\'audit...\n');
+    runLighthouse();
+  } else {
+    console.error('❌ Application non accessible. Assurez-vous qu\'elle est démarrée (npm run dev).');
+    process.exit(1);
+  }
+}).on('error', (err) => {
+  console.error('❌ Impossible de se connecter à l\'application.');
+  console.error('   Assurez-vous qu\'elle est démarrée avec: npm run dev');
+  process.exit(1);
+});

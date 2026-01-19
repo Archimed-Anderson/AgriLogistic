@@ -40,7 +40,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
               Transform Your Agricultural Supply Chain
             </h1>
             <p className="text-xl mb-8 text-blue-100">
-              AgroDeep is a comprehensive SaaS platform that connects farmers, suppliers, and buyers in a seamless digital ecosystem.
+              AgroLogistic is a comprehensive SaaS platform that connects farmers, suppliers, and buyers in a seamless digital ecosystem.
             </p>
             <div className="flex gap-4">
               <Button
@@ -76,7 +76,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
       {/* Features Section */}
       <div className="container mx-auto px-6 py-24">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">Why Choose AgroDeep?</h2>
+          <h2 className="text-4xl font-bold mb-4">Why Choose AgroLogistic?</h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Our platform provides everything you need to streamline your agricultural supply chain operations
           </p>
@@ -124,7 +124,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
         <div className="bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] rounded-2xl p-12 text-center text-white">
           <h2 className="text-4xl font-bold mb-4">Ready to Get Started?</h2>
           <p className="text-xl mb-8 text-blue-100 max-w-2xl mx-auto">
-            Join thousands of businesses already using AgroDeep to optimize their agricultural supply chain
+            Join thousands of businesses already using AgroLogistic to optimize their agricultural supply chain
           </p>
           <Button
             onClick={() => onNavigate("/register")}
@@ -145,10 +145,10 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2563eb]">
                 <span className="text-lg font-bold text-white">A</span>
               </div>
-              <span className="text-lg font-bold">AgroDeep</span>
+              <span className="text-lg font-bold">AgroLogistic</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              © 2026 AgroDeep. All rights reserved.
+              © 2026 AgroLogistic. All rights reserved.
             </p>
           </div>
         </div>

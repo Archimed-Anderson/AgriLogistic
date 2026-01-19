@@ -1,8 +1,8 @@
-# 🏗️ AgroDeep - Architecture Documentation
+# 🏗️ AgroLogistic - Architecture Documentation
 
 ## Vue d'ensemble
 
-AgroDeep est une plateforme SaaS complète pour la chaîne d'approvisionnement agricole construite selon les principes de **Clean Architecture** et **Domain-Driven Design (DDD)**.
+AgroLogistic est une plateforme SaaS complète pour la chaîne d'approvisionnement agricole construite selon les principes de **Clean Architecture** et **Domain-Driven Design (DDD)**.
 
 ---
 
@@ -10,7 +10,7 @@ AgroDeep est une plateforme SaaS complète pour la chaîne d'approvisionnement a
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                      AGRODEEP PLATFORM                          │
+│                      AgroLogistic PLATFORM                          │
 │              Clean Architecture + Modular Design                │
 └─────────────────────────────────────────────────────────────────┘
                                │
@@ -379,7 +379,7 @@ UI Components (Design System)
 ## 🧩 Modules & Bounded Contexts (DDD)
 
 ```
-AgroDeep Platform
+AgroLogistic Platform
 │
 ├── 🛒 Marketplace Context
 │   ├── Products
@@ -578,4 +578,4 @@ MIT License - Voir [LICENSE](../LICENSE)
 
 **Dernière mise à jour:** $(date)  
 **Version:** 2.0.0  
-**Mainteneur:** AgroDeep Team
+**Mainteneur:** AgroLogistic Team

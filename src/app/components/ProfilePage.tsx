@@ -36,8 +36,8 @@ export function ProfilePage() {
   const [formData, setFormData] = useState({
     firstName: "Admin",
     lastName: "User",
-    username: "admin_agrodeep",
-    email: "admin@agrodeep.fr",
+    username: "admin_AgroLogistic",
+    email: "admin@AgroLogistic.fr",
     phone: "+33 6 12 34 56 78",
     address: "123 Rue de l'Agriculture, 69000 Lyon",
     bio: "Passionné d'agriculture depuis 10 ans. Spécialisé dans la gestion de la chaîne d'approvisionnement.",

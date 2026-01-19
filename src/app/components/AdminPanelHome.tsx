@@ -179,7 +179,7 @@ export function AdminPanelHome({ onNavigate }: AdminPanelHomeProps) {
             Panel d'Administration
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Gérez tous les aspects de votre plateforme AgroDeep
+            Gérez tous les aspects de votre plateforme AgroLogistic
           </p>
         </div>
       </div>

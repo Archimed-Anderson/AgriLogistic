@@ -1,15 +1,60 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>AgroDeep Web App Prototype</title>
-    </head>
+    <title>AgroLogistic | Logistique agricole & supply chain</title>
+    <meta
+      name="description"
+      content="AgroLogistic connecte producteurs, acheteurs et transporteurs pour une logistique agricole performante. Marketplace, tracking et gestion de la chaîne d'approvisionnement."
+    />
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content="#047857" />
 
-    <body>
-      <div id="root"></div>
-      <script type="module" src="/src/main.tsx"></script>
-    </body>
-  </html>
-  
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="AgroLogistic" />
+    <meta property="og:title" content="AgroLogistic | Logistique agricole & supply chain" />
+    <meta
+      property="og:description"
+      content="Marketplace agricole, tracking temps réel et outils de gestion pour une logistique durable. Rejoignez la communauté AgroLogistic."
+    />
+    <meta property="og:image" content="/og/og-image.webp" />
+    <meta property="og:image:alt" content="AgroLogistic - logistique agricole" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="AgroLogistic | Logistique agricole & supply chain" />
+    <meta
+      name="twitter:description"
+      content="Marketplace agricole, tracking temps réel et outils de gestion pour une logistique durable."
+    />
+    <meta name="twitter:image" content="/og/og-image.webp" />
+
+    <!-- Structured data (Schema.org) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "AgroLogistic",
+        "url": "/",
+        "description": "Plateforme de logistique agricole: marketplace, tracking temps réel, gestion supply chain.",
+        "logo": "/og/og-image.webp"
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "AgroLogistic",
+        "url": "/"
+      }
+    </script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

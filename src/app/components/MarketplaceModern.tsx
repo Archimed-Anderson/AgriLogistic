@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Search,
   SlidersHorizontal,
@@ -12,37 +12,71 @@ import {
   ChevronRight,
   ChevronLeft,
   X,
-  Filter,
   TrendingUp,
-  Leaf,
-  Award,
   Clock,
-  User,
   MessageCircle,
-  Share2,
   Check,
   Minus,
   Plus,
   ArrowUpDown,
   Sparkles,
   Package,
-  ThumbsUp,
-  Calendar,
   Edit,
   Trash2,
   MoreVertical,
   Settings as SettingsIcon,
-  Eye,
-  EyeOff,
   Archive,
   Move,
-  Copy,
   History,
-  Loader2,
   AlertTriangle,
   FolderPlus,
+  Leaf,
+  Apple,
+  Milk,
+  Beef,
+  Egg,
+  Package as PackageBox,
+  Sprout,
+  Eye,
+  Sun,
+  CloudRain,
+  Droplet,
+  Wind,
 } from "lucide-react";
 import { toast } from "sonner";
+import { MarketplaceHero } from "./marketplace/hero/MarketplaceHero";
+import { ProductFilterSidebar } from "./marketplace/filters/ProductFilterSidebar";
+import type { PriceRange } from "./marketplace/filters/ProductFilterSidebar";
+import { ProductGrid } from "./marketplace/grid/ProductGrid";
+
+type ProductHistoryChange = {
+  field: keyof Product;
+  from: unknown;
+  to: unknown;
+};
+
+type ProductHistoryEntry = {
+  id: string;
+  timestamp: string;
+  author: string;
+  changes: ProductHistoryChange[];
+};
+
+type ProductMediaItem = {
+  id: string;
+  url: string;
+  type: "image" | "video";
+  alt?: string;
+  isPrimary?: boolean;
+};
+
+type ProductPromotion = {
+  type: "percentage" | "fixed";
+  value: number;
+  startsAt?: string;
+  endsAt?: string;
+  label?: string;
+};
 
 interface Product {
   id: string;
@@ -80,6 +114,9 @@ interface Product {
   visible?: boolean;
   isNew?: boolean;
   archived?: boolean;
+  media?: ProductMediaItem[];
+  promotion?: ProductPromotion;
+  history?: ProductHistoryEntry[];
 }
 
 interface Category {
@@ -89,8 +126,47 @@ interface Category {
   children?: Category[];
 }
 
+const DEFAULT_PRICE_RANGE: PriceRange = [0, 100];
+
+const marketplaceWeatherData = {
+  current: { temp: 22, humidity: 64, wind: 12, rain: 0 },
+  forecast: [
+    { day: "Lun", temp: 24, rain: 10, icon: Sun },
+    { day: "Mar", temp: 23, rain: 20, icon: CloudRain },
+    { day: "Mer", temp: 21, rain: 40, icon: CloudRain },
+    { day: "Jeu", temp: 25, rain: 5, icon: Sun },
+  ],
+};
+
+export function isPromotionActive(promotion?: ProductPromotion | null, now: Date = new Date()) {
+  if (!promotion || !promotion.value) return false;
+  if (promotion.startsAt && new Date(promotion.startsAt) > now) return false;
+  if (promotion.endsAt && new Date(promotion.endsAt) < now) return false;
+  return true;
+}
+
+export function computePromotionPrice(
+  basePrice: number,
+  promotion?: ProductPromotion | null,
+  now: Date = new Date()
+) {
+  if (!isPromotionActive(promotion, now)) return null;
+  const value = promotion!.value;
+  let discounted = basePrice;
+  if (promotion!.type === "percentage") {
+    discounted = basePrice * (1 - value / 100);
+  } else if (promotion!.type === "fixed") {
+    discounted = Math.max(0, basePrice - value);
+  }
+  const savings = basePrice > 0 ? ((basePrice - discounted) / basePrice) * 100 : 0;
+  return {
+    discountedPrice: discounted,
+    savingsPercentage: savings,
+  };
+}
+
 export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { adminMode?: boolean; onAdminModeChange?: (value: boolean) => void }) {
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "list" | "map">("grid");
   const [showFilters, setShowFilters] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("relevance");
@@ -109,7 +185,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
   
   // Filters
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState([0, 100]);
+  const [priceRange, setPriceRange] = useState<PriceRange>(DEFAULT_PRICE_RANGE);
   const [maxDistance, setMaxDistance] = useState(50);
   const [minRating, setMinRating] = useState(0);
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
@@ -117,24 +193,312 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [categories, setCategories] = useState<Category[]>(initialCategories);
 
+  const [searchSuggestions, setSearchSuggestions] = useState<Product[]>([]);
+  const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
+
+  // Smart Filters State
+  const [savedFilterPresets, setSavedFilterPresets] = useState<Array<{
+    id: string;
+    name: string;
+    filters: {
+      categories: string[];
+      priceRange: PriceRange;
+      maxDistance: number;
+      minRating: number;
+      labels: string[];
+    };
+  }>>([]);
+  const [showSaveFilterModal, setShowSaveFilterModal] = useState(false);
+  const [filterPresetName, setFilterPresetName] = useState("");
+
+  // Price & Availability Alerts State
+  const [priceAlerts, setPriceAlerts] = useState<Array<{
+    id: string;
+    productId: string;
+    productName: string;
+    type: "price_drop" | "back_in_stock" | "price_target";
+    targetPrice?: number;
+    currentPrice: number;
+    createdAt: string;
+    active: boolean;
+  }>>([]);
+  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [alertProduct, setAlertProduct] = useState<Product | null>(null);
+  const [alertType, setAlertType] = useState<"price_drop" | "back_in_stock" | "price_target">("price_drop");
+  const [targetPrice, setTargetPrice] = useState("");
+  const [showAlertsPanel, setShowAlertsPanel] = useState(false);
+
+  // Browse History & Recommendations State
+  const [browseHistory, setBrowseHistory] = useState<Array<{
+    productId: string;
+    productName: string;
+    category: string;
+    price: number;
+    viewedAt: string;
+    viewDuration?: number;
+  }>>([]);
+  const [recommendations, setRecommendations] = useState<Product[]>([]);
+  const [showRecommendations, setShowRecommendations] = useState(true);
+
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchSuggestions([]);
+      return;
+    }
+
+    const handle = setTimeout(() => {
+      const q = searchQuery.toLowerCase();
+      const matches = products
+        .filter((product) => {
+          if (product.archived) {
+            return false;
+          }
+          const nameMatch = product.name.toLowerCase().includes(q);
+          const sellerMatch = product.seller.name.toLowerCase().includes(q);
+          const categoryMatch = product.category.toLowerCase().includes(q);
+          return nameMatch || sellerMatch || categoryMatch;
+        })
+        .slice(0, 6);
+
+      setSearchSuggestions(matches);
+    }, 200);
+
+    return () => clearTimeout(handle);
+  }, [searchQuery, products]);
+
   // Load favorites from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem("agrodeep-favorites");
+    const saved = localStorage.getItem("AgroLogistic-favorites");
     if (saved) setFavorites(JSON.parse(saved));
     
-    const savedSort = localStorage.getItem("agrodeep-sort-preference");
+    const savedSort = localStorage.getItem("AgroLogistic-sort-preference");
     if (savedSort) setSortBy(savedSort);
+
+    // Load saved filter presets
+    const savedPresets = localStorage.getItem("AgroLogistic-filter-presets");
+    if (savedPresets) {
+      try {
+        setSavedFilterPresets(JSON.parse(savedPresets));
+      } catch (e) {
+        console.error("Failed to parse filter presets", e);
+      }
+    }
+
+    // Load last used filters
+    const lastFilters = localStorage.getItem("AgroLogistic-last-filters");
+    if (lastFilters) {
+      try {
+        const filters = JSON.parse(lastFilters);
+        setSelectedCategories(filters.categories || []);
+        setPriceRange(
+          Array.isArray(filters.priceRange) && filters.priceRange.length === 2
+            ? filters.priceRange
+            : [0, 100]
+        );
+        setMaxDistance(filters.maxDistance || 50);
+        setMinRating(filters.minRating || 0);
+        setSelectedLabels(filters.labels || []);
+      } catch (e) {
+        console.error("Failed to parse last filters", e);
+      }
+    }
+
+    // Load saved price alerts
+    const savedAlerts = localStorage.getItem("AgroLogistic-price-alerts");
+    if (savedAlerts) {
+      try {
+        setPriceAlerts(JSON.parse(savedAlerts));
+      } catch (e) {
+        console.error("Failed to parse price alerts", e);
+      }
+    }
+
+    // Load browse history
+    const savedHistory = localStorage.getItem("AgroLogistic-browse-history");
+    if (savedHistory) {
+      try {
+        setBrowseHistory(JSON.parse(savedHistory));
+      } catch (e) {
+        console.error("Failed to parse browse history", e);
+      }
+    }
   }, []);
 
   // Save sort preference
   useEffect(() => {
-    localStorage.setItem("agrodeep-sort-preference", sortBy);
+    localStorage.setItem("AgroLogistic-sort-preference", sortBy);
   }, [sortBy]);
+
+  // Auto-save current filters (debounced)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const currentFilters = {
+        categories: selectedCategories,
+        priceRange,
+        maxDistance,
+        minRating,
+        labels: selectedLabels,
+      };
+      localStorage.setItem("AgroLogistic-last-filters", JSON.stringify(currentFilters));
+    }, 1000); // Save after 1 second of inactivity
+
+    return () => clearTimeout(timer);
+  }, [selectedCategories, priceRange, maxDistance, minRating, selectedLabels]);
+
+  // Monitor price alerts and trigger notifications
+  useEffect(() => {
+    if (priceAlerts.length === 0) return;
+
+    const checkAlerts = () => {
+      const triggeredAlerts: typeof priceAlerts = [];
+      const updatedAlerts = priceAlerts.map((alert) => {
+        if (!alert.active) return alert;
+
+        const product = products.find((p) => p.id === alert.productId);
+        if (!product) return alert;
+
+        let shouldTrigger = false;
+        let message = "";
+
+        switch (alert.type) {
+          case "price_drop":
+            if (product.price < alert.currentPrice) {
+              shouldTrigger = true;
+              message = `Le prix de "${product.name}" a baissé à ${product.price.toFixed(2)}€ (était ${alert.currentPrice.toFixed(2)}€)`;
+            }
+            break;
+          case "back_in_stock":
+            if (product.stock === "in-stock" && alert.currentPrice === 0) {
+              shouldTrigger = true;
+              message = `"${product.name}" est de nouveau en stock !`;
+            }
+            break;
+          case "price_target":
+            if (alert.targetPrice && product.price <= alert.targetPrice) {
+              shouldTrigger = true;
+              message = `"${product.name}" a atteint votre prix cible de ${alert.targetPrice.toFixed(2)}€ !`;
+            }
+            break;
+        }
+
+        if (shouldTrigger) {
+          triggeredAlerts.push(alert);
+          toast.success(message, {
+            duration: 8000,
+            action: {
+              label: "Voir",
+              onClick: () => setSelectedProduct(product),
+            },
+          });
+          // Deactivate alert after triggering
+          return { ...alert, active: false };
+        }
+
+        return alert;
+      });
+
+      if (triggeredAlerts.length > 0) {
+        setPriceAlerts(updatedAlerts);
+        localStorage.setItem("AgroLogistic-price-alerts", JSON.stringify(updatedAlerts));
+      }
+    };
+
+    // Check alerts every 10 seconds (simulating real-time updates)
+    const interval = setInterval(checkAlerts, 10000);
+    // Also check immediately
+    checkAlerts();
+
+    return () => clearInterval(interval);
+  }, [priceAlerts, products]);
 
   // Sync admin mode with prop
   useEffect(() => {
     setIsAdminMode(adminMode);
   }, [adminMode]);
+
+  // Generate personalized recommendations based on browse history
+  useEffect(() => {
+    if (browseHistory.length === 0) {
+      setRecommendations([]);
+      return;
+    }
+
+    // Analyze browsing patterns
+    const categoryFrequency: Record<string, number> = {};
+    const labelPreferences: Record<string, number> = {};
+    const priceRanges: number[] = [];
+
+    browseHistory.forEach((item) => {
+      // Count category views
+      categoryFrequency[item.category] = (categoryFrequency[item.category] || 0) + 1;
+      priceRanges.push(item.price);
+
+      // Find product to get labels
+      const product = products.find((p) => p.id === item.productId);
+      if (product) {
+        product.labels.forEach((label) => {
+          labelPreferences[label] = (labelPreferences[label] || 0) + 1;
+        });
+      }
+    });
+
+    // Calculate average price range
+    const avgPrice = priceRanges.reduce((a, b) => a + b, 0) / priceRanges.length;
+    const priceMargin = avgPrice * 0.3; // 30% margin
+
+    // Get most viewed categories
+    const topCategories = Object.entries(categoryFrequency)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 3)
+      .map(([cat]) => cat);
+
+    // Get preferred labels
+    const preferredLabels = Object.entries(labelPreferences)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 3)
+      .map(([label]) => label);
+
+    // Get IDs of already viewed products
+    const viewedIds = new Set(browseHistory.map((h) => h.productId));
+
+    // Score products based on preferences
+    const scoredProducts = products
+      .filter((p) => !p.archived && !viewedIds.has(p.id)) // Exclude viewed and archived
+      .map((product) => {
+        let score = 0;
+
+        // Category match (highest weight)
+        if (topCategories.includes(product.category)) {
+          score += 10;
+        }
+
+        // Label match
+        const matchingLabels = product.labels.filter((l) => preferredLabels.includes(l));
+        score += matchingLabels.length * 5;
+
+        // Price similarity
+        const priceDiff = Math.abs(product.price - avgPrice);
+        if (priceDiff <= priceMargin) {
+          score += 8 - (priceDiff / priceMargin) * 3; // Higher score for closer prices
+        }
+
+        // Rating bonus
+        score += product.rating;
+
+        // Stock availability
+        if (product.stock === "in-stock") score += 2;
+
+        // Fast delivery bonus
+        if (product.fastDelivery) score += 1;
+
+        return { product, score };
+      })
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 8) // Top 8 recommendations
+      .map(({ product }) => product);
+
+    setRecommendations(scoredProducts);
+  }, [browseHistory, products]);
 
   // Filtered & Sorted Products
   const filteredProducts = products
@@ -183,17 +547,21 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
       ? favorites.filter((id) => id !== productId)
       : [...favorites, productId];
     setFavorites(newFavorites);
-    localStorage.setItem("agrodeep-favorites", JSON.stringify(newFavorites));
+    localStorage.setItem("AgroLogistic-favorites", JSON.stringify(newFavorites));
     toast.success(
       favorites.includes(productId) ? "Retiré des favoris" : "Ajouté aux favoris"
     );
   };
 
+  const [showCompareModal, setShowCompareModal] = useState(false);
+
   const toggleCompare = (productId: string) => {
     if (compareProducts.includes(productId)) {
       setCompareProducts(compareProducts.filter((id) => id !== productId));
+      toast.success("Produit retiré de la comparaison");
     } else if (compareProducts.length < 3) {
       setCompareProducts([...compareProducts, productId]);
+      toast.success("Produit ajouté à la comparaison");
     } else {
       toast.error("Maximum 3 produits pour la comparaison");
     }
@@ -219,18 +587,67 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
   };
 
   const handleUpdateProduct = (productId: string, updates: Partial<Product>) => {
-    setProducts(products.map((p) => (p.id === productId ? { ...p, ...updates } : p)));
+    setProducts(
+      products.map((p) => {
+        if (p.id !== productId) return p;
+        const changes: ProductHistoryChange[] = [];
+        Object.keys(updates).forEach((key) => {
+          const k = key as keyof Product;
+          const previous = p[k];
+          const next = updates[k];
+          if (previous === next) return;
+          changes.push({
+            field: k,
+            from: previous,
+            to: next,
+          });
+        });
+        const hasChanges = changes.length > 0;
+        const historyEntry: ProductHistoryEntry | null = hasChanges
+          ? {
+              id: `HIST-${Date.now()}`,
+              timestamp: new Date().toISOString(),
+              author: "Admin",
+              changes,
+            }
+          : null;
+        const nextHistory = historyEntry ? [...(p.history || []), historyEntry] : p.history;
+        return {
+          ...p,
+          ...updates,
+          history: nextHistory,
+        };
+      })
+    );
     toast.success("✅ Produit mis à jour avec succès");
   };
 
   const handleAddProduct = (newProduct: Partial<Product>) => {
+    const baseId = `PROD-${Date.now()}`;
+    const historyEntry: ProductHistoryEntry = {
+      id: `HIST-${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      author: "Admin",
+      changes: [
+        {
+          field: "name",
+          from: "",
+          to: newProduct.name || "Nouveau produit",
+        },
+      ],
+    };
+    const media = newProduct.media && newProduct.media.length > 0 ? newProduct.media : undefined;
+    const primaryMedia = media && media.length > 0 ? media.find((m) => m.isPrimary) || media[0] : undefined;
     const product: Product = {
-      id: `PROD-${Date.now()}`,
+      id: newProduct.id || baseId,
       name: newProduct.name || "Nouveau produit",
       category: newProduct.category || "Autres",
       price: newProduct.price || 0,
       unit: newProduct.unit || "unité",
-      image: newProduct.image || "📦",
+      image:
+        primaryMedia?.url ||
+        newProduct.image ||
+        "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&h=400&fit=crop",
       seller: newProduct.seller || {
         name: "Vendeur",
         location: "France",
@@ -249,9 +666,11 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
       sku: newProduct.sku || `SKU-${Date.now()}`,
       visible: true,
       isNew: true,
+      variants: newProduct.variants,
+      media,
+      promotion: newProduct.promotion,
+      history: [historyEntry],
     };
-    
-    // Add to beginning of array
     setProducts([product, ...products]);
     toast.success(`✅ "${product.name}" ajouté au marketplace`);
     setShowAddProductModal(false);
@@ -311,13 +730,203 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
     setMaxDistance(50);
     setMinRating(0);
     setSelectedLabels([]);
+    toast.success("Filtres réinitialisés");
+  };
+
+  // Filter Preset Management
+  const saveCurrentFilters = () => {
+    if (!filterPresetName.trim()) {
+      toast.error("Veuillez entrer un nom pour ce filtre");
+      return;
+    }
+
+    const newPreset = {
+      id: `preset-${Date.now()}`,
+      name: filterPresetName,
+      filters: {
+        categories: selectedCategories,
+        priceRange,
+        maxDistance,
+        minRating,
+        labels: selectedLabels,
+      },
+    };
+
+    const updatedPresets = [...savedFilterPresets, newPreset];
+    setSavedFilterPresets(updatedPresets);
+    localStorage.setItem("AgroLogistic-filter-presets", JSON.stringify(updatedPresets));
+    
+    setShowSaveFilterModal(false);
+    setFilterPresetName("");
+    toast.success(`Filtre "${filterPresetName}" enregistré`);
+  };
+
+  const loadFilterPreset = (preset: typeof savedFilterPresets[0]) => {
+    setSelectedCategories(preset.filters.categories);
+    setPriceRange(preset.filters.priceRange);
+    setMaxDistance(preset.filters.maxDistance);
+    setMinRating(preset.filters.minRating);
+    setSelectedLabels(preset.filters.labels);
+    toast.success(`Filtre "${preset.name}" appliqué`);
+  };
+
+  const deleteFilterPreset = (presetId: string) => {
+    const updatedPresets = savedFilterPresets.filter((p) => p.id !== presetId);
+    setSavedFilterPresets(updatedPresets);
+    localStorage.setItem("AgroLogistic-filter-presets", JSON.stringify(updatedPresets));
+    toast.success("Filtre supprimé");
+  };
+
+  // Quick Filter Presets
+  const quickFilters = [
+    {
+      id: "bio-local",
+      name: "Bio & Local",
+      icon: Leaf,
+      description: "Produits bio et locaux",
+      apply: () => {
+        setSelectedLabels(["Bio", "Local"]);
+        setMaxDistance(20);
+        toast.success("Filtre Bio & Local appliqué");
+      },
+    },
+    {
+      id: "nearby",
+      name: "📍 À proximité",
+      description: "Moins de 10 km",
+      apply: () => {
+        setMaxDistance(10);
+        toast.success("Filtre proximité appliqué");
+      },
+    },
+    {
+      id: "best-rated",
+      name: "⭐ Meilleures notes",
+      description: "4 étoiles et plus",
+      apply: () => {
+        setMinRating(4);
+        setSortBy("rating");
+        toast.success("Filtre meilleures notes appliqué");
+      },
+    },
+    {
+      id: "budget",
+      name: "💰 Petit budget",
+      description: "Prix inférieur à 10€",
+      apply: () => {
+        setPriceRange([0, 10]);
+        setSortBy("price-asc");
+        toast.success("Filtre petit budget appliqué");
+      },
+    },
+  ];
+
+  // Price Alert Management
+  const createPriceAlert = () => {
+    if (!alertProduct) return;
+
+    // Validate target price for price_target type
+    if (alertType === "price_target") {
+      const price = parseFloat(targetPrice);
+      if (isNaN(price) || price <= 0) {
+        toast.error("Veuillez entrer un prix valide");
+        return;
+      }
+      if (price >= alertProduct.price) {
+        toast.error("Le prix cible doit être inférieur au prix actuel");
+        return;
+      }
+    }
+
+    const newAlert = {
+      id: `alert-${Date.now()}`,
+      productId: alertProduct.id,
+      productName: alertProduct.name,
+      type: alertType,
+      targetPrice: alertType === "price_target" ? parseFloat(targetPrice) : undefined,
+      currentPrice: alertProduct.price,
+      createdAt: new Date().toISOString(),
+      active: true,
+    };
+
+    const updatedAlerts = [...priceAlerts, newAlert];
+    setPriceAlerts(updatedAlerts);
+    localStorage.setItem("AgroLogistic-price-alerts", JSON.stringify(updatedAlerts));
+
+    setShowAlertModal(false);
+    setAlertProduct(null);
+    setTargetPrice("");
+
+    const alertTypeMessages = {
+      price_drop: "Vous serez alerté si le prix baisse",
+      back_in_stock: "Vous serez alerté quand le produit sera disponible",
+      price_target: `Vous serez alerté quand le prix atteindra ${parseFloat(targetPrice).toFixed(2)}€`,
+    };
+
+    toast.success(alertTypeMessages[alertType]);
+  };
+
+  const deleteAlert = (alertId: string) => {
+    const updatedAlerts = priceAlerts.filter((a) => a.id !== alertId);
+    setPriceAlerts(updatedAlerts);
+    localStorage.setItem("AgroLogistic-price-alerts", JSON.stringify(updatedAlerts));
+    toast.success("Alerte supprimée");
+  };
+
+  const openAlertModal = (product: Product, type: typeof alertType) => {
+    setAlertProduct(product);
+    setAlertType(type);
+    setTargetPrice("");
+    setShowAlertModal(true);
+  };
+
+  // Browse History & Recommendations Management
+  const trackProductView = (product: Product) => {
+    const viewEntry = {
+      productId: product.id,
+      productName: product.name,
+      category: product.category,
+      price: product.price,
+      viewedAt: new Date().toISOString(),
+    };
+
+    // Avoid duplicates - keep only most recent view of each product
+    const updatedHistory = [
+      viewEntry,
+      ...browseHistory.filter((h) => h.productId !== product.id),
+    ].slice(0, 50); // Keep last 50 views
+
+    setBrowseHistory(updatedHistory);
+    localStorage.setItem("AgroLogistic-browse-history", JSON.stringify(updatedHistory));
+  };
+
+  const clearBrowseHistory = () => {
+    setBrowseHistory([]);
+    localStorage.removeItem("AgroLogistic-browse-history");
+    toast.success("Historique de navigation effacé");
+  };
+
+  const removeFromHistory = (productId: string) => {
+    const updatedHistory = browseHistory.filter((h) => h.productId !== productId);
+    setBrowseHistory(updatedHistory);
+    localStorage.setItem("AgroLogistic-browse-history", JSON.stringify(updatedHistory));
+    toast.success("Produit retiré de l'historique");
+  };
+
+  const handleProductClick = (product: Product) => {
+    setSelectedProduct(product);
+    trackProductView(product);
+    setShowSearchSuggestions(false);
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 px-4 py-6 sm:px-6 lg:px-8 transition-colors">
       {/* Admin Banner */}
       {isAdminMode && (
-        <div className="bg-[#2563eb]/10 border border-[#2563eb]/30 rounded-lg p-4 flex items-center justify-between">
+        <div
+          className="bg-[#2563eb]/10 border border-[#2563eb]/30 rounded-lg p-4 flex items-center justify-between"
+          data-testid="admin-banner"
+        >
           <div className="flex items-center gap-3">
             <SettingsIcon className="h-5 w-5 text-[#2563eb]" />
             <span className="font-semibold text-[#2563eb]">⚙️ Mode Édition Admin Actif</span>
@@ -326,6 +935,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
             <button
               onClick={() => setShowAddProductModal(true)}
               className="px-4 py-2 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors font-medium flex items-center gap-2"
+              data-testid="add-product-button"
             >
               <Plus className="h-4 w-4" />
               Ajouter un produit
@@ -340,15 +950,14 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
         </div>
       )}
 
-      {/* Hero Section */}
-      <HeroSection />
+      <MarketplaceHero />
 
       {/* Main Layout */}
       <div className="flex gap-6">
         {/* Left Sidebar - Filters */}
         {showFilters && (
           <div className="w-80 flex-shrink-0">
-            <FiltersPanel
+            <ProductFilterSidebar
               selectedCategories={selectedCategories}
               onCategoriesChange={setSelectedCategories}
               priceRange={priceRange}
@@ -367,6 +976,12 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
               categoryMenuOpen={categoryMenuOpen}
               onCategoryMenuOpen={setCategoryMenuOpen}
               onRenameCategory={handleRenameCategory}
+              // Smart Filters Props
+              savedFilterPresets={savedFilterPresets}
+              quickFilters={quickFilters}
+              onLoadPreset={loadFilterPreset}
+              onDeletePreset={deleteFilterPreset}
+              onSaveCurrentFilters={() => setShowSaveFilterModal(true)}
             />
           </div>
         )}
@@ -392,8 +1007,53 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
                   placeholder="Rechercher des produits..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => setShowSearchSuggestions(true)}
+                  onBlur={() => {
+                    setTimeout(() => setShowSearchSuggestions(false), 100);
+                  }}
                   className="w-full pl-10 pr-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
                 />
+                {showSearchSuggestions && searchSuggestions.length > 0 && (
+                  <div className="absolute left-0 right-0 mt-2 z-20 bg-card border rounded-lg shadow-lg max-h-80 overflow-y-auto">
+                    {searchSuggestions.map((product) => (
+                      <button
+                        key={product.id}
+                        type="button"
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => handleProductClick(product)}
+                        className="w-full px-3 py-2 text-left hover:bg-muted/60 flex items-center justify-between gap-2"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="h-9 w-9 rounded bg-muted flex items-center justify-center text-sm">
+                            <span className="truncate max-w-[2rem]">
+                              {product.name.slice(0, 2).toUpperCase()}
+                            </span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium truncate">
+                              {product.name}
+                            </span>
+                            <span className="text-xs text-muted-foreground flex items-center gap-1">
+                              <MapPin className="h-3 w-3" />
+                              <span className="truncate">
+                                {product.seller.location}
+                              </span>
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                          <span className="text-sm font-semibold text-[#2563eb]">
+                            {product.price.toFixed(2)}€
+                          </span>
+                          <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                            {product.rating.toFixed(1)}
+                          </span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Sort */}
@@ -409,7 +1069,6 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
                 <option value="distance">Plus proches</option>
               </select>
 
-              {/* View Toggle */}
               <div className="flex border rounded-lg overflow-hidden">
                 <button
                   onClick={() => setViewMode("grid")}
@@ -426,6 +1085,53 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
                   }`}
                 >
                   <List className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={() => setViewMode("map")}
+                  className={`p-2 transition-colors ${
+                    viewMode === "map" ? "bg-[#2563eb] text-white" : "hover:bg-muted"
+                  }`}
+                >
+                  <MapPin className="h-5 w-5" />
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2 ml-3">
+                {isAdminMode && (
+                  <>
+                    <button
+                      onClick={() => {
+                        const allIds = filteredProducts.map((product) => product.id);
+                        setSelectedForEdit(allIds);
+                      }}
+                      className="px-3 py-2 border rounded-lg text-sm hover:bg-muted transition-colors"
+                      data-testid="select-all-products"
+                    >
+                      Tout sélectionner
+                    </button>
+                    <button
+                      onClick={() => setSelectedForEdit([])}
+                      className="px-3 py-2 border rounded-lg text-sm hover:bg-muted transition-colors"
+                      data-testid="deselect-all-products"
+                    >
+                      Tout désélectionner
+                    </button>
+                  </>
+                )}
+                <button
+                  onClick={() => {
+                    const nextMode = !isAdminMode;
+                    setIsAdminMode(nextMode);
+                    onAdminModeChange?.(nextMode);
+                  }}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium border ${
+                    isAdminMode
+                      ? "bg-[#2563eb] text-white border-[#2563eb]"
+                      : "bg-background hover:bg-muted"
+                  }`}
+                  data-testid="admin-toggle"
+                >
+                  Mode admin
                 </button>
               </div>
             </div>
@@ -466,51 +1172,217 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
               </div>
             )}
 
-            {/* Results Count */}
             <div className="text-sm text-muted-foreground">
               <span className="font-semibold text-foreground">{filteredProducts.length}</span>{" "}
               produit(s) trouvé(s)
             </div>
           </div>
 
-          {/* Products Grid/List */}
-          <div
-            className={
-              viewMode === "grid"
-                ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                : "space-y-4"
-            }
-          >
-            {filteredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                viewMode={viewMode}
-                isFavorite={favorites.includes(product.id)}
-                isComparing={compareProducts.includes(product.id)}
-                onToggleFavorite={() => toggleFavorite(product.id)}
-                onToggleCompare={() => toggleCompare(product.id)}
-                onAddToCart={() => addToCart(product.id)}
-                onClick={() => setSelectedProduct(product)}
-                // Admin props
-                isAdminMode={isAdminMode}
-                isSelected={selectedForEdit.includes(product.id)}
-                onToggleSelect={() => {
-                  if (selectedForEdit.includes(product.id)) {
-                    setSelectedForEdit(selectedForEdit.filter((id) => id !== product.id));
-                  } else {
-                    setSelectedForEdit([...selectedForEdit, product.id]);
-                  }
-                }}
-                onEdit={() => setSelectedProduct(product)}
-                onArchive={() => setShowArchiveConfirm(product.id)}
-              />
-            ))}
+          <div className="mt-4">
+            <div className="grid gap-4 md:grid-cols-3 mb-4">
+              <div className="md:col-span-2 hidden md:block text-sm text-muted-foreground">
+                Les conditions météo influencent les prix et la disponibilité des produits frais.
+              </div>
+              <div className="bg-card border rounded-lg p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Sun className="h-4 w-4 text-orange-500" />
+                    <span className="text-sm font-medium">Météo locale</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground">Aujourd'hui</span>
+                </div>
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="text-3xl font-bold">
+                    {marketplaceWeatherData.current.temp}°C
+                  </div>
+                  <div className="space-y-1 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Droplet className="h-3 w-3" />
+                      <span>{marketplaceWeatherData.current.humidity}%</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Wind className="h-3 w-3" />
+                      <span>{marketplaceWeatherData.current.wind} km/h</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <CloudRain className="h-3 w-3" />
+                      <span>{marketplaceWeatherData.current.rain} mm</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-between gap-2 text-xs">
+                  {marketplaceWeatherData.forecast.map((day) => {
+                    const Icon = day.icon;
+                    return (
+                      <div key={day.day} className="flex flex-col items-center gap-1">
+                        <span className="text-muted-foreground">{day.day}</span>
+                        <Icon className="h-3 w-3 text-blue-500" />
+                        <span className="font-medium">{day.temp}°</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+            <ProductGrid
+              products={filteredProducts}
+              viewMode={viewMode}
+              favorites={favorites}
+              compareProducts={compareProducts}
+              selectedForEdit={selectedForEdit}
+              isAdminMode={isAdminMode}
+              onToggleFavorite={toggleFavorite}
+              onToggleCompare={toggleCompare}
+              onAddToCart={addToCart}
+              onProductClick={handleProductClick}
+              onToggleSelect={(productId) => {
+                if (selectedForEdit.includes(productId)) {
+                  setSelectedForEdit(selectedForEdit.filter((id) => id !== productId));
+                } else {
+                  setSelectedForEdit([...selectedForEdit, productId]);
+                }
+              }}
+              onEditProduct={(product) => setSelectedProduct(product)}
+              onArchiveProduct={(productId) => setShowArchiveConfirm(productId)}
+            />
           </div>
 
-          {/* Inspired For You Section */}
-          {filteredProducts.length > 0 && (
-            <InspiredForYouSection products={products.slice(0, 4)} />
+          {/* Personalized Recommendations */}
+          {recommendations.length > 0 && showRecommendations && (
+            <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-xl font-bold flex items-center gap-2">
+                    <Sparkles className="h-6 w-6 text-purple-600" />
+                    Recommandé pour vous
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Basé sur vos {browseHistory.length} produit(s) consulté(s)
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      const historySection = document.getElementById("browse-history-section");
+                      historySection?.scrollIntoView({ behavior: "smooth" });
+                    }}
+                    className="px-4 py-2 border border-purple-600 text-purple-600 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors text-sm font-medium"
+                  >
+                    <History className="h-4 w-4 inline mr-1" />
+                    Voir l'historique
+                  </button>
+                  <button
+                    onClick={() => setShowRecommendations(false)}
+                    className="p-2 hover:bg-muted rounded-lg transition-colors"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {recommendations.slice(0, 4).map((product) => (
+                  <div
+                    key={product.id}
+                    onClick={() => {
+                      setSelectedProduct(product);
+                      trackProductView(product);
+                    }}
+                    className="bg-card border rounded-lg p-4 hover:shadow-lg transition-all cursor-pointer"
+                  >
+                    <div className="text-center mb-3">
+                      <div className="text-5xl mb-2">{product.image}</div>
+                      <div className="font-medium text-sm line-clamp-2">{product.name}</div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="text-lg font-bold text-[#2563eb]">
+                        {product.price.toFixed(2)}€
+                      </div>
+                      <div className="flex items-center gap-1 text-xs">
+                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                        {product.rating}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Browse History Section */}
+          {browseHistory.length > 0 && (
+            <div id="browse-history-section" className="bg-card border rounded-lg p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-xl font-bold flex items-center gap-2">
+                    <History className="h-6 w-6 text-[#2563eb]" />
+                    Historique de navigation
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Les {browseHistory.length} derniers produits consultés
+                  </p>
+                </div>
+                <button
+                  onClick={clearBrowseHistory}
+                  className="px-4 py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-sm font-medium"
+                >
+                  <Trash2 className="h-4 w-4 inline mr-1" />
+                  Effacer tout
+                </button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {browseHistory.slice(0, 8).map((historyItem) => {
+                  const product = products.find((p) => p.id === historyItem.productId);
+                  if (!product) return null;
+
+                  const timeSince = () => {
+                    const diff = Date.now() - new Date(historyItem.viewedAt).getTime();
+                    const minutes = Math.floor(diff / 60000);
+                    const hours = Math.floor(minutes / 60);
+                    const days = Math.floor(hours / 24);
+
+                    if (days > 0) return `Il y a ${days}j`;
+                    if (hours > 0) return `Il y a ${hours}h`;
+                    if (minutes > 0) return `Il y a ${minutes}min`;
+                    return "A l'instant";
+                  };
+
+                  return (
+                    <div
+                      key={historyItem.productId}
+                      className="bg-muted/30 border rounded-lg p-4 hover:shadow-lg transition-all cursor-pointer group relative"
+                    >
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeFromHistory(historyItem.productId);
+                        }}
+                        className="absolute top-2 right-2 p-1 opacity-0 group-hover:opacity-100 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 rounded transition-all"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                      <div
+                        onClick={() => {
+                          setSelectedProduct(product);
+                          trackProductView(product);
+                        }}
+                      >
+                        <div className="text-center mb-3">
+                          <div className="text-5xl mb-2">{product.image}</div>
+                          <div className="font-medium text-sm line-clamp-2">{product.name}</div>
+                        </div>
+                        <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
+                          <span><Clock className="h-3 w-3 inline mr-1" />{timeSince()}</span>
+                          <span>{product.category}</span>
+                        </div>
+                        <div className="text-lg font-bold text-[#2563eb] text-center">
+                          {product.price.toFixed(2)}€
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           )}
         </div>
       </div>
@@ -518,18 +1390,35 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
       {/* Compare Floating Button */}
       {compareProducts.length > 0 && (
         <button
-          className="fixed bottom-6 right-6 px-6 py-3 bg-[#2563eb] text-white rounded-full shadow-lg hover:bg-[#1d4ed8] transition-all flex items-center gap-2 z-40"
-          onClick={() => toast.info("Fonctionnalité de comparaison (à implémenter)")}
+          className="fixed bottom-6 right-6 px-6 py-3 bg-[#2563eb] text-white rounded-full shadow-lg hover:bg-[#1d4ed8] transition-all flex items-center gap-2 z-40 hover:scale-105"
+          onClick={() => setShowCompareModal(true)}
         >
           <ArrowUpDown className="h-5 w-5" />
           Comparer ({compareProducts.length})
         </button>
       )}
 
+      {/* Price Alerts Floating Button */}
+      {priceAlerts.length > 0 && (
+        <button
+          className="fixed bottom-6 right-48 px-6 py-3 bg-orange-600 text-white rounded-full shadow-lg hover:bg-orange-700 transition-all flex items-center gap-2 z-40 hover:scale-105"
+          onClick={() => setShowAlertsPanel(true)}
+        >
+          <AlertTriangle className="h-5 w-5" />
+          Alertes ({priceAlerts.filter((a) => a.active).length})
+        </button>
+      )}
+
       {/* Bulk Actions Bar (Admin) */}
       {isAdminMode && selectedForEdit.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-card border-2 border-[#2563eb] rounded-lg shadow-xl p-4 flex items-center gap-4 z-40">
-          <span className="font-semibold text-[#2563eb]">
+        <div
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-card border-2 border-[#2563eb] rounded-lg shadow-xl p-4 flex items-center gap-4 z-40"
+          data-testid="bulk-actions-menu"
+        >
+          <span
+            className="font-semibold text-[#2563eb]"
+            data-testid="selection-counter"
+          >
             {selectedForEdit.length} sélectionné(s)
           </span>
           <div className="flex gap-2">
@@ -571,6 +1460,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
           onToggleFavorite={() => toggleFavorite(selectedProduct.id)}
           isAdminMode={isAdminMode}
           onUpdate={(updates) => handleUpdateProduct(selectedProduct.id, updates)}
+          onCreateAlert={(type) => openAlertModal(selectedProduct, type)}
         />
       )}
 
@@ -591,6 +1481,311 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
           onCancel={() => setShowArchiveConfirm(null)}
         />
       )}
+
+      {/* Product Comparison Modal */}
+      {showCompareModal && compareProducts.length > 0 && (
+        <ProductComparisonModal
+          products={products.filter((p) => compareProducts.includes(p.id))}
+          onClose={() => setShowCompareModal(false)}
+          onRemoveProduct={(productId) => toggleCompare(productId)}
+          onAddToCart={(productId) => addToCart(productId)}
+        />
+      )}
+
+      {/* Save Filter Preset Modal */}
+      {showSaveFilterModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-card border rounded-lg shadow-xl w-full max-w-md">
+            <div className="px-6 py-4 border-b">
+              <h2 className="text-xl font-bold">Enregistrer ce filtre</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Donnez un nom à cette configuration de filtres
+              </p>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Nom du filtre</label>
+                <input
+                  type="text"
+                  value={filterPresetName}
+                  onChange={(e) => setFilterPresetName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") saveCurrentFilters();
+                  }}
+                  placeholder="Ex: Produits bio locaux"
+                  autoFocus
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
+                />
+              </div>
+
+              <div className="bg-muted/50 rounded-lg p-4 space-y-2 text-sm">
+                <div className="font-medium">Filtres actuels :</div>
+                {selectedCategories.length > 0 && (
+                  <div>• Catégories : {selectedCategories.join(", ")}</div>
+                )}
+                {(priceRange[0] !== 0 || priceRange[1] !== 100) && (
+                  <div>• Prix : {priceRange[0]}€ - {priceRange[1]}€</div>
+                )}
+                {maxDistance !== 50 && <div>• Distance : {maxDistance} km</div>}
+                {minRating > 0 && <div>• Note minimale : {minRating}⭐</div>}
+                {selectedLabels.length > 0 && (
+                  <div>• Labels : {selectedLabels.join(", ")}</div>
+                )}
+              </div>
+            </div>
+
+            <div className="px-6 py-4 border-t flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setShowSaveFilterModal(false);
+                  setFilterPresetName("");
+                }}
+                className="px-4 py-2 border rounded-lg hover:bg-muted transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={saveCurrentFilters}
+                disabled={!filterPresetName.trim()}
+                className="px-6 py-2 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Enregistrer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Price Alert Modal */}
+      {showAlertModal && alertProduct && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-card border rounded-lg shadow-xl w-full max-w-md">
+            <div className="px-6 py-4 border-b">
+              <h2 className="text-xl font-bold">Créer une alerte</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Recevez une notification pour "{alertProduct.name}"
+              </p>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div className="bg-muted/50 rounded-lg p-4 flex items-center gap-4">
+                <div className="text-4xl">{alertProduct.image}</div>
+                <div className="flex-1">
+                  <div className="font-medium">{alertProduct.name}</div>
+                  <div className="text-2xl font-bold text-[#2563eb] mt-1">
+                    {alertProduct.price.toFixed(2)}€
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-3">Type d'alerte</label>
+                <div className="space-y-2">
+                  <button
+                    onClick={() => setAlertType("price_drop")}
+                    className={`w-full p-3 border rounded-lg text-left transition-all ${
+                      alertType === "price_drop"
+                        ? "border-[#2563eb] bg-[#2563eb]/10"
+                        : "hover:bg-muted"
+                    }`}
+                  >
+                    <div className="font-medium flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4" />
+                      Baisse de prix
+                    </div>
+                    <div className="text-sm text-muted-foreground mt-1">
+                      Être alerté dès que le prix baisse
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => setAlertType("price_target")}
+                    className={`w-full p-3 border rounded-lg text-left transition-all ${
+                      alertType === "price_target"
+                        ? "border-[#2563eb] bg-[#2563eb]/10"
+                        : "hover:bg-muted"
+                    }`}
+                  >
+                    <div className="font-medium flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4" />
+                      Prix cible
+                    </div>
+                    <div className="text-sm text-muted-foreground mt-1">
+                      Définir un prix souhaité
+                    </div>
+                  </button>
+
+                  {alertProduct.stock === "out-of-stock" && (
+                    <button
+                      onClick={() => setAlertType("back_in_stock")}
+                      className={`w-full p-3 border rounded-lg text-left transition-all ${
+                        alertType === "back_in_stock"
+                          ? "border-[#2563eb] bg-[#2563eb]/10"
+                          : "hover:bg-muted"
+                      }`}
+                    >
+                      <div className="font-medium flex items-center gap-2">
+                        <Package className="h-4 w-4" />
+                        Retour en stock
+                      </div>
+                      <div className="text-sm text-muted-foreground mt-1">
+                        Être alerté quand le produit est disponible
+                      </div>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {alertType === "price_target" && (
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Prix cible (€)
+                  </label>
+                  <input
+                    type="number"
+                    value={targetPrice}
+                    onChange={(e) => setTargetPrice(e.target.value)}
+                    placeholder={`Moins de ${alertProduct.price.toFixed(2)}€`}
+                    step="0.01"
+                    min="0"
+                    max={alertProduct.price}
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Vous serez alerté quand le prix atteint ou passe en dessous de ce montant
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="px-6 py-4 border-t flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setShowAlertModal(false);
+                  setAlertProduct(null);
+                  setTargetPrice("");
+                }}
+                className="px-4 py-2 border rounded-lg hover:bg-muted transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={createPriceAlert}
+                className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-medium"
+              >
+                Créer l'alerte
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Price Alerts Panel */}
+      {showAlertsPanel && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-card border rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
+            <div className="px-6 py-4 border-b flex items-center justify-between bg-gradient-to-r from-orange-600 to-orange-700 text-white">
+              <div>
+                <h2 className="text-2xl font-bold flex items-center gap-2">
+                  <AlertTriangle className="h-6 w-6" />
+                  Mes alertes prix
+                </h2>
+                <p className="text-sm opacity-90 mt-1">
+                  {priceAlerts.filter((a) => a.active).length} alerte(s) active(s)
+                </p>
+              </div>
+              <button
+                onClick={() => setShowAlertsPanel(false)}
+                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6">
+              {priceAlerts.length === 0 ? (
+                <div className="text-center py-12">
+                  <AlertTriangle className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">
+                    Vous n'avez pas encore d'alertes prix
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Créez des alertes depuis les pages produits
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {priceAlerts.map((alert) => {
+                    const product = products.find((p) => p.id === alert.productId);
+                    return (
+                      <div
+                        key={alert.id}
+                        className={`border rounded-lg p-4 ${
+                          alert.active ? "" : "opacity-60"
+                        }`}
+                      >
+                        <div className="flex items-start gap-4">
+                          <div className="text-3xl">
+                            {product?.image || "📦"}
+                          </div>
+                          <div className="flex-1">
+                            <div className="font-medium">{alert.productName}</div>
+                            <div className="flex items-center gap-4 mt-2 text-sm">
+                              <div>
+                                <span className="text-muted-foreground">Prix actuel:</span>
+                                <span className="font-bold text-[#2563eb] ml-1">
+                                  {product?.price.toFixed(2) || alert.currentPrice.toFixed(2)}€
+                                </span>
+                              </div>
+                              {alert.type === "price_target" && alert.targetPrice && (
+                                <div>
+                                  <span className="text-muted-foreground">Prix cible:</span>
+                                  <span className="font-bold text-orange-600 ml-1">
+                                    {alert.targetPrice.toFixed(2)}€
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 mt-2">
+                              <span
+                                className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                  alert.active
+                                    ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                                    : "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400"
+                                }`}
+                              >
+                                {alert.active ? "✅ Active" : "⏸️ Déclenchée"}
+                              </span>
+                              <span className="px-2 py-1 bg-muted rounded-full text-xs">
+                                {alert.type === "price_drop" && "📉 Baisse de prix"}
+                                {alert.type === "price_target" && "🎯 Prix cible"}
+                                {alert.type === "back_in_stock" && (
+                                  <div className="flex items-center gap-2">
+                                    <Package className="h-4 w-4" />
+                                    <span>Retour stock</span>
+                                  </div>
+                                )}
+                              </span>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => deleteAlert(alert.id)}
+                            className="p-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                            title="Supprimer l'alerte"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -604,42 +1799,67 @@ function HeroSection() {
       title: "Fruits de Saison",
       subtitle: "Découvrez notre sélection de fruits frais",
       color: "from-orange-500 to-red-500",
-      icon: "🍎",
+      IconComponent: Apple,
     },
     {
       title: "Nouveaux Producteurs",
       subtitle: "Soutenez les agriculteurs locaux",
       color: "from-green-500 to-emerald-500",
-      icon: "🌱",
+      IconComponent: Leaf,
     },
     {
       title: "Produits Bio",
       subtitle: "100% certifiés agriculture biologique",
       color: "from-blue-500 to-cyan-500",
-      icon: "🌿",
+      IconComponent: Sprout,
     },
   ];
 
   const categories = [
-    { name: "Légumes", icon: "🥬", count: 45 },
-    { name: "Fruits", icon: "🍎", count: 38 },
-    { name: "Produits Laitiers", icon: "🧀", count: 22 },
-    { name: "Viandes", icon: "🥩", count: 18 },
-    { name: "Œufs", icon: "🥚", count: 12 },
+    { name: "Légumes", IconComponent: Leaf, count: 45 },
+    { name: "Fruits", IconComponent: Apple, count: 38 },
+    { name: "Produits Laitiers", IconComponent: Milk, count: 22 },
+    { name: "Viandes", IconComponent: Beef, count: 18 },
+    { name: "Œufs", IconComponent: Egg, count: 12 },
   ];
 
   return (
     <div className="space-y-4">
-      {/* Carousel */}
-      <div className="relative h-64 bg-gradient-to-r from-[#2563eb] to-blue-400 rounded-lg overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center text-white">
-          <div className="text-center space-y-4">
-            <div className="text-7xl">{slides[currentSlide].icon}</div>
-            <h2 className="text-4xl font-bold">{slides[currentSlide].title}</h2>
-            <p className="text-xl opacity-90">{slides[currentSlide].subtitle}</p>
-            <button className="px-6 py-3 bg-white text-[#2563eb] rounded-lg font-medium hover:bg-gray-100 transition-colors">
-              Découvrir
-            </button>
+      {/* Modern Gradient Hero Carousel */}
+      <div className="relative h-80 bg-gradient-to-br from-[#2563eb] via-blue-500 to-cyan-400 rounded-2xl overflow-hidden shadow-2xl">
+        {/* Animated Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.4"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }}></div>
+        </div>
+        
+        {/* Glassmorphism Content Container */}
+        <div className="absolute inset-0 backdrop-blur-[2px]">
+          <div className="absolute inset-0 flex items-center justify-center text-white px-8">
+            <div className="text-center space-y-6 max-w-3xl">
+              {/* Icon with Modern Glow Effect */}
+              <div className="inline-flex p-6 bg-white/20 backdrop-blur-md rounded-3xl shadow-xl border border-white/30 hover:scale-110 transition-transform duration-300">
+                {(() => {
+                  const Icon = slides[currentSlide].IconComponent;
+                  return <Icon className="h-24 w-24 text-white drop-shadow-2xl" strokeWidth={1.5} />;
+                })()}
+              </div>
+              
+              {/* Modern Typography */}
+              <div className="space-y-3">
+                <h2 className="text-5xl md:text-6xl font-bold tracking-tight drop-shadow-lg">
+                  {slides[currentSlide].title}
+                </h2>
+                <p className="text-xl md:text-2xl font-light opacity-95 tracking-wide">
+                  {slides[currentSlide].subtitle}
+                </p>
+              </div>
+              
+              {/* Modern CTA Button */}
+              <button className="group px-8 py-4 bg-white text-[#2563eb] rounded-full font-semibold text-lg hover:bg-opacity-95 transition-all duration-300 shadow-2xl hover:shadow-white/20 hover:scale-105 flex items-center gap-2 mx-auto">
+                Découvrir
+                <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -669,18 +1889,35 @@ function HeroSection() {
         </div>
       </div>
 
-      {/* Quick Category Access */}
-      <div className="grid grid-cols-5 gap-4">
+      {/* Modern Category Cards with Hover Effects */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {categories.map((category) => (
           <button
             key={category.name}
-            className="bg-card border rounded-lg p-4 hover:shadow-md transition-all text-center group"
+            className="group relative bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 hover:shadow-2xl hover:scale-105 hover:border-[#2563eb] transition-all duration-300 text-center overflow-hidden"
           >
-            <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">
-              {category.icon}
+            {/* Gradient Overlay on Hover */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#2563eb]/0 to-blue-500/0 group-hover:from-[#2563eb]/5 group-hover:to-blue-500/5 transition-all duration-300 rounded-2xl"></div>
+            
+            {/* Icon Container with Modern Animation */}
+            <div className="relative mb-4">
+              <div className="mx-auto w-20 h-20 bg-gradient-to-br from-[#2563eb]/10 via-blue-500/10 to-cyan-400/10 rounded-2xl flex items-center justify-center group-hover:from-[#2563eb]/20 group-hover:via-blue-500/20 group-hover:to-cyan-400/20 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-lg">
+                {(() => {
+                  const Icon = category.IconComponent;
+                  return <Icon className="h-10 w-10 text-[#2563eb] group-hover:text-blue-600 transition-colors" strokeWidth={1.5} />;
+                })()}
+              </div>
             </div>
-            <div className="font-medium">{category.name}</div>
-            <div className="text-xs text-muted-foreground">{category.count} produits</div>
+            
+            {/* Text Content */}
+            <div className="relative">
+              <div className="font-semibold text-gray-900 dark:text-white text-base group-hover:text-[#2563eb] transition-colors">
+                {category.name}
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">
+                {category.count} produits
+              </div>
+            </div>
           </button>
         ))}
       </div>
@@ -708,9 +1945,24 @@ function FiltersPanel({
   categoryMenuOpen,
   onCategoryMenuOpen,
   onRenameCategory,
+  // Smart Filters Props
+  savedFilterPresets,
+  quickFilters,
+  onLoadPreset,
+  onDeletePreset,
+  onSaveCurrentFilters,
 }: any) {
   const labels = ["Bio", "Local", "Primeur", "Fermier", "AOP"];
   const [categoryRename, setCategoryRename] = useState("");
+  const [showPresets, setShowPresets] = useState(false);
+
+  const hasActiveFilters =
+    selectedCategories.length > 0 ||
+    priceRange[0] !== 0 ||
+    priceRange[1] !== 100 ||
+    maxDistance !== 50 ||
+    minRating > 0 ||
+    selectedLabels.length > 0;
 
   return (
     <div className="bg-card border rounded-lg p-6 sticky top-6 space-y-6 max-h-[calc(100vh-8rem)] overflow-y-auto">
@@ -719,13 +1971,91 @@ function FiltersPanel({
           <SlidersHorizontal className="h-5 w-5 text-[#2563eb]" />
           Filtres
         </h2>
-        <button
-          onClick={onClearAll}
-          className="text-xs text-[#2563eb] hover:underline"
-        >
-          Réinitialiser
-        </button>
+        <div className="flex gap-2">
+          {hasActiveFilters && (
+            <button
+              onClick={onSaveCurrentFilters}
+              className="p-2 text-[#2563eb] hover:bg-[#2563eb]/10 rounded-lg transition-colors"
+              title="Enregistrer ces filtres"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          )}
+          <button
+            onClick={onClearAll}
+            className="text-xs text-[#2563eb] hover:underline"
+          >
+            Réinitialiser
+          </button>
+        </div>
       </div>
+
+      {/* Quick Filters */}
+      <div>
+        <div className="text-sm font-medium mb-3 flex items-center gap-2">
+          <Sparkles className="h-4 w-4 text-[#2563eb]" />
+          Filtres rapides
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          {quickFilters.map((filter: any) => (
+            <button
+              key={filter.id}
+              onClick={filter.apply}
+              className="p-3 border rounded-lg hover:border-[#2563eb] hover:bg-[#2563eb]/5 transition-all text-left group"
+              title={filter.description}
+            >
+              <div className="text-sm font-medium">{filter.name}</div>
+              <div className="text-xs text-muted-foreground group-hover:text-[#2563eb] transition-colors">
+                {filter.description}
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Saved Presets */}
+      {savedFilterPresets.length > 0 && (
+        <div>
+          <button
+            onClick={() => setShowPresets(!showPresets)}
+            className="w-full flex items-center justify-between text-sm font-medium mb-3 hover:text-[#2563eb] transition-colors"
+          >
+            <span className="flex items-center gap-2">
+              <History className="h-4 w-4" />
+              Mes filtres enregistrés ({savedFilterPresets.length})
+            </span>
+            <ChevronRight
+              className={`h-4 w-4 transition-transform ${
+                showPresets ? "rotate-90" : ""
+              }`}
+            />
+          </button>
+          {showPresets && (
+            <div className="space-y-2">
+              {savedFilterPresets.map((preset: any) => (
+                <div
+                  key={preset.id}
+                  className="flex items-center gap-2 p-2 border rounded-lg hover:bg-muted/50 transition-colors group"
+                >
+                  <button
+                    onClick={() => onLoadPreset(preset)}
+                    className="flex-1 text-left text-sm font-medium"
+                  >
+                    {preset.name}
+                  </button>
+                  <button
+                    onClick={() => onDeletePreset(preset.id)}
+                    className="p-1 opacity-0 group-hover:opacity-100 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 rounded transition-all"
+                    title="Supprimer"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Categories with Admin Controls */}
       <div>
@@ -966,6 +2296,15 @@ function ProductCard({
   onArchive,
 }: any) {
   const [isHovered, setIsHovered] = useState(false);
+  const promotionInfo = useMemo(
+    () => computePromotionPrice(product.price, product.promotion),
+    [product.price, product.promotion]
+  );
+  const primaryMedia =
+    product.media && product.media.length > 0
+      ? product.media.find((m: ProductMediaItem) => m.isPrimary) || product.media[0]
+      : null;
+  const imageUrl = primaryMedia?.url || product.image;
 
   const getStockBadge = () => {
     if (product.archived) {
@@ -1027,8 +2366,12 @@ function ProductCard({
           </div>
         )}
 
-        <div className="relative h-24 w-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-lg flex items-center justify-center text-4xl flex-shrink-0">
-          {product.image}
+        <div className="relative h-24 w-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-lg flex items-center justify-center text-4xl flex-shrink-0 overflow-hidden">
+          <img
+            src={imageUrl}
+            alt={product.name}
+            className="w-full h-full object-cover"
+          />
         </div>
         <div className="flex-1">
           <div className="flex items-start justify-between mb-2">
@@ -1044,9 +2387,28 @@ function ProductCard({
               <p className="text-sm text-muted-foreground">{product.seller.name}</p>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-[#2563eb]">
-                {product.price}€<span className="text-sm font-normal">/{product.unit}</span>
-              </div>
+              {promotionInfo ? (
+                <div className="space-y-1">
+                  <div className="text-xs font-semibold text-emerald-600">
+                    Promotion
+                  </div>
+                  <div className="flex items-baseline gap-2 justify-end">
+                    <div className="text-2xl font-bold text-emerald-600">
+                      {promotionInfo.discountedPrice.toFixed(2)}€
+                    </div>
+                    <div className="text-sm line-through text-gray-400">
+                      {product.price.toFixed(2)}€
+                    </div>
+                  </div>
+                  <div className="text-xs text-emerald-600">
+                    ~{Math.round(promotionInfo.savingsPercentage)}% de réduction /{product.unit}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-2xl font-bold text-[#2563eb]">
+                  {product.price}€<span className="text-sm font-normal">/{product.unit}</span>
+                </div>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-4 text-sm">
@@ -1106,9 +2468,9 @@ function ProductCard({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
-      className={`bg-card border rounded-lg overflow-hidden hover:shadow-lg transition-all cursor-pointer group relative ${
+      className={`group relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden hover:shadow-2xl hover:scale-[1.02] hover:border-[#2563eb] transition-all duration-300 cursor-pointer ${
         product.archived ? "opacity-60" : ""
-      } ${isSelected ? "ring-2 ring-[#2563eb]" : ""}`}
+      } ${isSelected ? "ring-2 ring-[#2563eb] shadow-lg" : ""}`}
     >
       {/* Admin Checkbox */}
       {isAdminMode && (
@@ -1125,39 +2487,47 @@ function ProductCard({
         </div>
       )}
 
-      {/* Image */}
-      <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center overflow-hidden">
-        <div
-          className={`text-8xl transition-transform duration-300 ${
-            isHovered ? "scale-110" : "scale-100"
+      <div className="relative h-64 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center overflow-hidden group-hover:shadow-inner">
+        <img
+          src={imageUrl}
+          alt={product.name}
+          className={`w-full h-full object-cover transition-all duration-500 ${
+            isHovered ? "scale-110 brightness-105" : "scale-100"
           }`}
-        >
-          {product.image}
-        </div>
+          onError={(e) => {
+            // Fallback to placeholder if image fails to load
+            e.currentTarget.src = 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&h=400&fit=crop';
+          }}
+        />
+        
+        {/* Gradient Overlay on Hover */}
+        <div className={`absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent transition-opacity duration-300 ${
+          isHovered ? 'opacity-100' : 'opacity-0'
+        }`}></div>
 
-        {/* Top Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-2">
+        {/* Modern Top Badges with Glassmorphism */}
+        <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
           {getStockBadge()}
           {product.fastDelivery && !product.archived && (
-            <span className="px-2 py-1 bg-[#2563eb] text-white text-xs font-medium rounded-full flex items-center gap-1">
-              <Truck className="h-3 w-3" />
+            <span className="px-3 py-1.5 bg-gradient-to-r from-[#2563eb] to-blue-600 text-white text-xs font-semibold rounded-full flex items-center gap-1.5 shadow-lg backdrop-blur-sm">
+              <Truck className="h-3.5 w-3.5" />
               Livré demain
             </span>
           )}
           {product.isNew && (
-            <span className="px-2 py-1 bg-purple-600 text-white text-xs font-medium rounded-full">
+            <span className="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-semibold rounded-full shadow-lg backdrop-blur-sm animate-pulse">
               Nouveau
             </span>
           )}
         </div>
 
-        {/* Labels */}
+        {/* Modern Labels with Enhanced Styling */}
         {product.labels.length > 0 && (
-          <div className="absolute top-3 right-3 flex flex-col gap-1">
+          <div className="absolute top-4 right-4 flex flex-col gap-2 z-10">
             {product.labels.slice(0, 2).map((label) => (
               <span
                 key={label}
-                className="px-2 py-1 bg-green-600 text-white text-xs font-medium rounded-full"
+                className="px-3 py-1.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white text-xs font-semibold rounded-full shadow-lg backdrop-blur-sm"
               >
                 {label}
               </span>
@@ -1191,16 +2561,17 @@ function ProductCard({
           </div>
         )}
 
-        {/* Hover Actions (Public) */}
+        {/* Modern Hover Actions with Glassmorphism */}
         {!isAdminMode && isHovered && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-2">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-transparent backdrop-blur-[2px] flex items-center justify-center gap-3 transition-all duration-300">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 onClick();
               }}
-              className="px-4 py-2 bg-white text-[#2563eb] rounded-lg font-medium hover:bg-gray-100 transition-colors"
+              className="px-6 py-3 bg-white/95 backdrop-blur-md text-[#2563eb] rounded-full font-semibold hover:bg-white transition-all duration-300 shadow-xl hover:scale-105 flex items-center gap-2"
             >
+              <Eye className="h-4 w-4" />
               Voir détails
             </button>
             <button
@@ -1208,24 +2579,26 @@ function ProductCard({
                 e.stopPropagation();
                 onAddToCart();
               }}
-              className="p-2 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors"
+              className="p-3 bg-[#2563eb] text-white rounded-full hover:bg-[#1d4ed8] transition-all duration-300 shadow-xl hover:scale-110"
             >
               <ShoppingCart className="h-5 w-5" />
             </button>
           </div>
         )}
 
-        {/* Favorite */}
+        {/* Modern Favorite Button */}
         {!isAdminMode && (
           <button
             onClick={(e) => {
               e.stopPropagation();
               onToggleFavorite();
             }}
-            className="absolute top-3 left-3 p-2 bg-white dark:bg-gray-800 rounded-full hover:scale-110 transition-transform z-10"
+            className="absolute top-4 left-4 p-2.5 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-full hover:scale-110 transition-all duration-300 shadow-lg z-10 border border-white/20"
           >
             <Heart
-              className={`h-5 w-5 ${isFavorite ? "fill-red-500 text-red-500" : "text-gray-600"}`}
+              className={`h-5 w-5 transition-all ${
+                isFavorite ? "fill-red-500 text-red-500 scale-110" : "text-gray-600 dark:text-gray-400"
+              }`}
             />
           </button>
         )}
@@ -1247,42 +2620,72 @@ function ProductCard({
         )}
       </div>
 
-      {/* Content */}
-      <div className="p-4 space-y-3">
-        <div>
-          <h3 className="font-semibold text-lg group-hover:text-[#2563eb] transition-colors">
+      {/* Modern Product Content */}
+      <div className="p-5 space-y-4">
+        <div className="space-y-1">
+          <h3 className="font-bold text-lg text-gray-900 dark:text-white group-hover:text-[#2563eb] transition-colors line-clamp-2">
             {product.name}
           </h3>
-          <p className="text-sm text-muted-foreground">{product.seller.name}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400 font-medium flex items-center gap-1">
+            <MapPin className="h-3.5 w-3.5" />
+            {product.seller.name}
+          </p>
         </div>
 
+        {/* Rating and Distance */}
         <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-1">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                className={`h-4 w-4 ${
-                  i < Math.floor(product.rating)
-                    ? "fill-yellow-400 text-yellow-400"
-                    : "text-gray-300"
-                }`}
-              />
-            ))}
-            <span className="ml-1 font-medium">{product.rating}</span>
-            <span className="text-muted-foreground">({product.reviewCount})</span>
+          <div className="flex items-center gap-1.5">
+            <div className="flex items-center">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star
+                  key={i}
+                  className={`h-4 w-4 ${
+                    i < Math.floor(product.rating)
+                      ? "fill-yellow-400 text-yellow-400"
+                      : "fill-gray-200 text-gray-200 dark:fill-gray-700 dark:text-gray-700"
+                  }`}
+                />
+              ))}
+            </div>
+            <span className="ml-1 font-bold text-gray-900 dark:text-white">{product.rating}</span>
+            <span className="text-gray-500 dark:text-gray-400">({product.reviewCount})</span>
           </div>
-          <div className="flex items-center gap-1 text-muted-foreground">
+          <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400 font-medium">
             <MapPin className="h-4 w-4" />
-            {product.seller.distance} km
+            <span className="text-xs">{product.seller.distance}km</span>
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-3 border-t">
+        <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
           <div>
-            <div className="text-2xl font-bold text-[#2563eb]">
-              {product.price}€
-              <span className="text-sm font-normal text-muted-foreground">/{product.unit}</span>
-            </div>
+            {promotionInfo ? (
+              <>
+                <div className="text-xs font-semibold text-emerald-600 mb-1">
+                  Promotion
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <div className="text-3xl font-bold text-emerald-600">
+                    {promotionInfo.discountedPrice.toFixed(2)}€
+                  </div>
+                  <div className="text-sm line-through text-gray-400 dark:text-gray-500">
+                    {product.price.toFixed(2)}€
+                  </div>
+                </div>
+                <span className="text-xs font-medium text-emerald-600">
+                  Économie ~{Math.round(promotionInfo.savingsPercentage)}%
+                </span>
+                <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  /{product.unit}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="text-3xl font-bold bg-gradient-to-r from-[#2563eb] to-blue-600 bg-clip-text text-transparent">
+                  {product.price}€
+                </div>
+                <span className="text-sm font-medium text-gray-500 dark:text-gray-400">/{product.unit}</span>
+              </>
+            )}
           </div>
           {!isAdminMode && (
             <button
@@ -1290,7 +2693,7 @@ function ProductCard({
                 e.stopPropagation();
                 onAddToCart();
               }}
-              className="p-2 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors"
+              className="p-3 bg-gradient-to-r from-[#2563eb] to-blue-600 text-white rounded-xl hover:shadow-lg hover:scale-110 transition-all duration-300"
             >
               <ShoppingCart className="h-5 w-5" />
             </button>
@@ -1327,17 +2730,56 @@ function InspiredForYouSection({ products }: { products: Product[] }) {
   );
 }
 
-// Product Detail Panel with Admin tab
-function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, onToggleFavorite, isAdminMode, onUpdate }: any) {
+export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, onToggleFavorite, isAdminMode, onUpdate, onCreateAlert }: any) {
   const [selectedVariant, setSelectedVariant] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("details");
+  const promotionInfo = useMemo(
+    () => computePromotionPrice(product.price, product.promotion),
+    [product.price, product.promotion]
+  );
+  const primaryMedia =
+    product.media && product.media.length > 0
+      ? product.media.find((m: ProductMediaItem) => m.isPrimary) || product.media[0]
+      : null;
   
-  // Admin fields
   const [adminFields, setAdminFields] = useState({
     category: product.category,
     visible: product.visible !== false,
     sku: product.sku || "",
+  });
+  const [adminErrors, setAdminErrors] = useState<Record<string, string>>({});
+  const [adminVariants, setAdminVariants] = useState<
+    Array<{ id: string; name: string; price: number; unit: string }>
+  >(
+    (product.variants || []).map((variant, index) => ({
+      id: `VAR-EDIT-${product.id}-${index}`,
+      name: variant.name,
+      price: variant.price,
+      unit: variant.unit,
+    }))
+  );
+  const [adminMedia, setAdminMedia] = useState<ProductMediaItem[]>(product.media || []);
+  const [draggedMediaIndex, setDraggedMediaIndex] = useState<number | null>(null);
+  const initialPromotion = product.promotion || {
+    type: "percentage" as ProductPromotion["type"],
+    value: 0,
+    startsAt: "",
+    endsAt: "",
+  };
+  const [promotionEnabled, setPromotionEnabled] = useState(
+    !!product.promotion && !!product.promotion.value
+  );
+  const [adminPromotion, setAdminPromotion] = useState<{
+    type: ProductPromotion["type"];
+    value: number;
+    startsAt: string;
+    endsAt: string;
+  }>({
+    type: initialPromotion.type,
+    value: initialPromotion.value,
+    startsAt: initialPromotion.startsAt || "",
+    endsAt: initialPromotion.endsAt || "",
   });
 
   const tabs = [
@@ -1347,12 +2789,55 @@ function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, onToggl
   ];
 
   const handleAdminSave = () => {
-    onUpdate(adminFields);
+    const nextErrors: Record<string, string> = {};
+    if (!adminFields.category) nextErrors.category = "Catégorie obligatoire";
+    if (!adminFields.sku.trim()) nextErrors.sku = "SKU obligatoire";
+    if (promotionEnabled && (!adminPromotion.value || adminPromotion.value <= 0)) {
+      nextErrors.promotion = "Valeur de promotion invalide";
+    }
+    setAdminErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      toast.error("Veuillez corriger les erreurs du formulaire");
+      return;
+    }
+
+    let promotionPayload: ProductPromotion | undefined;
+    if (promotionEnabled && adminPromotion.value > 0) {
+      promotionPayload = {
+        type: adminPromotion.type,
+        value: adminPromotion.value,
+        startsAt: adminPromotion.startsAt || undefined,
+        endsAt: adminPromotion.endsAt || undefined,
+      };
+    }
+
+    const variantsPayload =
+      adminVariants.length > 0
+        ? adminVariants.map((variant) => ({
+            name: variant.name,
+            price: variant.price,
+            unit: variant.unit,
+          }))
+        : undefined;
+
+    const mediaPayload = adminMedia.length > 0 ? adminMedia : undefined;
+
+    onUpdate({
+      category: adminFields.category,
+      visible: adminFields.visible,
+      sku: adminFields.sku,
+      variants: variantsPayload,
+      media: mediaPayload,
+      promotion: promotionPayload,
+    });
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex justify-end">
+    <div
+      className="fixed inset-0 bg-black/50 z-50 flex justify-end"
+      data-testid="product-detail-panel"
+    >
       <div className="w-full max-w-2xl bg-card h-full overflow-y-auto shadow-2xl">
         {/* Header */}
         <div className="sticky top-0 bg-card border-b p-6 flex items-center justify-between z-10">
@@ -1381,7 +2866,8 @@ function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, onToggl
                       activeTab === tab.id
                         ? "border-[#2563eb] text-[#2563eb]"
                         : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}
+                      }`}
+                    data-testid={`product-tab-${tab.id}`}
                   >
                     <Icon className="h-4 w-4" />
                     {tab.label}
@@ -1396,9 +2882,12 @@ function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, onToggl
         <div className="p-6 space-y-6">
           {activeTab === "details" && (
             <>
-              {/* Image Gallery */}
-              <div className="relative h-96 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-lg flex items-center justify-center">
-                <div className="text-9xl">{product.image}</div>
+              <div className="relative h-96 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-lg flex items-center justify-center overflow-hidden">
+                <img
+                  src={primaryMedia?.url || product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
                 <button
                   onClick={onToggleFavorite}
                   className="absolute top-4 right-4 p-3 bg-white dark:bg-gray-800 rounded-full hover:scale-110 transition-transform"
@@ -1410,6 +2899,22 @@ function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, onToggl
                   />
                 </button>
               </div>
+              {product.media && product.media.length > 1 && (
+                <div className="mt-3 flex gap-2 overflow-x-auto">
+                  {product.media.map((item: ProductMediaItem) => (
+                    <img
+                      key={item.id}
+                      src={item.url}
+                      alt={item.alt || product.name}
+                      className={`h-16 w-16 rounded-lg object-cover border ${
+                        primaryMedia && primaryMedia.id === item.id
+                          ? "border-[#2563eb]"
+                          : "border-transparent"
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
 
               {/* Product Info */}
               <div>
@@ -1434,12 +2939,49 @@ function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, onToggl
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-4xl font-bold text-[#2563eb]">
-                      {product.price}€
-                      <span className="text-lg font-normal text-muted-foreground">
-                        /{product.unit}
-                      </span>
-                    </div>
+                    {promotionInfo ? (
+                      <div className="space-y-1">
+                        <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 text-emerald-700 px-3 py-1 text-xs font-semibold">
+                          <Sparkles className="h-3 w-3" />
+                          Promotion active
+                        </div>
+                        <div className="flex items-baseline gap-2 justify-end">
+                          <div className="text-4xl font-bold text-emerald-600">
+                            {promotionInfo.discountedPrice.toFixed(2)}€
+                          </div>
+                          <div className="text-lg line-through text-gray-400">
+                            {product.price.toFixed(2)}€
+                          </div>
+                        </div>
+                        <div className="text-sm text-emerald-600">
+                          ~{Math.round(promotionInfo.savingsPercentage)}% de réduction /{product.unit}
+                        </div>
+                        {product.promotion && (product.promotion.startsAt || product.promotion.endsAt) && (
+                          <div className="text-xs text-muted-foreground">
+                            {product.promotion.startsAt && (
+                              <span>
+                                Dès le{" "}
+                                {new Date(product.promotion.startsAt).toLocaleDateString()}
+                              </span>
+                            )}
+                            {product.promotion.startsAt && product.promotion.endsAt && " • "}
+                            {product.promotion.endsAt && (
+                              <span>
+                                Jusqu&apos;au{" "}
+                                {new Date(product.promotion.endsAt).toLocaleDateString()}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-4xl font-bold text-[#2563eb]">
+                        {product.price}€
+                        <span className="text-lg font-normal text-muted-foreground">
+                          /{product.unit}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -1510,15 +3052,45 @@ function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, onToggl
 
                 {/* Add to Cart Button */}
                 {!isAdminMode && (
-                  <button
-                    onClick={() => {
-                      onAddToCart();
-                    }}
-                    className="w-full px-6 py-4 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors font-semibold text-lg flex items-center justify-center gap-2"
-                  >
-                    <ShoppingCart className="h-6 w-6" />
-                    Ajouter au panier - {(product.price * quantity).toFixed(2)}€
-                  </button>
+                  <>
+                    <button
+                      onClick={() => {
+                        onAddToCart();
+                      }}
+                      className="w-full px-6 py-4 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors font-semibold text-lg flex items-center justify-center gap-2"
+                    >
+                      <ShoppingCart className="h-6 w-6" />
+                      Ajouter au panier - {((promotionInfo?.discountedPrice ?? product.price) * quantity).toFixed(2)}€
+                    </button>
+
+                    {/* Price Alert Buttons */}
+                    <div className="grid grid-cols-2 gap-3 mt-3">
+                      <button
+                        onClick={() => onCreateAlert("price_drop")}
+                        className="px-4 py-3 border border-orange-600 text-orange-600 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors font-medium text-sm flex items-center justify-center gap-2"
+                      >
+                        <AlertTriangle className="h-4 w-4" />
+                        Alerter baisse prix
+                      </button>
+                      {product.stock === "out-of-stock" ? (
+                        <button
+                          onClick={() => onCreateAlert("back_in_stock")}
+                          className="px-4 py-3 border border-orange-600 text-orange-600 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors font-medium text-sm flex items-center justify-center gap-2"
+                        >
+                          <Package className="h-4 w-4" />
+                          Alerter retour stock
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => onCreateAlert("price_target")}
+                          className="px-4 py-3 border border-orange-600 text-orange-600 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors font-medium text-sm flex items-center justify-center gap-2"
+                        >
+                          <TrendingUp className="h-4 w-4" />
+                          Définir prix cible
+                        </button>
+                      )}
+                    </div>
+                  </>
                 )}
               </div>
 
@@ -1594,76 +3166,432 @@ function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, onToggl
 
           {activeTab === "admin" && (
             <div className="space-y-6">
-              <div>
-                <h3 className="font-semibold mb-4">Paramètres administrateur</h3>
-                
-                {/* Category selector */}
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Catégorie principale</label>
-                    <select
-                      value={adminFields.category}
-                      onChange={(e) =>
-                        setAdminFields({ ...adminFields, category: e.target.value })
-                      }
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
-                    >
-                      <option value="Légumes">Légumes</option>
-                      <option value="Fruits">Fruits</option>
-                      <option value="Produits Laitiers">Produits Laitiers</option>
-                      <option value="Viandes">Viandes</option>
-                      <option value="Œufs">Œufs</option>
-                      <option value="Autres">Autres</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">SKU / Référence</label>
-                    <input
-                      type="text"
-                      value={adminFields.sku}
-                      onChange={(e) =>
-                        setAdminFields({ ...adminFields, sku: e.target.value })
-                      }
-                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
-                      placeholder="Ex: PROD-001"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
+              <div className="space-y-6">
+                <div>
+                  <h3 className="font-semibold mb-4">Paramètres administrateur</h3>
+                  <div className="space-y-4">
                     <div>
-                      <div className="font-medium">Visible sur le marketplace</div>
-                      <div className="text-sm text-muted-foreground">
-                        Le produit est accessible aux clients
-                      </div>
+                      <label className="block text-sm font-medium mb-2">
+                        Catégorie principale *
+                      </label>
+                      <select
+                        value={adminFields.category}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setAdminFields({ ...adminFields, category: value });
+                          setAdminErrors((prev) => {
+                            const next = { ...prev };
+                            if (!value) {
+                              next.category = "Catégorie obligatoire";
+                            } else {
+                              delete next.category;
+                            }
+                            return next;
+                          });
+                        }}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
+                        data-testid="admin-category-select"
+                      >
+                        <option value="">Sélectionner...</option>
+                        <option value="Légumes">Légumes</option>
+                        <option value="Fruits">Fruits</option>
+                        <option value="Produits Laitiers">Produits Laitiers</option>
+                        <option value="Viandes">Viandes</option>
+                        <option value="Œufs">Œufs</option>
+                        <option value="Autres">Autres</option>
+                      </select>
+                      {adminErrors.category && (
+                        <p className="mt-1 text-xs text-red-600">{adminErrors.category}</p>
+                      )}
                     </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        SKU / Référence *
+                      </label>
+                      <input
+                        type="text"
+                        value={adminFields.sku}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setAdminFields({ ...adminFields, sku: value });
+                          setAdminErrors((prev) => {
+                            const next = { ...prev };
+                            if (!value.trim()) {
+                              next.sku = "SKU obligatoire";
+                            } else {
+                              delete next.sku;
+                            }
+                            return next;
+                          });
+                        }}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
+                        placeholder="Ex: PROD-001"
+                        data-testid="admin-sku-input"
+                      />
+                      {adminErrors.sku && (
+                        <p className="mt-1 text-xs text-red-600">{adminErrors.sku}</p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 border rounded-lg">
+                      <div>
+                        <div className="font-medium">Visible sur le marketplace</div>
+                        <div className="text-sm text-muted-foreground">
+                          Le produit est accessible aux clients
+                        </div>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={adminFields.visible}
+                          onChange={(e) =>
+                            setAdminFields({ ...adminFields, visible: e.target.checked })
+                          }
+                          className="sr-only peer"
+                          data-testid="admin-visible-toggle"
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#2563eb]/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[#2563eb]"></div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Variantes du produit</span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setAdminVariants([
+                          ...adminVariants,
+                          {
+                            id: `VAR-EDIT-${product.id}-${adminVariants.length}`,
+                            name: "",
+                            price: product.price,
+                            unit: product.unit,
+                          },
+                        ])
+                      }
+                      className="px-3 py-1 text-xs rounded-lg border hover:bg-muted"
+                      data-testid="admin-add-variant"
+                    >
+                      Ajouter une variante
+                    </button>
+                  </div>
+                  {adminVariants.length > 0 && (
+                    <div className="space-y-2">
+                      {adminVariants.map((variant, index) => (
+                        <div
+                          key={variant.id}
+                          className="grid grid-cols-3 gap-2 items-center rounded-lg border bg-muted/40 px-3 py-2"
+                        >
+                          <input
+                            type="text"
+                            value={variant.name}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              setAdminVariants(
+                                adminVariants.map((v, i) =>
+                                  i === index ? { ...v, name: value } : v
+                                )
+                              );
+                            }}
+                            placeholder="Nom"
+                            className="px-3 py-2 border rounded-lg text-sm bg-background"
+                            data-testid={`admin-variant-name-${index}`}
+                          />
+                          <input
+                            type="number"
+                            value={variant.price}
+                            onChange={(e) => {
+                              const value = parseFloat(e.target.value) || 0;
+                              setAdminVariants(
+                                adminVariants.map((v, i) =>
+                                  i === index ? { ...v, price: value } : v
+                                )
+                              );
+                            }}
+                            placeholder="Prix"
+                            className="px-3 py-2 border rounded-lg text-sm bg-background"
+                            data-testid={`admin-variant-price-${index}`}
+                          />
+                          <div className="flex items-center gap-2">
+                            <select
+                              value={variant.unit}
+                              onChange={(e) =>
+                                setAdminVariants(
+                                  adminVariants.map((v, i) =>
+                                    i === index ? { ...v, unit: e.target.value } : v
+                                  )
+                                )
+                              }
+                              className="px-3 py-2 border rounded-lg text-sm flex-1 bg-background"
+                              data-testid={`admin-variant-unit-${index}`}
+                            >
+                              <option value="kg">kg</option>
+                              <option value="pièce">pièce</option>
+                              <option value="litre">litre</option>
+                              <option value="barquette">barquette</option>
+                              <option value="boîte">boîte</option>
+                            </select>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setAdminVariants(
+                                  adminVariants.filter((_, i) => i !== index)
+                                )
+                              }
+                              className="px-2 py-1 text-xs text-red-600 hover:bg-red-50 rounded-lg"
+                              data-testid={`admin-variant-remove-${index}`}
+                            >
+                              Supprimer
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Médias du produit</span>
+                    <span className="text-xs text-muted-foreground">
+                      Glisser-déposer pour réordonner
+                    </span>
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(event) => {
+                      const files = event.target.files;
+                      if (!files) return;
+                      const added: ProductMediaItem[] = [];
+                      Array.from(files).forEach((file) => {
+                        const url = getCachedMediaUrl(file);
+                        added.push({
+                          id: `${file.name}-${file.size}-${file.lastModified}`,
+                          url,
+                          type: "image",
+                          alt: product.name || file.name,
+                        });
+                      });
+                      setAdminMedia((prev) => {
+                        const next = [...prev, ...added];
+                        if (next.length > 0 && !next.some((m) => m.isPrimary)) {
+                          next[0] = { ...next[0], isPrimary: true };
+                        }
+                        return next;
+                      });
+                    }}
+                    className="w-full text-sm"
+                    data-testid="admin-media-input"
+                  />
+                  {adminMedia.length > 0 && (
+                    <div className="flex gap-3 overflow-x-auto pb-1">
+                      {adminMedia.map((item, index) => (
+                        <div
+                          key={item.id}
+                          className="relative flex flex-col items-center gap-1 cursor-move"
+                          draggable
+                          onDragStart={() => setDraggedMediaIndex(index)}
+                          onDragOver={(event) => event.preventDefault()}
+                          onDrop={() => {
+                            if (draggedMediaIndex === null || draggedMediaIndex === index) {
+                              return;
+                            }
+                            setAdminMedia((prev) => {
+                              const copy = [...prev];
+                              const [moved] = copy.splice(draggedMediaIndex, 1);
+                              copy.splice(index, 0, moved);
+                              return copy;
+                            });
+                            setDraggedMediaIndex(null);
+                          }}
+                          data-testid="admin-media-thumb"
+                          data-media-id={item.id}
+                        >
+                          <img
+                            src={item.url}
+                            alt={item.alt}
+                            className={`h-16 w-16 rounded-lg object-cover border shadow-sm ${
+                              item.isPrimary ? "border-[#2563eb]" : "border-transparent"
+                            }`}
+                          />
+                          <div className="flex gap-1">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setAdminMedia(
+                                  adminMedia.map((m) => ({
+                                    ...m,
+                                    isPrimary: m.id === item.id,
+                                  }))
+                                )
+                              }
+                              className="px-2 py-0.5 text-[10px] rounded-full border text-xs bg-background"
+                            >
+                              Principal
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const copy = [...adminMedia];
+                                copy.splice(index, 1);
+                                setAdminMedia(copy);
+                              }}
+                              className="px-2 py-0.5 text-[10px] text-red-600 hover:bg-red-50 rounded-full"
+                            >
+                              Retirer
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Promotion</span>
+                    <label className="flex items-center gap-2 text-sm">
                       <input
                         type="checkbox"
-                        checked={adminFields.visible}
-                        onChange={(e) =>
-                          setAdminFields({ ...adminFields, visible: e.target.checked })
-                        }
-                        className="sr-only peer"
+                        checked={promotionEnabled}
+                        onChange={(e) => setPromotionEnabled(e.target.checked)}
+                        className="rounded border-gray-300"
+                        data-testid="admin-promo-toggle"
                       />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#2563eb]/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[#2563eb]"></div>
+                      Activer
                     </label>
                   </div>
+                  {promotionEnabled && (
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-2">
+                        <select
+                          value={adminPromotion.type}
+                          onChange={(e) =>
+                            setAdminPromotion({
+                              ...adminPromotion,
+                              type: e.target.value as ProductPromotion["type"],
+                            })
+                          }
+                          className="w-full px-3 py-2 border rounded-lg text-sm bg-background"
+                          data-testid="admin-promo-type"
+                        >
+                          <option value="percentage">Réduction en %</option>
+                          <option value="fixed">Montant fixe</option>
+                        </select>
+                        <input
+                          type="number"
+                          value={adminPromotion.value}
+                          onChange={(e) =>
+                            setAdminPromotion({
+                              ...adminPromotion,
+                              value: parseFloat(e.target.value) || 0,
+                            })
+                          }
+                          placeholder="Valeur"
+                          className="w-full px-3 py-2 border rounded-lg text-sm bg-background"
+                          data-testid="admin-promo-value"
+                        />
+                        {adminErrors.promotion && (
+                          <p className="mt-1 text-xs text-red-600">
+                            {adminErrors.promotion}
+                          </p>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <input
+                          type="date"
+                          value={adminPromotion.startsAt}
+                          onChange={(e) =>
+                            setAdminPromotion({
+                              ...adminPromotion,
+                              startsAt: e.target.value,
+                            })
+                          }
+                          className="w-full px-3 py-2 border rounded-lg text-sm bg-background"
+                          data-testid="admin-promo-start"
+                        />
+                        <input
+                          type="date"
+                          value={adminPromotion.endsAt}
+                          onChange={(e) =>
+                            setAdminPromotion({
+                              ...adminPromotion,
+                              endsAt: e.target.value,
+                            })
+                          }
+                          className="w-full px-3 py-2 border rounded-lg text-sm bg-background"
+                          data-testid="admin-promo-end"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
 
-                  <button
-                    onClick={() => toast.info("Historique des modifications")}
-                    className="w-full px-4 py-2 border rounded-lg hover:bg-muted transition-colors flex items-center justify-center gap-2"
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <History className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">
+                        Historique des modifications
+                      </span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      {product.history && product.history.length > 0
+                        ? `${product.history.length} événement(s)`
+                        : "Aucune modification enregistrée"}
+                    </span>
+                  </div>
+                  <div
+                    className="max-h-40 border rounded-lg overflow-y-auto bg-muted/40"
+                    data-testid="admin-history-list"
                   >
-                    <History className="h-4 w-4" />
-                    Historique des modifications
-                  </button>
+                    {product.history && product.history.length > 0 ? (
+                      product.history
+                        .slice()
+                        .reverse()
+                        .map((entry: ProductHistoryEntry) => (
+                          <div
+                            key={entry.id}
+                            className="px-3 py-2 border-b last:border-b-0 text-xs"
+                          >
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="font-medium">{entry.author}</span>
+                              <span className="text-muted-foreground">
+                                {new Date(entry.timestamp).toLocaleString()}
+                              </span>
+                            </div>
+                            <ul className="space-y-0.5 text-muted-foreground">
+                              {entry.changes.map((change, index) => (
+                                <li key={index}>
+                                  <span className="font-semibold">{change.field}:</span>{" "}
+                                  <span className="line-through opacity-70">
+                                    {String(change.from)}
+                                  </span>{" "}
+                                  → <span>{String(change.to)}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))
+                    ) : (
+                      <div className="px-3 py-2 text-xs text-muted-foreground">
+                        Aucun changement historique pour ce produit.
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              {/* Save button */}
               <button
                 onClick={handleAdminSave}
                 className="w-full px-6 py-4 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors font-semibold text-lg flex items-center justify-center gap-2"
+                data-testid="admin-save"
               >
                 <Check className="h-6 w-6" />
                 Sauvegarder les changements
@@ -1676,7 +3604,21 @@ function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, onToggl
   );
 }
 
-// Add Product Modal
+const mediaUrlCache = new Map<string, string>();
+
+function getMediaCacheKey(file: File) {
+  return `${file.name}-${file.size}-${file.lastModified}`;
+}
+
+function getCachedMediaUrl(file: File) {
+  const key = getMediaCacheKey(file);
+  const existing = mediaUrlCache.get(key);
+  if (existing) return existing;
+  const url = URL.createObjectURL(file);
+  mediaUrlCache.set(key, url);
+  return url;
+}
+
 function AddProductModal({ onClose, onSave, categories }: any) {
   const [step, setStep] = useState(1);
   const [productType, setProductType] = useState<"simple" | "advanced" | null>(null);
@@ -1685,21 +3627,71 @@ function AddProductModal({ onClose, onSave, categories }: any) {
     category: "",
     price: 0,
     unit: "kg",
-    image: "📦",
+    image: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&h=400&fit=crop",
     description: "",
     labels: [] as string[],
     sku: "",
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [variants, setVariants] = useState<Array<{ id: string; name: string; price: number; unit: string }>>([]);
+  const [media, setMedia] = useState<ProductMediaItem[]>([]);
+  const [promotionEnabled, setPromotionEnabled] = useState(false);
+  const [promotion, setPromotion] = useState<{
+    type: ProductPromotion["type"];
+    value: number;
+    startsAt: string;
+    endsAt: string;
+  }>({
+    type: "percentage",
+    value: 0,
+    startsAt: "",
+    endsAt: "",
+  });
 
-  const emojiOptions = ["🍅", "🥬", "🍎", "🧀", "🥩", "🥚", "🍓", "🍯", "🥕", "🍞", "🥛", "🍗"];
+  const imageOptions = [
+    "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400&h=400&fit=crop", // Tomatoes
+    "https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=400&h=400&fit=crop", // Lettuce
+    "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400&h=400&fit=crop", // Apples
+    "https://images.unsplash.com/photo-1452195100486-9cc805987862?w=400&h=400&fit=crop", // Cheese
+    "https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=400&h=400&fit=crop", // Meat
+    "https://images.unsplash.com/photo-1582169296194-e4d644c48063?w=400&h=400&fit=crop", // Eggs
+    "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&h=400&fit=crop", // Package/Generic
+  ];
 
   const handleSubmit = () => {
-    if (productType === "simple") {
-      onSave(formData);
-    } else {
-      toast.info("Ouverture de l'assistant complet");
-      onClose();
+    const nextErrors: Record<string, string> = {};
+    if (!formData.name.trim()) nextErrors.name = "Nom obligatoire";
+    if (!formData.category) nextErrors.category = "Catégorie obligatoire";
+    if (!formData.sku.trim()) nextErrors.sku = "SKU obligatoire";
+    if (!formData.price || formData.price <= 0) nextErrors.price = "Prix invalide";
+    if (promotionEnabled) {
+      if (!promotion.value || promotion.value <= 0) nextErrors.promotion = "Valeur de promotion invalide";
     }
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      toast.error("Veuillez corriger les erreurs du formulaire");
+      return;
+    }
+    let promotionPayload: ProductPromotion | undefined;
+    if (promotionEnabled) {
+      promotionPayload = {
+        type: promotion.type,
+        value: promotion.value,
+        startsAt: promotion.startsAt || undefined,
+        endsAt: promotion.endsAt || undefined,
+      };
+    }
+    const payload: Partial<Product> = {
+      ...formData,
+      variants: variants.map((v) => ({
+        name: v.name,
+        price: v.price,
+        unit: v.unit,
+      })),
+      media,
+      promotion: promotionPayload,
+    };
+    onSave(payload);
   };
 
   return (
@@ -1735,7 +3727,7 @@ function AddProductModal({ onClose, onSave, categories }: any) {
                 <button
                   onClick={() => {
                     setProductType("advanced");
-                    handleSubmit();
+                    setStep(2);
                   }}
                   className="p-6 border-2 rounded-lg hover:border-[#2563eb] hover:bg-[#2563eb]/5 transition-all text-left"
                 >
@@ -1749,17 +3741,30 @@ function AddProductModal({ onClose, onSave, categories }: any) {
             </div>
           )}
 
-          {step === 2 && productType === "simple" && (
+          {step === 2 && productType && (
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2">Nom du produit *</label>
                 <input
                   type="text"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setFormData({ ...formData, name: value });
+                    setErrors((prev) => {
+                      const next = { ...prev };
+                      if (!value.trim()) {
+                        next.name = "Nom obligatoire";
+                      } else {
+                        delete next.name;
+                      }
+                      return next;
+                    });
+                  }}
                   className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
                   placeholder="Ex: Tomates Bio"
                 />
+                {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name}</p>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -1767,7 +3772,19 @@ function AddProductModal({ onClose, onSave, categories }: any) {
                   <label className="block text-sm font-medium mb-2">Catégorie *</label>
                   <select
                     value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setFormData({ ...formData, category: value });
+                      setErrors((prev) => {
+                        const next = { ...prev };
+                        if (!value) {
+                          next.category = "Catégorie obligatoire";
+                        } else {
+                          delete next.category;
+                        }
+                        return next;
+                      });
+                    }}
                     className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
                   >
                     <option value="">Sélectionner...</option>
@@ -1784,13 +3801,24 @@ function AddProductModal({ onClose, onSave, categories }: any) {
                   <input
                     type="number"
                     value={formData.price}
-                    onChange={(e) =>
-                      setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })
-                    }
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value) || 0;
+                      setFormData({ ...formData, price: value });
+                      setErrors((prev) => {
+                        const next = { ...prev };
+                        if (!value || value <= 0) {
+                          next.price = "Prix invalide";
+                        } else {
+                          delete next.price;
+                        }
+                        return next;
+                      });
+                    }}
                     className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
                     placeholder="4.50"
                     step="0.1"
                   />
+                  {errors.price && <p className="mt-1 text-xs text-red-600">{errors.price}</p>}
                 </div>
               </div>
 
@@ -1810,20 +3838,27 @@ function AddProductModal({ onClose, onSave, categories }: any) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Image (emoji)</label>
-                <div className="grid grid-cols-12 gap-2">
-                  {emojiOptions.map((emoji) => (
+                <label className="block text-sm font-medium mb-2">Image URL</label>
+                <div className="grid grid-cols-2 gap-2 mb-4">
+                  {imageOptions.map((imageUrl, idx) => (
                     <button
-                      key={emoji}
-                      onClick={() => setFormData({ ...formData, image: emoji })}
-                      className={`text-3xl p-2 border rounded hover:bg-muted transition-colors ${
-                        formData.image === emoji ? "ring-2 ring-[#2563eb]" : ""
+                      key={idx}
+                      onClick={() => setFormData({ ...formData, image: imageUrl })}
+                      className={`p-2 border-2 rounded-lg hover:border-[#2563eb] transition-colors ${
+                        formData.image === imageUrl ? "border-[#2563eb] bg-blue-50" : "border-gray-200"
                       }`}
                     >
-                      {emoji}
+                      <img src={imageUrl} alt="Option" className="w-full h-16 object-cover rounded" />
                     </button>
                   ))}
                 </div>
+                <input
+                  type="text"
+                  placeholder="Ou entrez une URL d'image personnalisée"
+                  value={formData.image}
+                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb]"
+                />
               </div>
 
               <div>
@@ -1836,6 +3871,253 @@ function AddProductModal({ onClose, onSave, categories }: any) {
                   placeholder="Description du produit..."
                 />
               </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">SKU / Référence *</label>
+                <input
+                  type="text"
+                  value={formData.sku}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setFormData({ ...formData, sku: value });
+                    setErrors((prev) => {
+                      const next = { ...prev };
+                      if (!value.trim()) {
+                        next.sku = "SKU obligatoire";
+                      } else {
+                        delete next.sku;
+                      }
+                      return next;
+                    });
+                  }}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
+                  placeholder="Ex: PROD-001"
+                />
+                {errors.sku && <p className="mt-1 text-xs text-red-600">{errors.sku}</p>}
+              </div>
+
+              {productType === "advanced" && (
+                <div className="space-y-6 pt-2 border-t">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Variantes</span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setVariants([
+                            ...variants,
+                            { id: `VAR-${Date.now()}-${variants.length}`, name: "", price: formData.price, unit: formData.unit },
+                          ])
+                        }
+                        className="px-3 py-1 text-xs rounded-lg border hover:bg-muted"
+                      >
+                        Ajouter une variante
+                      </button>
+                    </div>
+                    {variants.length > 0 && (
+                      <div className="space-y-2">
+                        {variants.map((variant, index) => (
+                          <div key={variant.id} className="grid grid-cols-3 gap-2 items-center">
+                            <input
+                              type="text"
+                              value={variant.name}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                setVariants(
+                                  variants.map((v, i) =>
+                                    i === index ? { ...v, name: value } : v
+                                  )
+                                );
+                              }}
+                              placeholder="Nom"
+                              className="px-3 py-2 border rounded-lg text-sm"
+                            />
+                            <input
+                              type="number"
+                              value={variant.price}
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value) || 0;
+                                setVariants(
+                                  variants.map((v, i) =>
+                                    i === index ? { ...v, price: value } : v
+                                  )
+                                );
+                              }}
+                              placeholder="Prix"
+                              className="px-3 py-2 border rounded-lg text-sm"
+                            />
+                            <div className="flex items-center gap-2">
+                              <select
+                                value={variant.unit}
+                                onChange={(e) =>
+                                  setVariants(
+                                    variants.map((v, i) =>
+                                      i === index ? { ...v, unit: e.target.value } : v
+                                    )
+                                  )
+                                }
+                                className="px-3 py-2 border rounded-lg text-sm flex-1"
+                              >
+                                <option value="kg">kg</option>
+                                <option value="pièce">pièce</option>
+                                <option value="litre">litre</option>
+                                <option value="barquette">barquette</option>
+                                <option value="boîte">boîte</option>
+                              </select>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setVariants(variants.filter((_, i) => i !== index))
+                                }
+                                className="px-2 py-1 text-xs text-red-600 hover:bg-red-50 rounded-lg"
+                              >
+                                Supprimer
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <span className="text-sm font-medium">Médias du produit</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(event) => {
+                        const files = event.target.files;
+                        if (!files) return;
+                        const added: ProductMediaItem[] = [];
+                        Array.from(files).forEach((file) => {
+                          const url = getCachedMediaUrl(file);
+                          added.push({
+                            id: `${file.name}-${file.size}-${file.lastModified}`,
+                            url,
+                            type: "image",
+                            alt: formData.name || file.name,
+                          });
+                        });
+                        setMedia((prev) => {
+                          const next = [...prev, ...added];
+                          if (next.length > 0 && !next.some((m) => m.isPrimary)) {
+                            next[0] = { ...next[0], isPrimary: true };
+                          }
+                          return next;
+                        });
+                      }}
+                      className="w-full text-sm"
+                    />
+                    {media.length > 0 && (
+                      <div className="flex gap-3 overflow-x-auto pb-1">
+                        {media.map((item, index) => (
+                          <div key={item.id} className="relative flex flex-col items-center gap-1">
+                            <img
+                              src={item.url}
+                              alt={item.alt}
+                              className={`h-16 w-16 rounded-lg object-cover border ${
+                                item.isPrimary ? "border-[#2563eb]" : "border-transparent"
+                              }`}
+                            />
+                            <div className="flex gap-1">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setMedia(
+                                    media.map((m) => ({
+                                      ...m,
+                                      isPrimary: m.id === item.id,
+                                    }))
+                                  )
+                                }
+                                className="px-2 py-0.5 text-[10px] rounded-full border text-xs"
+                              >
+                                Principal
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const copy = [...media];
+                                  copy.splice(index, 1);
+                                  setMedia(copy);
+                                }}
+                                className="px-2 py-0.5 text-[10px] text-red-600 hover:bg-red-50 rounded-full"
+                              >
+                                Retirer
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Promotion</span>
+                      <label className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={promotionEnabled}
+                          onChange={(e) => setPromotionEnabled(e.target.checked)}
+                          className="rounded border-gray-300"
+                        />
+                        Activer
+                      </label>
+                    </div>
+                    {promotionEnabled && (
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-2">
+                          <select
+                            value={promotion.type}
+                            onChange={(e) =>
+                              setPromotion({ ...promotion, type: e.target.value as ProductPromotion["type"] })
+                            }
+                            className="w-full px-3 py-2 border rounded-lg text-sm"
+                          >
+                            <option value="percentage">Réduction en %</option>
+                            <option value="fixed">Montant fixe</option>
+                          </select>
+                          <input
+                            type="number"
+                            value={promotion.value}
+                            onChange={(e) =>
+                              setPromotion({
+                                ...promotion,
+                                value: parseFloat(e.target.value) || 0,
+                              })
+                            }
+                            placeholder="Valeur"
+                            className="w-full px-3 py-2 border rounded-lg text-sm"
+                          />
+                          {errors.promotion && (
+                            <p className="mt-1 text-xs text-red-600">{errors.promotion}</p>
+                          )}
+                        </div>
+                        <div className="space-y-2">
+                          <input
+                            type="date"
+                            value={promotion.startsAt}
+                            onChange={(e) =>
+                              setPromotion({ ...promotion, startsAt: e.target.value })
+                            }
+                            className="w-full px-3 py-2 border rounded-lg text-sm"
+                          />
+                          <input
+                            type="date"
+                            value={promotion.endsAt}
+                            onChange={(e) =>
+                              setPromotion({ ...promotion, endsAt: e.target.value })
+                            }
+                            className="w-full px-3 py-2 border rounded-lg text-sm"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -1898,14 +4180,235 @@ function ArchiveConfirmModal({ product, onConfirm, onCancel }: any) {
   );
 }
 
+// Product Comparison Modal
+function ProductComparisonModal({ products, onClose, onRemoveProduct, onAddToCart }: {
+  products: Product[];
+  onClose: () => void;
+  onRemoveProduct: (productId: string) => void;
+  onAddToCart: (productId: string) => void;
+}) {
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
+      <div className="bg-card border rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col my-8">
+        {/* Header */}
+        <div className="px-6 py-4 border-b flex items-center justify-between bg-gradient-to-r from-[#2563eb] to-blue-600 text-white">
+          <div>
+            <h2 className="text-2xl font-bold flex items-center gap-2">
+              <ArrowUpDown className="h-6 w-6" />
+              Comparaison de produits
+            </h2>
+            <p className="text-sm opacity-90 mt-1">
+              {products.length} produit{products.length > 1 ? 's' : ''} sélectionné{products.length > 1 ? 's' : ''}
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+          >
+            <X className="h-6 w-6" />
+          </button>
+        </div>
+
+        {/* Comparison Table */}
+        <div className="flex-1 overflow-auto p-6">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b-2">
+                <th className="text-left p-4 bg-muted/50 font-semibold sticky left-0 z-10">
+                  Caractéristiques
+                </th>
+                {products.map((product) => (
+                  <th key={product.id} className="p-4 text-center min-w-[250px]">
+                    <div className="space-y-3">
+                      <div className="relative w-full h-24 bg-gray-100 rounded-lg overflow-hidden">
+                        <img 
+                          src={product.image} 
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="font-bold text-lg">{product.name}</div>
+                      <div className="flex items-center justify-center gap-2">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        <span className="font-medium">{product.rating}</span>
+                        <span className="text-muted-foreground text-sm">({product.reviewCount})</span>
+                      </div>
+                      <button
+                        onClick={() => onRemoveProduct(product.id)}
+                        className="text-xs text-red-600 hover:underline"
+                      >
+                        Retirer
+                      </button>
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {/* Prix */}
+              <tr className="border-b hover:bg-muted/30">
+                <td className="p-4 font-medium bg-muted/50 sticky left-0 z-10">Prix</td>
+                {products.map((product) => (
+                  <td key={product.id} className="p-4 text-center">
+                    <div className="text-2xl font-bold text-[#2563eb]">
+                      {product.price.toFixed(2)}€
+                    </div>
+                    <div className="text-sm text-muted-foreground">{product.unit}</div>
+                  </td>
+                ))}
+              </tr>
+
+              {/* Vendeur */}
+              <tr className="border-b hover:bg-muted/30">
+                <td className="p-4 font-medium bg-muted/50 sticky left-0 z-10">Vendeur</td>
+                {products.map((product) => (
+                  <td key={product.id} className="p-4 text-center">
+                    <div className="font-medium">{product.seller.name}</div>
+                    <div className="text-sm text-muted-foreground flex items-center justify-center gap-1 mt-1">
+                      <MapPin className="h-3 w-3" />
+                      {product.seller.location}
+                    </div>
+                    <div className="text-sm text-muted-foreground mt-1">
+                      À {product.seller.distance} km
+                    </div>
+                  </td>
+                ))}
+              </tr>
+
+              {/* Catégorie */}
+              <tr className="border-b hover:bg-muted/30">
+                <td className="p-4 font-medium bg-muted/50 sticky left-0 z-10">Catégorie</td>
+                {products.map((product) => (
+                  <td key={product.id} className="p-4 text-center">
+                    <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 rounded-full text-sm">
+                      {product.category}
+                    </span>
+                  </td>
+                ))}
+              </tr>
+
+              {/* Disponibilité */}
+              <tr className="border-b hover:bg-muted/30">
+                <td className="p-4 font-medium bg-muted/50 sticky left-0 z-10">Disponibilité</td>
+                {products.map((product) => (
+                  <td key={product.id} className="p-4 text-center">
+                    <span className={`px-3 py-1 rounded-full text-sm ${
+                      product.stock === 'in-stock' ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400' :
+                      product.stock === 'limited' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400' :
+                      product.stock === 'pre-order' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400' :
+                      'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'
+                    }`}>
+                      {product.stock === 'in-stock' ? 'En stock' :
+                       product.stock === 'limited' ? 'Stock limité' :
+                       product.stock === 'pre-order' ? 'Pré-commande' :
+                       'Rupture'}
+                    </span>
+                  </td>
+                ))}
+              </tr>
+
+              {/* Labels */}
+              <tr className="border-b hover:bg-muted/30">
+                <td className="p-4 font-medium bg-muted/50 sticky left-0 z-10">Labels</td>
+                {products.map((product) => (
+                  <td key={product.id} className="p-4">
+                    <div className="flex flex-wrap gap-1 justify-center">
+                      {product.labels.map((label, idx) => (
+                        <span key={idx} className="px-2 py-1 bg-emerald-100 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 rounded text-xs">
+                          {label}
+                        </span>
+                      ))}
+                    </div>
+                  </td>
+                ))}
+              </tr>
+
+              {/* Livraison rapide */}
+              <tr className="border-b hover:bg-muted/30">
+                <td className="p-4 font-medium bg-muted/50 sticky left-0 z-10">Livraison rapide</td>
+                {products.map((product) => (
+                  <td key={product.id} className="p-4 text-center">
+                    {product.fastDelivery ? (
+                      <div className="flex items-center justify-center gap-2 text-green-600">
+                        <Check className="h-5 w-5" />
+                        <span className="font-medium">Oui</span>
+                      </div>
+                    ) : (
+                      <div className="text-muted-foreground">Standard</div>
+                    )}
+                  </td>
+                ))}
+              </tr>
+
+              {/* Description */}
+              <tr className="border-b hover:bg-muted/30">
+                <td className="p-4 font-medium bg-muted/50 sticky left-0 z-10">Description</td>
+                {products.map((product) => (
+                  <td key={product.id} className="p-4">
+                    <div className="text-sm text-muted-foreground text-left">
+                      {product.description}
+                    </div>
+                  </td>
+                ))}
+              </tr>
+
+              {/* Spécifications */}
+              {Object.keys(products[0]?.specifications || {}).length > 0 && (
+                <tr className="border-b">
+                  <td colSpan={products.length + 1} className="p-4 bg-muted/20">
+                    <div className="font-semibold text-lg mb-3">Spécifications techniques</div>
+                    <div className="space-y-2">
+                      {Object.keys(products[0].specifications).map((specKey) => (
+                        <div key={specKey} className="grid" style={{ gridTemplateColumns: `200px repeat(${products.length}, 1fr)` }}>
+                          <div className="p-2 font-medium bg-muted/50">{specKey}</div>
+                          {products.map((product) => (
+                            <div key={product.id} className="p-2 text-center">
+                              {product.specifications[specKey] || '-'}
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Footer with Actions */}
+        <div className="px-6 py-4 border-t bg-muted/30">
+          <div className="grid gap-3" style={{ gridTemplateColumns: `200px repeat(${products.length}, 1fr)` }}>
+            <div className="p-2 font-semibold">Actions</div>
+            {products.map((product) => (
+              <div key={product.id} className="p-2">
+                <button
+                  onClick={() => {
+                    onAddToCart(product.id);
+                    toast.success(`${product.name} ajouté au panier`);
+                  }}
+                  className="w-full px-4 py-2 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors font-medium flex items-center justify-center gap-2"
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                  Ajouter au panier
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Initial data
 const initialCategories: Category[] = [
-  { id: "CAT-001", name: "Légumes", icon: "🥬" },
-  { id: "CAT-002", name: "Fruits", icon: "🍎" },
-  { id: "CAT-003", name: "Produits Laitiers", icon: "🧀" },
-  { id: "CAT-004", name: "Viandes", icon: "🥩" },
-  { id: "CAT-005", name: "Œufs", icon: "🥚" },
-  { id: "CAT-006", name: "Autres", icon: "📦" },
+  { id: "CAT-001", name: "Légumes", icon: "Leaf" },
+  { id: "CAT-002", name: "Fruits", icon: "Apple" },
+  { id: "CAT-003", name: "Produits Laitiers", icon: "Milk" },
+  { id: "CAT-004", name: "Viandes", icon: "Beef" },
+  { id: "CAT-005", name: "Œufs", icon: "Egg" },
+  { id: "CAT-006", name: "Autres", icon: "PackageBox" },
 ];
 
 const initialProducts: Product[] = [
@@ -1916,7 +4419,7 @@ const initialProducts: Product[] = [
     subcategory: "Tomates",
     price: 4.5,
     unit: "kg",
-    image: "🍅",
+    image: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400&h=400&fit=crop",
     seller: {
       name: "Ferme du Soleil Levant",
       location: "Lyon, Rhône",
@@ -1968,7 +4471,7 @@ const initialProducts: Product[] = [
     category: "Légumes",
     price: 2.2,
     unit: "pièce",
-    image: "🥬",
+    image: "https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=400&h=400&fit=crop",
     seller: {
       name: "Les Jardins de Provence",
       location: "Marseille, Bouches-du-Rhône",
@@ -2005,7 +4508,7 @@ const initialProducts: Product[] = [
     category: "Fruits",
     price: 3.8,
     unit: "kg",
-    image: "🍎",
+    image: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400&h=400&fit=crop",
     seller: {
       name: "Verger des Alpes",
       location: "Grenoble, Isère",
@@ -2043,7 +4546,7 @@ const initialProducts: Product[] = [
     category: "Produits Laitiers",
     price: 6.5,
     unit: "pièce",
-    image: "🧀",
+    image: "https://images.unsplash.com/photo-1452195100486-9cc805987862?w=400&h=400&fit=crop",
     seller: {
       name: "Chèvrerie du Mont Blanc",
       location: "Annecy, Haute-Savoie",
@@ -2081,7 +4584,7 @@ const initialProducts: Product[] = [
     category: "Viandes",
     price: 12.9,
     unit: "kg",
-    image: "🥩",
+    image: "https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=400&h=400&fit=crop",
     seller: {
       name: "Boucherie Traditionnelle Dupont",
       location: "Lyon, Rhône",
@@ -2123,7 +4626,7 @@ const initialProducts: Product[] = [
     category: "Œufs",
     price: 4.2,
     unit: "boîte de 6",
-    image: "🥚",
+    image: "https://images.unsplash.com/photo-1582169296194-e4d644c48063?w=400&h=400&fit=crop",
     seller: {
       name: "Ferme Avicole des Monts",
       location: "Chambéry, Savoie",
@@ -2165,7 +4668,7 @@ const initialProducts: Product[] = [
     category: "Fruits",
     price: 8.5,
     unit: "barquette 500g",
-    image: "🍓",
+    image: "https://images.unsplash.com/photo-1464226066583-1bc946947204?w=400&h=400&fit=crop",
     seller: {
       name: "Maraîchers de Provence",
       location: "Avignon, Vaucluse",
@@ -2203,7 +4706,7 @@ const initialProducts: Product[] = [
     category: "Autres",
     price: 9.8,
     unit: "pot 250g",
-    image: "🍯",
+    image: "https://images.unsplash.com/photo-1587049352846-4a222e784f3c?w=400&h=400&fit=crop",
     seller: {
       name: "Rucher des Hautes Alpes",
       location: "Gap, Hautes-Alpes",
@@ -2241,7 +4744,7 @@ const initialProducts: Product[] = [
     category: "Légumes",
     price: 2.9,
     unit: "kg",
-    image: "🥕",
+    image: "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=400&h=400&fit=crop",
     seller: {
       name: "Bio Terre Aquitaine",
       location: "Bordeaux, Gironde",
@@ -2278,7 +4781,7 @@ const initialProducts: Product[] = [
     category: "Autres",
     price: 5.2,
     unit: "pièce",
-    image: "🍞",
+    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&h=400&fit=crop",
     seller: {
       name: "Boulangerie Artisanale Martin",
       location: "Lyon, Rhône",

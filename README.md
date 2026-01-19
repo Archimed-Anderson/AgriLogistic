@@ -1,452 +1,283 @@
-# 🌾 AgroDeep Platform
+# 🚛 AgroLogistic Platform
 
-<div align="center">
+> **Enterprise-grade agricultural logistics platform with microservices architecture, AI-powered features, blockchain traceability, and real-time delivery tracking.**
 
-![AgroDeep Logo](https://via.placeholder.com/200x200/0B7A4B/FFFFFF?text=AgroDeep)
-
-**Plateforme SaaS Complète pour la Chaîne d'Approvisionnement Agricole**
-
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue?logo=typescript)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-18.2-61DAFB?logo=react)](https://reactjs.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
-[![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./docs/CONTRIBUTING.md)
-
-[Documentation](./docs) · [Demo](https://agrodeep.com) · [Report Bug](https://github.com/agrodeep/agrodeep-platform/issues) · [Request Feature](https://github.com/agrodeep/agrodeep-platform/issues)
-
-</div>
+[![CI](https://img.shields.io/badge/CI-GitHub%20Actions-blue)](/.github/workflows/ci.yml)
+[![Docker](https://img.shields.io/badge/Docker-20.10+-blue)](https://www.docker.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.3+-blue)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18+-blue)](https://react.dev/)
+[![License](https://img.shields.io/badge/License-MIT-green)]()
 
 ---
 
-## 📋 Table des Matières
+## 🚀 Quick Start
 
-- [À Propos](#-à-propos)
-- [Fonctionnalités](#-fonctionnalités)
-- [Architecture](#-architecture)
-- [Technologies](#-technologies)
-- [Installation](#-installation)
-- [Utilisation](#-utilisation)
-- [Documentation](#-documentation)
-- [Contributing](#-contributing)
-- [License](#-license)
+### Development Mode (Mock Authentication)
+
+```bash
+# Clone and install dependencies
+cd AgroLogistic
+npm install
+
+# Start the development server
+npm run dev
+
+# Access the platform at http://localhost:5173
+```
+
+### Production Mode (Full Backend)
+
+```bash
+# Start all infrastructure services
+docker-compose up -d
+
+# Access the platform
+# Frontend:     http://localhost:3000
+# Kong API:     http://localhost:8000
+# Grafana:      http://localhost:3001 (admin/grafana_secure_2026)
+# Prometheus:   http://localhost:9090
+```
 
 ---
 
-## 🎯 À Propos
+## 🔐 Authentication System
 
-**AgroDeep** est une plateforme SaaS moderne et complète conçue pour révolutionner la chaîne d'approvisionnement agricole. Construite avec React, TypeScript et suivant les principes de Clean Architecture, elle offre :
+### Supported User Roles
 
-- 🛒 **Marketplace** - Achat/vente de produits et équipements agricoles
-- 🚚 **Logistique** - Gestion du transport et tracking en temps réel
-- 🌾 **Agriculture Intelligente** - IoT, IA, et automatisation des cultures
-- 💰 **Suite Financière** - Gestion financière et programme d'affiliation
-- 📊 **Analytics** - Rapports et KPIs en temps réel
-- 👥 **Gestion d'Utilisateurs** - Administration complète multi-rôles
+| Role | Description | Features |
+|------|-------------|----------|
+| **Admin** | Platform administrators | Full access, user management, reports |
+| **Farmer** | Agricultural producers | Product management, sales, analytics |
+| **Buyer** | Product purchasers | Marketplace, orders, tracking |
+| **Transporter** | Logistics providers | Delivery management, GPS tracking |
+
+### Demo Accounts (Development Mode)
+
+| Email | Password | Role |
+|-------|----------|------|
+| `admin@agrologistic.com` | admin123 | Administrator |
+| `farmer@agrologistic.com` | farmer123 | Farmer |
+| `buyer@agrologistic.com` | buyer123 | Buyer |
+| `transporter@agrologistic.com` | transporter123 | Transporter |
+| `demo@agrologistic.com` | (any password) | Demo Admin |
+
+### Configuration
+
+Set the auth provider in `.env`:
+
+```env
+# Development (no backend required)
+VITE_AUTH_PROVIDER=mock
+
+# Production (requires backend services)
+VITE_AUTH_PROVIDER=real
+VITE_API_GATEWAY_URL=http://localhost:8000/api/v1
+```
 
 ---
 
-## ✨ Fonctionnalités
+## 📋 Features
 
-### 🛒 Marketplace & Commerce
+### Core Platform
+- 🛒 **Marketplace** - Agricultural products trading platform
+- 📊 **Dashboard** - Real-time KPIs, weather, analytics
+- 💳 **Payments** - Stripe integration with webhooks
+- 📦 **Orders** - Saga pattern for distributed transactions
 
-- Catalogue de produits complet (tracteurs, équipements, pièces détachées)
-- Panier d'achat et processus de commande
-- Gestion des stocks en temps réel
-- Système de paiement sécurisé
-- Historique des commandes
+### Authentication & User Management
+- 🔐 **Multi-role Authentication** - Admin, Farmer, Buyer, Transporter
+- 📝 **Multi-step Registration** - Role-specific fields and validation
+- 🔑 **Secure Password Handling** - Client-side hashing + server-side bcrypt
+- 📧 **Email Verification** - Account activation via email
+- 🔄 **Token Refresh** - Automatic JWT token renewal
 
-### 🚚 Transport & Logistique
+### Advanced Features
+- 🚚 **Real-time Delivery** - GPS tracking via WebSocket
+- 📧 **Notifications** - Email (SendGrid), SMS (Twilio), Push (FCM)
+- 🤖 **AI/ML** - Product recommendations, demand forecasting
+- 📈 **Analytics** - ClickHouse OLAP with Kafka streaming
+- ⛓️ **Blockchain** - Hyperledger Fabric product traceability
 
-- **Calculateur de Transport** - Estimation automatique des coûts
-- **Tracking en Temps Réel** - Suivi GPS des livraisons
-- **Gestion des Transporteurs** - Dashboard transporteurs
-- **Chat B2B** - Communication directe transporteur-client
-- **Optimisation des Routes** - IA pour routes optimales
-
-### 🌾 Agriculture Intelligente
-
-- **IoT Device Hub** - Connexion capteurs et équipements
-- **Crop Intelligence** - Analyse des cultures avec IA
-- **AI Insights** - Prédictions et recommandations
-- **Automation Workflows** - Automatisation des tâches
-
-### 💰 Suite Financière
-
-- Gestion de facturation
-- Traitement des paiements
-- Programme d'affiliation (jusqu'à 25% commission)
-- Suivi des revenus en temps réel
-
-### 📊 Analytics & Reporting
-
-- Dashboard avec KPIs en temps réel
-- Rapports personnalisables
-- Export de données (CSV, Excel, PDF)
-- Visualisations interactives
-
-### 👥 Administration
-
-- Gestion multi-utilisateurs
-- Rôles et permissions (Admin, User, Carrier)
-- Gestion de produits et catégories
-- Configuration système
+### DevOps
+- 🔄 **CI/CD** - GitHub Actions pipelines
+- 🎯 **GitOps** - ArgoCD deployments
+- 📡 **Observability** - Prometheus, Grafana, Jaeger, ELK
 
 ---
 
 ## 🏗️ Architecture
 
-AgroDeep est construit selon les principes de **Clean Architecture** :
-
 ```
-┌─────────────────────────────────────────┐
-│          AGRODEEP PLATFORM              │
-│     Clean Architecture + DDD            │
-└─────────────────────────────────────────┘
-                  │
-      ┌───────────┼───────────┐
-      │           │           │
-      ▼           ▼           ▼
-┌──────────┐ ┌──────────┐ ┌──────────┐
-│  DOMAIN  │ │   APP    │ │   UI     │
-│(Entities)│◄│(Use Cases)│►│(React)   │
-└──────────┘ └──────────┘ └──────────┘
-      │           │           │
-      └───────────┼───────────┘
-                  ▼
-          ┌──────────────┐
-          │    INFRA     │
-          │(APIs, DB)    │
-          └──────────────┘
-```
-
-### Principes
-
-- ✅ **Separation of Concerns** - Chaque couche a une responsabilité unique
-- ✅ **Dependency Inversion** - Les dépendances pointent vers le domaine
-- ✅ **Testability** - 100% testable indépendamment
-- ✅ **Scalability** - Architecture modulaire et extensible
-
-Voir [ARCHITECTURE.md](./docs/ARCHITECTURE.md) pour plus de détails.
-
----
-
-## 🛠️ Technologies
-
-### Core
-
-- **React 18.2** - UI Library
-- **TypeScript 5.3** - Type Safety
-- **Vite 5.0** - Build Tool
-- **Tailwind CSS 4.0** - Styling
-
-### State Management
-
-- **Zustand** - Global State
-- **React Query** - Server State
-- **React Context** - Local State
-
-### UI Components
-
-- **Radix UI** - Headless Components
-- **Lucide React** - Icon Library
-- **Sonner** - Toast Notifications
-
-### Development
-
-- **Vitest** - Unit Testing
-- **Playwright** - E2E Testing
-- **ESLint** - Linting
-- **Prettier** - Code Formatting
-
-### Infrastructure
-
-- **Supabase** - Backend (Auth, DB, Storage)
-- **Vercel** - Deployment
-- **GitHub Actions** - CI/CD
-
----
-
-## 🚀 Installation
-
-### Prérequis
-
-```bash
-Node.js >= 18.0.0
-pnpm >= 8.0.0
-Git >= 2.30.0
-```
-
-### Installation Rapide
-
-```bash
-# 1. Clone le repository
-git clone https://github.com/agrodeep/agrodeep-platform.git
-cd agrodeep-platform
-
-# 2. Installe les dépendances
-pnpm install
-
-# 3. Configure les variables d'environnement
-cp .env.example .env
-# Édite .env avec tes valeurs
-
-# 4. Lance en développement
-pnpm dev
-```
-
-### Configuration des Variables d'Environnement
-
-```bash
-# .env
-VITE_APP_NAME=AgroDeep
-VITE_API_URL=http://localhost:3000
-VITE_SUPABASE_URL=your-supabase-url
-VITE_SUPABASE_ANON_KEY=your-anon-key
+AgroLogistic/
+├── 📁 .github/workflows/       # CI/CD pipelines
+│
+├── 📁 docs/                    # Documentation
+│   ├── ACCOUNT-CREATION-GUIDE.md
+│   ├── ARCHITECTURE.md
+│   ├── API_ENDPOINTS.md
+│   └── IMPLEMENTATION_PLAN_PHASE[1-4].md
+│
+├── 📁 infrastructure/          # DevOps configurations
+│   ├── argocd/                 # GitOps applications
+│   ├── k8s/                    # Kubernetes manifests
+│   └── monitoring/             # Prometheus, Grafana, ELK
+│
+├── 📁 services/                # Backend microservices
+│   ├── auth-service/           # Authentication (3001)
+│   ├── product-service/        # Catalog (3002)
+│   ├── order-service/          # Saga pattern (3003)
+│   ├── payment-service/        # Stripe (3004)
+│   ├── delivery-service/       # GPS tracking (3005)
+│   ├── notification-service/   # Email/SMS/Push (3006)
+│   ├── ai-service/             # ML recommendations (3007)
+│   ├── analytics-service/      # ClickHouse analytics (3008)
+│   └── blockchain-service/     # Hyperledger Fabric (3009)
+│
+├── 📁 src/                     # React Frontend (Clean Architecture)
+│   ├── app/                    # Pages & routing
+│   ├── application/            # Use cases & DTOs
+│   ├── domain/                 # Entities & business logic
+│   ├── infrastructure/         # API adapters & services
+│   └── presentation/           # UI components & hooks
+│
+├── 📁 tests/                   # E2E & integration tests
+├── docker-compose.yml          # Infrastructure stack
+└── package.json                # Frontend dependencies
 ```
 
 ---
 
-## 💻 Utilisation
+## 🐳 Services Architecture
 
-### Commandes Disponibles
+| Service | Port | Technology | Description |
+|---------|------|------------|-------------|
+| **Frontend** | 5173 (dev) / 3000 (prod) | React + Vite | Dashboard & marketplace UI |
+| **Auth** | 3001 | Node.js + JWT | Authentication & authorization |
+| **Product** | 3002 | Node.js + PostgreSQL | Product catalog |
+| **Order** | 3003 | Node.js + Saga | Order management |
+| **Payment** | 3004 | Node.js + Stripe | Payment processing |
+| **Delivery** | 3005 | Node.js + Socket.io | GPS tracking |
+| **Notification** | 3006 | Node.js + BullMQ | Multi-channel notifications |
+| **AI** | 3007 | Node.js + TensorFlow | ML recommendations |
+| **Analytics** | 3008 | Node.js + ClickHouse | Real-time analytics |
+| **Blockchain** | 3009 | Node.js + Hyperledger | Product traceability |
+| **Kong Gateway** | 8000 | Kong 3.5 | API Gateway |
+
+---
+
+## 🧪 Testing
 
 ```bash
-# Développement
-pnpm dev              # Lance le serveur de dev
-pnpm dev:host         # Dev avec accès réseau
+# Unit tests
+npm run test
 
-# Build
-pnpm build            # Build production
-pnpm preview          # Preview du build
+# Unit tests with watch mode
+npm run test:watch
 
-# Tests
-pnpm test             # Tests unitaires
-pnpm test:watch       # Tests en mode watch
-pnpm test:e2e         # Tests E2E
-pnpm test:coverage    # Rapport de coverage
+# Coverage report
+npm run test:coverage
 
-# Quality
-pnpm lint             # Vérifie le code
-pnpm lint:fix         # Corrige les erreurs
-pnpm format           # Formate le code
-pnpm typecheck        # Vérifie les types
+# E2E tests (Playwright)
+npm run test:e2e
 
-# Analysis
-pnpm analyze          # Analyse la taille du bundle
+# All tests
+npm run test:all
 ```
 
-### Accès à l'Application
+---
 
-Après `pnpm dev`, l'application est accessible sur :
+## 📦 Deployment
 
+### Local Development
+```bash
+# With mock auth (no backend needed)
+VITE_AUTH_PROVIDER=mock npm run dev
+
+# With full backend
+docker-compose up -d
+VITE_AUTH_PROVIDER=real npm run dev
 ```
-Local:   http://localhost:5173
-Network: http://192.168.x.x:5173
+
+### Production Build
+```bash
+npm run build
+npm run preview
 ```
 
-### Comptes de Test
+### Kubernetes Deployment
+```bash
+# Apply with Kustomize
+kubectl apply -k infrastructure/k8s/overlays/production
 
+# Or use ArgoCD
+kubectl apply -f infrastructure/argocd/applications.yml
 ```
-Admin:
-Email: admin@agrodeep.com
-Password: Admin123!
 
-User:
-Email: user@agrodeep.com
-Password: User123!
+---
 
-Carrier:
-Email: carrier@agrodeep.com
-Password: Carrier123!
+## 📈 Monitoring
+
+| Dashboard | URL | Credentials |
+|-----------|-----|-------------|
+| Grafana | http://localhost:3001 | admin / grafana_secure_2026 |
+| Prometheus | http://localhost:9090 | - |
+| Kong Admin | http://localhost:8001 | - |
+
+---
+
+## 🔐 Environment Variables
+
+Copy `.env.example` to `.env` and configure:
+
+```env
+# Authentication Provider
+VITE_AUTH_PROVIDER=mock           # mock | real
+
+# API Configuration
+VITE_API_GATEWAY_URL=http://localhost:8000/api/v1
+VITE_API_URL=http://localhost:8000/api/v1
+
+# Database (for production)
+POSTGRES_PASSWORD=your_password
+REDIS_PASSWORD=your_password
+
+# JWT (for production)
+JWT_ACCESS_SECRET=your_secret
+JWT_REFRESH_SECRET=your_secret
+
+# External Services (optional)
+STRIPE_SECRET_KEY=sk_test_...
+SENDGRID_API_KEY=SG....
+TWILIO_ACCOUNT_SID=AC...
 ```
 
 ---
 
 ## 📚 Documentation
 
-### Documentation Complète
-
-- [**ARCHITECTURE.md**](./docs/ARCHITECTURE.md) - Architecture détaillée
-- [**FOLDER_STRUCTURE.md**](./docs/FOLDER_STRUCTURE.md) - Structure des dossiers
-- [**DEVELOPMENT_GUIDE.md**](./docs/DEVELOPMENT_GUIDE.md) - Guide de développement
-- [**CONTRIBUTING.md**](./docs/CONTRIBUTING.md) - Guide de contribution
-- [**API_DOCUMENTATION.md**](./docs/API_DOCUMENTATION.md) - Documentation API
-
-### Guides Rapides
-
-#### Créer un Nouveau Composant
-
-```bash
-# Structure recommandée
-src/presentation/components/features/mon-module/
-├── MonComposant.tsx
-├── MonComposant.spec.tsx
-└── index.ts
-```
-
-#### Créer un Use Case
-
-```bash
-# Structure recommandée
-src/application/use-cases/mon-module/
-├── mon-action.usecase.ts
-├── mon-action.usecase.spec.ts
-└── index.ts
-```
-
-#### Ajouter une Route
-
-```typescript
-// src/presentation/routing/routes.tsx
-{
-  path: "/nouvelle-route",
-  element: <NouvellePage />,
-  guard: PrivateRoute
-}
-```
+- [Account Creation Guide](docs/ACCOUNT-CREATION-GUIDE.md) - User registration procedures
+- [Architecture Overview](docs/ARCHITECTURE.md) - System design and patterns
+- [API Endpoints](docs/API_ENDPOINTS.md) - Complete API reference
+- [Development Guide](docs/DEVELOPMENT_GUIDE.md) - Setup and coding standards
+- [Contributing](docs/CONTRIBUTING.md) - Contribution guidelines
 
 ---
 
-## 🤝 Contributing
+## 🔄 Recent Changes
 
-Les contributions sont les bienvenues ! Voici comment contribuer :
-
-1. **Fork** le repository
-2. **Clone** ton fork
-3. **Crée** une branche (`git checkout -b feature/ma-feature`)
-4. **Commit** tes changements (`git commit -m 'feat: add new feature'`)
-5. **Push** vers ta branche (`git push origin feature/ma-feature`)
-6. **Ouvre** une Pull Request
-
-Voir [CONTRIBUTING.md](./docs/CONTRIBUTING.md) pour plus de détails.
-
-### Standards de Commits
-
-Nous utilisons [Conventional Commits](https://www.conventionalcommits.org/) :
-
-```bash
-feat(scope): add new feature
-fix(scope): resolve bug
-docs(scope): update documentation
-style(scope): format code
-refactor(scope): restructure code
-test(scope): add tests
-chore(scope): update dependencies
-```
-
----
-
-## 🧪 Testing
-
-### Couverture de Tests
-
-```
-Domain Layer:       100% ████████████████████
-Application Layer:   90% ██████████████████
-Infrastructure:      70% ██████████████
-Presentation:        80% ████████████████
-```
-
-### Lancer les Tests
-
-```bash
-# Tests unitaires
-pnpm test
-
-# Tests E2E
-pnpm test:e2e
-
-# Rapport de coverage
-pnpm test:coverage
-```
-
----
-
-## 📈 Roadmap
-
-### Q1 2026
-
-- [x] Marketplace complet
-- [x] Transport & Logistics
-- [x] IoT Device Hub
-- [x] AI Insights
-- [x] Financial Suite
-
-### Q2 2026
-
-- [ ] Mobile App (React Native)
-- [ ] API publique REST/GraphQL
-- [ ] Intégrations tierces (Stripe, Twilio)
-- [ ] Multi-langue (i18n)
-
-### Q3 2026
-
-- [ ] Blockchain pour traçabilité
-- [ ] Marketplace B2B2C étendu
-- [ ] Module de formation (LMS)
-- [ ] Analytics avancés (ML)
-
----
-
-## 👥 Équipe
-
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/username1">
-        <img src="https://via.placeholder.com/100" width="100px;" alt=""/>
-        <br /><sub><b>John Doe</b></sub>
-      </a>
-      <br />Lead Developer
-    </td>
-    <td align="center">
-      <a href="https://github.com/username2">
-        <img src="https://via.placeholder.com/100" width="100px;" alt=""/>
-        <br /><sub><b>Jane Smith</b></sub>
-      </a>
-      <br />UI/UX Designer
-    </td>
-    <td align="center">
-      <a href="https://github.com/username3">
-        <img src="https://via.placeholder.com/100" width="100px;" alt=""/>
-        <br /><sub><b>Bob Johnson</b></sub>
-      </a>
-      <br />Backend Engineer
-    </td>
-  </tr>
-</table>
+### v2.0.0 - January 2026
+- **Rebranding**: Renamed from AgroDeep to AgroLogistic
+- **Multi-role Authentication**: Added support for Admin, Farmer, Buyer, Transporter roles
+- **Multi-step Registration**: New comprehensive registration form with role-specific fields
+- **Mock Auth Provider**: Development mode with demo accounts
+- **Code Cleanup**: Removed debug logging, optimized codebase
 
 ---
 
 ## 📄 License
 
-Ce projet est licensé sous la **MIT License** - voir [LICENSE](./LICENSE) pour plus de détails.
+MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-## 🙏 Remerciements
-
-- [React](https://reactjs.org/) - UI Library
-- [Tailwind CSS](https://tailwindcss.com/) - CSS Framework
-- [Supabase](https://supabase.com/) - Backend Platform
-- [Vercel](https://vercel.com/) - Deployment Platform
-- Tous nos [contributeurs](https://github.com/agrodeep/agrodeep-platform/contributors)
-
----
-
-## 📞 Contact
-
-- **Website**: [agrodeep.com](https://agrodeep.com)
-- **Email**: contact@agrodeep.com
-- **Twitter**: [@agrodeep](https://twitter.com/agrodeep)
-- **LinkedIn**: [AgroDeep](https://linkedin.com/company/agrodeep)
-
----
-
-<div align="center">
-
-**Fait avec ❤️ par l'équipe AgroDeep**
-
-[⬆ Retour en haut](#-agrodeep-platform)
-
-</div>
+**Built with ❤️ by the AgroLogistic Team**

@@ -252,7 +252,7 @@ export function AcademyPortal({ onNavigate }: { onNavigate: (route: string) => v
             <div className="p-3 bg-white/20 backdrop-blur-sm rounded-lg">
               <BookOpen className="h-8 w-8" />
             </div>
-            <h1 className="text-5xl font-bold">Académie AgroDeep</h1>
+            <h1 className="text-5xl font-bold">Académie AgroLogistic</h1>
           </div>
           <p className="text-xl opacity-90 mb-8">
             Votre université agricole digitale - Apprenez les meilleures pratiques pour chaque
@@ -591,7 +591,7 @@ export function AcademyPortal({ onNavigate }: { onNavigate: (route: string) => v
         <h2 className="text-3xl font-bold mb-4">Prêt à transformer votre agriculture ?</h2>
         <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
           Rejoignez des milliers d'agriculteurs qui ont déjà amélioré leurs rendements grâce à
-          l'Académie AgroDeep
+          l'Académie AgroLogistic
         </p>
         <div className="flex items-center justify-center gap-4">
           <button className="px-8 py-4 bg-white text-[#1A5D1A] rounded-lg font-semibold hover:bg-gray-100 transition-colors">

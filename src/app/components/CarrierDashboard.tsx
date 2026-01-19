@@ -20,6 +20,11 @@ import {
   MessageCircle,
   Download,
   Upload,
+  Activity,
+  Gauge,
+  Wrench,
+  AlertTriangle,
+  Users,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -45,7 +50,7 @@ export function CarrierDashboard() {
       type: "both",
       origin: "Toulouse, France",
       destination: "Lyon, France",
-      customer: "AgroDeep SAS",
+      customer: "AgroLogistic SAS",
       product: "Semences de maïs",
       weight: 500,
       distance: 360,
@@ -84,7 +89,7 @@ export function CarrierDashboard() {
     },
   ]);
 
-  const [selectedTab, setSelectedTab] = useState<"missions" | "route" | "documents" | "stats">("missions");
+  const [selectedTab, setSelectedTab] = useState<"missions" | "route" | "documents" | "stats" | "fleet">("missions");
 
   const stats = {
     totalMissions: 45,
@@ -95,6 +100,75 @@ export function CarrierDashboard() {
     rating: 4.8,
     totalDistance: 15420,
     fuelEfficiency: 8.5,
+  };
+
+  // Fleet management data
+  const [vehicles] = useState([
+    {
+      id: "V001",
+      plate: "AA-123-BB",
+      model: "Mercedes Actros",
+      driver: "Pierre Moreau",
+      status: "active" as const,
+      currentMission: "M001",
+      fuelLevel: 78,
+      mileage: 245680,
+      lastMaintenance: "2025-12-15",
+      nextMaintenance: "2026-02-15",
+      efficiency: 8.2,
+      emissions: 215,
+    },
+    {
+      id: "V002",
+      plate: "CC-456-DD",
+      model: "Volvo FH16",
+      driver: "Sophie Laurent",
+      status: "active" as const,
+      currentMission: "M002",
+      fuelLevel: 45,
+      mileage: 189340,
+      lastMaintenance: "2026-01-05",
+      nextMaintenance: "2026-03-05",
+      efficiency: 8.7,
+      emissions: 228,
+    },
+    {
+      id: "V003",
+      plate: "EE-789-FF",
+      model: "Scania R450",
+      driver: "Jean Dupont",
+      status: "maintenance" as const,
+      currentMission: null,
+      fuelLevel: 92,
+      mileage: 312450,
+      lastMaintenance: "2026-01-14",
+      nextMaintenance: "2026-01-20",
+      efficiency: 9.1,
+      emissions: 240,
+    },
+    {
+      id: "V004",
+      plate: "GG-321-HH",
+      model: "Renault T High",
+      driver: "Luc Bernard",
+      status: "idle" as const,
+      currentMission: null,
+      fuelLevel: 65,
+      mileage: 156720,
+      lastMaintenance: "2025-12-28",
+      nextMaintenance: "2026-02-28",
+      efficiency: 8.4,
+      emissions: 220,
+    },
+  ]);
+
+  const fleetStats = {
+    totalVehicles: vehicles.length,
+    activeVehicles: vehicles.filter((v) => v.status === "active").length,
+    maintenanceNeeded: vehicles.filter((v) => v.status === "maintenance" || new Date(v.nextMaintenance) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)).length,
+    avgFuelLevel: Math.round(vehicles.reduce((acc, v) => acc + v.fuelLevel, 0) / vehicles.length),
+    avgEfficiency: (vehicles.reduce((acc, v) => acc + v.efficiency, 0) / vehicles.length).toFixed(1),
+    totalMileage: vehicles.reduce((acc, v) => acc + v.mileage, 0),
   };
 
   const handleAcceptMission = (missionId: string) => {
@@ -235,6 +309,7 @@ export function CarrierDashboard() {
             <div className="flex gap-4">
               {[
                 { id: "missions", label: "Missions", icon: Package, count: stats.activeMissions },
+                { id: "fleet", label: "Gestion Flotte", icon: Truck, count: fleetStats.maintenanceNeeded },
                 { id: "route", label: "Optimisation Itinéraire", icon: Route },
                 { id: "documents", label: "Documents", icon: FileText },
                 { id: "stats", label: "Performances", icon: BarChart3 },
@@ -370,6 +445,189 @@ export function CarrierDashboard() {
                         </>
                       )}
                     </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Fleet Management Tab */}
+          {selectedTab === "fleet" && (
+            <div className="p-6">
+              {/* Fleet Overview Cards */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Truck className="h-5 w-5 text-blue-600" />
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Vehicules</span>
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{fleetStats.totalVehicles}</p>
+                </div>
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Activity className="h-5 w-5 text-green-600" />
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Actifs</span>
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{fleetStats.activeVehicles}</p>
+                </div>
+                <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Fuel className="h-5 w-5 text-orange-600" />
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Carburant Moy.</span>
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{fleetStats.avgFuelLevel}%</p>
+                </div>
+                <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Gauge className="h-5 w-5 text-purple-600" />
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Efficacite Moy.</span>
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{fleetStats.avgEfficiency} L</p>
+                </div>
+              </div>
+
+              {/* Vehicles List */}
+              <div className="space-y-4">
+                {vehicles.map((vehicle) => (
+                  <div
+                    key={vehicle.id}
+                    className="bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg p-6"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-start gap-4 flex-1">
+                        <div
+                          className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                            vehicle.status === "active"
+                              ? "bg-green-100 dark:bg-green-900/30"
+                              : vehicle.status === "maintenance"
+                              ? "bg-orange-100 dark:bg-orange-900/30"
+                              : "bg-gray-100 dark:bg-gray-700"
+                          }`}
+                        >
+                          <Truck
+                            className={`h-6 w-6 ${
+                              vehicle.status === "active"
+                                ? "text-green-600"
+                                : vehicle.status === "maintenance"
+                                ? "text-orange-600"
+                                : "text-gray-600"
+                            }`}
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="font-bold text-lg text-gray-900 dark:text-white">{vehicle.plate}</h3>
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                                vehicle.status === "active"
+                                  ? "bg-green-100 text-green-700"
+                                  : vehicle.status === "maintenance"
+                                  ? "bg-orange-100 text-orange-700"
+                                  : "bg-gray-100 text-gray-700"
+                              }`}
+                            >
+                              {vehicle.status === "active"
+                                ? "Actif"
+                                : vehicle.status === "maintenance"
+                                ? "Maintenance"
+                                : "Disponible"}
+                            </span>
+                            {vehicle.currentMission && (
+                              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
+                                Mission: {vehicle.currentMission}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                            {vehicle.model} • Conducteur: {vehicle.driver}
+                          </p>
+
+                          {/* Metrics Grid */}
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-600">
+                              <div className="flex items-center gap-2 mb-1">
+                                <Fuel className="h-4 w-4 text-orange-600" />
+                                <span className="text-xs text-gray-600 dark:text-gray-400">Carburant</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                  <div
+                                    className={`h-full ${
+                                      vehicle.fuelLevel > 60
+                                        ? "bg-green-500"
+                                        : vehicle.fuelLevel > 30
+                                        ? "bg-orange-500"
+                                        : "bg-red-500"
+                                    }`}
+                                    style={{ width: `${vehicle.fuelLevel}%` }}
+                                  />
+                                </div>
+                                <span className="text-sm font-bold text-gray-900 dark:text-white">{vehicle.fuelLevel}%</span>
+                              </div>
+                            </div>
+
+                            <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-600">
+                              <div className="flex items-center gap-2 mb-1">
+                                <Gauge className="h-4 w-4 text-purple-600" />
+                                <span className="text-xs text-gray-600 dark:text-gray-400">Kilometrage</span>
+                              </div>
+                              <p className="text-sm font-bold text-gray-900 dark:text-white">
+                                {vehicle.mileage.toLocaleString()} km
+                              </p>
+                            </div>
+
+                            <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-600">
+                              <div className="flex items-center gap-2 mb-1">
+                                <TrendingUp className="h-4 w-4 text-green-600" />
+                                <span className="text-xs text-gray-600 dark:text-gray-400">Efficacite</span>
+                              </div>
+                              <p className="text-sm font-bold text-gray-900 dark:text-white">{vehicle.efficiency} L/100km</p>
+                            </div>
+
+                            <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-600">
+                              <div className="flex items-center gap-2 mb-1">
+                                <Wrench className="h-4 w-4 text-blue-600" />
+                                <span className="text-xs text-gray-600 dark:text-gray-400">Prochaine Maint.</span>
+                              </div>
+                              <p className="text-xs font-bold text-gray-900 dark:text-white">
+                                {new Date(vehicle.nextMaintenance).toLocaleDateString("fr-FR")}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex flex-col gap-2 ml-4">
+                        {vehicle.status === "maintenance" && (
+                          <button className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-semibold text-sm flex items-center gap-2">
+                            <Wrench className="h-4 w-4" />
+                            Details Maint.
+                          </button>
+                        )}
+                        {vehicle.status === "idle" && (
+                          <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-sm flex items-center gap-2">
+                            <Package className="h-4 w-4" />
+                            Assigner Mission
+                          </button>
+                        )}
+                        <button className="px-4 py-2 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg font-semibold text-sm flex items-center gap-2">
+                          <Phone className="h-4 w-4" />
+                          Contacter
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Alert if maintenance needed soon */}
+                    {new Date(vehicle.nextMaintenance) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) && vehicle.status !== "maintenance" && (
+                      <div className="mt-4 p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4 text-orange-600 flex-shrink-0" />
+                        <p className="text-sm text-orange-700 dark:text-orange-400">
+                          Maintenance programmee dans{" "}
+                          {Math.ceil((new Date(vehicle.nextMaintenance).getTime() - Date.now()) / (24 * 60 * 60 * 1000))} jours
+                        </p>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

@@ -104,7 +104,7 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
       icon: LinkIcon,
       emoji: "🔌",
       title: "API Management",
-      description: "Intégrez AgroDeep avec vos systèmes existants",
+      description: "Intégrez AgroLogistic avec vos systèmes existants",
       color: "orange",
       route: "/",
     },
@@ -198,7 +198,7 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#2563eb]">
                 <span className="text-xl font-bold text-white">A</span>
               </div>
-              <span className="text-2xl font-bold">AgroDeep</span>
+              <span className="text-2xl font-bold">AgroLogistic</span>
             </button>
 
             {/* Navigation Links */}
@@ -334,7 +334,7 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
       <section id="ecosystem" className="py-20 px-6 bg-muted/30">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">L'écosystème AgroDeep complet</h2>
+            <h2 className="text-4xl font-bold mb-4">L'écosystème AgroLogistic complet</h2>
             <p className="text-xl text-muted-foreground">
               Découvrez tous nos modules intégrés pour une agriculture intelligente
             </p>
@@ -519,8 +519,8 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
                   </div>
                   <div>
                     <div className="font-semibold mb-1">Email</div>
-                    <a href="mailto:contact@agrodeep.com" className="text-muted-foreground hover:text-[#2563eb]">
-                      contact@agrodeep.com
+                    <a href="mailto:contact@AgroLogistic.com" className="text-muted-foreground hover:text-[#2563eb]">
+                      contact@AgroLogistic.com
                     </a>
                   </div>
                 </div>
@@ -609,7 +609,7 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b">
               <div>
-                <h2 className="text-2xl font-bold">Démonstration Interactive AgroDeep</h2>
+                <h2 className="text-2xl font-bold">Démonstration Interactive AgroLogistic</h2>
                 <p className="text-muted-foreground">Explorez nos modules en action</p>
               </div>
               <button
@@ -694,7 +694,7 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#2563eb]">
                   <span className="text-xl font-bold text-white">A</span>
                 </div>
-                <span className="text-xl font-bold">AgroDeep</span>
+                <span className="text-xl font-bold">AgroLogistic</span>
               </div>
               <p className="text-sm text-muted-foreground">
                 La plateforme complète pour l'agriculture intelligente
@@ -732,7 +732,7 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
           </div>
 
           <div className="mt-12 pt-8 border-t text-center text-sm text-muted-foreground">
-            <p>© 2025 AgroDeep. Tous droits réservés.</p>
+            <p>© 2025 AgroLogistic. Tous droits réservés.</p>
           </div>
         </div>
       </footer>

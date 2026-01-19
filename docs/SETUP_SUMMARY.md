@@ -1,4 +1,4 @@
-# 📋 AgroDeep - Résumé de Configuration Complète
+# 📋 AgroLogistic - Résumé de Configuration Complète
 
 ## ✅ PHASE 1 : DOCUMENTATION ARCHITECTURE - **COMPLÈTE**
 
@@ -381,10 +381,10 @@ Lignes de Code: 10,000+
 
 ### Besoin d'Aide ?
 
-- 📧 **Email**: dev@agrodeep.com
+- 📧 **Email**: dev@AgroLogistic.com
 - 💬 **Discord**: [Lien Discord]
-- 🐛 **Issues**: [GitHub Issues](https://github.com/agrodeep/agrodeep-platform/issues)
-- 📖 **Wiki**: [GitHub Wiki](https://github.com/agrodeep/agrodeep-platform/wiki)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/AgroLogistic/AgroLogistic-platform/issues)
+- 📖 **Wiki**: [GitHub Wiki](https://github.com/AgroLogistic/AgroLogistic-platform/wiki)
 
 ### Contribuer
 
@@ -453,8 +453,8 @@ Voir [CONTRIBUTING.md](./CONTRIBUTING.md) pour les guidelines complètes.
 
 <div align="center">
 
-**🌾 AgroDeep Platform - Ready for Production Development 🚀**
+**🌾 AgroLogistic Platform - Ready for Production Development 🚀**
 
-[⬆ Retour en haut](#-agrodeep---résumé-de-configuration-complète)
+[⬆ Retour en haut](#-AgroLogistic---résumé-de-configuration-complète)
 
 </div>

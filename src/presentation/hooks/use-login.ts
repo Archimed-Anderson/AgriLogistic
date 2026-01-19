@@ -1,14 +1,12 @@
 import { useState } from 'react';
-import { LoginUseCase } from '../../application/use-cases/auth/login.use-case';
-import { MockAuthAdapter } from '../../infrastructure/adapters/mock-auth.adapter';
 import { LoginRequestDTO } from '../../application/dto/request/login-request.dto';
 import { toast } from 'sonner';
-
-// In a real app, this would be injected via Context/Provider
-const authAdapter = new MockAuthAdapter();
-const loginUseCase = new LoginUseCase(authAdapter);
+import { useAuth } from '../contexts/AuthContext';
+import { ErrorHandler } from '../utils/error-handler';
+import { APIError } from '../../infrastructure/api/rest/api-client-enhanced';
 
 export function useLogin() {
+  const { login: authLogin, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -17,22 +15,37 @@ export function useLogin() {
     setError(null);
 
     try {
-      const response = await loginUseCase.execute(credentials);
-      toast.success(`Bienvenue, ${response.user.firstName} !`);
+      const response = await authLogin(credentials);
+      setIsLoading(false);
+      toast.success(`Bienvenue, ${response.user.firstName} !`, {
+        description: 'Connexion réussie',
+        duration: 3000,
+      });
       return response;
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Une erreur est survenue';
-      setError(message);
-      toast.error(message);
-      throw err;
-    } finally {
       setIsLoading(false);
+      
+      // Use enhanced error handler
+      const friendlyError = ErrorHandler.toUserFriendly(err);
+      setError(friendlyError.message);
+      
+      // Show error toast with actionable advice
+      toast.error(friendlyError.title, {
+        description: `${friendlyError.message}\n${friendlyError.actionable}`,
+        duration: 5000,
+        action: friendlyError.canRetry ? {
+          label: 'Réessayer',
+          onClick: () => login(credentials),
+        } : undefined,
+      });
+      
+      throw err;
     }
   };
 
   return {
     login,
-    isLoading,
+    isLoading: isLoading || authLoading,
     error,
   };
 }

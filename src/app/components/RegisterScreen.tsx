@@ -71,7 +71,7 @@ export function RegisterScreen({ onNavigate }: RegisterScreenProps) {
           </div>
           <CardTitle className="text-2xl">Create your account</CardTitle>
           <CardDescription>
-            Join AgroDeep to manage your agricultural supply chain
+            Join AgroLogistic to manage your agricultural supply chain
           </CardDescription>
         </CardHeader>
         <CardContent>

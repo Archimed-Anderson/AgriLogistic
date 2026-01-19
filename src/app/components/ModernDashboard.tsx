@@ -172,7 +172,7 @@ export function ModernDashboard() {
                 </div>
                 <div>
                   <h1 className="text-4xl font-bold text-white">
-                    Bienvenue sur AgroDeep
+                    Bienvenue sur AgroLogistic
                   </h1>
                   <p className="text-white/90 text-lg mt-1">
                     Votre plateforme intelligente pour l'agriculture moderne
@@ -490,7 +490,7 @@ export function ModernDashboard() {
               </span>
             </div>
             <h3 className="text-3xl font-bold mb-3">
-              Programme d'Affiliation AgroDeep
+              Programme d'Affiliation AgroLogistic
             </h3>
             <p className="text-white/90 mb-6 max-w-2xl text-lg">
               Générez des revenus passifs en partageant nos produits agricoles de qualité. 
@@ -750,8 +750,8 @@ export function ModernDashboard() {
                 </div>
                 <div>
                   <p className="font-medium text-gray-900 dark:text-white">Email</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">contact@agrodeep.com</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">support@agrodeep.com</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">contact@AgroLogistic.com</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">support@AgroLogistic.com</p>
                 </div>
               </div>
 
@@ -827,7 +827,7 @@ export function ModernDashboard() {
               <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-[#0B7A4B] to-[#1A5F7A] flex items-center justify-center">
                 <Sprout className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900 dark:text-white">AgroDeep</span>
+              <span className="text-xl font-bold text-gray-900 dark:text-white">AgroLogistic</span>
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
               La plateforme complète pour l'agriculture intelligente et durable
@@ -944,7 +944,7 @@ export function ModernDashboard() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
               <Shield className="h-4 w-4" />
-              © 2026 AgroDeep. Tous droits réservés.
+              © 2026 AgroLogistic. Tous droits réservés.
             </p>
             <div className="flex gap-6 text-sm">
               <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors">

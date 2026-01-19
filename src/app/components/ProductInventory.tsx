@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, ChangeEvent } from "react";
 import {
   Package,
   TrendingUp,
@@ -20,6 +20,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import { toast } from "sonner";
+import * as XLSX from "xlsx";
 import {
   LineChart,
   Line,
@@ -34,7 +35,7 @@ import {
 } from "recharts";
 
 // Types
-interface Product {
+export interface Product {
   id: number;
   name: string;
   sku: string;
@@ -56,6 +57,117 @@ interface StockMovement {
   date: string;
   user: string;
   reason?: string;
+}
+
+// Import/Export helpers
+export function mapInventoryRowToProduct(row: any, id: number) {
+  const name = (row.name ?? row.Nom ?? row["Nom"] ?? "").toString().trim();
+  const sku = (row.sku ?? row.SKU ?? "").toString().trim();
+  const category = (
+    row.category ??
+    row.Catégorie ??
+    row["Categorie"] ??
+    row["Catégorie"] ??
+    ""
+  )
+    .toString()
+    .trim();
+
+  const currentStockRaw =
+    row.currentStock ??
+    row["Stock actuel"] ??
+    row.Stock ??
+    row.Quantité ??
+    row["Quantite"];
+  const reorderPointRaw =
+    row.reorderPoint ??
+    row["Point de réapprovisionnement"] ??
+    row["Point de réappro"] ??
+    row["Seuil d'alerte"];
+  const maxStockRaw =
+    row.maxStock ??
+    row["Stock maximum"] ??
+    row["Stock max"];
+  const unitPriceRaw =
+    row.unitPrice ??
+    row["Prix unitaire"] ??
+    row["Prix"];
+
+  const supplierValue = (row.supplier ?? row.Fournisseur ?? "").toString().trim();
+  const descriptionValue = (row.description ?? row.Description ?? "").toString().trim();
+
+  const supplier = supplierValue || undefined;
+  const description = descriptionValue || undefined;
+
+  const hasNumericValues =
+    currentStockRaw !== undefined &&
+    currentStockRaw !== null &&
+    currentStockRaw !== "" &&
+    reorderPointRaw !== undefined &&
+    reorderPointRaw !== null &&
+    reorderPointRaw !== "" &&
+    maxStockRaw !== undefined &&
+    maxStockRaw !== null &&
+    maxStockRaw !== "" &&
+    unitPriceRaw !== undefined &&
+    unitPriceRaw !== null &&
+    unitPriceRaw !== "";
+
+  if (!name || !sku || !category) {
+    return { error: "Champs obligatoires manquants" };
+  }
+
+  if (!hasNumericValues) {
+    return { error: "Valeurs numériques manquantes" };
+  }
+
+  const currentStock = Number(currentStockRaw);
+  const reorderPoint = Number(reorderPointRaw);
+  const maxStock = Number(maxStockRaw);
+  const unitPrice = Number(unitPriceRaw);
+
+  if (
+    Number.isNaN(currentStock) ||
+    Number.isNaN(reorderPoint) ||
+    Number.isNaN(maxStock) ||
+    Number.isNaN(unitPrice)
+  ) {
+    return { error: "Valeurs numériques invalides" };
+  }
+
+  if (currentStock < 0 || reorderPoint < 0 || maxStock <= 0 || unitPrice < 0) {
+    return { error: "Valeurs numériques négatives ou nulles interdites" };
+  }
+
+  const product: Product = {
+    id,
+    name,
+    sku,
+    category,
+    currentStock,
+    reorderPoint,
+    maxStock,
+    unitPrice,
+    supplier,
+    description,
+  };
+
+  return { product };
+}
+
+export function buildInventoryExportData(products: Product[]) {
+  return products.map((product) => ({
+    ID: product.id,
+    Nom: product.name,
+    SKU: product.sku,
+    Catégorie: product.category,
+    "Stock actuel": product.currentStock,
+    "Point de réapprovisionnement": product.reorderPoint,
+    "Stock maximum": product.maxStock,
+    "Prix unitaire (€)": product.unitPrice,
+    Fournisseur: product.supplier || "",
+    Description: product.description || "",
+  }));
 }
 
 // Mock data - 12 produits agricoles
@@ -247,6 +359,7 @@ export function ProductInventory() {
   const [adjustmentReason, setAdjustmentReason] = useState("Réception");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Calcul des KPIs
   const totalProducts = products.length;
@@ -351,6 +464,108 @@ export function ProductInventory() {
     toast.success("Données de stock actualisées");
   };
 
+  const handleImportClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleImportChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      try {
+        const data = e.target?.result;
+        if (!data) {
+          toast.error("Fichier vide ou illisible");
+          return;
+        }
+
+        const workbook = XLSX.read(data, { type: "binary" });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+        if (!Array.isArray(jsonData) || jsonData.length === 0) {
+          toast.error("Aucune donnée trouvée dans le fichier");
+          return;
+        }
+
+        const maxId = products.reduce((max, p) => Math.max(max, p.id), 0);
+        let nextId = maxId + 1;
+        const importedProducts: Product[] = [];
+        let errorCount = 0;
+
+        jsonData.forEach((row, index) => {
+          const result = mapInventoryRowToProduct(row, nextId);
+          if (result.product) {
+            importedProducts.push(result.product);
+            nextId += 1;
+          } else {
+            errorCount += 1;
+          }
+        });
+
+        if (importedProducts.length === 0) {
+          toast.error("Aucun produit valide trouvé dans le fichier");
+          if (errorCount > 0) {
+            toast.info(`${errorCount} ligne(s) ignorée(s) pour cause d'erreur`);
+          }
+          return;
+        }
+
+        setProducts([...products, ...importedProducts]);
+        toast.success(`${importedProducts.length} produit(s) importé(s) avec succès`);
+        if (errorCount > 0) {
+          toast.info(`${errorCount} ligne(s) ignorée(s) pour cause d'erreur`);
+        }
+      } catch (error) {
+        toast.error("Erreur lors de la lecture du fichier");
+      }
+    };
+
+    reader.onerror = () => {
+      toast.error("Erreur lors de la lecture du fichier");
+    };
+
+    reader.readAsBinaryString(file);
+  };
+
+  const handleExport = () => {
+    if (products.length === 0) {
+      toast.info("Aucun produit à exporter");
+      return;
+    }
+
+    const exportData = buildInventoryExportData(products);
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+
+    const colWidths = [
+      { wch: 6 },
+      { wch: 24 },
+      { wch: 16 },
+      { wch: 16 },
+      { wch: 26 },
+      { wch: 16 },
+      { wch: 18 },
+      { wch: 24 },
+      { wch: 40 },
+    ];
+    (worksheet as any)["!cols"] = colWidths;
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Inventaire");
+
+    const filename = `AgroLogistic_Inventaire_${new Date().toISOString().split("T")[0]}.xlsx`;
+    XLSX.writeFile(workbook, filename);
+
+    toast.success(`Export Excel réussi : ${products.length} produit(s)`);
+  };
+
   const categories = ["Légumes", "Fruits", "Produits Laitiers", "Autres"];
 
   return (
@@ -364,8 +579,15 @@ export function ProductInventory() {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".csv,.xlsx,.xls"
+            className="hidden"
+            onChange={handleImportChange}
+          />
           <button
-            onClick={() => toast.info("Import en masse - Fonctionnalité à venir")}
+            onClick={handleImportClick}
             className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-accent transition-colors"
           >
             <Upload className="h-4 w-4" />
@@ -649,7 +871,7 @@ export function ProductInventory() {
               {/* Action Buttons */}
               <div className="flex gap-2">
                 <button
-                  onClick={() => toast.success("Export Excel lancé")}
+                  onClick={handleExport}
                   className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-accent transition-colors"
                   title="Exporter"
                 >

@@ -21,6 +21,8 @@ interface NavbarProps {
   isAuthenticated?: boolean;
   adminMode?: boolean;
   onAdminModeChange?: (value: boolean) => void;
+  userLabel?: string;
+  onLogout?: () => void;
 }
 
 export function Navbar({
@@ -32,6 +34,8 @@ export function Navbar({
   isAuthenticated = false,
   adminMode = false,
   onAdminModeChange,
+  userLabel,
+  onLogout,
 }: NavbarProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showCart, setShowCart] = useState(false);
@@ -51,7 +55,7 @@ export function Navbar({
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#2563eb]">
               <span className="text-lg font-bold text-white">A</span>
             </div>
-            <span className="text-xl font-bold">AgroDeep</span>
+            <span className="text-xl font-bold">AgroLogistic</span>
           </button>
 
           {/* Main Navigation */}
@@ -222,7 +226,7 @@ export function Navbar({
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="h-9 px-3 gap-2">
                     <User className="h-5 w-5" />
-                    <span className="hidden md:inline text-sm">Admin</span>
+                    <span className="hidden md:inline text-sm">{userLabel || "Compte"}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-64">
@@ -265,8 +269,8 @@ export function Navbar({
           )}
 
           {!isAuthenticated && (
-            <Button onClick={() => onNavigate("/login")} className="bg-[#2563eb] hover:bg-[#1d4ed8]">
-              Sign In
+            <Button onClick={() => onNavigate("/auth")} className="bg-[#2563eb] hover:bg-[#1d4ed8]">
+              Connexion
             </Button>
           )}
         </div>
@@ -278,7 +282,11 @@ export function Navbar({
           onClose={() => setShowSignOutModal(false)}
           onConfirm={() => {
             setShowSignOutModal(false);
-            onNavigate("/");
+            if (onLogout) {
+              onLogout();
+            } else {
+              onNavigate("/");
+            }
           }}
         />
       )}

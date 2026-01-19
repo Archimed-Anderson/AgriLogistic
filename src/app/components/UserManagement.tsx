@@ -62,7 +62,7 @@ const mockUsers: User[] = [
   {
     id: 1,
     name: "Sophie Leroy",
-    email: "sophie.leroy@agrodeep.fr",
+    email: "sophie.leroy@AgroLogistic.fr",
     role: "Admin",
     status: "Actif",
     registrationDate: "12/08/2025",
@@ -164,7 +164,7 @@ const mockUsers: User[] = [
   {
     id: 7,
     name: "Julie Moreau",
-    email: "julie.moreau@agrodeep.fr",
+    email: "julie.moreau@AgroLogistic.fr",
     role: "Admin",
     status: "Actif",
     registrationDate: "18/08/2025",
@@ -362,7 +362,7 @@ export function UserManagement() {
     XLSX.utils.book_append_sheet(wb, ws, "Utilisateurs");
 
     // Générer le fichier Excel
-    const filename = `AgroDeep_Utilisateurs_${new Date().toISOString().split('T')[0]}.xlsx`;
+    const filename = `AgroLogistic_Utilisateurs_${new Date().toISOString().split('T')[0]}.xlsx`;
     XLSX.writeFile(wb, filename);
 
     toast.success(`Export Excel réussi : ${filteredUsers.length} utilisateur(s) exporté(s)`);
@@ -392,7 +392,7 @@ export function UserManagement() {
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `AgroDeep_Utilisateurs_${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `AgroLogistic_Utilisateurs_${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
 
     toast.success("Export CSV lancé (250 utilisateurs)");
@@ -448,7 +448,7 @@ export function UserManagement() {
   // Rapports d'activité
   const handleGenerateReport = (reportType: string, format: string) => {
     const reportData = {
-      title: `Rapport ${reportType} - AgroDeep`,
+      title: `Rapport ${reportType} - AgroLogistic`,
       generatedAt: new Date().toLocaleString("fr-FR"),
       totalUsers: mockUsers.length,
       activeUsers: mockUsers.filter((u) => u.status === "Actif").length,
@@ -504,7 +504,7 @@ export function UserManagement() {
       wsDetail['!cols'] = Array(9).fill({ wch: 15 });
       XLSX.utils.book_append_sheet(wb, wsDetail, "Détails");
 
-      const filename = `Rapport_AgroDeep_${reportType}_${new Date().toISOString().split('T')[0]}.xlsx`;
+      const filename = `Rapport_AgroLogistic_${reportType}_${new Date().toISOString().split('T')[0]}.xlsx`;
       XLSX.writeFile(wb, filename);
 
       toast.success(`Rapport Excel "${reportType}" généré avec succès`);
@@ -589,7 +589,7 @@ export function UserManagement() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Gestion des Utilisateurs</h1>
           <p className="text-muted-foreground mt-2">
-            Gérez tous les utilisateurs de la plateforme AgroDeep
+            Gérez tous les utilisateurs de la plateforme AgroLogistic
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -1164,7 +1164,7 @@ export function UserManagement() {
                     const wb = XLSX.utils.book_new();
                     const ws = XLSX.utils.json_to_sheet(templateData);
                     XLSX.utils.book_append_sheet(wb, ws, "Template");
-                    XLSX.writeFile(wb, "AgroDeep_Template_Import.xlsx");
+                    XLSX.writeFile(wb, "AgroLogistic_Template_Import.xlsx");
                     toast.success("Template téléchargé");
                   }}
                   className="text-sm text-[#2563eb] hover:underline flex items-center gap-1"

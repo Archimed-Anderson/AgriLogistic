@@ -1,1 +1,3 @@
 // Application Configuration
+
+export {};

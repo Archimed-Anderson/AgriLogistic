@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  product-db:
+    image: postgres:15-alpine
+    container_name: AgroLogistic-product-db
+    environment:
+      POSTGRES_DB: ${DB_NAME:-AgroLogistic_products}
+      POSTGRES_USER: ${DB_USER:-AgroLogistic}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-AgroLogistic_password}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "${DB_PORT:-5434}:5432"
+    volumes:
+      - product-db-data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+    networks:
+      - AgroLogistic-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-AgroLogistic}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: AgroLogistic-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - AgroLogistic-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  product-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: AgroLogistic-product-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 3002
+      DB_HOST: product-db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-AgroLogistic_products}
+      DB_USER: ${DB_USER:-AgroLogistic}
+      DB_PASSWORD: ${DB_PASSWORD:-AgroLogistic_password}
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+    ports:
+      - "3002:3002"
+    depends_on:
+      product-db:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - AgroLogistic-network
+    restart: unless-stopped
+
+volumes:
+  product-db-data:
+  elasticsearch-data:
+
+networks:
+  AgroLogistic-network:
+    external: true

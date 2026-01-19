@@ -1,19 +1,19 @@
 {
-  "name": "agrodeep-platform",
+  "name": "agrologistic-platform",
   "description": "Plateforme SaaS complète pour la chaîne d'approvisionnement agricole",
   "version": "2.0.0",
   "private": true,
   "type": "module",
-  "author": "AgroDeep Team <dev@agrodeep.com>",
+  "author": "AgroLogistic Team <dev@agrologistic.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/agrodeep/agrodeep-platform.git"
+    "url": "https://github.com/agrologistic/agrologistic-platform.git"
   },
   "bugs": {
-    "url": "https://github.com/agrodeep/agrodeep-platform/issues"
+    "url": "https://github.com/agrologistic/agrologistic-platform/issues"
   },
-  "homepage": "https://agrodeep.com",
+  "homepage": "https://agrologistic.com",
   "keywords": [
     "agriculture",
     "saas",
@@ -44,7 +44,15 @@
     "test:e2e:ui": "playwright test --ui",
     "prepare": "husky install",
     "clean": "rm -rf dist node_modules .vite",
-    "validate": "npm run typecheck && npm run lint && npm run format:check && npm run test:ci"
+    "validate": "npm run typecheck && npm run lint && npm run format:check && npm run test:ci",
+    "validate:env": "node scripts/validate-env.js",
+    "check:health": "node scripts/check-health.js",
+    "test:all": "node scripts/run-all-tests.js",
+    "pre-deploy": "node scripts/pre-deploy-check.js",
+    "analyze:homepage": "node scripts/run-homepage-analysis.js",
+    "test:login": "node scripts/run-login-tests.js",
+    "test:modern-login": "node scripts/run-modern-login-tests.js",
+    "lighthouse": "node scripts/lighthouse-audit.js"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",
@@ -102,9 +110,11 @@
     "tailwind-merge": "3.2.0",
     "tw-animate-css": "1.3.8",
     "vaul": "1.1.2",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "zustand": "^5.0.10"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "@tailwindcss/vite": "4.1.12",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
@@ -122,6 +132,8 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-react-refresh": "0.4.3",
     "husky": "8.0.3",
+    "imagemin-cli": "^8.0.0",
+    "imagemin-webp": "^8.0.0",
     "jsdom": "^27.4.0",
     "playwright": "1.40.0",
     "prettier": "3.0.3",

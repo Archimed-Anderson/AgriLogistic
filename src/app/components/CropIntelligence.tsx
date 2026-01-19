@@ -34,6 +34,12 @@ import {
   Sprout,
   Leaf,
   Wheat,
+  Camera,
+  Upload,
+  Sparkles,
+  Brain,
+  FileImage,
+  RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -50,11 +56,40 @@ interface Field {
   lastUpdated: string;
 }
 
+interface DiseaseDetection {
+  id: string;
+  name: string;
+  confidence: number;
+  severity: "low" | "medium" | "high" | "critical";
+  affectedArea: number;
+  detectionMethod: "visual" | "ai_image" | "sensor" | "manual";
+  symptoms: string[];
+  treatments: Array<{
+    type: string;
+    product: string;
+    dosage: string;
+    timing: string;
+    cost: number;
+  }>;
+  spread: "contained" | "spreading" | "widespread";
+  imageUrl?: string;
+  detectedAt: string;
+  fieldId: string;
+  preventionTips?: string[];
+}
+
 export function CropIntelligence() {
   const [activeView, setActiveView] = useState<"overview" | "mapping" | "growth" | "disease" | "irrigation" | "weather">("overview");
   const [selectedField, setSelectedField] = useState<string | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState("7days");
   const [mapLayer, setMapLayer] = useState<"satellite" | "ndvi" | "moisture" | "temperature">("ndvi");
+  
+  // AI Disease Detection State
+  const [showImageUpload, setShowImageUpload] = useState(false);
+  const [analyzingImage, setAnalyzingImage] = useState(false);
+  const [detections, setDetections] = useState<DiseaseDetection[]>([]);
+  const [selectedDetection, setSelectedDetection] = useState<DiseaseDetection | null>(null);
+  const [aiDetectionEnabled, setAiDetectionEnabled] = useState(true);
 
   // KPIs Data
   const kpis = [
@@ -191,6 +226,76 @@ export function CropIntelligence() {
     },
   ];
 
+  // AI Disease Detection Sample Data
+  const sampleDetections: DiseaseDetection[] = [
+    {
+      id: "DET-001",
+      name: "Mildiou du Maïs",
+      confidence: 94.5,
+      severity: "high",
+      affectedArea: 12.3,
+      detectionMethod: "ai_image",
+      symptoms: [
+        "Taches irrégulières jaune-brun sur feuilles",
+        "Moisissure blanche au revers des feuilles",
+        "Flétrissement des zones affectées",
+      ],
+      treatments: [
+        {
+          type: "Fongicide préventif",
+          product: "Métalaxyl + Mancozèbe",
+          dosage: "2.5 kg/ha",
+          timing: "Immédiat + rappel 10j",
+          cost: 145,
+        },
+        {
+          type: "Fongicide curatif",
+          product: "Cymoxanil",
+          dosage: "0.5 L/ha",
+          timing: "Dans les 48h",
+          cost: 95,
+        },
+      ],
+      spread: "spreading",
+      detectedAt: "Il y a 2 heures",
+      fieldId: "F001",
+      preventionTips: [
+        "Améliorer drainage parcelle",
+        "Réduire humidité feuillage",
+        "Appliquer rotation avec légumineuses",
+      ],
+    },
+    {
+      id: "DET-002",
+      name: "Rouille du Blé",
+      confidence: 87.2,
+      severity: "medium",
+      affectedArea: 5.8,
+      detectionMethod: "ai_image",
+      symptoms: [
+        "Pustules orangées circulaires",
+        "Poudre rouille au toucher",
+        "Jaunissement précoce feuilles",
+      ],
+      treatments: [
+        {
+          type: "Fongicide systémique",
+          product: "Triazole (Tébuconazole)",
+          dosage: "1.0 L/ha",
+          timing: "Stade épiaison",
+          cost: 68,
+        },
+      ],
+      spread: "contained",
+      detectedAt: "Il y a 5 heures",
+      fieldId: "F002",
+      preventionTips: [
+        "Variétés résistantes pour prochaine saison",
+        "Surveiller conditions météo favorables",
+      ],
+    },
+  ];
+
   // Weather data
   const weatherData = {
     current: {
@@ -227,6 +332,82 @@ export function CropIntelligence() {
       rainy: CloudRain,
     };
     return icons[condition] || Sun;
+  };
+
+  // AI Disease Detection Functions
+  const analyzeImage = async () => {
+    setAnalyzingImage(true);
+    toast.info("Analyse IA de l'image en cours...");
+
+    // Simulate AI image analysis (2.5 seconds)
+    await new Promise((resolve) => setTimeout(resolve, 2500));
+
+    // Simulate AI detection results
+    const newDetection: DiseaseDetection = {
+      id: `DET-${Date.now()}`,
+      name: Math.random() > 0.5 ? "Mildiou" : "Rouille",
+      confidence: Math.round(85 + Math.random() * 12),
+      severity: ["low", "medium", "high"][Math.floor(Math.random() * 3)] as any,
+      affectedArea: Math.round(Math.random() * 20 * 10) / 10,
+      detectionMethod: "ai_image",
+      symptoms: [
+        "Taches anormales détectées",
+        "Décoloration du feuillage",
+        "Pattern caractéristique identifié",
+      ],
+      treatments: [
+        {
+          type: "Fongicide",
+          product: "Traitement adapté",
+          dosage: "Selon analyse",
+          timing: "Sous 48h",
+          cost: Math.round(80 + Math.random() * 100),
+        },
+      ],
+      spread: ["contained", "spreading"][Math.floor(Math.random() * 2)] as any,
+      detectedAt: "A l'instant",
+      fieldId: selectedField || "F001",
+      preventionTips: [
+        "Surveiller évolution quotidiennement",
+        "Isoler zone affectée si possible",
+      ],
+    };
+
+    setDetections((prev) => [newDetection, ...prev]);
+    setAnalyzingImage(false);
+    toast.success(`Maladie détectée: ${newDetection.name} (confiance ${newDetection.confidence}%)`, {
+      description: "Consultez les détails pour le traitement recommandé",
+    });
+    setShowImageUpload(false);
+  };
+
+  const getSeverityConfig = (severity: string) => {
+    const configs: { [key: string]: { bg: string; text: string; border: string; icon: any } } = {
+      low: { bg: "bg-green-100 dark:bg-green-900/20", text: "text-green-700", border: "border-green-300", icon: CheckCircle },
+      medium: { bg: "bg-orange-100 dark:bg-orange-900/20", text: "text-orange-700", border: "border-orange-300", icon: AlertTriangle },
+      high: { bg: "bg-red-100 dark:bg-red-900/20", text: "text-red-700", border: "border-red-300", icon: XCircle },
+      critical: { bg: "bg-red-200 dark:bg-red-900/40", text: "text-red-900", border: "border-red-500", icon: XCircle },
+    };
+    return configs[severity] || configs.low;
+  };
+
+  const getSpreadLabel = (spread: string) => {
+    const labels: { [key: string]: string } = {
+      contained: "Contenue",
+      spreading: "En propagation",
+      widespread: "Généralisée",
+    };
+    return labels[spread] || spread;
+  };
+
+  const applyTreatment = (detectionId: string, treatmentIndex: number) => {
+    const detection = [...sampleDetections, ...detections].find((d) => d.id === detectionId);
+    if (!detection) return;
+
+    const treatment = detection.treatments[treatmentIndex];
+    toast.success(`Traitement appliqué: ${treatment.product}`, {
+      description: `Coût estimé: ${treatment.cost}€ | ${treatment.timing}`,
+    });
   };
 
   const renderOverview = () => (
@@ -566,91 +747,251 @@ export function CropIntelligence() {
 
   const renderDisease = () => (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold">Surveillance des Maladies</h2>
-        <p className="text-muted-foreground">Base de données et alertes précoces</p>
-      </div>
-
-      {/* Disease Risk Map */}
-      <div className="bg-card border rounded-xl p-6">
-        <h3 className="text-lg font-semibold mb-4">Carte Thermique des Risques</h3>
-        <div className="grid grid-cols-4 gap-2">
-          {fields.map((field) => {
-            const riskColors = getRiskColor(field.diseaseRisk);
-            return (
-              <div
-                key={field.id}
-                className={`p-4 rounded-lg border-2 ${riskColors.bg} ${riskColors.border}`}
-              >
-                <div className="text-sm font-semibold">{field.name}</div>
-                <div className="text-xs text-muted-foreground">{field.crop}</div>
-                <div className={`text-xs font-bold mt-2 ${riskColors.text}`}>
-                  Risque: {field.diseaseRisk === "low" ? "Faible" : field.diseaseRisk === "medium" ? "Moyen" : "Élevé"}
-                </div>
-              </div>
-            );
-          })}
+      {/* Header with AI Upload */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold">Détection des Maladies IA</h2>
+          <p className="text-muted-foreground">Analyse d'images par intelligence artificielle</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowImageUpload(true)}
+            className="px-6 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all font-semibold flex items-center gap-2"
+          >
+            <Camera className="h-5 w-5" />
+            Analyser Image
+          </button>
+          <button
+            onClick={() => setAiDetectionEnabled(!aiDetectionEnabled)}
+            className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+              aiDetectionEnabled
+                ? "bg-green-100 text-green-700 dark:bg-green-900/30"
+                : "bg-gray-100 text-gray-700 dark:bg-gray-800"
+            }`}
+          >
+            {aiDetectionEnabled ? "IA Active" : "IA Inactive"}
+          </button>
         </div>
       </div>
 
-      {/* Diseases Database */}
-      <div className="bg-card border rounded-xl overflow-hidden">
-        <div className="p-6 border-b">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Base de Données Maladies</h3>
-            <button className="px-4 py-2 bg-[#2E8B57] text-white rounded-lg hover:bg-[#267049] transition-colors font-semibold flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Nouvelle Maladie
-            </button>
+      {/* AI Detection Banner */}
+      <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-2 border-purple-200 dark:border-purple-800 rounded-xl p-6">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-purple-100 dark:bg-purple-900/40 rounded-lg">
+            <Brain className="h-8 w-8 text-purple-600" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-bold text-lg mb-1">Moteur de Détection IA</h3>
+            <p className="text-sm text-muted-foreground">
+              {[...sampleDetections, ...detections].length} détections total | {detections.length} détections récentes
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-6 w-6 text-purple-600 animate-pulse" />
+            <span className="text-sm font-semibold text-purple-700 dark:text-purple-300">
+              Confiance moyenne: {Math.round([...sampleDetections, ...detections].reduce((acc, d) => acc + d.confidence, 0) / ([...sampleDetections, ...detections].length || 1))}%
+            </span>
           </div>
         </div>
+      </div>
 
-        <div className="divide-y">
-          {diseases.map((disease) => {
-            const severity = disease.severity as "low" | "medium" | "high";
-            const colors = getRiskColor(severity);
-            return (
-              <div key={disease.id} className="p-6 hover:bg-muted/50 transition-colors">
-                <div className="flex items-start gap-4">
-                  <div className="text-5xl">{disease.image}</div>
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <h4 className="font-semibold text-lg">{disease.name}</h4>
-                        <p className="text-sm text-muted-foreground">{disease.symptoms}</p>
-                      </div>
-                      <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${colors.text} ${colors.bg}`}
-                      >
-                        Sévérité: {severity === "low" ? "Faible" : severity === "medium" ? "Moyenne" : "Élevée"}
-                      </span>
-                    </div>
+      {/* AI Detections List */}
+      <div className="space-y-4">
+        {[...sampleDetections, ...detections].map((detection) => {
+          const severityConfig = getSeverityConfig(detection.severity);
+          const SeverityIcon = severityConfig.icon;
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                      <div className="p-3 bg-muted rounded-lg">
-                        <div className="text-xs text-muted-foreground">Parcelles touchées</div>
-                        <div className="text-xl font-bold">{disease.affectedFields}</div>
+          return (
+            <div
+              key={detection.id}
+              className={`bg-card border-2 rounded-xl p-6 hover:shadow-lg transition-all ${severityConfig.border}`}
+            >
+              <div className="flex items-start gap-4">
+                <div className={`p-3 rounded-lg ${severityConfig.bg}`}>
+                  <SeverityIcon className={`h-6 w-6 ${severityConfig.text}`} />
+                </div>
+
+                <div className="flex-1">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
+                        <h3 className="font-semibold text-lg">{detection.name}</h3>
+                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${severityConfig.text} ${severityConfig.bg}`}>
+                          Sévérité: {detection.severity.toUpperCase()}
+                        </span>
+                        {detection.detectionMethod === "ai_image" && (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/40 dark:to-blue-900/40 text-purple-700 dark:text-purple-300">
+                            <Sparkles className="h-3 w-3 mr-1" />
+                            Détection IA
+                          </span>
+                        )}
+                        <span className="text-xs text-muted-foreground">
+                          {detection.detectedAt}
+                        </span>
                       </div>
-                      <div className="p-3 bg-muted rounded-lg">
-                        <div className="text-xs text-muted-foreground">Traitement recommandé</div>
-                        <div className="text-sm font-semibold">{disease.treatment}</div>
+
+                      {/* AI Confidence & Area */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                        <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                          <div className="text-xs text-muted-foreground">Confiance IA</div>
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-blue-500"
+                                style={{ width: `${detection.confidence}%` }}
+                              />
+                            </div>
+                            <span className="text-sm font-bold text-blue-700 dark:text-blue-400">{detection.confidence}%</span>
+                          </div>
+                        </div>
+                        <div className="p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                          <div className="text-xs text-muted-foreground">Surface Affectée</div>
+                          <div className="font-bold text-orange-700 dark:text-orange-400">{detection.affectedArea} ha</div>
+                        </div>
+                        <div className="p-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                          <div className="text-xs text-muted-foreground">Propagation</div>
+                          <div className="font-bold text-red-700 dark:text-red-400">{getSpreadLabel(detection.spread)}</div>
+                        </div>
+                        <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                          <div className="text-xs text-muted-foreground">Parcelle</div>
+                          <div className="font-bold text-green-700 dark:text-green-400">{detection.fieldId}</div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <button className="flex-1 px-4 py-2 border rounded-lg hover:bg-muted transition-colors text-sm font-medium">
-                          Guide Traitement
-                        </button>
-                        <button className="flex-1 px-4 py-2 bg-[#2E8B57] text-white rounded-lg hover:bg-[#267049] transition-colors text-sm font-medium">
-                          Appliquer
-                        </button>
+
+                      {/* Symptoms */}
+                      <div className="mb-3">
+                        <div className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1">
+                          <Bug className="h-3 w-3" />
+                          Symptômes détectés:
+                        </div>
+                        <div className="space-y-1">
+                          {detection.symptoms.map((symptom, idx) => (
+                            <div key={idx} className="flex items-start gap-2 text-sm">
+                              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs font-bold flex-shrink-0">
+                                {idx + 1}
+                              </span>
+                              <span>{symptom}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
+
+                      {/* Treatments */}
+                      <div className="mb-3">
+                        <div className="text-xs font-semibold text-muted-foreground mb-2">Traitements recommandés:</div>
+                        <div className="space-y-2">
+                          {detection.treatments.map((treatment, idx) => (
+                            <div key={idx} className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                              <div className="flex items-start justify-between mb-2">
+                                <div className="flex-1">
+                                  <div className="font-semibold text-sm text-green-900 dark:text-green-100">
+                                    {treatment.type}: {treatment.product}
+                                  </div>
+                                  <div className="text-xs text-muted-foreground mt-1">
+                                    Dosage: {treatment.dosage} | Timing: {treatment.timing}
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <div className="text-xs text-muted-foreground">Coût</div>
+                                  <div className="font-bold text-green-700 dark:text-green-400">{treatment.cost}€</div>
+                                </div>
+                              </div>
+                              <button
+                                onClick={() => applyTreatment(detection.id, idx)}
+                                className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold text-sm flex items-center justify-center gap-2"
+                              >
+                                <CheckCircle className="h-4 w-4" />
+                                Appliquer ce traitement
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Prevention Tips */}
+                      {detection.preventionTips && detection.preventionTips.length > 0 && (
+                        <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                          <div className="flex items-start gap-2">
+                            <Sparkles className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                            <div>
+                              <div className="text-xs font-semibold text-blue-900 dark:text-blue-200 mb-1">Conseils de prévention:</div>
+                              <div className="text-xs text-blue-800 dark:text-blue-300 space-y-1">
+                                {detection.preventionTips.map((tip, idx) => (
+                                  <div key={idx}>• {tip}</div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
+
+      {/* Image Upload Modal */}
+      {showImageUpload && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-card border rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-xl">Analyse IA d'Image</h3>
+                <p className="text-sm text-muted-foreground">Téléchargez une photo de feuilles malades</p>
+              </div>
+              <button
+                onClick={() => setShowImageUpload(false)}
+                className="p-2 hover:bg-muted rounded-lg transition-colors"
+              >
+                <XCircle className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="p-6">
+              <div className="border-2 border-dashed border-purple-300 dark:border-purple-700 rounded-xl p-12 text-center hover:border-purple-500 transition-colors cursor-pointer">
+                <Upload className="h-16 w-16 text-purple-600 mx-auto mb-4" />
+                <h4 className="font-semibold text-lg mb-2">Glissez-déposez votre image ici</h4>
+                <p className="text-sm text-muted-foreground mb-4">ou cliquez pour parcourir (JPG, PNG max 10MB)</p>
+                <button
+                  onClick={analyzeImage}
+                  disabled={analyzingImage}
+                  className="px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all font-semibold flex items-center gap-2 mx-auto disabled:opacity-50"
+                >
+                  {analyzingImage ? (
+                    <>
+                      <RefreshCw className="h-5 w-5 animate-spin" />
+                      Analyse en cours...
+                    </>
+                  ) : (
+                    <>
+                      <Brain className="h-5 w-5" />
+                      Analyser avec IA
+                    </>
+                  )}
+                </button>
+              </div>
+
+              <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <FileImage className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-sm text-blue-800 dark:text-blue-300">
+                    <div className="font-semibold mb-1">Conseils pour de meilleurs résultats:</div>
+                    <ul className="space-y-1 list-disc list-inside">
+                      <li>Photo nette et bien éclairée</li>
+                      <li>Vue rapprochée des feuilles affectées</li>
+                      <li>Fond neutre si possible</li>
+                      <li>Plusieurs angles si symptômes variés</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 

@@ -5,16 +5,22 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [
-    // The React and Tailwind plugins are both required for Make, even if
-    // Tailwind is not being actively used – do not remove them
     react(),
     tailwindcss(),
   ],
+  server: {
+    proxy: {
+      // Proxy API requests to Kong Gateway
+      '/api': {
+        target: 'http://kong:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
   resolve: {
     alias: {
-      // Alias @ to the src directory
       '@': path.resolve(__dirname, './src'),
-      // Clean Architecture layer aliases
       '@domain': path.resolve(__dirname, './src/domain'),
       '@application': path.resolve(__dirname, './src/application'),
       '@infrastructure': path.resolve(__dirname, './src/infrastructure'),
@@ -22,5 +28,57 @@ export default defineConfig({
       '@shared': path.resolve(__dirname, './src/shared'),
       '@components': path.resolve(__dirname, './src/app/components'),
     },
+  },
+  build: {
+    target: 'es2020',
+    sourcemap: false,
+    minify: 'esbuild',
+    cssCodeSplit: true,
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // React core
+          'react-vendor': ['react', 'react-dom'],
+          // UI libraries
+          'ui-vendor': [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-select',
+            '@radix-ui/react-tooltip',
+            '@radix-ui/react-popover',
+            '@radix-ui/react-accordion',
+          ],
+          // MUI components
+          'mui-vendor': ['@mui/material', '@mui/icons-material'],
+          // Charts & visualization
+          'charts-vendor': ['recharts'],
+          // Forms & utilities
+          'utils-vendor': [
+            'react-hook-form',
+            'date-fns',
+            'clsx',
+            'zustand',
+            'sonner',
+          ],
+        },
+        // Optimize chunk file names
+        chunkFileNames: (chunkInfo) => {
+          const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';
+          return `assets/[name]-[hash].js`;
+        },
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
+      },
+    },
+  },
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      'zustand',
+      'sonner',
+    ],
   },
 })

@@ -1,0 +1,151 @@
+groups:
+  # Service Availability Alerts
+  - name: service_availability
+    interval: 30s
+    rules:
+      - alert: ServiceDown
+        expr: up{job=~".*-service"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: "{{ $labels.job }} has been down for more than 2 minutes"
+
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate on {{ $labels.service }}"
+          description: "Error rate is {{ $value | humanizePercentage }}"
+
+      - alert: HighLatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High latency on {{ $labels.service }}"
+          description: "95th percentile latency is {{ $value }}s"
+
+      - alert: KongGatewayDown
+        expr: up{job="kong"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Kong API Gateway is down"
+          description: "Kong Gateway has been unreachable for more than 1 minute"
+
+  # Resource Usage Alerts
+  - name: resource_usage
+    interval: 30s
+    rules:
+      - alert: HighCPUUsage
+        expr: rate(process_cpu_seconds_total[5m]) > 0.8
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage on {{ $labels.job }}"
+          description: "CPU usage is {{ $value | humanizePercentage }}"
+
+      - alert: HighMemoryUsage
+        expr: process_resident_memory_bytes / 1024 / 1024 / 1024 > 2
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage on {{ $labels.job }}"
+          description: "Memory usage is {{ $value }}GB"
+
+      - alert: DiskSpaceRunningLow
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 < 15
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Disk space running low"
+          description: "Only {{ $value }}% disk space available"
+
+  # Database Alerts
+  - name: database_alerts
+    interval: 30s
+    rules:
+      - alert: DatabaseConnectionsHigh
+        expr: pg_stat_database_numbackends / pg_settings_max_connections > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High database connections"
+          description: "{{ $value | humanizePercentage }} of max connections used"
+
+      - alert: SlowQueries
+        expr: rate(pg_stat_statements_mean_time_seconds[5m]) > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow database queries detected"
+          description: "Average query time: {{ $value }}s"
+
+      - alert: PostgreSQLDown
+        expr: pg_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "PostgreSQL database is not responding"
+
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis is down"
+          description: "Redis cache is not responding"
+
+      - alert: ElasticsearchDown
+        expr: elasticsearch_cluster_health_status{color="red"} == 1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Elasticsearch cluster is unhealthy"
+          description: "Elasticsearch cluster status is RED"
+
+  # Business Metrics Alerts
+  - name: business_alerts
+    interval: 60s
+    rules:
+      - alert: OrderFailureRateHigh
+        expr: sum(rate(orders_failed_total[5m])) / sum(rate(orders_created_total[5m])) > 0.05
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High order failure rate"
+          description: "Order failure rate is {{ $value | humanizePercentage }}"
+
+      - alert: PaymentFailureRateHigh
+        expr: sum(rate(payments_failed_total[5m])) / sum(rate(payments_processed_total[5m])) > 0.02
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High payment failure rate"
+          description: "Payment failure rate is {{ $value | humanizePercentage }}"
+
+      - alert: AuthenticationFailuresHigh
+        expr: sum(rate(auth_login_failures_total[5m])) > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High authentication failure rate"
+          description: "More than 10 login failures per second"

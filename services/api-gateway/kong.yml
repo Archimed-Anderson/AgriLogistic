@@ -1,0 +1,428 @@
+_format_version: "3.0"
+
+# =============================================================================
+# AgroLogistic API Gateway Configuration
+# Kong Gateway declarative configuration for microservices routing
+# =============================================================================
+
+services:
+  # =========================================================================
+  # Authentication Service
+  # =========================================================================
+  - name: auth-service
+    url: http://AgroLogistic-auth-service:3001
+    routes:
+      - name: auth-routes
+        paths:
+          - /api/v1/auth
+        strip_path: true
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - PATCH
+          - OPTIONS
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+          policy: local
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - PATCH
+            - OPTIONS
+          headers:
+            - Authorization
+            - Content-Type
+            - Accept
+            - X-Request-ID
+          credentials: true
+          max_age: 3600
+
+  # =========================================================================
+  # Product Service
+  # =========================================================================
+  - name: product-service
+    url: http://product-service:3002
+    routes:
+      - name: product-routes
+        paths:
+          - /api/v1/products
+        strip_path: true
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - PATCH
+          - OPTIONS
+      - name: inventory-routes
+        paths:
+          - /api/v1/inventory
+        strip_path: true
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+          secret_is_base64: false
+          anonymous: ~
+      - name: rate-limiting
+        config:
+          minute: 200
+          hour: 5000
+          policy: local
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - PATCH
+            - OPTIONS
+          headers:
+            - Authorization
+            - Content-Type
+            - Accept
+            - X-Request-ID
+          credentials: true
+          max_age: 3600
+
+  # =========================================================================
+  # Order Service
+  # =========================================================================
+  - name: order-service
+    url: http://order-service:3003
+    routes:
+      - name: order-routes
+        paths:
+          - /api/v1/orders
+        strip_path: true
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - PATCH
+          - OPTIONS
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+          secret_is_base64: false
+      - name: rate-limiting
+        config:
+          minute: 150
+          hour: 3000
+          policy: local
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - PATCH
+            - OPTIONS
+          headers:
+            - Authorization
+            - Content-Type
+            - Accept
+            - X-Request-ID
+          credentials: true
+          max_age: 3600
+
+  # =========================================================================
+  # Payment Service
+  # =========================================================================
+  - name: payment-service
+    url: http://payment-service:3004
+    routes:
+      - name: payment-routes
+        paths:
+          - /api/v1/payments
+        strip_path: true
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+      - name: webhook-routes
+        paths:
+          - /api/v1/webhooks
+        strip_path: true
+        methods:
+          - POST
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+          secret_is_base64: false
+      - name: rate-limiting
+        config:
+          minute: 50
+          hour: 500
+          policy: local
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+          headers:
+            - Authorization
+            - Content-Type
+            - Accept
+            - Stripe-Signature
+            - X-Request-ID
+          credentials: true
+          max_age: 3600
+
+  # =========================================================================
+  # Delivery Service (Phase 2)
+  # =========================================================================
+  - name: delivery-service
+    url: http://delivery-service:3005
+    routes:
+      - name: delivery-routes
+        paths:
+          - /api/v1/deliveries
+        strip_path: true
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 2000
+          policy: local
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+          headers:
+            - Authorization
+            - Content-Type
+          credentials: true
+
+  # =========================================================================
+  # Notification Service (Phase 2)
+  # =========================================================================
+  - name: notification-service
+    url: http://notification-service:3006
+    routes:
+      - name: notification-routes
+        paths:
+          - /api/v1/notifications
+        strip_path: true
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 2000
+          policy: local
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+          headers:
+            - Authorization
+            - Content-Type
+          credentials: true
+
+  # =========================================================================
+  # Contact Service (Public) - Notification Service
+  # =========================================================================
+  - name: contact-service
+    url: http://notification-service:3006
+    routes:
+      - name: contact-routes
+        paths:
+          - /api/v1/contact
+        strip_path: true
+        methods:
+          - POST
+          - OPTIONS
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 30
+          hour: 300
+          policy: local
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - POST
+            - OPTIONS
+          headers:
+            - Content-Type
+            - X-Request-ID
+            - X-CSRF-Token
+          credentials: true
+
+  # =========================================================================
+  # AI Service (Phase 2)
+  # =========================================================================
+  - name: ai-service
+    url: http://ai-service:3007
+    routes:
+      - name: ai-routes
+        paths:
+          - /api/v1/ai
+        strip_path: true
+        methods:
+          - GET
+          - POST
+          - OPTIONS
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+      - name: rate-limiting
+        config:
+          minute: 30
+          hour: 500
+          policy: local
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - OPTIONS
+          headers:
+            - Authorization
+            - Content-Type
+          credentials: true
+
+  # =========================================================================
+  # Analytics Service (Phase 2)
+  # =========================================================================
+  - name: analytics-service
+    url: http://analytics-service:3008
+    routes:
+      - name: analytics-routes
+        paths:
+          - /api/v1/analytics
+        strip_path: true
+        methods:
+          - GET
+          - POST
+          - OPTIONS
+      - name: events-routes
+        paths:
+          - /api/v1/events
+        strip_path: true
+        methods:
+          - GET
+          - POST
+          - OPTIONS
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+      - name: rate-limiting
+        config:
+          minute: 500
+          hour: 10000
+          policy: local
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - OPTIONS
+          headers:
+            - Authorization
+            - Content-Type
+          credentials: true
+
+# =============================================================================
+# Global Plugins
+# =============================================================================
+plugins:
+  # Add request metadata
+  - name: request-transformer
+    config:
+      add:
+        headers:
+          - X-Gateway-Version:2.0
+          - X-Request-ID:$(uuid)
+  
+  # Add response metadata
+  - name: response-transformer
+    config:
+      add:
+        headers:
+          - X-Response-Time:$(latency)
+          - X-Powered-By:AgroLogistic-Gateway
+
+  # Enable Prometheus metrics
+  - name: prometheus
+    config:
+      status_code_metrics: true
+      latency_metrics: true
+      bandwidth_metrics: true
+      upstream_health_metrics: true
+
+# =============================================================================
+# Consumers (dynamically managed by auth-service)
+# =============================================================================
+consumers: []

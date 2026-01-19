@@ -1,0 +1,51 @@
+{
+  "name": "@AgroLogistic/delivery-service",
+  "version": "1.0.0",
+  "description": "Delivery Service for AgroLogistic Platform - GPS tracking and route optimization",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix"
+  },
+  "keywords": [
+    "AgroLogistic",
+    "delivery-service",
+    "gps-tracking",
+    "route-optimization",
+    "logistics"
+  ],
+  "author": "AgroLogistic Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "dotenv": "^16.3.1",
+    "pg": "^8.11.3",
+    "redis": "^4.6.10",
+    "uuid": "^9.0.1",
+    "joi": "^17.11.0",
+    "winston": "^3.11.0",
+    "axios": "^1.6.2",
+    "socket.io": "^4.7.2",
+    "geolib": "^3.3.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17",
+    "@types/uuid": "^9.0.7",
+    "typescript": "^5.3.2",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "vitest": "^1.0.0"
+  }
+}

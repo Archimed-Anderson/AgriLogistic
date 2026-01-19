@@ -343,7 +343,7 @@ export function BlogArticle({ onNavigate }: { onNavigate: (route: string) => voi
             </div>
           </div>
           <div className="absolute bottom-4 left-4 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity">
-            Crédit photo: AgroDeep Research • Cliquez pour agrandir
+            Crédit photo: AgroLogistic Research • Cliquez pour agrandir
           </div>
         </div>
 
@@ -375,13 +375,13 @@ export function BlogArticle({ onNavigate }: { onNavigate: (route: string) => voi
             <li>Des rendements sous-optimaux par stress hydrique ou excès d'eau</li>
           </ul>
 
-          {/* Conseil AgroDeep Block */}
+          {/* Conseil AgroLogistic Block */}
           <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-6 my-8">
             <div className="flex items-start gap-3">
               <Lightbulb className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
               <div>
                 <h3 className="text-lg font-semibold text-green-900 dark:text-green-100 mb-2">
-                  💡 Conseil AgroDeep
+                  💡 Conseil AgroLogistic
                 </h3>
                 <p className="text-green-800 dark:text-green-200">
                   Commencez par installer des capteurs d'humidité sur une parcelle test avant de

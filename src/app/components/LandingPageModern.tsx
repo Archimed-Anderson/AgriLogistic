@@ -81,7 +81,7 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#2563eb]">
                 <span className="text-xl font-bold text-white">A</span>
               </div>
-              <span className="text-2xl font-bold">AgroDeep</span>
+              <span className="text-2xl font-bold">AgroLogistic</span>
             </div>
 
             {/* Navigation Links */}
@@ -209,7 +209,7 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              AgroDeep, bien plus qu'un simple marché
+              AgroLogistic, bien plus qu'un simple marché
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Une plateforme complète qui accompagne chaque étape de votre activité agricole
@@ -494,7 +494,7 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
 
           {/* Testimonials */}
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">Ce qu'ils disent d'AgroDeep</h2>
+            <h2 className="text-4xl font-bold mb-4">Ce qu'ils disent d'AgroLogistic</h2>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -505,7 +505,7 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
                 avatar: "👨",
                 rating: 5,
                 comment:
-                  "AgroDeep a transformé ma façon de vendre mes produits. Plus de transparence, moins d'intermédiaires, plus de profits.",
+                  "AgroLogistic a transformé ma façon de vendre mes produits. Plus de transparence, moins d'intermédiaires, plus de profits.",
               },
               {
                 name: "Marie Martin",
@@ -631,7 +631,7 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#2563eb]">
                   <span className="text-xl font-bold text-white">A</span>
                 </div>
-                <span className="text-xl font-bold text-white">AgroDeep</span>
+                <span className="text-xl font-bold text-white">AgroLogistic</span>
               </div>
               <p className="text-sm mb-6">
                 La plateforme tout-en-un pour révolutionner votre chaîne d'approvisionnement
@@ -711,7 +711,7 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
                 </li>
                 <li className="flex items-center gap-2">
                   <Mail className="h-4 w-4" />
-                  <span>contact@agrodeep.fr</span>
+                  <span>contact@AgroLogistic.fr</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <Phone className="h-4 w-4" />
@@ -731,7 +731,7 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
 
           {/* Bottom Bar */}
           <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
-            <p>© 2026 AgroDeep. Tous droits réservés.</p>
+            <p>© 2026 AgroLogistic. Tous droits réservés.</p>
             <div className="flex gap-6">
               <button className="hover:text-white transition-colors">Mentions légales</button>
               <button className="hover:text-white transition-colors">

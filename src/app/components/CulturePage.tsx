@@ -462,7 +462,7 @@ export function CulturePage({ onNavigate }: { onNavigate: (route: string) => voi
             <Lightbulb className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
             <div>
               <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
-                💡 Conseil AgroDeep
+                💡 Conseil AgroLogistic
               </h4>
               <p className="text-sm text-blue-800 dark:text-blue-200">
                 La période de floraison est critique : un stress hydrique de 3 jours peut réduire

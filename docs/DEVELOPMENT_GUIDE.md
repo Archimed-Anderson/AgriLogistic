@@ -1,4 +1,4 @@
-# 🚀 AgroDeep - Guide de Développement
+# 🚀 AgroLogistic - Guide de Développement
 
 ## Table des Matières
 
@@ -27,8 +27,8 @@ Git: >= 2.30.0
 
 ```bash
 # 1. Cloner le repository
-git clone https://github.com/votre-org/agrodeep-platform.git
-cd agrodeep-platform
+git clone https://github.com/votre-org/AgroLogistic-platform.git
+cd AgroLogistic-platform
 
 # 2. Installer les dépendances
 pnpm install
@@ -190,7 +190,7 @@ const calculateTotal = () => {};
 const userCount = 10;
 
 // Constants: UPPER_SNAKE_CASE
-const API_BASE_URL = "https://api.agrodeep.com";
+const API_BASE_URL = "https://api.AgroLogistic.com";
 const MAX_RETRY_ATTEMPTS = 3;
 
 // Private properties: _prefixed
@@ -583,6 +583,30 @@ test.describe('Checkout Flow', () => {
 });
 ```
 
+```typescript
+// tests/e2e/marketplace-modern-admin.spec.ts
+test.describe('MarketplaceModern - Product Admin', () => {
+  test('should configure promotion from admin tab and display it', async ({ page }) => {
+    await page.goto('/');
+    await page.click('[data-testid="admin-toggle"]');
+
+    const firstProduct = page.locator('[data-testid="product-card"]').first();
+    await firstProduct.click();
+
+    await page.click('[data-testid="product-tab-admin"]');
+
+    await page.click('[data-testid="admin-promo-toggle"]');
+    await page.selectOption('[data-testid="admin-promo-type"]', 'percentage');
+    await page.fill('[data-testid="admin-promo-value"]', '10');
+    await page.click('[data-testid="admin-save"]');
+
+    await firstProduct.click();
+    await expect(page.locator('[data-testid="product-detail-panel"]')).toBeVisible();
+    await expect(page.locator('text=Promotion active')).toBeVisible();
+  });
+});
+```
+
 ---
 
 ## 🐛 Debugging
@@ -700,7 +724,7 @@ pnpm test:ci
 
 ```bash
 # .env.production
-VITE_API_URL=https://api.agrodeep.com
+VITE_API_URL=https://api.AgroLogistic.com
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
 VITE_ENABLE_ANALYTICS=true
@@ -751,8 +775,8 @@ jobs:
 
 ## 🆘 Besoin d'Aide ?
 
-- 💬 Slack: #agrodeep-dev
-- 📧 Email: dev@agrodeep.com
+- 💬 Slack: #AgroLogistic-dev
+- 📧 Email: dev@AgroLogistic.com
 - 🐛 Issues: GitHub Issues
 - 📖 Wiki: GitHub Wiki
 

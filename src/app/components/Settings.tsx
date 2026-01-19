@@ -22,6 +22,15 @@ import {
   Lock,
   Smartphone,
   Monitor,
+  Database,
+  Activity,
+  UserCheck,
+  Download,
+  Search,
+  Filter,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -43,7 +52,7 @@ export function Settings({ isClientView = false }: SettingsProps) {
   const [isSaving, setIsSaving] = useState(false);
 
   // General Settings
-  const [platformName, setPlatformName] = useState("AgroDeep Pro");
+  const [platformName, setPlatformName] = useState("AgroLogistic Pro");
   const [timezone, setTimezone] = useState("Europe/Paris");
   const [currency, setCurrency] = useState("EUR");
   const [unitSystem, setUnitSystem] = useState("metric");
@@ -82,6 +91,8 @@ export function Settings({ isClientView = false }: SettingsProps) {
   const securityRef = useRef<HTMLDivElement>(null);
   const apiRef = useRef<HTMLDivElement>(null);
   const auditRef = useRef<HTMLDivElement>(null);
+  const governanceRef = useRef<HTMLDivElement>(null);
+  const rgpdRef = useRef<HTMLDivElement>(null);
 
   const navItems: NavItem[] = [
     { id: "general", label: "Général", icon: SettingsIcon },
@@ -90,8 +101,10 @@ export function Settings({ isClientView = false }: SettingsProps) {
     { id: "notifications", label: "Notifications", icon: Bell },
     { id: "billing", label: isClientView ? "Compte" : "Facturation", icon: CreditCard },
     { id: "security", label: "Sécurité", icon: Shield },
+    { id: "governance", label: "Data Governance", icon: Database, adminOnly: true },
+    { id: "audit", label: "Audit Trails", icon: Activity, adminOnly: true },
+    { id: "rgpd", label: "RGPD Compliance", icon: UserCheck, adminOnly: true },
     { id: "api", label: "API & Intégrations", icon: Code, adminOnly: true },
-    { id: "audit", label: "Journal d'Audit", icon: FileText, adminOnly: true },
   ];
 
   const visibleNavItems = isClientView
@@ -108,6 +121,8 @@ export function Settings({ isClientView = false }: SettingsProps) {
       security: securityRef,
       api: apiRef,
       audit: auditRef,
+      governance: governanceRef,
+      rgpd: rgpdRef,
     };
 
     const ref = refs[sectionId];
@@ -137,7 +152,7 @@ export function Settings({ isClientView = false }: SettingsProps) {
   };
 
   const predefinedColors = [
-    { name: "Bleu AgroDeep", value: "#2563eb" },
+    { name: "Bleu AgroLogistic", value: "#2563eb" },
     { name: "Vert Nature", value: "#10b981" },
     { name: "Orange Récolte", value: "#f97316" },
     { name: "Violet", value: "#8b5cf6" },
@@ -981,6 +996,513 @@ export function Settings({ isClientView = false }: SettingsProps) {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Data Governance Section (Admin only) - Phase 7 Feature 1 */}
+        {!isClientView && (
+          <div ref={governanceRef} className="scroll-mt-6">
+            <div className="mb-4">
+              <h1 className="text-2xl font-bold flex items-center gap-3">
+                <Database className="h-7 w-7 text-[#2563eb]" />
+                Data Governance
+              </h1>
+              <p className="text-muted-foreground">Gestion de la qualité, traçabilité et classification des données</p>
+            </div>
+
+            {/* Data Quality Dashboard */}
+            <div className="bg-card border rounded-lg p-6 mb-6">
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <CheckCircle className="h-5 w-5 text-green-600" />
+                Qualité des Données
+              </h2>
+              <div className="grid grid-cols-4 gap-4 mb-6">
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4">
+                  <div className="text-2xl font-bold text-green-700">94.2%</div>
+                  <div className="text-sm text-green-600">Score de Qualité Global</div>
+                  <div className="text-xs text-green-500 mt-1">↑ +2.3% vs mois dernier</div>
+                </div>
+                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-4">
+                  <div className="text-2xl font-bold text-blue-700">98.7%</div>
+                  <div className="text-sm text-blue-600">Complétude</div>
+                  <div className="text-xs text-blue-500 mt-1">Champs requis remplis</div>
+                </div>
+                <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 rounded-lg p-4">
+                  <div className="text-2xl font-bold text-purple-700">96.1%</div>
+                  <div className="text-sm text-purple-600">Exactitude</div>
+                  <div className="text-xs text-purple-500 mt-1">Données validées</div>
+                </div>
+                <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200 rounded-lg p-4">
+                  <div className="text-2xl font-bold text-orange-700">89.4%</div>
+                  <div className="text-sm text-orange-600">Fraîcheur</div>
+                  <div className="text-xs text-orange-500 mt-1">Données à jour (&lt; 30j)</div>
+                </div>
+              </div>
+
+              {/* Data Quality Issues */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold text-muted-foreground">Problèmes de Qualité Détectés (12)</h3>
+                {[
+                  { severity: "high", count: 3, issue: "Doublons dans la table produits", table: "products", impact: "Haut" },
+                  { severity: "medium", count: 5, issue: "Valeurs manquantes dans descriptions", table: "products", impact: "Moyen" },
+                  { severity: "low", count: 4, issue: "Format téléphone non standardisé", table: "users", impact: "Faible" },
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
+                    <div className="flex items-center gap-3">
+                      {item.severity === "high" && <XCircle className="h-5 w-5 text-red-500" />}
+                      {item.severity === "medium" && <AlertCircle className="h-5 w-5 text-orange-500" />}
+                      {item.severity === "low" && <AlertTriangle className="h-5 w-5 text-yellow-500" />}
+                      <div>
+                        <div className="font-medium">{item.issue}</div>
+                        <div className="text-xs text-muted-foreground">Table: {item.table} • Impact: {item.impact}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-700">{item.count} occurrences</span>
+                      <button className="px-3 py-1.5 text-xs font-medium bg-[#2563eb] text-white rounded hover:bg-[#1d4ed8] transition-colors">
+                        Corriger
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Data Lineage Tracking */}
+            <div className="bg-card border rounded-lg p-6 mb-6">
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Activity className="h-5 w-5 text-[#2563eb]" />
+                Traçabilité des Données (Data Lineage)
+              </h2>
+              <div className="space-y-4">
+                {[
+                  {
+                    dataSet: "product_sales_analytics",
+                    source: "orders, products, users",
+                    transformations: 3,
+                    lastUpdate: "10/01/2026 14:30",
+                    owner: "Data Team",
+                  },
+                  {
+                    dataSet: "customer_360_view",
+                    source: "users, orders, reviews, support_tickets",
+                    transformations: 5,
+                    lastUpdate: "10/01/2026 12:15",
+                    owner: "Marketing Team",
+                  },
+                  {
+                    dataSet: "inventory_forecasting",
+                    source: "products, orders, suppliers",
+                    transformations: 4,
+                    lastUpdate: "10/01/2026 09:00",
+                    owner: "Operations Team",
+                  },
+                ].map((lineage, idx) => (
+                  <div key={idx} className="border rounded-lg p-4 hover:border-[#2563eb] transition-colors">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="font-semibold text-[#2563eb]">{lineage.dataSet}</div>
+                      <button className="text-xs px-2 py-1 border rounded hover:bg-muted transition-colors">
+                        Voir le graphe
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                      <div>
+                        <span className="text-muted-foreground">Sources: </span>
+                        <span className="font-medium">{lineage.source}</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Propriétaire: </span>
+                        <span className="font-medium">{lineage.owner}</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Transformations: </span>
+                        <span className="font-medium">{lineage.transformations} étapes</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Dernière MAJ: </span>
+                        <span className="font-medium">{lineage.lastUpdate}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Data Classification */}
+            <div className="bg-card border rounded-lg p-6">
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Shield className="h-5 w-5 text-purple-600" />
+                Classification des Données
+              </h2>
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="bg-gradient-to-br from-red-50 to-rose-50 border-2 border-red-300 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Lock className="h-5 w-5 text-red-600" />
+                    <div className="font-semibold text-red-700">Confidentielles</div>
+                  </div>
+                  <div className="text-2xl font-bold text-red-700">8,342</div>
+                  <div className="text-xs text-red-600 mt-1">enregistrements</div>
+                  <div className="mt-2 text-xs text-muted-foreground">Données personnelles, finances</div>
+                </div>
+                <div className="bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-300 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <AlertTriangle className="h-5 w-5 text-orange-600" />
+                    <div className="font-semibold text-orange-700">Internes</div>
+                  </div>
+                  <div className="text-2xl font-bold text-orange-700">24,891</div>
+                  <div className="text-xs text-orange-600 mt-1">enregistrements</div>
+                  <div className="mt-2 text-xs text-muted-foreground">Opérations, stratégie</div>
+                </div>
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <div className="font-semibold text-green-700">Publiques</div>
+                  </div>
+                  <div className="text-2xl font-bold text-green-700">156,723</div>
+                  <div className="text-xs text-green-600 mt-1">enregistrements</div>
+                  <div className="mt-2 text-xs text-muted-foreground">Catalogue, documentation</div>
+                </div>
+              </div>
+
+              {/* Classification Rules */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold text-muted-foreground">Règles de Classification Actives (6)</h3>
+                {[
+                  { rule: "Données bancaires → Confidentiel", scope: "billing, payments", auto: true },
+                  { rule: "Informations personnelles → Confidentiel", scope: "users, profiles", auto: true },
+                  { rule: "Prix de vente → Interne", scope: "products, orders", auto: true },
+                  { rule: "Descriptions produits → Public", scope: "products", auto: true },
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div>
+                      <div className="font-medium">{item.rule}</div>
+                      <div className="text-xs text-muted-foreground">Scope: {item.scope}</div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {item.auto && (
+                        <span className="px-2 py-1 text-xs font-semibold rounded bg-blue-100 text-blue-700">
+                          Auto
+                        </span>
+                      )}
+                      <button className="text-xs text-[#2563eb] hover:underline">Éditer</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* RGPD Compliance Section (Admin only) - Phase 7 Feature 3 */}
+        {!isClientView && (
+          <div ref={rgpdRef} className="scroll-mt-6">
+            <div className="mb-4">
+              <h1 className="text-2xl font-bold flex items-center gap-3">
+                <UserCheck className="h-7 w-7 text-green-600" />
+                RGPD Compliance
+              </h1>
+              <p className="text-muted-foreground">Gestion des droits des personnes concernées et conformité RGPD</p>
+            </div>
+
+            {/* RGPD Overview */}
+            <div className="bg-card border rounded-lg p-6 mb-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-semibold">Statut de Conformité</h2>
+                <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg">
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <span className="font-semibold text-green-700">Conforme RGPD</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-4 gap-4 mb-6">
+                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-4">
+                  <div className="text-2xl font-bold text-blue-700">2,847</div>
+                  <div className="text-sm text-blue-600">Utilisateurs Enregistrés</div>
+                  <div className="text-xs text-blue-500 mt-1">Tous avec consentement</div>
+                </div>
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4">
+                  <div className="text-2xl font-bold text-green-700">98.4%</div>
+                  <div className="text-sm text-green-600">Taux de Consentement</div>
+                  <div className="text-xs text-green-500 mt-1">↑ +1.2% vs mois dernier</div>
+                </div>
+                <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 rounded-lg p-4">
+                  <div className="text-2xl font-bold text-purple-700">143</div>
+                  <div className="text-sm text-purple-600">Demandes RGPD Traitées</div>
+                  <div className="text-xs text-purple-500 mt-1">Depuis le lancement</div>
+                </div>
+                <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200 rounded-lg p-4">
+                  <div className="text-2xl font-bold text-orange-700">2.4j</div>
+                  <div className="text-sm text-orange-600">Délai Moyen de Réponse</div>
+                  <div className="text-xs text-orange-500 mt-1">Objectif: &lt; 30 jours</div>
+                </div>
+              </div>
+
+              {/* Quick Actions */}
+              <div className="flex items-center gap-3">
+                <button className="flex items-center gap-2 px-4 py-2 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors">
+                  <Download className="h-4 w-4" />
+                  Registre des Traitements
+                </button>
+                <button className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-muted transition-colors">
+                  <FileText className="h-4 w-4" />
+                  Politique de Confidentialité
+                </button>
+                <button className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-muted transition-colors">
+                  <Shield className="h-4 w-4" />
+                  Analyse d'Impact (DPIA)
+                </button>
+              </div>
+            </div>
+
+            {/* Data Subject Rights Management */}
+            <div className="bg-card border rounded-lg p-6 mb-6">
+              <h2 className="text-lg font-semibold mb-4">Gestion des Droits des Personnes Concernées</h2>
+              <div className="space-y-4">
+                {[
+                  {
+                    id: "REQ-2026-0143",
+                    type: "Droit d'accès",
+                    user: "marie.durand@email.fr",
+                    date: "08/01/2026",
+                    status: "pending",
+                    deadline: "07/02/2026",
+                    daysLeft: 28,
+                  },
+                  {
+                    id: "REQ-2026-0142",
+                    type: "Droit à l'effacement",
+                    user: "jean.martin@email.fr",
+                    date: "05/01/2026",
+                    status: "in_progress",
+                    deadline: "04/02/2026",
+                    daysLeft: 25,
+                  },
+                  {
+                    id: "REQ-2026-0141",
+                    type: "Droit à la rectification",
+                    user: "paul.bernard@email.fr",
+                    date: "03/01/2026",
+                    status: "completed",
+                    deadline: "02/02/2026",
+                    daysLeft: null,
+                  },
+                  {
+                    id: "REQ-2026-0140",
+                    type: "Droit à la portabilité",
+                    user: "sophie.petit@email.fr",
+                    date: "01/01/2026",
+                    status: "completed",
+                    deadline: "31/01/2026",
+                    daysLeft: null,
+                  },
+                ].map((request, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-4 border rounded-lg hover:border-[#2563eb] transition-colors"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div
+                        className={`w-3 h-3 rounded-full ${
+                          request.status === "completed"
+                            ? "bg-green-500"
+                            : request.status === "in_progress"
+                            ? "bg-blue-500"
+                            : "bg-orange-500"
+                        }`}
+                      />
+                      <div>
+                        <div className="font-semibold">{request.id}</div>
+                        <div className="text-sm text-muted-foreground">{request.user}</div>
+                      </div>
+                      <div className="px-3 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full">
+                        {request.type}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-6">
+                      <div className="text-sm">
+                        <div className="text-muted-foreground">Date de demande</div>
+                        <div className="font-medium">{request.date}</div>
+                      </div>
+                      <div className="text-sm">
+                        <div className="text-muted-foreground">Échéance</div>
+                        <div className="font-medium">
+                          {request.status === "completed" ? (
+                            <span className="text-green-600">✓ Traitée</span>
+                          ) : (
+                            <span className={request.daysLeft! < 7 ? "text-red-600" : ""}>
+                              {request.deadline} ({request.daysLeft}j)
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      {request.status !== "completed" && (
+                        <button className="px-3 py-1.5 text-xs font-medium bg-[#2563eb] text-white rounded hover:bg-[#1d4ed8] transition-colors">
+                          Traiter
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Consent Management */}
+            <div className="bg-card border rounded-lg p-6 mb-6">
+              <h2 className="text-lg font-semibold mb-4">Gestion des Consentements</h2>
+              <div className="space-y-4">
+                {[
+                  {
+                    purpose: "Marketing électronique",
+                    description: "Envoi de newsletters et offres promotionnelles",
+                    consented: 2453,
+                    refused: 394,
+                    rate: 86.2,
+                  },
+                  {
+                    purpose: "Analyse et statistiques",
+                    description: "Collecte de données d'utilisation pour améliorer le service",
+                    consented: 2687,
+                    refused: 160,
+                    rate: 94.4,
+                  },
+                  {
+                    purpose: "Personnalisation",
+                    description: "Adaptation de l'expérience utilisateur",
+                    consented: 2591,
+                    refused: 256,
+                    rate: 91.0,
+                  },
+                  {
+                    purpose: "Partage avec partenaires",
+                    description: "Transmission de données à des partenaires commerciaux",
+                    consented: 1423,
+                    refused: 1424,
+                    rate: 50.0,
+                  },
+                ].map((consent, idx) => (
+                  <div key={idx} className="border rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div>
+                        <div className="font-semibold">{consent.purpose}</div>
+                        <div className="text-xs text-muted-foreground">{consent.description}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-2xl font-bold text-[#2563eb]">{consent.rate}%</div>
+                        <div className="text-xs text-muted-foreground">Taux de consentement</div>
+                      </div>
+                    </div>
+                    <div className="mt-3">
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-green-500 to-emerald-500"
+                          style={{ width: `${consent.rate}%` }}
+                        />
+                      </div>
+                      <div className="flex items-center justify-between mt-1 text-xs text-muted-foreground">
+                        <span>✓ {consent.consented.toLocaleString()} acceptés</span>
+                        <span>✗ {consent.refused.toLocaleString()} refusés</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Privacy Controls */}
+            <div className="bg-card border rounded-lg p-6">
+              <h2 className="text-lg font-semibold mb-4">Contrôles de Confidentialité</h2>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div>
+                    <div className="font-semibold">Anonymisation Automatique</div>
+                    <div className="text-sm text-muted-foreground">
+                      Anonymiser automatiquement les données des comptes inactifs &gt; 3 ans
+                    </div>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" className="sr-only peer" defaultChecked />
+                    <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2563eb]"></div>
+                  </label>
+                </div>
+
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div>
+                    <div className="font-semibold">Chiffrement des Données Sensibles</div>
+                    <div className="text-sm text-muted-foreground">
+                      Chiffrer toutes les données personnelles en base de données (AES-256)
+                    </div>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" className="sr-only peer" defaultChecked />
+                    <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2563eb]"></div>
+                  </label>
+                </div>
+
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div>
+                    <div className="font-semibold">Demandes de Consentement Double Opt-In</div>
+                    <div className="text-sm text-muted-foreground">
+                      Exiger une confirmation par email pour tous les consentements
+                    </div>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" className="sr-only peer" defaultChecked />
+                    <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2563eb]"></div>
+                  </label>
+                </div>
+
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div>
+                    <div className="font-semibold">Durée de Conservation des Données</div>
+                    <div className="text-sm text-muted-foreground">
+                      Suppression automatique après la durée légale
+                    </div>
+                  </div>
+                  <select className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background">
+                    <option>2 ans</option>
+                    <option selected>3 ans</option>
+                    <option>5 ans</option>
+                    <option>10 ans</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div>
+                    <div className="font-semibold">Notifications de Violation</div>
+                    <div className="text-sm text-muted-foreground">
+                      Notifier automatiquement la CNIL et les utilisateurs en cas de violation &lt; 72h
+                    </div>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" className="sr-only peer" defaultChecked />
+                    <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2563eb]"></div>
+                  </label>
+                </div>
+              </div>
+
+              {/* Export User Data */}
+              <div className="mt-6 pt-6 border-t">
+                <h3 className="font-semibold mb-3">Outils d'Export de Données</h3>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="email"
+                    placeholder="Email de l'utilisateur"
+                    className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
+                  />
+                  <button className="px-4 py-2 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors">
+                    <Download className="h-4 w-4 inline mr-2" />
+                    Exporter Données JSON
+                  </button>
+                  <button className="px-4 py-2 border rounded-lg hover:bg-muted transition-colors">
+                    <Trash2 className="h-4 w-4 inline mr-2 text-red-600" />
+                    Supprimer Compte
+                  </button>
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  L'export inclut toutes les données personnelles, commandes, interactions et consentements de l'utilisateur.
+                </p>
               </div>
             </div>
           </div>

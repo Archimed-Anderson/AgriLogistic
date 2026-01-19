@@ -888,7 +888,7 @@ export function VisionStrategy({ onNavigate }: { onNavigate: (route: string) => 
 
         <div className="text-center mt-8">
           <p className="text-sm text-muted-foreground mb-3">Suivez-nous sur les réseaux sociaux</p>
-          <p className="font-semibold text-[#2980B9]">#AgroDeepVision</p>
+          <p className="font-semibold text-[#2980B9]">#AgroLogisticVision</p>
         </div>
       </div>
     </div>

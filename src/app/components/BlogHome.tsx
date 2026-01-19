@@ -134,7 +134,7 @@ export function BlogHome({ onNavigate }: { onNavigate: (route: string) => void }
     {
       id: "8",
       title: "ROI de l'agriculture connectée : Étude de cas 2025",
-      excerpt: "Analyse complète du retour sur investissement de 50 exploitations ayant adopté les technologies AgroDeep.",
+      excerpt: "Analyse complète du retour sur investissement de 50 exploitations ayant adopté les technologies AgroLogistic.",
       author: { name: "Sarah Moreau", avatar: "SM" },
       category: "Business",
       categoryColor: "green",
@@ -206,7 +206,7 @@ export function BlogHome({ onNavigate }: { onNavigate: (route: string) => void }
       {/* Hero Header */}
       <div className="bg-gradient-to-br from-[#2ECC71] to-[#27AE60] rounded-2xl p-12 text-white">
         <div className="max-w-4xl">
-          <h1 className="text-5xl font-bold mb-4">Le Blog AgroDeep</h1>
+          <h1 className="text-5xl font-bold mb-4">Le Blog AgroLogistic</h1>
           <p className="text-xl opacity-90 mb-8">
             Découvrez les dernières innovations, conseils pratiques et success stories
             de l'agriculture connectée

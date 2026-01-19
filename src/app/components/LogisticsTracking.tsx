@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Truck,
   MapPin,
@@ -22,6 +22,13 @@ import {
   User,
   FileText,
   Navigation2,
+  Route,
+  CheckCircle,
+  Info,
+  Mail,
+  Send,
+  Bell,
+  Settings,
 } from "lucide-react";
 import { toast } from "sonner";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
@@ -56,7 +63,7 @@ interface Incident {
   resolved: boolean;
 }
 
-// Mock data - 6 livraisons réalistes pour AgroDeep
+// Mock data - 6 livraisons réalistes pour AgroLogistic
 const mockDeliveries: Delivery[] = [
   {
     id: "DLV-001",
@@ -253,6 +260,51 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [incidentType, setIncidentType] = useState<Incident["type"]>("delay");
   const [incidentNote, setIncidentNote] = useState("");
+  const [isRealTimeEnabled, setIsRealTimeEnabled] = useState(true);
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const [wsStatus, setWsStatus] = useState<"connected" | "disconnected" | "reconnecting">("connected");
+  const [showRouteOptimizer, setShowRouteOptimizer] = useState(false);
+  const [selectedDeliveries, setSelectedDeliveries] = useState<string[]>([]);
+  const [optimizationResult, setOptimizationResult] = useState<{
+    totalDistance: number;
+    estimatedFuel: number;
+    fuelCost: number;
+    co2Emissions: number;
+    estimatedTime: number;
+    optimizedRoute: Array<{ deliveryId: string; order: number; city: string; distance: number }>;
+  } | null>(null);
+  const [showNotificationSettings, setShowNotificationSettings] = useState(false);
+  const [notificationPreferences, setNotificationPreferences] = useState(() => {
+    const saved = localStorage.getItem("AgroLogistic-notification-prefs");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error("Failed to parse notification preferences", e);
+      }
+    }
+    return {
+      smsEnabled: true,
+      emailEnabled: true,
+      events: {
+        collected: { enabled: true, sms: true, email: true },
+        inTransit: { enabled: true, sms: true, email: false },
+        delivering: { enabled: true, sms: true, email: true },
+        delivered: { enabled: true, sms: true, email: true },
+        delayed: { enabled: true, sms: true, email: true },
+        incident: { enabled: true, sms: true, email: true },
+      },
+    };
+  });
+  const [notificationHistory, setNotificationHistory] = useState<Array<{
+    id: string;
+    deliveryId: string;
+    type: "sms" | "email";
+    event: string;
+    recipient: string;
+    timestamp: string;
+    status: "sent" | "failed" | "pending";
+  }>>([]);
 
   const activeDeliveriesCount = deliveries.filter((d) =>
     ["collected", "in-transit", "delivering"].includes(d.status)
@@ -359,11 +411,249 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
     toast.success("Incident signalé avec succès");
   };
 
+  // Route optimization functions
+  const toggleDeliverySelection = (deliveryId: string) => {
+    setSelectedDeliveries((prev) =>
+      prev.includes(deliveryId) ? prev.filter((id) => id !== deliveryId) : [...prev, deliveryId]
+    );
+  };
+
+  const calculateOptimizedRoute = () => {
+    if (selectedDeliveries.length < 2) {
+      toast.error("Selectionnez au moins 2 livraisons pour optimiser");
+      return;
+    }
+
+    // Get selected delivery objects
+    const selectedDeliveryObjects = deliveries.filter((d) => selectedDeliveries.includes(d.id));
+
+    // Simple greedy algorithm for TSP (Traveling Salesman Problem)
+    // Start from depot (assumed at Paris: 48.8566, 2.3522)
+    const depot = { lat: 48.8566, lng: 2.3522, city: "Depot Paris" };
+    let currentPos = depot;
+    const unvisited = [...selectedDeliveryObjects];
+    const route: Array<{ deliveryId: string; order: number; city: string; distance: number }> = [];
+    let totalDistance = 0;
+
+    // Greedy nearest-neighbor algorithm
+    while (unvisited.length > 0) {
+      let nearestIdx = 0;
+      let minDistance = calculateDistance(currentPos.lat, currentPos.lng, unvisited[0].latitude, unvisited[0].longitude);
+
+      for (let i = 1; i < unvisited.length; i++) {
+        const dist = calculateDistance(currentPos.lat, currentPos.lng, unvisited[i].latitude, unvisited[i].longitude);
+        if (dist < minDistance) {
+          minDistance = dist;
+          nearestIdx = i;
+        }
+      }
+
+      const nearest = unvisited[nearestIdx];
+      route.push({
+        deliveryId: nearest.id,
+        order: route.length + 1,
+        city: nearest.recipientCity,
+        distance: Math.round(minDistance),
+      });
+      totalDistance += minDistance;
+      currentPos = { lat: nearest.latitude, lng: nearest.longitude, city: nearest.recipientCity };
+      unvisited.splice(nearestIdx, 1);
+    }
+
+    // Return to depot
+    const returnDistance = calculateDistance(currentPos.lat, currentPos.lng, depot.lat, depot.lng);
+    totalDistance += returnDistance;
+
+    // Calculate fuel consumption (assuming 8.5 L/100km)
+    const fuelConsumption = 8.5; // L/100km
+    const fuelPrice = 1.85; // EUR per liter
+    const estimatedFuel = (totalDistance * fuelConsumption) / 100;
+    const fuelCost = estimatedFuel * fuelPrice;
+
+    // Calculate CO2 emissions (2.31 kg CO2 per liter of diesel)
+    const co2Emissions = estimatedFuel * 2.31;
+
+    // Estimate time (assuming average speed of 70 km/h)
+    const estimatedTime = totalDistance / 70;
+
+    setOptimizationResult({
+      totalDistance: Math.round(totalDistance),
+      estimatedFuel: Math.round(estimatedFuel * 10) / 10,
+      fuelCost: Math.round(fuelCost * 100) / 100,
+      co2Emissions: Math.round(co2Emissions * 10) / 10,
+      estimatedTime: Math.round(estimatedTime * 10) / 10,
+      optimizedRoute: route,
+    });
+
+    toast.success(`Itineraire optimise! Distance totale: ${Math.round(totalDistance)} km`);
+  };
+
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+    // Haversine formula for distance between two coordinates
+    const R = 6371; // Earth radius in km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
+
+  const resetOptimization = () => {
+    setSelectedDeliveries([]);
+    setOptimizationResult(null);
+    toast.info("Optimisation reinitialise e");
+  };
+
+  // Notification functions
+  const sendNotification = (delivery: Delivery, event: string, type: "sms" | "email") => {
+    const eventKey = event.toLowerCase().replace("-", "") as keyof typeof notificationPreferences.events;
+    const prefs = notificationPreferences.events[eventKey];
+
+    if (!prefs || !prefs.enabled || (type === "sms" && !prefs.sms) || (type === "email" && !prefs.email)) {
+      return;
+    }
+
+    const notification = {
+      id: `notif-${Date.now()}-${Math.random()}`,
+      deliveryId: delivery.id,
+      type,
+      event,
+      recipient: type === "sms" ? delivery.phone : delivery.customerName,
+      timestamp: new Date().toISOString(),
+      status: Math.random() > 0.05 ? ("sent" as const) : ("failed" as const), // 95% success rate
+    };
+
+    setNotificationHistory((prev) => [notification, ...prev]);
+
+    if (notification.status === "sent") {
+      const message =
+        type === "sms"
+          ? `SMS envoye a ${delivery.phone}: Livraison ${delivery.trackingNumber} - ${event}`
+          : `Email envoye a ${delivery.customerName}: Livraison ${delivery.trackingNumber} - ${event}`;
+      toast.success(message, { duration: 3000 });
+    } else {
+      toast.error(`Echec envoi ${type.toUpperCase()} pour ${delivery.trackingNumber}`);
+    }
+  };
+
+  const toggleNotificationEvent = (eventKey: string, field: "enabled" | "sms" | "email") => {
+    setNotificationPreferences((prev: any) => ({
+      ...prev,
+      events: {
+        ...prev.events,
+        [eventKey]: {
+          ...prev.events[eventKey],
+          [field]: !prev.events[eventKey][field],
+        },
+      },
+    }));
+  };
+
+  const saveNotificationPreferences = () => {
+    localStorage.setItem("AgroLogistic-notification-prefs", JSON.stringify(notificationPreferences));
+    toast.success("Preferences de notification sauvegardees");
+    setShowNotificationSettings(false);
+  };
+
+  const simulateDeliveryStatusChange = (deliveryId: string, newStatus: Delivery["status"]) => {
+    const delivery = deliveries.find((d) => d.id === deliveryId);
+    if (!delivery) return;
+
+    setDeliveries((prev) => prev.map((d) => (d.id === deliveryId ? { ...d, status: newStatus } : d)));
+
+    // Auto-send notifications based on status change
+    const eventMap: Record<Delivery["status"], string> = {
+      collected: "Collectee",
+      "in-transit": "En transit",
+      delivering: "En livraison",
+      delivered: "Livree",
+      delayed: "Retard detecte",
+      incident: "Incident signale",
+    };
+
+    const event = eventMap[newStatus];
+    if (notificationPreferences.smsEnabled) {
+      sendNotification(delivery, event, "sms");
+    }
+    if (notificationPreferences.emailEnabled) {
+      setTimeout(() => sendNotification(delivery, event, "email"), 500);
+    }
+
+    toast.success(`Statut change: ${delivery.trackingNumber} - ${event}`);
+  };
+
   const filteredDeliveries = deliveries.filter((d) => {
     if (statusFilter !== "all" && d.status !== statusFilter) return false;
     if (searchQuery && !d.trackingNumber.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
+
+  // Real-time GPS tracking simulation (WebSocket)
+  useEffect(() => {
+    if (!isRealTimeEnabled) return;
+
+    // Simulate WebSocket connection
+    const wsInterval = setInterval(() => {
+      setLastUpdate(new Date());
+      setWsStatus("connected");
+
+      // Simulate random GPS position updates for active deliveries
+      setDeliveries((prevDeliveries) =>
+        prevDeliveries.map((delivery) => {
+          if (["in-transit", "delivering"].includes(delivery.status)) {
+            // Simulate GPS movement (small random changes)
+            const latChange = (Math.random() - 0.5) * 0.02;
+            const lngChange = (Math.random() - 0.5) * 0.02;
+
+            return {
+              ...delivery,
+              latitude: delivery.latitude + latChange,
+              longitude: delivery.longitude + lngChange,
+            };
+          }
+          return delivery;
+        })
+      );
+
+      // Randomly detect delays or incidents (1% chance per update)
+      if (Math.random() < 0.01) {
+        const activeDeliveries = deliveries.filter((d) =>
+          ["in-transit", "delivering"].includes(d.status)
+        );
+        if (activeDeliveries.length > 0) {
+          const randomDelivery = activeDeliveries[Math.floor(Math.random() * activeDeliveries.length)];
+          
+          if (Math.random() < 0.5) {
+            // Simulate delay
+            toast.warning(`Retard detecte pour ${randomDelivery.trackingNumber}`, {
+              description: "Le vehicule est ralenti par le trafic",
+            });
+          } else {
+            // Simulate incident
+            toast.error(`Incident signale pour ${randomDelivery.trackingNumber}`, {
+              description: "Le chauffeur a signale un probleme",
+            });
+          }
+        }
+      }
+    }, 5000); // Update every 5 seconds
+
+    // Simulate occasional reconnection
+    const reconnectInterval = setInterval(() => {
+      setWsStatus("reconnecting");
+      setTimeout(() => {
+        setWsStatus("connected");
+        toast.success("Connexion GPS retablie");
+      }, 1000);
+    }, 120000); // Simulate reconnect every 2 minutes
+
+    return () => {
+      clearInterval(wsInterval);
+      clearInterval(reconnectInterval);
+    };
+  }, [isRealTimeEnabled, deliveries]);
 
   // Client View - Simple Tracking Widget
   if (isClientView) {
@@ -608,12 +898,62 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
           </p>
         </div>
         <div className="flex items-center gap-3">
+          {/* Real-time Status Indicator */}
+          <div className="flex items-center gap-2 px-3 py-2 border rounded-lg bg-card">
+            <div className="flex items-center gap-1.5">
+              <div
+                className={`h-2 w-2 rounded-full ${
+                  wsStatus === "connected"
+                    ? "bg-green-500 animate-pulse"
+                    : wsStatus === "reconnecting"
+                    ? "bg-orange-500 animate-pulse"
+                    : "bg-red-500"
+                }`}
+              />
+              <span className="text-xs font-medium">
+                {wsStatus === "connected" ? "En direct" : wsStatus === "reconnecting" ? "Reconnexion..." : "Hors ligne"}
+              </span>
+            </div>
+            <button
+              onClick={() => {
+                setIsRealTimeEnabled(!isRealTimeEnabled);
+                toast.success(isRealTimeEnabled ? "Suivi temps reel desactive" : "Suivi temps reel active");
+              }}
+              className={`px-2 py-1 text-xs rounded transition-colors ${
+                isRealTimeEnabled ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"
+              }`}
+            >
+              {isRealTimeEnabled ? "ON" : "OFF"}
+            </button>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            Derniere MAJ: {lastUpdate.toLocaleTimeString("fr-FR")}
+          </div>
           <button
             onClick={handleRefresh}
             className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-accent transition-colors"
           >
             <RefreshCw className="h-4 w-4" />
             Actualiser
+          </button>
+          <button
+            onClick={() => setShowRouteOptimizer(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-[#27AE60] text-white rounded-lg hover:bg-[#229954] transition-colors"
+          >
+            <Route className="h-4 w-4" />
+            Optimiser Itineraire
+          </button>
+          <button
+            onClick={() => setShowNotificationSettings(true)}
+            className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-accent transition-colors relative"
+          >
+            <Bell className="h-4 w-4" />
+            Notifications
+            {notificationHistory.length > 0 && (
+              <span className="absolute -top-1 -right-1 h-5 w-5 bg-[#27AE60] text-white text-xs rounded-full flex items-center justify-center font-bold">
+                {notificationHistory.length}
+              </span>
+            )}
           </button>
           <select className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background">
             <option>Aujourd'hui</option>
@@ -1416,6 +1756,414 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
               >
                 Signaler
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Route Optimizer Modal */}
+      {showRouteOptimizer && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-card border rounded-lg shadow-xl w-full max-w-4xl my-8">
+            <div className="px-6 py-4 border-b flex items-center justify-between">
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                <Route className="h-5 w-5 text-[#27AE60]" />
+                Optimisation d Itineraire
+              </h2>
+              <button
+                onClick={() => {
+                  setShowRouteOptimizer(false);
+                  resetOptimization();
+                }}
+                className="p-2 hover:bg-muted rounded-lg transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Step 1: Select Deliveries */}
+              <div>
+                <h3 className="font-semibold mb-3 flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-[#27AE60]" />
+                  Etape 1: Selectionnez les livraisons a optimiser
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {deliveries
+                    .filter((d) => ["collected", "in-transit", "delivering"].includes(d.status))
+                    .map((delivery) => (
+                      <label
+                        key={delivery.id}
+                        className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${
+                          selectedDeliveries.includes(delivery.id)
+                            ? "bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-800"
+                            : "hover:bg-muted/50"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedDeliveries.includes(delivery.id)}
+                          onChange={() => toggleDeliverySelection(delivery.id)}
+                          className="h-4 w-4 rounded border-gray-300 text-[#27AE60] focus:ring-[#27AE60]"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium">{delivery.recipientCity}</div>
+                          <div className="text-xs text-muted-foreground truncate">
+                            {delivery.trackingNumber} • {delivery.recipientName}
+                          </div>
+                        </div>
+                        <div className={`px-2 py-1 text-xs rounded-full ${getStatusBadge(delivery.status).class}`}>
+                          {getStatusBadge(delivery.status).label}
+                        </div>
+                      </label>
+                    ))}
+                </div>
+                <div className="mt-3 text-sm text-muted-foreground">
+                  {selectedDeliveries.length} livraisons selectionnees
+                </div>
+              </div>
+
+              {/* Step 2: Calculate */}
+              <div className="flex gap-3">
+                <button
+                  onClick={calculateOptimizedRoute}
+                  disabled={selectedDeliveries.length < 2}
+                  className="flex-1 py-2 bg-[#27AE60] text-white rounded-lg hover:bg-[#229954] transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Navigation2 className="h-4 w-4" />
+                  Calculer itineraire optimal
+                </button>
+                {optimizationResult && (
+                  <button
+                    onClick={resetOptimization}
+                    className="px-4 py-2 border rounded-lg hover:bg-muted transition-colors"
+                  >
+                    Reinitialiser
+                  </button>
+                )}
+              </div>
+
+              {/* Results */}
+              {optimizationResult && (
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-semibold mb-3 flex items-center gap-2">
+                      <Info className="h-4 w-4 text-[#27AE60]" />
+                      Resultats de l optimisation
+                    </h3>
+                  </div>
+
+                  {/* KPI Cards */}
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                      <div className="text-xs text-muted-foreground mb-1">Distance totale</div>
+                      <div className="text-lg font-bold">{optimizationResult.totalDistance} km</div>
+                    </div>
+                    <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-3">
+                      <div className="text-xs text-muted-foreground mb-1">Carburant</div>
+                      <div className="text-lg font-bold">{optimizationResult.estimatedFuel} L</div>
+                    </div>
+                    <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
+                      <div className="text-xs text-muted-foreground mb-1">Cout</div>
+                      <div className="text-lg font-bold">{optimizationResult.fuelCost} EUR</div>
+                    </div>
+                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                      <div className="text-xs text-muted-foreground mb-1">CO2</div>
+                      <div className="text-lg font-bold">{optimizationResult.co2Emissions} kg</div>
+                    </div>
+                    <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-3">
+                      <div className="text-xs text-muted-foreground mb-1">Duree</div>
+                      <div className="text-lg font-bold">{optimizationResult.estimatedTime} h</div>
+                    </div>
+                  </div>
+
+                  {/* Optimized Route */}
+                  <div className="bg-muted/50 rounded-lg p-4">
+                    <h4 className="font-semibold mb-3">Itineraire optimise (algorithme Greedy TSP)</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-3 text-sm">
+                        <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
+                          D
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-medium">Depot Paris</div>
+                          <div className="text-xs text-muted-foreground">Point de depart</div>
+                        </div>
+                      </div>
+                      {optimizationResult.optimizedRoute.map((stop, idx) => (
+                        <div key={stop.deliveryId}>
+                          <div className="flex items-center gap-2 ml-4">
+                            <Navigation className="h-4 w-4 text-muted-foreground" />
+                            <div className="text-xs text-muted-foreground">{stop.distance} km</div>
+                          </div>
+                          <div className="flex items-center gap-3 text-sm mt-1">
+                            <div className="w-8 h-8 bg-[#27AE60] text-white rounded-full flex items-center justify-center font-bold">
+                              {stop.order}
+                            </div>
+                            <div className="flex-1">
+                              <div className="font-medium">{stop.city}</div>
+                              <div className="text-xs text-muted-foreground">{stop.deliveryId}</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      <div className="flex items-center gap-2 ml-4">
+                        <Navigation className="h-4 w-4 text-muted-foreground" />
+                        <div className="text-xs text-muted-foreground">Retour depot</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-3">
+                    <button className="flex-1 py-2 bg-[#27AE60] text-white rounded-lg hover:bg-[#229954] transition-colors flex items-center justify-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      Exporter PDF
+                    </button>
+                    <button className="flex-1 py-2 border rounded-lg hover:bg-muted transition-colors flex items-center justify-center gap-2">
+                      <Navigation className="h-4 w-4" />
+                      Envoyer au GPS
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="px-6 py-4 border-t flex justify-end">
+              <button
+                onClick={() => {
+                  setShowRouteOptimizer(false);
+                  resetOptimization();
+                }}
+                className="px-4 py-2 border rounded-lg hover:bg-accent transition-colors"
+              >
+                Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Notification Settings Modal */}
+      {showNotificationSettings && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-card border rounded-lg shadow-xl w-full max-w-5xl my-8">
+            <div className="px-6 py-4 border-b flex items-center justify-between">
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                <Bell className="h-5 w-5 text-[#27AE60]" />
+                Configuration des Notifications Automatiques
+              </h2>
+              <button
+                onClick={() => setShowNotificationSettings(false)}
+                className="p-2 hover:bg-muted rounded-lg transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Left Column: Configuration */}
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="font-semibold mb-3 flex items-center gap-2">
+                      <Settings className="h-4 w-4 text-[#27AE60]" />
+                      Parametres Generaux
+                    </h3>
+                    <div className="space-y-3 bg-muted/50 rounded-lg p-4">
+                      <label className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Phone className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-medium">Notifications SMS</span>
+                        </div>
+                        <input
+                          type="checkbox"
+                          checked={notificationPreferences.smsEnabled}
+                          onChange={() =>
+                            setNotificationPreferences((prev: any) => ({ ...prev, smsEnabled: !prev.smsEnabled }))
+                          }
+                          className="h-4 w-4 rounded border-gray-300 text-[#27AE60] focus:ring-[#27AE60]"
+                        />
+                      </label>
+                      <label className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Mail className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-medium">Notifications Email</span>
+                        </div>
+                        <input
+                          type="checkbox"
+                          checked={notificationPreferences.emailEnabled}
+                          onChange={() =>
+                            setNotificationPreferences((prev: any) => ({ ...prev, emailEnabled: !prev.emailEnabled }))
+                          }
+                          className="h-4 w-4 rounded border-gray-300 text-[#27AE60] focus:ring-[#27AE60]"
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold mb-3">Evenements de Livraison</h3>
+                    <div className="space-y-2">
+                      {Object.entries(notificationPreferences.events).map(([key, value]: [string, any]) => (
+                        <div key={key} className="bg-muted/50 rounded-lg p-3">
+                          <div className="flex items-center justify-between mb-2">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={value.enabled}
+                                onChange={() => toggleNotificationEvent(key, "enabled")}
+                                className="h-4 w-4 rounded border-gray-300 text-[#27AE60] focus:ring-[#27AE60]"
+                              />
+                              <span className="font-medium capitalize">
+                                {key === "inTransit" ? "En Transit" : key.charAt(0).toUpperCase() + key.slice(1)}
+                              </span>
+                            </label>
+                          </div>
+                          {value.enabled && (
+                            <div className="flex gap-4 ml-6 text-sm">
+                              <label className="flex items-center gap-1.5 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={value.sms}
+                                  onChange={() => toggleNotificationEvent(key, "sms")}
+                                  className="h-3 w-3 rounded border-gray-300 text-[#27AE60] focus:ring-[#27AE60]"
+                                />
+                                <Phone className="h-3 w-3" />
+                                SMS
+                              </label>
+                              <label className="flex items-center gap-1.5 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={value.email}
+                                  onChange={() => toggleNotificationEvent(key, "email")}
+                                  className="h-3 w-3 rounded border-gray-300 text-[#27AE60] focus:ring-[#27AE60]"
+                                />
+                                <Mail className="h-3 w-3" />
+                                Email
+                              </label>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Test Notifications */}
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                    <h4 className="font-semibold mb-2 text-sm">Tester les notifications</h4>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Simulez un changement de statut pour voir les notifications en action
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {deliveries.slice(0, 2).map((delivery) => (
+                        <select
+                          key={delivery.id}
+                          onChange={(e) => simulateDeliveryStatusChange(delivery.id, e.target.value as Delivery["status"])}
+                          value={delivery.status}
+                          className="text-xs px-2 py-1 border rounded bg-background"
+                        >
+                          <option value="collected">Collectee - {delivery.recipientCity}</option>
+                          <option value="in-transit">En Transit</option>
+                          <option value="delivering">En Livraison</option>
+                          <option value="delivered">Livree</option>
+                          <option value="delayed">Retard</option>
+                          <option value="incident">Incident</option>
+                        </select>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Column: Notification History */}
+                <div>
+                  <h3 className="font-semibold mb-3 flex items-center gap-2">
+                    <Activity className="h-4 w-4 text-[#27AE60]" />
+                    Historique des Notifications ({notificationHistory.length})
+                  </h3>
+                  <div className="bg-muted/50 rounded-lg p-4 max-h-[600px] overflow-y-auto">
+                    {notificationHistory.length === 0 ? (
+                      <div className="text-center py-12 text-muted-foreground">
+                        <Bell className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                        <p>Aucune notification envoyee</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {notificationHistory.map((notif) => (
+                          <div
+                            key={notif.id}
+                            className={`p-3 rounded-lg border ${
+                              notif.status === "sent"
+                                ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+                                : notif.status === "failed"
+                                ? "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
+                                : "bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800"
+                            }`}
+                          >
+                            <div className="flex items-start gap-2">
+                              <div className="mt-0.5">
+                                {notif.type === "sms" ? (
+                                  <Phone className="h-4 w-4 text-muted-foreground" />
+                                ) : (
+                                  <Mail className="h-4 w-4 text-muted-foreground" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between gap-2 mb-1">
+                                  <span className="text-xs font-medium uppercase">{notif.type}</span>
+                                  <span
+                                    className={`text-xs px-2 py-0.5 rounded-full ${
+                                      notif.status === "sent"
+                                        ? "bg-green-100 text-green-700"
+                                        : notif.status === "failed"
+                                        ? "bg-red-100 text-red-700"
+                                        : "bg-orange-100 text-orange-700"
+                                    }`}
+                                  >
+                                    {notif.status === "sent" ? "Envoye" : notif.status === "failed" ? "Echec" : "En cours"}
+                                  </span>
+                                </div>
+                                <p className="text-sm font-medium">{notif.event}</p>
+                                <p className="text-xs text-muted-foreground truncate">
+                                  {notif.deliveryId} → {notif.recipient}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {new Date(notif.timestamp).toLocaleString("fr-FR")}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="px-6 py-4 border-t flex justify-between">
+              <button
+                onClick={() => setNotificationHistory([])}
+                disabled={notificationHistory.length === 0}
+                className="px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Effacer historique
+              </button>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowNotificationSettings(false)}
+                  className="px-4 py-2 border rounded-lg hover:bg-accent transition-colors"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={saveNotificationPreferences}
+                  className="px-4 py-2 bg-[#27AE60] text-white rounded-lg hover:bg-[#229954] transition-colors flex items-center gap-2"
+                >
+                  <CheckCircle className="h-4 w-4" />
+                  Sauvegarder
+                </button>
+              </div>
             </div>
           </div>
         </div>

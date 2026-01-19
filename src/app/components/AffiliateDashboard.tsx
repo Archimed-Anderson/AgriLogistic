@@ -76,7 +76,7 @@ export function AffiliateDashboard() {
       id: "1",
       productName: "Tracteur John Deere 6M Series",
       category: "Engins Agricoles",
-      affiliateUrl: "https://agrodeep.com/aff/jd-6m-abc123",
+      affiliateUrl: "https://AgroLogistic.com/aff/jd-6m-abc123",
       commission: 8.5,
       clicks: 1234,
       conversions: 45,
@@ -88,7 +88,7 @@ export function AffiliateDashboard() {
       id: "2",
       productName: "Pièces Détachées Moissonneuse",
       category: "Pièces Détachées",
-      affiliateUrl: "https://agrodeep.com/aff/spare-parts-xyz789",
+      affiliateUrl: "https://AgroLogistic.com/aff/spare-parts-xyz789",
       commission: 12,
       clicks: 890,
       conversions: 67,
@@ -100,7 +100,7 @@ export function AffiliateDashboard() {
       id: "3",
       productName: "Électro-Pompe Irrigation",
       category: "Électroménager Agricole",
-      affiliateUrl: "https://agrodeep.com/aff/pump-def456",
+      affiliateUrl: "https://AgroLogistic.com/aff/pump-def456",
       commission: 10,
       clicks: 567,
       conversions: 34,
@@ -112,7 +112,7 @@ export function AffiliateDashboard() {
       id: "4",
       productName: "Système d'Irrigation Automatique",
       category: "Produits Industriels",
-      affiliateUrl: "https://agrodeep.com/aff/irrigation-ghi789",
+      affiliateUrl: "https://AgroLogistic.com/aff/irrigation-ghi789",
       commission: 15,
       clicks: 2100,
       conversions: 89,
@@ -124,7 +124,7 @@ export function AffiliateDashboard() {
       id: "5",
       productName: "Kit Capteurs IoT Agriculture",
       category: "Produits Industriels",
-      affiliateUrl: "https://agrodeep.com/aff/iot-sensors-jkl012",
+      affiliateUrl: "https://AgroLogistic.com/aff/iot-sensors-jkl012",
       commission: 18,
       clicks: 1450,
       conversions: 56,
@@ -603,7 +603,7 @@ export function AffiliateDashboard() {
               🚀 Programme Ambassadeur Premium
             </h3>
             <p className="text-green-100 mb-4">
-              Débloquez des commissions jusqu'à 25% et des bonus exclusifs en devenant Ambassadeur Premium AgroDeep
+              Débloquez des commissions jusqu'à 25% et des bonus exclusifs en devenant Ambassadeur Premium AgroLogistic
             </p>
             <ul className="space-y-2 mb-4">
               <li className="flex items-center gap-2 text-sm">

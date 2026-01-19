@@ -1,14 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Toaster } from "sonner";
+import { AuthProviderComponent, useAuth } from "@presentation/contexts/AuthContext";
+import { ConsentBanner } from "./components/ConsentBanner";
+import { BackendStatus } from "./components/BackendStatus";
+import { trackPageView } from "./lib/analytics/ga";
 
 // Layout components
 import { Navbar } from "./components/Navbar";
 import { Sidebar } from "./components/Sidebar";
 
 // Auth & Landing
-import { LandingPageInteractive } from "./components/LandingPageInteractive";
+import { AgroLogisticLandingPage } from "./components/landing/AgroDeepLandingPage";
 import { LoginPage } from "@presentation/pages/LoginPage";
-import { RegisterScreen } from "./components/RegisterScreen";
+import { RegisterPage } from "@presentation/pages/RegisterPage";
+import { ModernAuthPage } from "@presentation/pages/ModernAuthPage";
+import { ForgotPasswordPage } from "@presentation/pages/ForgotPasswordPage";
+import { ResetPasswordPage } from "@presentation/pages/ResetPasswordPage";
 
 // Dashboard
 import { AdminDashboard } from "./components/AdminDashboard";
@@ -20,6 +27,7 @@ import { ChatInterface } from "./components/ChatInterface";
 import { AnalyticsDashboard } from "./components/AnalyticsDashboard";
 import { MarketplaceModern } from "./components/MarketplaceModern";
 import { RentalMarketplace } from "./components/RentalMarketplace";
+import { RentalMarketplace2 } from "./components/RentalMarketplace2";
 import { Settings } from "./components/Settings";
 import { ProfilePage } from "./components/ProfilePage";
 import { NotificationsPage } from "./components/NotificationsPage";
@@ -56,13 +64,31 @@ import { B2BChat } from "./components/B2BChat";
 import { CarrierDashboard } from "./components/CarrierDashboard";
 import { AffiliateDashboard } from "./components/AffiliateDashboard";
 
-export default function App() {
+function AppShell() {
+  const { isAuthenticated, isLoading, user, logout } = useAuth();
+
+  // For development: Start with dashboard instead of landing page
+  // Change to "/" for production landing page
   const [currentRoute, setCurrentRoute] = useState("/");
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [adminMode, setAdminMode] = useState(false);
+  const [showBackendStatus, setShowBackendStatus] = useState(false);
+  const gaMeasurementId = import.meta.env.VITE_GA_MEASUREMENT_ID || "";
 
-  const isAuthenticated = !["/", "/login", "/register"].includes(currentRoute);
+  // SPA page views (GA4) - uniquement si consentement donné et GA initialisé
+  useEffect(() => {
+    trackPageView(gaMeasurementId, currentRoute);
+  }, [gaMeasurementId, currentRoute]);
+
+  // Protection routes: redirige vers /auth si non authentifié
+  useEffect(() => {
+    const needsAuth = currentRoute.startsWith("/admin") || currentRoute.startsWith("/customer");
+    if (!isLoading && needsAuth && !isAuthenticated) {
+      setCurrentRoute("/auth");
+      window.scrollTo(0, 0);
+    }
+  }, [currentRoute, isAuthenticated, isLoading]);
   
   // Sidebar visible uniquement pour les pages d'administration spécifiques
   const showSidebar = isAuthenticated && 
@@ -113,11 +139,17 @@ export default function App() {
     switch (currentRoute) {
       // Auth & Landing
       case "/":
-        return <LandingPageInteractive onNavigate={handleNavigate} />;
+        return <AgroLogisticLandingPage onNavigate={handleNavigate} />;
+      case "/auth":
+        return <ModernAuthPage onNavigate={handleNavigate} />;
       case "/login":
         return <LoginPage onNavigate={handleNavigate} />;
       case "/register":
-        return <RegisterScreen onNavigate={handleNavigate} />;
+        return <RegisterPage onNavigate={handleNavigate} />;
+      case "/forgot-password":
+        return <ForgotPasswordPage onNavigate={handleNavigate} />;
+      case "/reset-password":
+        return <ResetPasswordPage onNavigate={handleNavigate} />;
       
       // Admin Dashboard
       case "/admin/overview":
@@ -144,7 +176,7 @@ export default function App() {
       
       case "/admin/rental":
       case "/customer/rental":
-        return <RentalMarketplace />;
+        return <RentalMarketplace2 />;
       
       case "/admin/settings":
       case "/customer/settings":
@@ -239,13 +271,12 @@ export default function App() {
       
       // Default fallback
       default:
-        return <AdminDashboard />;
+        return isAuthenticated ? <ModernDashboard /> : <AgroLogisticLandingPage onNavigate={handleNavigate} />;
     }
   };
 
   return (
     <div className={`min-h-screen bg-background ${theme}`}>
-      {isAuthenticated && (
         <Navbar
           currentRoute={currentRoute}
           onNavigate={handleNavigate}
@@ -255,31 +286,57 @@ export default function App() {
           isAuthenticated={isAuthenticated}
           adminMode={adminMode}
           onAdminModeChange={setAdminMode}
+          userLabel={user ? user.email.value : undefined}
+          onLogout={async () => {
+            await logout();
+            handleNavigate("/");
+          }}
         />
-      )}
-      
-      {showSidebar ? (
-        <div className="flex h-[calc(100vh-4rem)]">
-          <Sidebar
-            currentRoute={currentRoute}
-            onNavigate={handleNavigate}
-            type={getSidebarType()}
-            collapsed={sidebarCollapsed}
-            onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
-          />
-          <main className="flex-1 overflow-y-auto bg-background">
-            <div className="container mx-auto p-6 max-w-7xl">
-              {renderContent()}
-            </div>
+        
+        {showSidebar ? (
+          <div className="flex h-[calc(100vh-4rem)]">
+            <Sidebar
+              currentRoute={currentRoute}
+              onNavigate={handleNavigate}
+              type={getSidebarType()}
+              collapsed={sidebarCollapsed}
+              onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+            />
+            <main className="flex-1 overflow-y-auto bg-background">
+              <div className="container mx-auto p-6 max-w-7xl">
+                {renderContent()}
+              </div>
+            </main>
+          </div>
+        ) : (
+          <main className="w-full">
+            {renderContent()}
           </main>
-        </div>
-      ) : (
-        <main className="w-full">
-          {renderContent()}
-        </main>
-      )}
+        )}
 
-      <Toaster position="top-right" />
-    </div>
+        <ConsentBanner />
+        {showBackendStatus && <BackendStatus onClose={() => setShowBackendStatus(false)} />}
+        
+        {/* Floating backend status button */}
+        <button
+          onClick={() => setShowBackendStatus(true)}
+          className="fixed bottom-4 right-4 z-40 rounded-full bg-gray-800 p-3 text-white shadow-lg hover:bg-gray-700 transition-colors"
+          title="Vérifier l'état du backend"
+        >
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </button>
+
+        <Toaster position="top-right" />
+      </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProviderComponent>
+      <AppShell />
+    </AuthProviderComponent>
   );
 }

@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  kong-database:
+    image: postgres:15-alpine
+    container_name: AgroLogistic-kong-db
+    environment:
+      POSTGRES_DB: kong
+      POSTGRES_USER: kong
+      POSTGRES_PASSWORD: ${KONG_PG_PASSWORD:-kong_password_change_me}
+    volumes:
+      - kong-db-data:/var/lib/postgresql/data
+    networks:
+      - kong-net
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "kong"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  kong-migrations:
+    image: kong/kong-gateway:3.5
+    container_name: AgroLogistic-kong-migrations
+    command: kong migrations bootstrap
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: 172.23.0.2
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: ${KONG_PG_PASSWORD:-kong_password_change_me}
+    depends_on:
+      kong-database:
+        condition: service_healthy
+    networks:
+      - kong-net
+    restart: on-failure
+
+  kong:
+    image: kong/kong-gateway:3.5
+    container_name: AgroLogistic-kong
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: 172.23.0.2
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: ${KONG_PG_PASSWORD:-kong_password_change_me}
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+      KONG_PROXY_LISTEN: 0.0.0.0:8000, 0.0.0.0:8443 ssl
+      KONG_PLUGINS: bundled,jwt,rate-limiting,cors,request-transformer,response-transformer
+      KONG_LOG_LEVEL: info
+    ports:
+      - "8000:8000"  # Proxy HTTP
+      - "8443:8443"  # Proxy HTTPS
+      - "8001:8001"  # Admin API
+    depends_on:
+      kong-migrations:
+        condition: service_completed_successfully
+    networks:
+      - kong-net
+    volumes:
+      - ./kong.yml:/etc/kong/kong.yml:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "kong", "health"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  konga:
+    image: pantsel/konga:latest
+    container_name: AgroLogistic-konga
+    environment:
+      DB_ADAPTER: postgres
+      DB_HOST: kong-database
+      DB_USER: kong
+      DB_PASSWORD: ${KONG_PG_PASSWORD:-kong_password_change_me}
+      DB_DATABASE: konga
+      NODE_ENV: production
+      TOKEN_SECRET: ${KONGA_TOKEN_SECRET:-konga_secret_change_me}
+    ports:
+      - "1337:1337"
+    depends_on:
+      - kong-database
+      - kong
+    networks:
+      - kong-net
+    restart: unless-stopped
+
+networks:
+  kong-net:
+    driver: bridge
+
+volumes:
+  kong-db-data:

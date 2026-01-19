@@ -1,15 +1,15 @@
-# 📁 AgroDeep - Structure Complète des Dossiers
+# 📁 AgroLogistic - Structure Complète des Dossiers
 
 ## Vue d'ensemble
 
-Ce document décrit l'intégralité de la structure de dossiers de la plateforme AgroDeep, avec des annotations détaillées pour chaque dossier et fichier important.
+Ce document décrit l'intégralité de la structure de dossiers de la plateforme AgroLogistic, avec des annotations détaillées pour chaque dossier et fichier important.
 
 ---
 
 ## 🌳 Arborescence Complète
 
 ```
-agrodeep-platform/
+AgroLogistic-platform/
 │
 ├── 📁 .github/                              # GitHub Configuration
 │   ├── 📁 workflows/                        # CI/CD Workflows
@@ -676,4 +676,4 @@ Statistiques du Projet:
 
 **Dernière mise à jour:** $(date)  
 **Version:** 2.0.0  
-**Mainteneur:** AgroDeep Team
+**Mainteneur:** AgroLogistic Team

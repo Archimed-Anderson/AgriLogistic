@@ -1,6 +1,6 @@
-# 🤝 Contributing to AgroDeep
+# 🤝 Contributing to AgroLogistic
 
-Merci de contribuer à AgroDeep ! Ce document vous guide dans le processus de contribution.
+Merci de contribuer à AgroLogistic ! Ce document vous guide dans le processus de contribution.
 
 ## 📋 Table des Matières
 
@@ -46,11 +46,11 @@ Nous accueillons les contributions suivantes :
 # Fork le repository sur GitHub
 # Puis clone ton fork
 
-git clone https://github.com/TON-USERNAME/agrodeep-platform.git
-cd agrodeep-platform
+git clone https://github.com/TON-USERNAME/AgroLogistic-platform.git
+cd AgroLogistic-platform
 
 # Ajoute le repository original comme remote
-git remote add upstream https://github.com/agrodeep/agrodeep-platform.git
+git remote add upstream https://github.com/AgroLogistic/AgroLogistic-platform.git
 ```
 
 ### 2. Installation
@@ -503,9 +503,9 @@ Les contributeurs seront reconnus :
 ## 📞 Besoin d'Aide ?
 
 - 💬 **Discord**: [Lien Discord]
-- 📧 **Email**: dev@agrodeep.com
-- 📖 **Documentation**: [docs.agrodeep.com](https://docs.agrodeep.com)
-- 🐛 **Issues**: [GitHub Issues](https://github.com/agrodeep/agrodeep-platform/issues)
+- 📧 **Email**: dev@AgroLogistic.com
+- 📖 **Documentation**: [docs.AgroLogistic.com](https://docs.AgroLogistic.com)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/AgroLogistic/AgroLogistic-platform/issues)
 
 ---
 

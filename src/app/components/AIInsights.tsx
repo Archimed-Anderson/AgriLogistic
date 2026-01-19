@@ -30,6 +30,7 @@ import {
   Sparkles,
   Rocket,
   ChevronRight,
+  XCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -55,11 +56,31 @@ interface Recommendation {
   confidence: number;
   adoptionRate: number;
   estimatedValue: string;
+  // AI-Powered fields
+  aiGenerated: boolean;
+  recommendationType: "crop_suggestion" | "yield_optimization" | "market_timing" | "resource_allocation" | "risk_mitigation";
+  actionSteps?: string[];
+  expectedROI?: number;
+  timeframe?: string;
+  dependencies?: string[];
+  historicalSuccess?: number;
 }
 
 export function AIInsights() {
   const [activeView, setActiveView] = useState<"overview" | "models" | "patterns" | "recommendations" | "optimization">("overview");
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
+  
+  // AI Recommendations Engine State
+  const [showRecommendationDetails, setShowRecommendationDetails] = useState(false);
+  const [selectedRecommendation, setSelectedRecommendation] = useState<Recommendation | null>(null);
+  const [recommendationFilters, setRecommendationFilters] = useState({
+    types: [] as string[],
+    minConfidence: 0,
+    minImpact: 0,
+    categories: [] as string[],
+  });
+  const [aiInsightsEnabled, setAiInsightsEnabled] = useState(true);
+  const [generatingRecommendations, setGeneratingRecommendations] = useState(false);
 
   // KPIs Data
   const kpis = [
@@ -168,6 +189,12 @@ export function AIInsights() {
       confidence: 96,
       adoptionRate: 0,
       estimatedValue: "+2,400€",
+      aiGenerated: true,
+      recommendationType: "resource_allocation",
+      actionSteps: ["Vérifier système d'irrigation", "Augmenter débit 15%", "Surveiller humidité 48h"],
+      expectedROI: 4.2,
+      timeframe: "24 heures",
+      historicalSuccess: 94,
     },
     {
       id: "R002",
@@ -178,6 +205,13 @@ export function AIInsights() {
       confidence: 88,
       adoptionRate: 45,
       estimatedValue: "+8,500€/an",
+      aiGenerated: true,
+      recommendationType: "crop_suggestion",
+      actionSteps: ["Analyser historique parcelles", "Planifier rotation maïs-soja-blé", "Préparer sol pour prochaine saison"],
+      expectedROI: 3.8,
+      timeframe: "1 saison",
+      dependencies: ["Analyse sol complète", "Conditions météo favorables"],
+      historicalSuccess: 87,
     },
     {
       id: "R003",
@@ -188,6 +222,12 @@ export function AIInsights() {
       confidence: 82,
       adoptionRate: 0,
       estimatedValue: "+12%",
+      aiGenerated: true,
+      recommendationType: "market_timing",
+      actionSteps: ["Préparer semences", "Vérifier équipement plantation", "Planifier main d'œuvre"],
+      expectedROI: 2.5,
+      timeframe: "4 jours",
+      historicalSuccess: 91,
     },
   ];
 
@@ -219,6 +259,121 @@ export function AIInsights() {
     };
     return configs[category];
   };
+
+  // AI Recommendations Engine Functions
+  const generateAIRecommendations = async () => {
+    setGeneratingRecommendations(true);
+    toast.info("Génération de nouvelles recommandations IA...");
+
+    // Simulate AI processing time
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // Simulate AI-generated recommendations based on farm data
+    const newRecommendations = [
+      {
+        id: `R${Date.now()}-1`,
+        category: "improvement" as const,
+        title: "Optimiser densité de plantation maïs",
+        description: "L'analyse historique suggère d'augmenter la densité de plantation de 5% pour maximiser le rendement dans les conditions actuelles.",
+        impact: 82,
+        confidence: 91,
+        adoptionRate: 0,
+        estimatedValue: "+5,200€",
+        aiGenerated: true,
+        recommendationType: "yield_optimization" as const,
+        actionSteps: [
+          "Calculer nouvelle densité optimale (85k plants/ha)",
+          "Ajuster paramètres semoir",
+          "Monitorer émergence 14 jours"
+        ],
+        expectedROI: 3.2,
+        timeframe: "Prochaine saison",
+        historicalSuccess: 89,
+      },
+      {
+        id: `R${Date.now()}-2`,
+        category: "opportunity" as const,
+        title: "Moment optimal pour vente blé",
+        description: "Les modèles prédictifs de marché indiquent une hausse de prix de 8-12% dans les 3 prochaines semaines.",
+        impact: 75,
+        confidence: 84,
+        adoptionRate: 0,
+        estimatedValue: "+14,800€",
+        aiGenerated: true,
+        recommendationType: "market_timing" as const,
+        actionSteps: [
+          "Préparer stock pour vente (245 tonnes)",
+          "Surveiller cours quotidiens",
+          "Contacter acheteurs potentiels"
+        ],
+        expectedROI: 4.7,
+        timeframe: "3 semaines",
+        dependencies: ["Conditions de stockage optimales", "Transport disponible"],
+        historicalSuccess: 92,
+      },
+      {
+        id: `R${Date.now()}-3`,
+        category: "urgent" as const,
+        title: "Risque de carence azotée détecté",
+        description: "Les capteurs IoT et l'analyse d'images satellite révèlent une possible carence en azote sur Parcelle Ouest.",
+        impact: 88,
+        confidence: 93,
+        adoptionRate: 0,
+        estimatedValue: "+3,100€",
+        aiGenerated: true,
+        recommendationType: "risk_mitigation" as const,
+        actionSteps: [
+          "Prélever échantillons sol",
+          "Appliquer engrais azoté (120 kg/ha)",
+          "Réévaluer dans 10 jours"
+        ],
+        expectedROI: 5.1,
+        timeframe: "7 jours",
+        historicalSuccess: 96,
+      },
+    ];
+
+    setGeneratingRecommendations(false);
+    toast.success(`${newRecommendations.length} nouvelles recommandations générées!`);
+  };
+
+  const applyRecommendation = (recommendationId: string) => {
+    const recommendation = recommendations.find((r) => r.id === recommendationId);
+    if (!recommendation) return;
+
+    toast.success(`Recommandation "${recommendation.title}" appliquée!`, {
+      description: `Gain estimé: ${recommendation.estimatedValue} | ROI: ${recommendation.expectedROI}x`,
+    });
+
+    // In a real app, this would trigger the actual implementation
+    // e.g., update irrigation schedules, send notifications, etc.
+  };
+
+  const dismissRecommendation = (recommendationId: string) => {
+    const recommendation = recommendations.find((r) => r.id === recommendationId);
+    if (!recommendation) return;
+
+    toast.info(`Recommandation "${recommendation.title}" ignorée`);
+  };
+
+  const getRecommendationTypeLabel = (type: string) => {
+    const labels: { [key: string]: string } = {
+      crop_suggestion: "ǰ Suggestion Culture",
+      yield_optimization: "🌾 Optimisation Rendement",
+      market_timing: "📊 Timing Marché",
+      resource_allocation: "💧 Allocation Ressources",
+      risk_mitigation: "⚠️ Mitigation Risque",
+    };
+    return labels[type] || type;
+  };
+
+  const filteredRecommendations = recommendations.filter((rec) => {
+    const matchesType = recommendationFilters.types.length === 0 || recommendationFilters.types.includes(rec.recommendationType);
+    const matchesCategory = recommendationFilters.categories.length === 0 || recommendationFilters.categories.includes(rec.category);
+    const matchesConfidence = rec.confidence >= recommendationFilters.minConfidence;
+    const matchesImpact = rec.impact >= recommendationFilters.minImpact;
+    return matchesType && matchesCategory && matchesConfidence && matchesImpact;
+  });
 
   const renderOverview = () => (
     <div className="space-y-6">
@@ -270,7 +425,7 @@ export function AIInsights() {
               <h3 className="text-2xl font-bold">Tous les Systèmes Opérationnels</h3>
             </div>
             <p className="opacity-90 mt-2">
-              L'intelligence artificielle AgroDeep fonctionne à pleine capacité
+              L'intelligence artificielle AgroLogistic fonctionne à pleine capacité
             </p>
           </div>
           <Sparkles className="h-20 w-20 opacity-50" />
@@ -608,21 +763,76 @@ export function AIInsights() {
 
   const renderRecommendations = () => (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold">Recommandations IA</h2>
-        <p className="text-muted-foreground">Actions prioritaires basées sur l'intelligence artificielle</p>
+      {/* Header with AI Generation */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold">Recommandations IA</h2>
+          <p className="text-muted-foreground">Actions prioritaires basées sur l'intelligence artificielle</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={generateAIRecommendations}
+            disabled={generatingRecommendations}
+            className="px-6 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all font-semibold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {generatingRecommendations ? (
+              <>
+                <RefreshCw className="h-5 w-5 animate-spin" />
+                Génération...
+              </>
+            ) : (
+              <>
+                <Sparkles className="h-5 w-5" />
+                Générer Nouvelles
+              </>
+            )}
+          </button>
+          <button className="px-6 py-2 bg-card border-2 border-purple-200 dark:border-purple-800 rounded-lg hover:border-purple-400 transition-colors font-semibold flex items-center gap-2">
+            <Settings className="h-5 w-5" />
+            Filtres
+          </button>
+        </div>
       </div>
 
-      {/* Recommendations List */}
+      {/* AI Insights Status Banner */}
+      <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-2 border-purple-200 dark:border-purple-800 rounded-xl p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-purple-100 dark:bg-purple-900/40 rounded-lg">
+              <Brain className="h-8 w-8 text-purple-600" />
+            </div>
+            <div>
+              <h3 className="font-bold text-lg mb-1">Moteur IA Actif</h3>
+              <p className="text-sm text-muted-foreground">
+                Analyse continue de {filteredRecommendations.length} recommandations | {filteredRecommendations.filter(r => r.aiGenerated).length} générées par IA
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setAiInsightsEnabled(!aiInsightsEnabled)}
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                aiInsightsEnabled
+                  ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                  : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400"
+              }`}
+            >
+              {aiInsightsEnabled ? "Activé" : "Désactivé"}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Recommendations List with Enhanced AI Features */}
       <div className="space-y-4">
-        {recommendations.map((rec) => {
+        {filteredRecommendations.map((rec) => {
           const categoryConfig = getCategoryConfig(rec.category);
           const CategoryIcon = categoryConfig.icon;
 
           return (
             <div
               key={rec.id}
-              className={`bg-card border-2 rounded-xl p-6 ${categoryConfig.border}`}
+              className={`bg-card border-2 rounded-xl p-6 hover:shadow-lg transition-all ${categoryConfig.border}`}
             >
               <div className="flex items-start gap-4">
                 <div className={`p-3 rounded-lg ${categoryConfig.bgColor}`}>
@@ -631,20 +841,86 @@ export function AIInsights() {
 
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <div className="flex items-center gap-2 mb-2">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
                         <h3 className="font-semibold text-lg">{rec.title}</h3>
                         <span
                           className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${categoryConfig.color} ${categoryConfig.bgColor}`}
                         >
                           {categoryConfig.label}
                         </span>
+                        {rec.aiGenerated && (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/40 dark:to-blue-900/40 text-purple-700 dark:text-purple-300">
+                            <Sparkles className="h-3 w-3 mr-1" />
+                            IA
+                          </span>
+                        )}
+                        <span className="text-xs text-muted-foreground">
+                          {getRecommendationTypeLabel(rec.recommendationType)}
+                        </span>
                       </div>
-                      <p className="text-sm text-muted-foreground">{rec.description}</p>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm text-muted-foreground">Valeur estimée</div>
-                      <div className="text-2xl font-bold text-[#9B59B6]">{rec.estimatedValue}</div>
+                      <p className="text-sm text-muted-foreground mb-3">{rec.description}</p>
+                      
+                      {/* Action Steps */}
+                      {rec.actionSteps && rec.actionSteps.length > 0 && (
+                        <div className="mb-3">
+                          <div className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1">
+                            <ChevronRight className="h-3 w-3" />
+                            Étapes d'action:
+                          </div>
+                          <div className="space-y-1">
+                            {rec.actionSteps.map((step, idx) => (
+                              <div key={idx} className="flex items-start gap-2 text-sm">
+                                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs font-bold flex-shrink-0">
+                                  {idx + 1}
+                                </span>
+                                <span>{step}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Additional AI Metrics */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                        {rec.expectedROI && (
+                          <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                            <div className="text-xs text-muted-foreground">ROI Estimé</div>
+                            <div className="font-bold text-green-700 dark:text-green-400">{rec.expectedROI}x</div>
+                          </div>
+                        )}
+                        {rec.timeframe && (
+                          <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                            <div className="text-xs text-muted-foreground">Délai</div>
+                            <div className="font-bold text-blue-700 dark:text-blue-400">{rec.timeframe}</div>
+                          </div>
+                        )}
+                        {rec.historicalSuccess && (
+                          <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                            <div className="text-xs text-muted-foreground">Succès Historique</div>
+                            <div className="font-bold text-purple-700 dark:text-purple-400">{rec.historicalSuccess}%</div>
+                          </div>
+                        )}
+                        <div className="p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                          <div className="text-xs text-muted-foreground">Gain Potentiel</div>
+                          <div className="font-bold text-orange-700 dark:text-orange-400">{rec.estimatedValue}</div>
+                        </div>
+                      </div>
+
+                      {/* Dependencies */}
+                      {rec.dependencies && rec.dependencies.length > 0 && (
+                        <div className="p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+                          <div className="flex items-start gap-2">
+                            <AlertCircle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                            <div>
+                              <div className="text-xs font-semibold text-amber-900 dark:text-amber-200 mb-1">Dépendances:</div>
+                              <div className="text-xs text-amber-800 dark:text-amber-300">
+                                {rec.dependencies.join(" • ")}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -690,14 +966,25 @@ export function AIInsights() {
 
                   {/* Actions */}
                   <div className="flex items-center gap-2">
-                    <button className="flex-1 px-4 py-2 bg-[#9B59B6] text-white rounded-lg hover:bg-[#8E44AD] transition-colors font-semibold flex items-center justify-center gap-2">
+                    <button
+                      onClick={() => applyRecommendation(rec.id)}
+                      className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all font-semibold flex items-center justify-center gap-2"
+                    >
                       <CheckCircle className="h-4 w-4" />
                       Appliquer
                     </button>
-                    <button className="px-4 py-2 border rounded-lg hover:bg-muted transition-colors font-medium">
+                    <button
+                      onClick={() => setSelectedRecommendation(rec)}
+                      className="px-4 py-2 border-2 border-purple-200 dark:border-purple-800 rounded-lg hover:border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all font-medium flex items-center gap-2"
+                    >
+                      <Eye className="h-4 w-4" />
                       Détails
                     </button>
-                    <button className="px-4 py-2 border rounded-lg hover:bg-muted transition-colors font-medium">
+                    <button
+                      onClick={() => dismissRecommendation(rec.id)}
+                      className="px-4 py-2 border rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-300 transition-all font-medium text-red-600 flex items-center gap-2"
+                    >
+                      <XCircle className="h-4 w-4" />
                       Ignorer
                     </button>
                   </div>
@@ -836,7 +1123,7 @@ export function AIInsights() {
       <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-3xl font-bold tracking-tight">Intelligence Artificielle AgroDeep</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Intelligence Artificielle AgroLogistic</h1>
             <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 text-xs font-bold rounded-full flex items-center gap-1">
               <Brain className="h-3 w-3" />
               IA AVANCÉE

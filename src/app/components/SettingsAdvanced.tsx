@@ -486,7 +486,7 @@ export function SettingsAdvanced() {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="font-semibold">AgroDeep</span>
+                        <span className="font-semibold">AgroLogistic</span>
                         <span className="text-xs text-muted-foreground">Il y a 2 min</span>
                       </div>
                       <p className="text-sm">Vous avez reçu un nouveau message</p>

@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Checkbox } from "./ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
+import { useLogin } from "@/presentation/hooks/use-login";
+import { apiClient } from "@/infrastructure/api/rest/api-client-enhanced";
+import { AlertCircle, RefreshCw, CheckCircle2 } from "lucide-react";
 
 interface LoginScreenProps {
   onNavigate: (route: string) => void;
@@ -13,11 +17,47 @@ export function LoginScreen({ onNavigate }: LoginScreenProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [backendStatus, setBackendStatus] = useState<'checking' | 'connected' | 'disconnected'>('checking');
+  const [detailedError, setDetailedError] = useState<{message: string; suggestion?: string} | null>(null);
+  
+  const { login, isLoading, error } = useLogin();
 
-  const handleLogin = (e: React.FormEvent) => {
+  useEffect(() => {
+    checkBackendConnection();
+  }, []);
+
+  const checkBackendConnection = async () => {
+    setBackendStatus('checking');
+    try {
+      const diagnostic = await apiClient.diagnoseConnection();
+      setBackendStatus(diagnostic.isReachable ? 'connected' : 'disconnected');
+      if (!diagnostic.isReachable && diagnostic.suggestion) {
+        setDetailedError({
+          message: diagnostic.error || 'Connexion échouée',
+          suggestion: diagnostic.suggestion
+        });
+      }
+    } catch (err) {
+      setBackendStatus('disconnected');
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Navigate to admin dashboard on login
-    onNavigate("/admin/overview");
+    setDetailedError(null);
+    
+    try {
+      await login({ email, password });
+      onNavigate("/admin/overview");
+    } catch (err: any) {
+      if (err?.message) {
+        const lines = err.message.split('\n');
+        setDetailedError({
+          message: lines[0],
+          suggestion: lines.slice(1).join('\n')
+        });
+      }
+    }
   };
 
   return (
@@ -29,12 +69,55 @@ export function LoginScreen({ onNavigate }: LoginScreenProps) {
               <span className="text-2xl font-bold text-white">A</span>
             </div>
           </div>
-          <CardTitle className="text-2xl">Welcome to AgroDeep</CardTitle>
+          <CardTitle className="text-2xl">Welcome to AgroLogistic</CardTitle>
           <CardDescription>
             Sign in to your account to continue
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Backend Status Indicator */}
+          {backendStatus === 'disconnected' && detailedError && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Erreur de connexion au serveur</AlertTitle>
+              <AlertDescription className="mt-2">
+                <p className="font-medium">{detailedError.message}</p>
+                {detailedError.suggestion && (
+                  <div className="mt-2 text-sm whitespace-pre-line">
+                    {detailedError.suggestion}
+                  </div>
+                )}
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-3"
+                  onClick={checkBackendConnection}
+                >
+                  <RefreshCw className="h-3 w-3 mr-2" />
+                  Tester la connexion
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {backendStatus === 'connected' && !error && (
+            <Alert className="mb-4 border-green-200 bg-green-50 text-green-900">
+              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              <AlertDescription>
+                Serveur backend connecté
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {/* Login Error Alert */}
+          {error && !detailedError && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Erreur d'authentification</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -80,8 +163,19 @@ export function LoginScreen({ onNavigate }: LoginScreenProps) {
                 Forgot password?
               </button>
             </div>
-            <Button type="submit" className="w-full bg-[#2563eb] hover:bg-[#1d4ed8]">
-              Sign In
+            <Button 
+              type="submit" 
+              className="w-full bg-[#2563eb] hover:bg-[#1d4ed8]"
+              disabled={isLoading || backendStatus === 'disconnected'}
+            >
+              {isLoading ? (
+                <>
+                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                  Connexion en cours...
+                </>
+              ) : (
+                'Sign In'
+              )}
             </Button>
           </form>
 

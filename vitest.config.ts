@@ -9,7 +9,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./tests/setup.ts'],
     include: ['src/**/*.{test,spec}.{ts,tsx}', 'tests/**/*.{test,spec}.{ts,tsx}'],
-    exclude: ['node_modules', 'dist', 'tests/e2e'],
+    exclude: ['node_modules', 'dist', 'tests/e2e', 'tests/loueur-calendar.spec.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],

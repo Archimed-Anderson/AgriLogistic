@@ -194,7 +194,7 @@ const mockOrders: Order[] = [
     ],
     shippingAddress: "12 boulevard Haussmann, 75009 Paris",
     billingAddress: "12 boulevard Haussmann, 75009 Paris",
-    customerEmail: "julie.moreau@agrodeep.fr",
+    customerEmail: "julie.moreau@AgroLogistic.fr",
     customerPhone: "+33 6 78 90 12 34",
   },
   {
@@ -350,7 +350,7 @@ const mockOrders: Order[] = [
       { name: "Laitue Frisée", quantity: 4, unitPrice: 2.00 },
       { name: "Courgettes", quantity: 3, unitPrice: 2.20 },
     ],
-    shippingAddress: "Point de retrait AgroDeep, 31000 Toulouse",
+    shippingAddress: "Point de retrait AgroLogistic, 31000 Toulouse",
     billingAddress: "22 rue Jean Jaurès, 31000 Toulouse",
     customerEmail: "sandrine.petit@email.fr",
     customerPhone: "+33 6 33 22 11 00",
