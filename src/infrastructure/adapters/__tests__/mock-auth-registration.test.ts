@@ -13,6 +13,8 @@ describe('MockAuthAdapter - User Registration', () => {
     authAdapter = new MockAuthAdapter();
     // Clear localStorage
     localStorage.clear();
+    // Reset mock database to ensure test isolation
+    MockAuthAdapter.resetDatabase();
   });
 
   describe('Account Creation - Nominal Cases', () => {

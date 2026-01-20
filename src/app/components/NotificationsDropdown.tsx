@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  Check,
   Heart,
   MessageCircle,
   Settings,
@@ -110,7 +109,7 @@ export function NotificationsDropdown({ onClose }: { onClose: () => void }) {
         <div className="flex items-center gap-2">
           <h3 className="font-semibold">Notifications</h3>
           {unreadCount > 0 && (
-            <span className="px-2 py-0.5 bg-[#2563eb] text-white text-xs rounded-full">
+            <span className="px-2 py-0.5 bg-[#0B7A4B] text-white text-xs rounded-full">
               {unreadCount}
             </span>
           )}
@@ -119,7 +118,7 @@ export function NotificationsDropdown({ onClose }: { onClose: () => void }) {
           {unreadCount > 0 && (
             <button
               onClick={markAllAsRead}
-              className="text-xs text-[#2563eb] hover:underline"
+              className="text-xs text-[#0B7A4B] hover:underline"
             >
               Tout marquer comme lu
             </button>
@@ -145,7 +144,7 @@ export function NotificationsDropdown({ onClose }: { onClose: () => void }) {
             onClick={() => setActiveTab(tab.value as any)}
             className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
               activeTab === tab.value
-                ? "text-[#2563eb] border-b-2 border-[#2563eb]"
+                ? "text-[#0B7A4B] border-b-2 border-[#0B7A4B]"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -177,7 +176,7 @@ export function NotificationsDropdown({ onClose }: { onClose: () => void }) {
                   {/* Avatar or Icon */}
                   <div className="flex-shrink-0">
                     {notification.avatar ? (
-                      <div className="h-10 w-10 bg-gradient-to-br from-[#2563eb] to-blue-400 rounded-full flex items-center justify-center text-xl">
+                      <div className="h-10 w-10 bg-gradient-to-br from-[#0B7A4B] to-blue-400 rounded-full flex items-center justify-center text-xl">
                         {notification.avatar}
                       </div>
                     ) : (
@@ -192,7 +191,7 @@ export function NotificationsDropdown({ onClose }: { onClose: () => void }) {
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <h4 className="font-medium text-sm">{notification.title}</h4>
                       {!notification.read && (
-                        <div className="h-2 w-2 bg-[#2563eb] rounded-full flex-shrink-0 mt-1"></div>
+                        <div className="h-2 w-2 bg-[#0B7A4B] rounded-full flex-shrink-0 mt-1"></div>
                       )}
                     </div>
                     <p className="text-sm text-muted-foreground line-clamp-2">
@@ -207,14 +206,14 @@ export function NotificationsDropdown({ onClose }: { onClose: () => void }) {
                       <div className="flex items-center gap-2">
                         {notification.type === "message" && (
                           <>
-                            <button className="text-xs text-[#2563eb] hover:underline flex items-center gap-1">
+                            <button className="text-xs text-[#0B7A4B] hover:underline flex items-center gap-1">
                               <Reply className="h-3 w-3" />
                               Répondre
                             </button>
                             {!notification.read && (
                               <button
                                 onClick={() => markAsRead(notification.id)}
-                                className="text-xs text-[#2563eb] hover:underline flex items-center gap-1"
+                                className="text-xs text-[#0B7A4B] hover:underline flex items-center gap-1"
                               >
                                 <Eye className="h-3 w-3" />
                                 Lu
@@ -224,11 +223,11 @@ export function NotificationsDropdown({ onClose }: { onClose: () => void }) {
                         )}
                         {notification.type === "like" && (
                           <>
-                            <button className="text-xs text-[#2563eb] hover:underline flex items-center gap-1">
+                            <button className="text-xs text-[#0B7A4B] hover:underline flex items-center gap-1">
                               <Eye className="h-3 w-3" />
                               Voir
                             </button>
-                            <button className="text-xs text-[#2563eb] hover:underline flex items-center gap-1">
+                            <button className="text-xs text-[#0B7A4B] hover:underline flex items-center gap-1">
                               <ThumbsUp className="h-3 w-3" />
                               Aimer
                             </button>
@@ -236,7 +235,7 @@ export function NotificationsDropdown({ onClose }: { onClose: () => void }) {
                         )}
                         {notification.type === "system" && (
                           <>
-                            <button className="text-xs text-[#2563eb] hover:underline flex items-center gap-1">
+                            <button className="text-xs text-[#0B7A4B] hover:underline flex items-center gap-1">
                               <CheckCircle className="h-3 w-3" />
                               Résoudre
                             </button>
@@ -262,7 +261,7 @@ export function NotificationsDropdown({ onClose }: { onClose: () => void }) {
       {/* Footer */}
       {filteredNotifications.length > 0 && (
         <div className="px-4 py-3 border-t text-center">
-          <button className="text-sm text-[#2563eb] hover:underline font-medium">
+          <button className="text-sm text-[#0B7A4B] hover:underline font-medium">
             Voir toutes les notifications
           </button>
         </div>

@@ -74,7 +74,8 @@ Write-Host ""
 # Etape 3: Demarrer les services principaux
 Write-Host "[3/5] Demarrage des services (PostgreSQL, Redis, Kong)..." -ForegroundColor Yellow
 
-$projectRoot = "c:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep"
+# Résoudre le chemin de façon portable (script dans AgroDeep\scripts)
+$projectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 Set-Location $projectRoot
 
 Write-Host "  Lancement de docker-compose..." -ForegroundColor Cyan
@@ -130,32 +131,16 @@ if ($redisReady -like "*PONG*") {
 
 Write-Host ""
 
-# Etape 5: Configurer PostgreSQL
-Write-Host "[5/5] Configuration PostgreSQL..." -ForegroundColor Yellow
+# Etape 5: Vérifier PostgreSQL (SANS abaisser la sécurité)
+Write-Host "[5/5] Vérification PostgreSQL..." -ForegroundColor Yellow
 
 $testConnection = docker exec agrodeep-postgres psql -U agrodeep -d agrodeep_auth -c "SELECT 1;" 2>&1 | Out-String
-if ($testConnection -notlike "*?column?*") {
-    Write-Host "  Configuration de l'authentification..." -ForegroundColor Cyan
-    
-    docker exec agrodeep-postgres sh -c "cat > /var/lib/postgresql/data/pg_hba.conf << 'EOF'
-# TYPE  DATABASE        USER            ADDRESS                 METHOD
-local   all             all                                     trust
-host    all             all             127.0.0.1/32            trust
-host    all             all             ::1/128                 trust
-host    all             all             172.16.0.0/12           trust
-host    all             all             10.0.0.0/8              trust
-host    all             all             192.168.0.0/16          trust
-host    all             all             0.0.0.0/0               md5
-EOF
-" 2>&1 | Out-Null
-    
-    docker exec agrodeep-postgres psql -U agrodeep -d agrodeep -c "ALTER USER agrodeep WITH PASSWORD 'agrodeep_secure_2026';" 2>&1 | Out-Null
-    docker restart agrodeep-postgres 2>&1 | Out-Null
-    Start-Sleep -Seconds 10
-    
-    Write-Host "  OK - PostgreSQL configure et redemarre" -ForegroundColor Green
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "  OK - Connexion PostgreSQL OK (agrodeep_auth)" -ForegroundColor Green
 } else {
-    Write-Host "  OK - PostgreSQL deja configure" -ForegroundColor Green
+    Write-Host "  ATTENTION - Connexion PostgreSQL échouée" -ForegroundColor Yellow
+    Write-Host "  Détails: $testConnection" -ForegroundColor Gray
+    Write-Host "  Conseil: vérifiez DB_PASSWORD/POSTGRES_PASSWORD et relancez: docker-compose down && docker-compose up -d postgres" -ForegroundColor Yellow
 }
 
 Write-Host ""
@@ -167,7 +152,8 @@ Write-Host "Etat des services:" -ForegroundColor Cyan
 docker ps --filter "name=agrodeep" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" 2>$null
 Write-Host ""
 Write-Host "Services disponibles:" -ForegroundColor Cyan
-Write-Host "  - PostgreSQL:  localhost:5432" -ForegroundColor White
+$postgresPort = if ($env:POSTGRES_PORT) { $env:POSTGRES_PORT } else { "5433" }
+Write-Host "  - PostgreSQL:  localhost:$postgresPort" -ForegroundColor White
 Write-Host "  - Redis:       localhost:6379" -ForegroundColor White
 Write-Host "  - Kong:        localhost:8000" -ForegroundColor White
 Write-Host ""

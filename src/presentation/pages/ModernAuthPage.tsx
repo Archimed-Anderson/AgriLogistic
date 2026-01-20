@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@presentation/contexts/AuthContext';
-import { ModernLoginForm } from '../components/features/auth/ModernLoginForm';
+import { ProfileSelectorLogin } from '../components/features/auth/ProfileSelectorLogin';
 import { MultiStepRegisterForm } from '../components/features/auth/MultiStepRegisterForm';
 import { AuthTransition } from '../components/features/auth/AuthTransition';
 
@@ -102,7 +102,7 @@ export function ModernAuthPage({ onNavigate }: ModernAuthPageProps) {
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
             </div>
           ) : isLogin ? (
-            <ModernLoginForm
+            <ProfileSelectorLogin
               onSuccess={handleLoginSuccess}
               onForgotPassword={handleForgotPassword}
               onSwitchToRegister={handleSwitchMode}

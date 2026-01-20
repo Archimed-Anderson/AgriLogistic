@@ -73,6 +73,12 @@ export class AuthProviderFactory {
    * Configure the provider type from environment variables
    */
   static configureFromEnv(): AuthProvider {
+    // E2E (Playwright) runs with navigator.webdriver=true.
+    // Use Mock provider to make UI tests deterministic and isolated from backend availability.
+    if (typeof navigator !== 'undefined' && (navigator as any).webdriver) {
+      return this.getProvider(AuthProviderType.MOCK);
+    }
+
     const envProvider = import.meta.env?.VITE_AUTH_PROVIDER as string;
     
     let providerType: AuthProviderType;

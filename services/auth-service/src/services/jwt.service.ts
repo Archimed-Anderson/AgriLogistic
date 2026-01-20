@@ -44,7 +44,6 @@ export class JWTService {
       const generatedAccess = crypto.randomBytes(64).toString('hex');
       const generatedRefresh = crypto.randomBytes(64).toString('hex');
 
-      // eslint-disable-next-line no-console
       console.warn(
         '[auth-service] JWT secrets missing; using ephemeral in-memory secrets for non-production runtime. ' +
           'Set JWT_ACCESS_SECRET/JWT_REFRESH_SECRET in your .env to persist sessions.'

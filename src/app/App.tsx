@@ -8,6 +8,7 @@ import { trackPageView } from "./lib/analytics/ga";
 // Layout components
 import { Navbar } from "./components/Navbar";
 import { Sidebar } from "./components/Sidebar";
+import { AccessDenied } from "./components/AccessDenied";
 
 // Auth & Landing
 import { AgroLogisticLandingPage } from "./components/landing/AgroLogisticLandingPage";
@@ -18,15 +19,14 @@ import { ForgotPasswordPage } from "@presentation/pages/ForgotPasswordPage";
 import { ResetPasswordPage } from "@presentation/pages/ResetPasswordPage";
 
 // Dashboard
-import { AdminDashboard } from "./components/AdminDashboard";
-import { CustomerDashboard } from "./components/CustomerDashboard";
 import { ModernDashboard } from "./components/ModernDashboard";
+import { FarmVistaDashboard } from "./components/FarmVistaDashboard";
 
 // Core Features
 import { ChatInterface } from "./components/ChatInterface";
 import { AnalyticsDashboard } from "./components/AnalyticsDashboard";
 import { MarketplaceModern } from "./components/MarketplaceModern";
-import { RentalMarketplace } from "./components/RentalMarketplace";
+
 import { RentalMarketplace2 } from "./components/RentalMarketplace2";
 import { Settings } from "./components/Settings";
 import { ProfilePage } from "./components/ProfilePage";
@@ -54,24 +54,39 @@ import { AutomationWorkflows } from "./components/AutomationWorkflows";
 import { AIInsights } from "./components/AIInsights";
 import { FinancialSuite } from "./components/FinancialSuite";
 import { LogisticsTracking } from "./components/LogisticsTracking";
-import { CropIntelligence } from "./components/CropIntelligence";
+
+// Farm Dashboard Components
+import { WeatherDashboard } from "./components/WeatherDashboard";
+import { SoilWaterManagement } from "./components/SoilWaterManagement";
+import { EquipmentManagement } from "./components/EquipmentManagement";
+import { TaskManagement } from "./components/TaskManagement";
+import { HelpSupport } from "./components/HelpSupport";
+import { CropManagement } from "./components/CropManagement";
 
 // B2B & Logistics (Nouveaux composants)
 import { TransportCalculator } from "./components/TransportCalculator";
 import { ShippingTracker } from "./components/ShippingTracker";
-import { PriceNegotiator } from "./components/PriceNegotiator";
+
 import { B2BChat } from "./components/B2BChat";
 import { CarrierDashboard } from "./components/CarrierDashboard";
 import { AffiliateDashboard } from "./components/AffiliateDashboard";
+import { LaborManagement } from "./components/LaborManagement";
+
+import { Permission } from "@domain/value-objects/permissions.vo";
+import { UserRole } from "@domain/enums/user-role.enum";
 
 function AppShell() {
   const { isAuthenticated, isLoading, user, logout } = useAuth();
 
   // For development: Start with dashboard instead of landing page
   // Change to "/" for production landing page
-  const [currentRoute, setCurrentRoute] = useState("/");
+  const [currentRoute, setCurrentRoute] = useState(() => {
+    if (typeof window === "undefined") return "/";
+    return window.location.pathname || "/";
+  });
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarMobileOpen, setSidebarMobileOpen] = useState(false);
   const [adminMode, setAdminMode] = useState(false);
   const [showBackendStatus, setShowBackendStatus] = useState(false);
   const gaMeasurementId = import.meta.env.VITE_GA_MEASUREMENT_ID || "";
@@ -91,39 +106,29 @@ function AppShell() {
   }, [currentRoute, isAuthenticated, isLoading]);
   
   // Sidebar visible uniquement pour les pages d'administration spécifiques
-  const showSidebar = isAuthenticated && 
-    (currentRoute === "/admin/panel" ||
-     currentRoute.startsWith("/admin/users") || 
-     currentRoute.startsWith("/admin/products") ||
-     currentRoute.startsWith("/admin/orders") ||
-     currentRoute.startsWith("/admin/categories") ||
-     currentRoute.startsWith("/admin/reports") ||
-     currentRoute.startsWith("/admin/logistics") ||
-     currentRoute.startsWith("/admin/transport-calculator") ||
-     currentRoute.startsWith("/admin/tracking") ||
-     currentRoute.startsWith("/admin/carrier-dashboard") ||
-     currentRoute.startsWith("/admin/b2b-chat") ||
-     currentRoute.startsWith("/admin/affiliate-dashboard") ||
-     currentRoute.startsWith("/admin/crops") ||
-     currentRoute.startsWith("/admin/iot") ||
-     currentRoute.startsWith("/admin/ai-insights") ||
-     currentRoute.startsWith("/admin/finance") ||
-     currentRoute.startsWith("/admin/automation") ||
-     currentRoute.startsWith("/admin/settings") ||
-     currentRoute.startsWith("/customer/orders") ||
-     currentRoute.startsWith("/customer/transport-calculator") ||
-     currentRoute.startsWith("/customer/tracking") ||
-     currentRoute.startsWith("/customer/iot") ||
-     currentRoute.startsWith("/customer/ai-insights") ||
-     currentRoute.startsWith("/customer/finance") ||
-     currentRoute.startsWith("/customer/crops") ||
-     currentRoute.startsWith("/customer/payments") ||
-     currentRoute.startsWith("/customer/settings"));
+  const showSidebar =
+    isAuthenticated &&
+    (currentRoute.startsWith("/admin") || currentRoute.startsWith("/customer"));
 
   const handleNavigate = (route: string) => {
     setCurrentRoute(route);
+    setSidebarMobileOpen(false);
+    if (typeof window !== "undefined") {
+      window.history.pushState({}, "", route);
+    }
     window.scrollTo(0, 0);
   };
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const onPopState = () => {
+      setCurrentRoute(window.location.pathname || "/");
+      setSidebarMobileOpen(false);
+      window.scrollTo(0, 0);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
 
   const handleThemeToggle = () => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -134,6 +139,20 @@ function AppShell() {
   const getSidebarType = (): "admin" | "customer" => {
     return currentRoute.startsWith("/admin") ? "admin" : "customer";
   };
+
+  const userRole: UserRole | undefined = user?.role;
+  const userPermissions = user?.permissions.toArray();
+
+  const deny = (moduleLabel: string) => (
+    <AccessDenied
+      title="Accès refusé"
+      message={`Vous n’avez pas accès à « ${moduleLabel} ». Si vous pensez que c’est une erreur, contactez un administrateur.`}
+      onBack={() => handleNavigate(getSidebarType() === "admin" ? "/admin/dashboard" : "/customer/dashboard")}
+    />
+  );
+
+  const hasAnyPermission = (...perms: Permission[]) =>
+    user ? user.permissions.hasAny(...perms) : false;
 
   const renderContent = () => {
     switch (currentRoute) {
@@ -154,7 +173,7 @@ function AppShell() {
       // Admin Dashboard
       case "/admin/overview":
       case "/admin/dashboard":
-        return <ModernDashboard />;
+        return <FarmVistaDashboard onNavigate={handleNavigate} />;
       
       // Customer Dashboard
       case "/customer/overview":
@@ -209,22 +228,43 @@ function AppShell() {
       
       // Admin Features
       case "/admin/users":
+        if (!hasAnyPermission(Permission.VIEW_USERS, Permission.EDIT_USERS, Permission.DELETE_USERS)) {
+          return deny("Gestion Utilisateurs");
+        }
         return <UserManagement />;
       
       case "/admin/products":
+        if (!hasAnyPermission(Permission.VIEW_ALL_PRODUCTS)) {
+          return deny("Produits");
+        }
         return <ProductInventory />;
       
       case "/admin/orders":
+        if (!hasAnyPermission(Permission.MANAGE_ORDERS, Permission.VIEW_ALL_ORDERS)) {
+          return deny("Commandes");
+        }
         return <OrdersManagement />;
       
       case "/admin/categories":
+        if (!hasAnyPermission(Permission.MANAGE_CATEGORIES)) {
+          return deny("Catégories");
+        }
         return <CategoryManagement />;
       
       case "/admin/reports":
+        if (!hasAnyPermission(Permission.VIEW_ANALYTICS, Permission.EXPORT_REPORTS)) {
+          return deny("Rapports");
+        }
         return <ReportEngine />;
       
       case "/admin/panel":
         return <AdminPanelHome onNavigate={handleNavigate} />;
+
+      case "/admin/labor":
+        if (userRole !== UserRole.ADMIN) {
+          return deny("Gestion Main-d'œuvre");
+        }
+        return <LaborManagement />;
       
       // Advanced Features
       case "/admin/iot":
@@ -232,6 +272,9 @@ function AppShell() {
         return <IoTDeviceHub />;
       
       case "/admin/automation":
+        if (userRole !== UserRole.ADMIN) {
+          return deny("Automation");
+        }
         return <AutomationWorkflows />;
       
       case "/admin/ai-insights":
@@ -240,15 +283,56 @@ function AppShell() {
       
       case "/admin/finance":
       case "/customer/finance":
+        if (!hasAnyPermission(Permission.VIEW_FINANCIAL_REPORTS)) {
+          return deny("Finance");
+        }
         return <FinancialSuite />;
       
       case "/admin/logistics":
       case "/customer/logistics":
+        if (!hasAnyPermission(Permission.MANAGE_LOGISTICS, Permission.VIEW_DELIVERY_ORDERS)) {
+          return deny("Logistique");
+        }
         return <LogisticsTracking />;
       
       case "/admin/crops":
       case "/customer/crops":
-        return <CropIntelligence />;
+        if (userRole !== UserRole.ADMIN && userRole !== UserRole.FARMER) {
+          return deny("Gestion Cultures");
+        }
+        return <CropManagement />;
+      
+      case "/admin/weather":
+      case "/customer/weather":
+        if (userRole !== UserRole.ADMIN && userRole !== UserRole.FARMER) {
+          return deny("Météo");
+        }
+        return <WeatherDashboard />;
+      
+      case "/admin/soil-water":
+      case "/customer/soil-water":
+        if (userRole !== UserRole.ADMIN && userRole !== UserRole.FARMER) {
+          return deny("Sol & Eau");
+        }
+        return <SoilWaterManagement />;
+
+      case "/admin/equipment":
+      case "/customer/equipment":
+        if (userRole !== UserRole.ADMIN && userRole !== UserRole.FARMER) {
+          return deny("Équipements");
+        }
+        return <EquipmentManagement />;
+      
+      case "/admin/tasks":
+      case "/customer/tasks":
+        if (userRole !== UserRole.ADMIN && userRole !== UserRole.FARMER) {
+          return deny("Gestion Tâches");
+        }
+        return <TaskManagement />;
+      
+      case "/admin/help":
+      case "/customer/help":
+        return <HelpSupport />;
       
       // B2B & Logistics (Nouveaux)
       case "/admin/transport-calculator":
@@ -287,6 +371,8 @@ function AppShell() {
           adminMode={adminMode}
           onAdminModeChange={setAdminMode}
           userLabel={user ? user.email.value : undefined}
+          showSidebarToggle={showSidebar}
+          onSidebarToggle={() => setSidebarMobileOpen((v) => !v)}
           onLogout={async () => {
             await logout();
             handleNavigate("/");
@@ -294,16 +380,24 @@ function AppShell() {
         />
         
         {showSidebar ? (
-          <div className="flex h-[calc(100vh-4rem)]">
+          <div className="relative h-[calc(100vh-4rem)] md:flex">
             <Sidebar
               currentRoute={currentRoute}
               onNavigate={handleNavigate}
               type={getSidebarType()}
               collapsed={sidebarCollapsed}
               onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+              mobileOpen={sidebarMobileOpen}
+              onMobileOpenChange={setSidebarMobileOpen}
+              userRole={userRole}
+              userPermissions={userPermissions}
+              onLogout={async () => {
+                await logout();
+                handleNavigate("/");
+              }}
             />
-            <main className="flex-1 overflow-y-auto bg-background">
-              <div className="container mx-auto p-6 max-w-7xl">
+            <main className="w-full md:flex-1 overflow-y-auto bg-[#F6F7F9]">
+              <div className="mx-auto p-6 max-w-7xl">
                 {renderContent()}
               </div>
             </main>

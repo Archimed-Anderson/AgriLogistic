@@ -284,7 +284,26 @@ export class MockAuthAdapter implements AuthPort, AuthProvider {
     if (!token || !token.startsWith(this.tokenPrefix)) {
       return null;
     }
-    return this.currentUser;
+    // Prefer in-memory session when available
+    if (this.currentUser) {
+      return this.currentUser;
+    }
+
+    // Recover user from token (useful for E2E tests / page refresh)
+    // Token format: `${tokenPrefix}${userId}-${timestamp}` where userId can contain '-'
+    const rest = token.slice(this.tokenPrefix.length);
+    const lastDash = rest.lastIndexOf('-');
+    const userId = lastDash >= 0 ? rest.slice(0, lastDash) : rest;
+
+    for (const stored of mockUserDatabase.values()) {
+      if (stored.id === userId) {
+        const user = this.createUserFromStored(stored);
+        this.currentUser = user;
+        return user;
+      }
+    }
+
+    return null;
   }
 
   async verifyEmail(token: string): Promise<boolean> {
@@ -331,8 +350,15 @@ export class MockAuthAdapter implements AuthPort, AuthProvider {
     return Array.from(mockUserDatabase.values());
   }
 
+
   // Utility method to get user count
   static getUserCount(): number {
     return mockUserDatabase.size;
+  }
+
+  // Utility method to reset database (for testing)
+  static resetDatabase(): void {
+    mockUserDatabase.clear();
+    initializeMockUsers();
   }
 }

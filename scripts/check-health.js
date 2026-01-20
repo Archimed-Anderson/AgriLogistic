@@ -30,16 +30,27 @@ const services = [
   },
 ];
 
+function fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  return fetch(url, {
+    ...options,
+    signal: controller.signal,
+  }).finally(() => clearTimeout(timeoutId));
+}
+
 async function checkService(service) {
   if (!service.url) {
     return { name: service.name, status: 'skipped', required: service.required };
   }
 
   try {
-    const response = await fetch(service.url, {
-      method: 'GET',
-      timeout: 5000,
-    });
+    const response = await fetchWithTimeout(
+      service.url,
+      { method: 'GET' },
+      5000
+    );
 
     if (response.ok) {
       const data = await response.json().catch(() => ({}));
@@ -69,7 +80,11 @@ async function checkService(service) {
 
 async function checkDatabase() {
   try {
-    const response = await fetch('http://localhost:3001/health');
+    const response = await fetchWithTimeout(
+      'http://localhost:3001/health',
+      { method: 'GET' },
+      5000
+    );
     if (response.ok) {
       const data = await response.json();
       return {

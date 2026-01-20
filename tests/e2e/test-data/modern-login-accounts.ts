@@ -14,8 +14,9 @@ export interface TestAccount {
 
 export const TEST_ACCOUNTS: Record<string, TestAccount> = {
   admin: {
-    email: 'admintest@gmail.com',
-    password: 'Admin123', // Fallback: Admin@123
+    // MockAuthAdapter demo admin user (works in isolated E2E runs)
+    email: 'admin@AgroLogistic.com',
+    password: 'Admin123',
     role: 'admin',
     expectedRedirect: '/admin/overview',
     permissions: ['*'],

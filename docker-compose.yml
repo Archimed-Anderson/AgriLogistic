@@ -15,6 +15,9 @@ services:
       - NODE_ENV=production
       - VITE_APP_NAME=AgroDeep
       - VITE_APP_VERSION=2.0.0
+      # Primary (preferred) API gateway URL used by the frontend
+      - VITE_API_GATEWAY_URL=http://localhost:8000/api/v1
+      # Legacy alias kept for backward compatibility (deprecated)
       - VITE_API_URL=http://localhost:8000/api/v1
     volumes:
       - ./logs:/app/logs
@@ -24,7 +27,8 @@ services:
     depends_on:
       - kong
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
+      # Vite dev server does not expose /health; root is sufficient.
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
       interval: 30s
       timeout: 10s
       retries: 3

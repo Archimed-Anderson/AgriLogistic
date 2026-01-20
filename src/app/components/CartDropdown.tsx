@@ -66,7 +66,7 @@ export function CartDropdown({ onClose, onNavigate }: { onClose: () => void; onN
       <div className="px-4 py-3 border-b flex items-center justify-between">
         <div className="flex items-center gap-2">
           <h3 className="font-semibold">Mon panier</h3>
-          <span className="px-2 py-0.5 bg-[#2563eb] text-white text-xs rounded-full">
+          <span className="px-2 py-0.5 bg-[#0B7A4B] text-white text-xs rounded-full">
             {cartItems.length}
           </span>
         </div>
@@ -89,7 +89,7 @@ export function CartDropdown({ onClose, onNavigate }: { onClose: () => void; onN
                 onNavigate?.("/market");
                 onClose();
               }}
-              className="px-4 py-2 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors"
+              className="px-4 py-2 bg-[#0B7A4B] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors"
             >
               Explorer le marketplace
             </button>
@@ -128,7 +128,7 @@ export function CartDropdown({ onClose, onNavigate }: { onClose: () => void; onN
                       </div>
 
                       {/* Price */}
-                      <div className="text-sm font-semibold text-[#2563eb]">
+                      <div className="text-sm font-semibold text-[#0B7A4B]">
                         {(item.price * item.quantity).toFixed(2)}€
                       </div>
                     </div>
@@ -168,7 +168,7 @@ export function CartDropdown({ onClose, onNavigate }: { onClose: () => void; onN
               )}
               <div className="flex justify-between pt-2 border-t">
                 <span className="font-bold">TOTAL</span>
-                <span className="font-bold text-lg text-[#2563eb]">{total.toFixed(2)}€</span>
+                <span className="font-bold text-lg text-[#0B7A4B]">{total.toFixed(2)}€</span>
               </div>
             </div>
 
@@ -183,7 +183,7 @@ export function CartDropdown({ onClose, onNavigate }: { onClose: () => void; onN
                   >
                     <div className="text-4xl mb-2 text-center">{product.image}</div>
                     <div className="text-xs font-medium truncate">{product.name}</div>
-                    <div className="text-sm font-bold text-[#2563eb] mt-1">
+                    <div className="text-sm font-bold text-[#0B7A4B] mt-1">
                       {product.price}€
                     </div>
                     <button className="w-full mt-2 px-2 py-1 bg-muted hover:bg-muted/80 rounded text-xs transition-colors">
@@ -211,7 +211,7 @@ export function CartDropdown({ onClose, onNavigate }: { onClose: () => void; onN
                   onNavigate?.("/checkout");
                   onClose();
                 }}
-                className="w-full px-4 py-3 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors font-semibold"
+                className="w-full px-4 py-3 bg-[#0B7A4B] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors font-semibold"
               >
                 Passer la commande
               </button>
