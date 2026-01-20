@@ -1,96 +1,85 @@
-import { ShoppingBag, Radio, Sprout, Leaf } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
-import ServiceCard from '../ui/ServiceCard';
+import { ArrowRight } from "lucide-react";
 
 const services = [
   {
-    icon: ShoppingBag,
-    title: 'E-commerce',
-    description: 'Marketplace agricole moderne pour acheter et vendre des produits frais directement du producteur au consommateur.',
-    gradient: 'from-emerald-500 to-green-600'
+    id: "marketplace",
+    title: "Marketplace B2B",
+    description: "Connectez-vous directement avec des acheteurs et fournisseurs certifiés. Vendez vos récoltes au meilleur prix sans intermédiaires.",
+    icon: "/assets/images/landing/icon-marketplace.png",
+    color: "bg-blue-500/10 text-blue-500",
   },
   {
-    icon: Radio,
-    title: 'IoT Monitoring',
-    description: 'Système de capteurs intelligents pour suivre en temps réel l\'état de vos cultures et optimiser votre production.',
-    gradient: 'from-blue-500 to-cyan-600'
+    id: "logistics",
+    title: "Logistique Intelligente",
+    description: "Optimisez vos tournées et suivez vos livraisons en temps réel. Réduisez vos coûts de transport grâce à notre algorithme de groupage.",
+    icon: "/assets/images/landing/icon-logistics.png",
+    color: "bg-orange-500/10 text-orange-500",
   },
   {
-    icon: Sprout,
-    title: 'Farming',
-    description: 'Outils de gestion de cultures intégrés pour planifier, suivre et améliorer vos rendements agricoles.',
-    gradient: 'from-lime-500 to-green-600'
+    id: "ai",
+    title: "IA & Prédictions",
+    description: "Anticipez les rendements et les maladies grâce à nos modèles prédictifs basés sur l'IA et les données satellites.",
+    icon: "/assets/images/landing/icon-ai.png",
+    color: "bg-purple-500/10 text-purple-500",
   },
   {
-    icon: Leaf,
-    title: 'Agriculture Durable',
-    description: 'Pratiques et conseils pour une agriculture responsable, respectueuse de l\'environnement et économiquement viable.',
-    gradient: 'from-teal-500 to-emerald-600'
-  }
+    id: "finance",
+    title: "Finance Agricole",
+    description: "Accédez à des solutions de financement adaptées et gérez votre trésorerie avec nos outils de facturation intégrés.",
+    icon: "/assets/images/landing/icon-finance.png",
+    color: "bg-green-500/10 text-green-500",
+  },
 ];
 
-export default function ServicesSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
-      }
-    };
-  }, []);
-
+export function ServicesSection() {
   return (
-    <section 
-      ref={sectionRef}
-      className="py-20 bg-gray-50"
-    >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className={`text-center mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Nos Services
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Une suite complète d'outils pour transformer votre façon de produire, 
-            d'acheter et de vendre des produits agricoles.
+    <section className="relative py-24 bg-white sm:py-32 overflow-hidden">
+      {/* Decorative blobs */}
+      <div className="absolute top-0 right-0 -mr-400 -mt-24 h-[500px] w-[500px] rounded-full bg-green-50 opacity-50 blur-3xl" />
+      <div className="absolute bottom-0 left-0 -ml-40 -mb-24 h-[500px] w-[500px] rounded-full bg-blue-50 opacity-50 blur-3xl" />
+
+      <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
+        <div className="mx-auto max-w-2xl text-center mb-16">
+          <h2 className="text-base font-semibold leading-7 text-green-600">Solutions Complètes</h2>
+          <p className="mt-2 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+            Tout ce dont vous avez besoin pour grandir
+          </p>
+          <p className="mt-6 text-lg leading-8 text-slate-600">
+            Une suite d'outils interconnectés pour moderniser chaque aspect de votre exploitation agricole ou activité logistique.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {services.map((service, index) => (
-            <div
-              key={service.title}
-              className={`transition-all duration-700 ${
-                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-              }`}
-              style={{ transitionDelay: `${index * 100}ms` }}
+        <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-12 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+          {services.map((service) => (
+            <div 
+              key={service.id} 
+              className="flex flex-col sm:flex-row gap-6 rounded-3xl bg-white p-8 shadow-xl ring-1 ring-slate-900/10 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] hover:ring-green-500/30"
             >
-              <ServiceCard {...service} />
+              <div className="flex-none">
+                <div className={`flex h-20 w-20 items-center justify-center rounded-2xl ${service.color} p-2`}>
+                  <img 
+                    src={service.icon} 
+                    alt={service.title} 
+                    className="h-full w-full object-contain drop-shadow-md"
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col justify-center">
+                <h3 className="text-xl font-bold leading-8 text-slate-900">
+                  {service.title}
+                </h3>
+                <p className="mt-2 text-base leading-7 text-slate-600">
+                  {service.description}
+                </p>
+                <div className="mt-4">
+                  <span className="inline-flex items-center text-sm font-semibold leading-6 text-green-600 hover:text-green-500 cursor-pointer group">
+                    En savoir plus
+                    <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </span>
+                </div>
+              </div>
             </div>
           ))}
-        </div>
-
-        {/* CTA */}
-        <div className={`text-center mt-12 transition-all duration-700 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-          <button className="px-8 py-4 bg-emerald-600 text-white rounded-lg font-semibold text-lg hover:bg-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105">
-            Voir tous les services
-          </button>
         </div>
       </div>
     </section>

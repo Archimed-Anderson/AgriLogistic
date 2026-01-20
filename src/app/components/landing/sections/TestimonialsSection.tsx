@@ -1,174 +1,57 @@
-import { useEffect, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import TestimonialCard from '../ui/TestimonialCard';
-
-import avatar1 from '../../../assets/landing/story-1.webp';
-import avatar2 from '../../../assets/landing/story-2.webp';
-import avatar3 from '../../../assets/landing/story-3.webp';
-import avatar4 from '../../../assets/landing/story-4.webp';
-import partner1 from '../../../assets/landing/project-1.webp';
-import partner2 from '../../../assets/landing/project-2.webp';
-import partner3 from '../../../assets/landing/project-3.webp';
-import partner4 from '../../../assets/landing/project-4.webp';
 
 const testimonials = [
   {
-    name: 'Marie Dupont',
-    role: 'Agricultrice Bio',
-    content: 'AgroLogistic a transformé ma façon de travailler. Grâce à la plateforme, j\'ai pu élargir ma clientèle locale et mieux valoriser mes produits. Un outil indispensable!',
-    rating: 5,
-    avatarSrc: avatar1
+    body: "AgroLogistic a transformé notre façon de vendre. Nous avons réduit nos pertes post-récolte de 30% grâce à la logistique intégrée.",
+    author: {
+      name: "Jean Dupont",
+      handle: "AgriBio Ferme",
+      imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    },
   },
   {
-    name: 'Jean-Pierre Martin',
-    role: 'Maraîcher',
-    content: 'Le système de capteurs IoT m\'a permis d\'optimiser mes rendements de 30% tout en réduisant ma consommation d\'eau. Une vraie révolution pour mon exploitation.',
-    rating: 5,
-    avatarSrc: avatar2
+    body: "La marketplace m'a permis de trouver de nouveaux fournisseurs en un clic. L'interface est intuitive et le support très réactif.",
+    author: {
+      name: "Marie Curie",
+      handle: "Coopérative Sud",
+      imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    },
   },
   {
-    name: 'Sophie Bernard',
-    role: 'Restauratrice',
-    content: 'En tant que restauratrice, pouvoir me fournir directement auprès des producteurs locaux via AgroLogistic garantit la fraîcheur et la qualité que mes clients recherchent.',
-    rating: 5,
-    avatarSrc: avatar3
+    body: "Les outils d'IA nous ont alertés sur une menace de mildiou 3 jours avant qu'elle ne soit visible. Une économie inestimable !",
+    author: {
+      name: "Paul Martin",
+      handle: "Vignobles Martin",
+      imageUrl: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    },
   },
-  {
-    name: 'Laurent Dubois',
-    role: 'Transporteur',
-    content: 'L\'optimisation des tournées proposée par la plateforme m\'a fait économiser du temps et du carburant. C\'est win-win pour tout le monde!',
-    rating: 4,
-    avatarSrc: avatar4
-  }
 ];
 
-const partnerLogos = [partner1, partner2, partner3, partner4];
-
-export default function TestimonialsSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
-      }
-    };
-  }, []);
-
-  const nextTestimonial = () => {
-    setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-  };
-
-  const prevTestimonial = () => {
-    setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  };
-
-  const visibleTestimonials = [
-    testimonials[currentIndex],
-    testimonials[(currentIndex + 1) % testimonials.length],
-    testimonials[(currentIndex + 2) % testimonials.length]
-  ];
-
+export function TestimonialsSection() {
   return (
-    <section 
-      ref={sectionRef}
-      className="py-20 bg-white"
-    >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className={`text-center mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Témoignages de Nos Clients
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Découvrez ce que nos utilisateurs pensent d'AgroLogistic et comment 
-            la plateforme les aide au quotidien.
+    <section className="bg-slate-50 py-24 sm:py-32">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="mx-auto max-w-xl text-center">
+          <h2 className="text-lg font-semibold leading-8 tracking-tight text-green-600">Témoignages</h2>
+          <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            Ils nous font confiance
           </p>
         </div>
-
-        {/* Carousel */}
-        <div className="relative mb-16">
-          <div className="grid md:grid-cols-3 gap-6">
-            {visibleTestimonials.map((testimonial, index) => (
-              <div
-                key={`${testimonial.name}-${index}`}
-                className={`transition-all duration-700 ${
-                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-                }`}
-                style={{ transitionDelay: `${index * 100}ms` }}
-              >
-                <TestimonialCard {...testimonial} />
-              </div>
-            ))}
-          </div>
-
-          {/* Navigation Buttons */}
-          <div className="flex justify-center gap-4 mt-8">
-            <button
-              onClick={prevTestimonial}
-              className="p-3 bg-white border-2 border-gray-200 rounded-full hover:border-emerald-500 hover:bg-emerald-50 transition-all duration-300 hover:scale-110"
-              aria-label="Témoignage précédent"
-            >
-              <ChevronLeft className="h-6 w-6 text-gray-700" />
-            </button>
-            <button
-              onClick={nextTestimonial}
-              className="p-3 bg-white border-2 border-gray-200 rounded-full hover:border-emerald-500 hover:bg-emerald-50 transition-all duration-300 hover:scale-110"
-              aria-label="Témoignage suivant"
-            >
-              <ChevronRight className="h-6 w-6 text-gray-700" />
-            </button>
-          </div>
-
-          {/* Indicators */}
-          <div className="flex justify-center gap-2 mt-4">
-            {testimonials.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  index === currentIndex ? 'w-8 bg-emerald-500' : 'w-2 bg-gray-300'
-                }`}
-                aria-label={`Aller au témoignage ${index + 1}`}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Partner Logos */}
-        <div className={`transition-all duration-700 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-          <p className="text-center text-gray-500 text-sm mb-8">Ils nous font confiance</p>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 opacity-40">
-            {partnerLogos.map((logo, index) => (
-              <div
-                key={index}
-                className="w-16 h-10 rounded-md overflow-hidden grayscale hover:grayscale-0 transition-all duration-300 bg-white/60"
-              >
-                <img
-                  src={logo}
-                  alt={`Logo partenaire ${index + 1}`}
-                  className="w-full h-full object-cover"
-                  width={180}
-                  height={120}
-                  decoding="async"
-                  loading="lazy"
-                />
+        <div className="mx-auto mt-16 flow-root max-w-2xl sm:mt-20 lg:mx-0 lg:max-w-none">
+          <div className="-mt-8 sm:-mx-4 sm:columns-2 sm:text-[0] lg:columns-3">
+            {testimonials.map((testimonial) => (
+              <div key={testimonial.author.handle} className="pt-8 sm:inline-block sm:w-full sm:px-4">
+                <figure className="rounded-2xl bg-white p-8 text-sm leading-6 shadow-lg ring-1 ring-slate-900/5">
+                  <blockquote className="text-slate-900 font-medium italic">
+                    <p>“{testimonial.body}”</p>
+                  </blockquote>
+                  <figcaption className="mt-6 flex items-center gap-x-4">
+                    <img className="h-10 w-10 rounded-full bg-slate-50" src={testimonial.author.imageUrl} alt="" />
+                    <div>
+                      <div className="font-semibold text-slate-900">{testimonial.author.name}</div>
+                      <div className="text-slate-600 font-normal">@{testimonial.author.handle}</div>
+                    </div>
+                  </figcaption>
+                </figure>
               </div>
             ))}
           </div>

@@ -11,7 +11,8 @@ import { Sidebar } from "./components/Sidebar";
 import { AccessDenied } from "./components/AccessDenied";
 
 // Auth & Landing
-import { AgroLogisticLandingPage } from "./components/landing/AgroLogisticLandingPage";
+// Auth & Landing
+import { AgroLogisticRedesigned } from "./components/landing/AgroLogisticRedesigned"; // Changed from ./components/landing/AgroLogisticLandingPage
 import { LoginPage } from "@presentation/pages/LoginPage";
 import { RegisterPage } from "@presentation/pages/RegisterPage";
 import { ModernAuthPage } from "@presentation/pages/ModernAuthPage";
@@ -158,7 +159,7 @@ function AppShell() {
     switch (currentRoute) {
       // Auth & Landing
       case "/":
-        return <AgroLogisticLandingPage onNavigate={handleNavigate} />;
+        return <AgroLogisticRedesigned onNavigate={handleNavigate} />; // Changed from AgroLogisticLandingPage
       case "/auth":
         return <ModernAuthPage onNavigate={handleNavigate} />;
       case "/login":
@@ -355,7 +356,7 @@ function AppShell() {
       
       // Default fallback
       default:
-        return isAuthenticated ? <ModernDashboard /> : <AgroLogisticLandingPage onNavigate={handleNavigate} />;
+        return isAuthenticated ? <ModernDashboard /> : <AgroLogisticRedesigned onNavigate={handleNavigate} />;
     }
   };
 
