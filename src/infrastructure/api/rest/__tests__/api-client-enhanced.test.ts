@@ -200,6 +200,42 @@ describe('API Client Enhanced', () => {
       localStorage.clear();
     });
 
+    it('should refresh token on 401 using OAuth2 snake_case payload/response', async () => {
+      localStorage.setItem('refreshToken', 'rt-123');
+
+      // 1) original request -> 401
+      // 2) refresh -> 200 with OAuth2-style keys
+      // 3) retry original request -> 200
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: false,
+          status: 401,
+          headers: { get: (name: string) => (name === 'content-type' ? 'application/json' : null) },
+          json: async () => ({ error: 'Unauthorized' }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => ({ access_token: 'at-456', refresh_token: 'rt-789' }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => ({ data: 'ok' }),
+        });
+
+      const result = await apiClient.get('/test', { skipRetry: true });
+
+      expect(result).toEqual({ data: 'ok' });
+      expect(localStorage.getItem('accessToken')).toBe('at-456');
+      expect(localStorage.getItem('refreshToken')).toBe('rt-789');
+
+      const refreshCall = mockFetch.mock.calls[1];
+      expect(String(refreshCall[0])).toContain('/auth/refresh');
+      expect(refreshCall[1]?.method).toBe('POST');
+      expect(refreshCall[1]?.body).toBe(JSON.stringify({ refresh_token: 'rt-123', refreshToken: 'rt-123' }));
+    });
+
     it('should include Authorization header when token exists', async () => {
       localStorage.setItem('accessToken', 'test-token-123');
       

@@ -224,14 +224,17 @@ export function useRegister() {
       };
 
       const response = await authRegister(requestData);
-      
-      toast.success(
-        `Bienvenue, ${response.user.firstName} ! Votre compte a été créé avec succès.`,
-        {
-          description: 'Vous pouvez maintenant vous connecter.',
-          duration: 4000,
-        }
-      );
+
+      // Persist dev token for VerifyEmail screen (auth-service returns it in dev).
+      if (response.verificationToken) {
+        sessionStorage.setItem('email_verification_token', response.verificationToken);
+      }
+      sessionStorage.setItem('pending_verification_email', response.email);
+
+      toast.success('Compte créé. Vérifiez votre email.', {
+        description: "Un lien de vérification a été envoyé. En dev, vous pouvez utiliser le token affiché.",
+        duration: 5000,
+      });
       
       return response;
     } catch (err) {

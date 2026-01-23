@@ -18,10 +18,11 @@ import { RegisterPage } from "@presentation/pages/RegisterPage";
 import { ModernAuthPage } from "@presentation/pages/ModernAuthPage";
 import { ForgotPasswordPage } from "@presentation/pages/ForgotPasswordPage";
 import { ResetPasswordPage } from "@presentation/pages/ResetPasswordPage";
+import { VerifyEmailPage } from "@presentation/pages/VerifyEmailPage";
 
 // Dashboard
 import { ModernDashboard } from "./components/ModernDashboard";
-import { FarmVistaDashboard } from "./components/FarmVistaDashboard";
+import { ModernizedDashboard } from "./components/dashboard/ModernizedDashboard";
 
 // Core Features
 import { ChatInterface } from "./components/ChatInterface";
@@ -72,6 +73,14 @@ import { B2BChat } from "./components/B2BChat";
 import { CarrierDashboard } from "./components/CarrierDashboard";
 import { AffiliateDashboard } from "./components/AffiliateDashboard";
 import { LaborManagement } from "./components/LaborManagement";
+import { ProjectDetailPage } from "./components/landing/pages/ProjectDetailPage";
+import { DemoPage } from "./components/landing/pages/DemoPage";
+
+import { SolutionsLogisticsPage } from "./components/landing/pages/SolutionsLogisticsPage";
+import { PartnersEcosystemPage } from "./components/landing/pages/PartnersEcosystemPage";
+import { SustainableLogisticsPage } from "./components/landing/pages/SustainableLogisticsPage";
+import { TechBlogPage } from "./components/landing/pages/TechBlogPage";
+
 
 import { Permission } from "@domain/value-objects/permissions.vo";
 import { UserRole } from "@domain/enums/user-role.enum";
@@ -170,11 +179,26 @@ function AppShell() {
         return <ForgotPasswordPage onNavigate={handleNavigate} />;
       case "/reset-password":
         return <ResetPasswordPage onNavigate={handleNavigate} />;
+      case "/verify-email":
+        return <VerifyEmailPage onNavigate={handleNavigate} />;
+      case "/demo":
+        return <DemoPage onNavigate={handleNavigate} />;
       
+
+      case "/solutions/logistics":
+        return <SolutionsLogisticsPage onNavigate={handleNavigate} />;
+      case "/about/partners":
+        return <PartnersEcosystemPage onNavigate={handleNavigate} />;
+      case "/commitments/sustainability":
+        return <SustainableLogisticsPage onNavigate={handleNavigate} />;
+      case "/resources/blog":
+      case "/blog":
+        return <TechBlogPage onNavigate={handleNavigate} />;
+
       // Admin Dashboard
       case "/admin/overview":
       case "/admin/dashboard":
-        return <FarmVistaDashboard onNavigate={handleNavigate} />;
+        return <ModernizedDashboard onNavigate={handleNavigate} />;
       
       // Customer Dashboard
       case "/customer/overview":
@@ -260,7 +284,7 @@ function AppShell() {
       
       case "/admin/panel":
         return <AdminPanelHome onNavigate={handleNavigate} />;
-
+ 
       case "/admin/labor":
         if (userRole !== UserRole.ADMIN) {
           return deny("Gestion Main-d'œuvre");
@@ -316,7 +340,7 @@ function AppShell() {
           return deny("Sol & Eau");
         }
         return <SoilWaterManagement />;
-
+ 
       case "/admin/equipment":
       case "/customer/equipment":
         if (userRole !== UserRole.ADMIN && userRole !== UserRole.FARMER) {
@@ -353,6 +377,271 @@ function AppShell() {
       
       case "/admin/affiliate-dashboard":
         return <AffiliateDashboard />;
+      
+      // Projects Pages
+      // Contact Pages
+      case "/contact/general":
+        return (
+          <ProjectDetailPage 
+            onNavigate={handleNavigate}
+            title="General Inquiries"
+            category="Contact Us"
+            date="24/7 Availability"
+            client="AgroLogistic Support"
+            image="/assets/images/landing/contact-general.png"
+            content={(
+              <>
+                <h2>We're Here to Help</h2>
+                <p>Have a question about our platform, services, or pricing? Our team is ready to provide you with the answers you need to get started.</p>
+                <h3>How we can assist:</h3>
+                <ul>
+                  <li>Platform demonstrations and walkthroughs.</li>
+                  <li>Account setup and configuration guidance.</li>
+                  <li>General information about sustainable farming.</li>
+                </ul>
+              </>
+            )}
+          />
+        );
+      case "/contact/support":
+        return (
+          <ProjectDetailPage 
+            onNavigate={handleNavigate}
+            title="Technical Support"
+            category="Customer Success"
+            date="Immediate Response"
+            client="Active Users"
+            image="/assets/images/landing/contact-support.png"
+            content={(
+              <>
+                <h2>Expert Technical Assistance</h2>
+                <p>Facing a technical issue? Our dedicated support engineers are here to ensure your operations run smoothly without interruption.</p>
+                <h3>Support Services:</h3>
+                <ul>
+                  <li>Real-time troubleshooting for IOT devices.</li>
+                  <li>Data synchronization and API integration help.</li>
+                  <li>System upgrade and maintenance support.</li>
+                </ul>
+              </>
+            )}
+          />
+        );
+      case "/contact/partnerships":
+        return (
+          <ProjectDetailPage 
+            onNavigate={handleNavigate}
+            title="Strategic Partnerships"
+            category="Business Development"
+            date="Global Network"
+            client="Enterprise Partners"
+            image="/assets/images/landing/contact-partners.png"
+            content={(
+              <>
+                <h2>Grow With Us</h2>
+                <p>We are always looking to collaborate with organizations that share our vision for a sustainable agricultural future. Let's build something great together.</p>
+                <h3>Partnership Opportunities:</h3>
+                <ul>
+                  <li>Supply chain integration for retailers.</li>
+                  <li>Technology co-development and research.</li>
+                  <li>NGO and government sustainability initiatives.</li>
+                </ul>
+              </>
+            )}
+          />
+        );
+
+      // Story Pages
+      case "/story/eco-practices":
+        return (
+           <ProjectDetailPage 
+            onNavigate={handleNavigate}
+            title="Eco-Friendly Farming Practices"
+            category="Our Story"
+            date="Since 2018"
+            client="Internal Initiative"
+            image="/assets/images/landing/story-eco-practices.png"
+            content={(
+              <>
+                <h2>Preserving Nature, Enhancing Yields</h2>
+                <p>We believe that high-yield agriculture shouldn't come at the cost of the environment. Our eco-friendly practices focus on regenerative agriculture, ensuring soil health and biodiversity are maintained.</p>
+                <h3>Key Synergies</h3>
+                <ul>
+                  <li>Regenerative Soil Management: Using cover crops and composting to sequester carbon.</li>
+                  <li>Integrated Pest Management (IPM): Reducing pesticide use by introducing natural predators.</li>
+                  <li>Water Conservation: Precision irrigation to minimize runoff and waste.</li>
+                </ul>
+              </>
+            )}
+          />
+        );
+      case "/story/fair-trade":
+        return (
+          <ProjectDetailPage 
+            onNavigate={handleNavigate}
+            title="Fair Trade Marketplace"
+            category="Social Impact"
+            date="Global Reach"
+            client="Community Driven"
+            image="/assets/images/landing/story-fair-trade.png"
+            content={(
+              <>
+                <h2>Empowering Farmers Globally</h2>
+                <p>AgroLogistic cuts out the middlemen, connecting smallholder farmers directly to global buyers. This ensures fairer prices, transparent transactions, and faster payments.</p>
+                <h3>Marketplace Features</h3>
+                <ul>
+                  <li>Direct Access: Farmers sell directly to retailers and processors.</li>
+                  <li>Price Transparency: Real-time market data available to all users.</li>
+                  <li>Secure Payments: Blockchain-verified transactions ensure trust and speed.</li>
+                </ul>
+              </>
+            )}
+          />
+        );
+
+      // Sustainable Practices Pages
+      case "/practices/yield-growth":
+        return (
+          <ProjectDetailPage 
+            onNavigate={handleNavigate}
+            title="80% Yield Growth"
+            category="Performance"
+            date="Ongoing"
+            client="AgroLogistic Standard"
+            image="/assets/images/landing/practice-yield-growth.png"
+            content={(
+              <>
+                <h2>Maximizing Crop Potential</h2>
+                <p>Our AI-driven analytics platform processes millions of data points daily to provide actionable insights. This allows farmers to optimize planting schedules, nutrient application, and pest control.</p>
+                <h3>Impact Metrics</h3>
+                <ul>
+                  <li>Average yield increase of 80% within first 2 years.</li>
+                  <li>Reduction in chemical usage by 35%.</li>
+                  <li>Real-time disease detection accuracy of 99%.</li>
+                </ul>
+              </>
+            )}
+          />
+        );
+      case "/practices/water-efficiency":
+        return (
+          <ProjectDetailPage 
+            onNavigate={handleNavigate}
+            title="100% Efficient Water Use"
+            category="Sustainability"
+            date="Standard Feature"
+            client="Global Partners"
+            image="/assets/images/landing/practice-water-efficiency.png"
+            content={(
+              <>
+                <h2>Smart Irrigation Technology</h2>
+                <p>Water is our most precious resource. Our smart irrigation systems ensure that every drop counts, delivering water directly to the plant roots based on real-time soil moisture data.</p>
+                <h3>Technology Specs</h3>
+                <ul>
+                  <li>Automated drip irrigation valves.</li>
+                  <li>Soil moisture sensors at multiple depths.</li>
+                  <li>Weather-adaptive watering schedules.</li>
+                </ul>
+              </>
+            )}
+          />
+        );
+      case "/practices/renewable-energy":
+        return (
+          <ProjectDetailPage 
+            onNavigate={handleNavigate}
+            title="Renewable Energy Integration"
+            category="Energy"
+            date="infrastructure"
+            client="Eco-Certified Farms"
+            image="/assets/images/landing/practice-renewable-energy.png"
+            content={(
+              <>
+                <h2>Powering the Future</h2>
+                <p>We help farms transition to 100% renewable energy sources. From solar panels on barn roofs to wind turbines in open fields, we integrate clean energy into every aspect of operations.</p>
+                <h3>Benefits</h3>
+                <ul>
+                  <li>Zero operational carbon footprint.</li>
+                  <li>Significant reduction in electricity costs.</li>
+                  <li>Energy independence for remote locations.</li>
+                </ul>
+              </>
+            )}
+          />
+        );
+
+      case "/projects/eco-farm":
+        return (
+          <ProjectDetailPage 
+            onNavigate={handleNavigate}
+            title="Eco-Farm Expansion"
+            category="Infrastructure"
+            date="October 2024"
+            client="BioFuture Holdings"
+            image="/assets/images/landing/project-eco-farm.png"
+            content={(
+              <>
+                <h2>Expansion Overview</h2>
+                <p>We successfully expanded the operational capacity of BioFuture's main facility by 200%. This project included the installation of a 500kW solar array, automated greenhouses, and a vertically integrated logistics hub.</p>
+                <h3>Key Achievements</h3>
+                <ul>
+                  <li>Fully energy self-sufficient facility.</li>
+                  <li>Integrated water recycling reducing consumption by 60%.</li>
+                  <li>Automated climate control systems.</li>
+                </ul>
+              </>
+            )}
+          />
+        );
+      case "/projects/smart-irrigation":
+        return (
+          <ProjectDetailPage 
+            onNavigate={handleNavigate}
+            title="Smart Irrigation System"
+            category="Technology"
+            date="November 2024"
+            client="AgriTech Solutions"
+            image="/assets/images/landing/project-smart-irrigation.png"
+            content={(
+              <>
+                <h2>The Challenge</h2>
+                <p>Water scarcity in the region demanded a revolutionary approach to crop hydration. Traditional methods were wasteful and imprecise.</p>
+                <h3>Our Solution</h3>
+                <p>We deployed a network of over 1000 IoT sensors connected to a central AI processing unit. This system analyzes soil moisture, weather forecasts, and crop health in real-time to deliver the exact amount of water needed.</p>
+                <h3>Results</h3>
+                <ul>
+                  <li>40% Reduction in water usage.</li>
+                  <li>15% Increase in crop yield.</li>
+                  <li>Zero runoff waste.</li>
+                </ul>
+              </>
+            )}
+          />
+        );
+      case "/projects/logistics":
+        return (
+          <ProjectDetailPage 
+            onNavigate={handleNavigate}
+            title="Organic Supply Chain"
+            category="Logistics"
+            date="December 2024"
+            client="GreenGrocer Co-op"
+            image="/assets/images/landing/project-logistics.png"
+            content={(
+              <>
+                <h2>Project Scope</h2>
+                <p>Establishing a farm-to-table logistics network for a cooperative of 50 local organic farmers. The goal was to minimize time from harvest to retail shelf.</p>
+                <h3>Implementation</h3>
+                <p>Our team implemented a synchronized fleet management system using electric trucks and a centralized distribution warehouse with automated sorting.</p>
+                <h3>Impact</h3>
+                <ul>
+                  <li>Freshness guarantee improved from 3 days to 7 days.</li>
+                  <li>Carbon footprint reduced by 85% thanks to EV fleet.</li>
+                  <li>Real-time tracking for end consumers via QR codes.</li>
+                </ul>
+              </>
+            )}
+          />
+        );
       
       // Default fallback
       default:

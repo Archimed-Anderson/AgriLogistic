@@ -1,0 +1,128 @@
+# Installation des Dépendances Manquantes
+
+Pour que le dashboard admin fonctionne correctement, vous devez installer les dépendances suivantes :
+
+## 1. React Query (TanStack Query)
+
+```bash
+npm install @tanstack/react-query
+```
+
+## 2. Axios
+
+```bash
+npm install axios
+```
+
+## 3. Recharts
+
+```bash
+npm install recharts
+```
+
+## 4. React Hook Form + Zod
+
+```bash
+npm install react-hook-form @hookform/resolvers zod
+```
+
+## 5. Sonner (Toast notifications)
+
+```bash
+npm install sonner
+```
+
+## 6. Installation Complète (Commande unique)
+
+```bash
+npm install @tanstack/react-query axios recharts react-hook-form @hookform/resolvers zod sonner
+```
+
+## Configuration React Query
+
+Après l'installation, vous devez configurer le QueryClient dans votre application. Ajoutez ceci dans votre fichier principal (par exemple `main.tsx` ou `App.tsx`) :
+
+```tsx
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60000, // 1 minute
+      retry: 1,
+    },
+  },
+});
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      {/* Votre application */}
+    </QueryClientProvider>
+  );
+}
+```
+
+## Configuration Sonner (Toast)
+
+Ajoutez le composant Toaster dans votre layout principal :
+
+```tsx
+import { Toaster } from 'sonner';
+
+function App() {
+  return (
+    <>
+      <Toaster position="top-right" />
+      {/* Votre application */}
+    </>
+  );
+}
+```
+
+## Variables d'Environnement
+
+Créez un fichier `.env` à la racine du projet avec :
+
+```env
+VITE_API_BASE_URL=http://localhost:8000/api/v1
+```
+
+## Composants UI Manquants
+
+Les composants Radix UI suivants doivent être créés ou installés via shadcn/ui :
+
+- Input
+- Select
+- Label
+- Avatar
+- Badge
+- Button
+- Card
+- Alert
+- Skeleton
+- Table
+- DropdownMenu
+
+### Installation avec shadcn/ui
+
+Si vous utilisez shadcn/ui, exécutez :
+
+```bash
+npx shadcn-ui@latest add input select label avatar badge button card alert skeleton table dropdown-menu
+```
+
+## Vérification
+
+Après installation, vérifiez que tout fonctionne :
+
+```bash
+npm run typecheck
+npm run dev
+```
+
+## Notes
+
+- Les erreurs de lint actuelles sont normales et disparaîtront après l'installation des dépendances
+- Le backend `admin-service` doit être créé pour que les appels API fonctionnent
+- En attendant le backend, les hooks React Query retourneront des erreurs (attendu)

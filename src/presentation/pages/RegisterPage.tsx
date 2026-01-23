@@ -6,9 +6,8 @@ interface RegisterPageProps {
 
 export function RegisterPage({ onNavigate }: RegisterPageProps) {
   const handleSuccess = () => {
-    // Redirect to appropriate dashboard based on role
-    // For now, redirect to overview - will be improved with role-based routing
-    onNavigate('/admin/overview');
+    // Verify-first: go to email verification screen
+    onNavigate('/verify-email');
   };
 
   const handleLogin = () => {

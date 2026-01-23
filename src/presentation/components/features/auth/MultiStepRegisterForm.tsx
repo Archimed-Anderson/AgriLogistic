@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@presentation/contexts/AuthContext';
 import { useCSRFToken } from '@presentation/hooks/use-csrf-token';
-import { hashPassword } from '@presentation/utils/password-hash';
 import { getErrorMessage } from '@presentation/utils/auth-messages';
 import { RegisterRequestDTO } from '@application/dto/request/register-request.dto';
 import { UserRole } from '@domain/enums/user-role.enum';
@@ -254,19 +253,11 @@ export function MultiStepRegisterForm({ onSuccess, onSwitchToLogin }: MultiStepR
     setIsLoading(true);
 
     try {
-      // Hash password
-      let passwordToSend = password;
-      try {
-        passwordToSend = await hashPassword(password);
-      } catch (hashError) {
-        console.warn('Hash error, using plain password:', hashError);
-      }
-
       // Build registration data
       const registerData: RegisterRequestDTO = {
         email,
-        password: passwordToSend,
-        confirmPassword: passwordToSend,
+        password,
+        confirmPassword,
         firstName,
         lastName,
         phone,
@@ -293,7 +284,11 @@ export function MultiStepRegisterForm({ onSuccess, onSwitchToLogin }: MultiStepR
         confirmPassword: '[HIDDEN]',
       });
 
-      await authRegister(registerData);
+      const resp = await authRegister(registerData);
+      if (resp.verificationToken) {
+        sessionStorage.setItem('email_verification_token', resp.verificationToken);
+      }
+      sessionStorage.setItem('pending_verification_email', resp.email);
 
       toast.success(`Bienvenue ${firstName} !`, {
         description: `Votre compte ${ACCOUNT_TYPES.find((t) => t.role === accountType)

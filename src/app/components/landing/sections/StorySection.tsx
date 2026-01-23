@@ -1,159 +1,144 @@
-import { Target, Eye } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from "react";
+import { CheckCircle2, ArrowRight } from "lucide-react";
 
-import storyImg1 from '../../../assets/landing/story-1.webp';
-import storyImg2 from '../../../assets/landing/story-2.webp';
-import storyImg3 from '../../../assets/landing/story-3.webp';
-import storyImg4 from '../../../assets/landing/story-4.webp';
+interface StorySectionProps {
+  onNavigate?: (route: string) => void;
+}
 
-export default function StorySection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+const stories = [
+  {
+    id: "default",
+    title: "100% Organic",
+    description: "Certified Production",
+    image: "/assets/images/landing/story-innovation.png",
+    route: "/story/innovation", // Or loop back to top/default
+    isDefault: true
+  },
+  {
+    id: "eco",
+    title: "Eco-Friendly Practices",
+    description: "Supporting sustainable farming methods that protect our soil and water.",
+    image: "/assets/images/landing/story-eco-practices.png",
+    route: "/story/eco-practices"
+  },
+  {
+    id: "fair",
+    title: "Fair Trade Marketplace",
+    description: "Ensuring farmers get the best price for their hard work without intermediaries.",
+    image: "/assets/images/landing/story-fair-trade.png",
+    route: "/story/fair-trade"
+  }
+];
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
+export default function StorySection({ onNavigate }: StorySectionProps) {
+  const [activeStory, setActiveStory] = useState(stories[0]);
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
+  const handleMouseEnter = (storyId: string) => {
+    const story = stories.find(s => s.id === storyId);
+    if (story) setActiveStory(story);
+  };
 
-    return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
-      }
-    };
-  }, []);
+  const handleMouseLeave = () => {
+    // Optionally reset to default or keep last hovered. 
+    // Keeping last hovered feels smoother usually, or reset to 'default' if preferred.
+    // Let's keep the last hovered for now, or reset to default if user hovers out of main area?
+    // User request: "hover over the cards to see impact". 
+    // Usually resetting to main image is good for "Our Story" context.
+    setActiveStory(stories[0]); 
+  };
 
   return (
-    <section 
-      id="story"
-      ref={sectionRef}
-      className="py-20 bg-white"
-    >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className={`text-center mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Notre Histoire
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            AgroLogistic est née d'une vision simple : rendre l'agriculture locale accessible à tous 
-            tout en préservant notre planète et en soutenant nos producteurs.
-          </p>
-        </div>
+    <section id="story" className="py-24 bg-slate-50 overflow-hidden">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          
+          {/* Left Images Composition */}
+          <div className="relative group perspective-1000">
+             <div className="aspect-[4/3] w-full bg-slate-200 rounded-2xl overflow-hidden shadow-xl transform transition-transform duration-700 group-hover:scale-[1.02]">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10 opacity-60"></div>
+                <img 
+                  src={activeStory.image} 
+                  alt={activeStory.title}
+                  className="w-full h-full object-cover transition-opacity duration-500"
+                  key={activeStory.image} // Key change forces fade effect if handled by css animation, or just src replacement
+                />
+                 {/* Text Overlay for Image */}
+                 <div className="absolute bottom-6 left-6 z-20 text-white">
+                    <p className="font-bold text-xl">{activeStory.title}</p>
+                    {activeStory.isDefault && <p className="text-sm text-slate-200">Revolutionizing Agriculture</p>}
+                 </div>
+             </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {/* Image Grid */}
-          <div className={`grid grid-cols-2 gap-4 lg:col-span-2 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-6'}`}>
-            {/* First row - 2 images */}
-            <div className="rounded-xl overflow-hidden shadow-lg h-[250px] bg-gradient-to-br from-green-100 to-emerald-200">
-              <img
-                src={storyImg1}
-                alt="Agriculteur et exploitation agricole"
-                className="w-full h-full object-cover"
-                width={800}
-                height={800}
-                decoding="async"
-                loading="lazy"
-              />
-            </div>
-            <div className="rounded-xl overflow-hidden shadow-lg h-[250px] bg-gradient-to-br from-blue-100 to-cyan-200">
-              <img
-                src={storyImg2}
-                alt="Culture et croissance des plantes"
-                className="w-full h-full object-cover"
-                width={800}
-                height={800}
-                decoding="async"
-                loading="lazy"
-              />
-            </div>
+             {/* Floating Badge (Only show on default or relevant state) */}
+             <div className={`absolute -bottom-6 -right-6 bg-white p-6 rounded-xl shadow-2xl max-w-xs border border-green-100 hidden sm:block transition-all duration-300 ${activeStory.id === 'default' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <div className="flex items-center gap-4 mb-2">
+                   <div className="p-3 bg-green-100 rounded-full text-green-600">
+                      <CheckCircle2 className="w-6 h-6" />
+                   </div>
+                   <div>
+                      <p className="font-bold text-slate-900">100% Organic</p>
+                      <p className="text-sm text-slate-500">Certified Production</p>
+                   </div>
+                </div>
+             </div>
 
-            {/* Second row - 2 images */}
-            <div className="rounded-xl overflow-hidden shadow-lg h-[250px] bg-gradient-to-br from-lime-100 to-green-200">
-              <img
-                src={storyImg3}
-                alt="Produits frais et récolte"
-                className="w-full h-full object-cover"
-                width={800}
-                height={800}
-                decoding="async"
-                loading="lazy"
-              />
-            </div>
-            <div className="rounded-xl overflow-hidden shadow-lg h-[250px] bg-gradient-to-br from-amber-100 to-orange-200">
-              <img
-                src={storyImg4}
-                alt="Agriculture durable et terroir"
-                className="w-full h-full object-cover"
-                width={800}
-                height={800}
-                decoding="async"
-                loading="lazy"
-              />
-            </div>
+             {/* Decorative Elements */}
+             <div className="absolute -top-12 -left-12 w-24 h-24 bg-green-500/10 rounded-full blur-2xl"></div>
           </div>
 
-          {/* Mission & Vision Cards */}
-          <div className={`space-y-6 transition-all duration-700 delay-300 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-6'}`}>
-            {/* Notre Mission */}
-            <div className="bg-emerald-50 rounded-xl p-6 border-2 border-emerald-100 hover:border-emerald-300 transition-all duration-300 hover:shadow-lg">
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-emerald-500 rounded-lg">
-                  <Target className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Notre Mission</h3>
-                  <p className="text-gray-700 text-sm leading-relaxed">
-                    Faciliter l'accès aux produits bio et locaux tout en valorisant 
-                    le travail de nos agriculteurs partenaires.
-                  </p>
-                </div>
-              </div>
-            </div>
+          {/* Right Content */}
+          <div>
+            <span className="text-green-600 font-semibold tracking-wide uppercase text-sm">
+              Our Story
+            </span>
+            <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl mb-6">
+              Empowering Agriculture through Innovation
+            </h2>
+            <p className="text-lg text-slate-600 leading-relaxed mb-8">
+              Founded with a vision to revolutionize the agricultural supply chain, AgroLogistic bridges the gap between traditional farming and modern technology. We believe in a future where every harvest is optimized, traceable, and profitable.
+            </p>
 
-            {/* Notre Vision */}
-            <div className="bg-lime-50 rounded-xl p-6 border-2 border-lime-100 hover:border-lime-300 transition-all duration-300 hover:shadow-lg">
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-lime-500 rounded-lg">
-                  <Eye className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Notre Vision</h3>
-                  <p className="text-gray-700 text-sm leading-relaxed">
-                    Créer un écosystème agricole durable où producteurs, consommateurs 
-                    et transporteurs collaborent harmonieusement.
-                  </p>
-                </div>
+            <div className="space-y-4">
+              {/* Eco-Friendly Practices Item */}
+              <div 
+                className="flex gap-4 p-4 rounded-xl transition-all cursor-pointer hover:bg-white hover:shadow-md border border-transparent hover:border-green-100 group"
+                onMouseEnter={() => handleMouseEnter('eco')}
+                onMouseLeave={handleMouseLeave}
+                onClick={() => onNavigate && onNavigate('/story/eco-practices')}
+              >
+                 <div className="flex-none p-2 bg-green-50 rounded-lg h-fit group-hover:bg-green-100 transition-colors">
+                    <CheckCircle2 className="w-6 h-6 text-green-600" />
+                 </div>
+                 <div className="flex-1">
+                    <h3 className="font-semibold text-slate-900 flex items-center gap-2">
+                      Eco-Friendly Practices
+                      <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 text-green-500 transition-opacity" />
+                    </h3>
+                    <p className="text-slate-500 mt-1">Supporting sustainable farming methods that protect our soil and water.</p>
+                 </div>
+              </div>
+              
+              {/* Fair Trade Marketplace Item */}
+              <div 
+                className="flex gap-4 p-4 rounded-xl transition-all cursor-pointer hover:bg-white hover:shadow-md border border-transparent hover:border-green-100 group"
+                onMouseEnter={() => handleMouseEnter('fair')}
+                onMouseLeave={handleMouseLeave}
+                onClick={() => onNavigate && onNavigate('/story/fair-trade')}
+              >
+                 <div className="flex-none p-2 bg-green-50 rounded-lg h-fit group-hover:bg-green-100 transition-colors">
+                    <CheckCircle2 className="w-6 h-6 text-green-600" />
+                 </div>
+                 <div className="flex-1">
+                    <h3 className="font-semibold text-slate-900 flex items-center gap-2">
+                      Fair Trade Marketplace
+                      <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 text-green-500 transition-opacity" />
+                    </h3>
+                    <p className="text-slate-500 mt-1">Ensuring farmers get the best price for their hard work without intermediaries.</p>
+                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Stats or additional content */}
-        <div className={`bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl p-8 md:p-12 text-white transition-all duration-700 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            <div>
-              <div className="text-4xl md:text-5xl font-bold mb-2">98%</div>
-              <div className="text-green-100">Produits Bio Certifiés</div>
-            </div>
-            <div>
-              <div className="text-4xl md:text-5xl font-bold mb-2">50km</div>
-              <div className="text-green-100">Rayon Local Moyen</div>
-            </div>
-            <div>
-              <div className="text-4xl md:text-5xl font-bold mb-2">24h</div>
-              <div className="text-green-100">Fraîcheur Garantie</div>
-            </div>
-          </div>
         </div>
       </div>
     </section>

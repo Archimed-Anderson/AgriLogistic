@@ -22,6 +22,7 @@ describe('useLogin', () => {
     token: null,
     isAuthenticated: false,
     register: vi.fn(),
+    verifyEmail: vi.fn(),
     logout: vi.fn(),
     getCurrentUser: vi.fn(),
     refreshToken: vi.fn(),

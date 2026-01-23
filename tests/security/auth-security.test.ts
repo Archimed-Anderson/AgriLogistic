@@ -75,20 +75,16 @@ describe('Auth Security Tests', () => {
 
   describe('Token Security', () => {
     it('should store tokens securely in localStorage', async () => {
-      const mockResponse = {
-        success: true,
-        token: 'valid-token',
-        refreshToken: 'valid-refresh-token',
-        user: {
-          id: '1',
-          email: 'test@example.com',
-          firstName: 'Test',
-          lastName: 'User',
-          role: 'buyer',
-        },
-      };
-
-      vi.mocked(apiClient.post).mockResolvedValue(mockResponse);
+      vi.mocked(apiClient.post).mockResolvedValue({
+        access_token: 'valid-token',
+        refresh_token: 'valid-refresh-token',
+        expires_in: 3600,
+      });
+      vi.mocked(apiClient.get).mockResolvedValue({
+        id: '1',
+        email: 'test@example.com',
+        full_name: 'Test User',
+      });
 
       const result = await adapter.login('test@example.com', 'password');
 
@@ -165,20 +161,16 @@ describe('Auth Security Tests', () => {
 
   describe('CSRF Protection', () => {
     it('should include proper headers in API requests', async () => {
-      const mockResponse = {
-        success: true,
-        token: 'token',
-        refreshToken: 'refresh-token',
-        user: {
-          id: '1',
-          email: 'test@example.com',
-          firstName: 'Test',
-          lastName: 'User',
-          role: 'buyer',
-        },
-      };
-
-      vi.mocked(apiClient.post).mockResolvedValue(mockResponse);
+      vi.mocked(apiClient.post).mockResolvedValue({
+        access_token: 'token',
+        refresh_token: 'refresh-token',
+        expires_in: 3600,
+      });
+      vi.mocked(apiClient.get).mockResolvedValue({
+        id: '1',
+        email: 'test@example.com',
+        full_name: 'Test User',
+      });
 
       await adapter.login('test@example.com', 'password');
 

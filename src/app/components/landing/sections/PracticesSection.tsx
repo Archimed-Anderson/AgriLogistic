@@ -1,139 +1,114 @@
-import { Leaf, Droplet, Award, Heart } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
-import CertificationBadge from '../ui/CertificationBadge';
+import { useState } from "react";
+import { Sprout, Droplets, Sun, ArrowRight } from "lucide-react";
 
-import practicesImg from '../../../assets/landing/practices.webp';
-import practicesFloatingImg from '../../../assets/landing/project-4.webp';
-
-const certifications = [
+const practices = [
   {
-    icon: Leaf,
-    label: '100% Bio',
-    description: 'Tous nos produits sont certifiés agriculture biologique sans pesticides ni OGM.'
+    id: "yield",
+    title: "80% Yield Growth",
+    description: "Enhanced crop productivity through AI-driven insights.",
+    icon: Sprout,
+    color: "bg-green-50 text-green-600",
+    image: "/assets/images/landing/practice-yield-growth.png",
+    route: "/practices/yield-growth",
   },
   {
-    icon: Droplet,
-    label: 'Zéro Pesticide',
-    description: 'Aucun produit chimique de synthèse utilisé dans nos méthodes de culture.'
+    id: "water",
+    title: "100% Efficient",
+    description: "Smart water management reducing waste significantly.",
+    icon: Droplets,
+    color: "bg-blue-50 text-blue-600",
+    image: "/assets/images/landing/practice-water-efficiency.png",
+    route: "/practices/water-efficiency",
   },
   {
-    icon: Award,
-    label: 'Commerce Équitable',
-    description: 'Rémunération juste pour tous nos producteurs partenaires.'
+    id: "energy",
+    title: "Renewable Energy",
+    description: "Powered by solar and clean energy solutions.",
+    icon: Sun,
+    color: "bg-orange-50 text-orange-600",
+    image: "/assets/images/landing/practice-renewable-energy.png",
+    route: "/practices/renewable-energy",
   },
-  {
-    icon: Heart,
-    label: 'Sans OGM',
-    description: 'Garantie de semences naturelles et non modifiées génétiquement.'
-  }
 ];
 
-export default function PracticesSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+interface PracticesSectionProps {
+  onNavigate?: (route: string) => void;
+}
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
-      }
-    };
-  }, []);
+export default function PracticesSection({ onNavigate }: PracticesSectionProps) {
+  const [activeImage, setActiveImage] = useState(practices[0].image);
+  
+  const handleNavigate = (route: string) => {
+     if (onNavigate) {
+       onNavigate(route);
+     }
+  };
 
   return (
-    <section 
-      ref={sectionRef}
-      className="py-20 bg-white"
-    >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left: Image */}
-          <div className={`transition-all duration-700 ${isVisible ? 'opacity-100 -translate-x-0' : 'opacity-0 -translate-x-6'}`}>
-            <div className="relative">
-              {/* Main image */}
-              <div className="rounded-2xl overflow-hidden shadow-2xl h-[500px] bg-gradient-to-br from-green-100 to-emerald-200">
-                <img
-                  src={practicesImg}
-                  alt="Pratiques agricoles durables"
-                  className="w-full h-full object-cover"
-                  width={900}
-                  height={1050}
-                  decoding="async"
-                  loading="lazy"
+    <section className="py-24 bg-slate-50 overflow-hidden">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          
+          {/* Left Visual - Interactive */}
+          <div className="relative order-2 lg:order-1 group perspective-1000">
+             <div className="aspect-[3/4] w-full max-w-md mx-auto bg-slate-900 rounded-3xl overflow-hidden shadow-2xl relative transition-all duration-500 transform group-hover:rotate-y-2">
+                <div className="absolute inset-0 bg-gradient-to-br from-green-900/50 to-slate-900/80 z-10 transition-opacity duration-500"></div>
+                <img 
+                  src={activeImage} 
+                  alt="Sustainable Practice" 
+                  className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 opacity-90 hover:scale-105"
                 />
-              </div>
-              {/* Small floating image */}
-              <div className="absolute -bottom-6 -right-6 w-48 h-48 rounded-xl overflow-hidden shadow-xl bg-white/10 backdrop-blur-sm border-4 border-white">
-                <img
-                  src={practicesFloatingImg}
-                  alt="Innovation et agriculture"
-                  className="w-full h-full object-cover"
-                  width={900}
-                  height={600}
-                  decoding="async"
-                  loading="lazy"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Right: Content */}
-          <div className={`space-y-8 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-6'}`}>
-            <div className="space-y-4">
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
-                Pratiques Agricoles
-                <span className="block text-emerald-600">Durables</span>
-              </h2>
-              <p className="text-lg text-gray-600 leading-relaxed">
-                Pour un avenir meilleur, nous nous engageons à promouvoir des pratiques 
-                agricoles respectueuses de l'environnement et socialement responsables.
-              </p>
-            </div>
-
-            {/* Certifications Grid */}
-            <div className="grid md:grid-cols-2 gap-4">
-              {certifications.map((cert, index) => (
-                <div
-                  key={cert.label}
-                  className="transition-all duration-500"
-                  style={{ transitionDelay: `${(index + 2) * 100}ms` }}
-                >
-                  <CertificationBadge {...cert} />
+                
+                {/* Overlay Content */}
+                <div className="absolute bottom-8 left-8 right-8 text-white z-20">
+                   <div className="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-semibold mb-3 border border-white/10">
+                      In Focus
+                   </div>
+                   <div className="text-4xl font-bold mb-2">Sustainable</div>
+                   <p className="text-green-100/90 text-sm">Hover over the cards to see our impact in action.</p>
                 </div>
-              ))}
-            </div>
+             </div>
+             
+             {/* Decorative Elements */}
+             <div className="absolute -z-10 top-12 -right-12 w-32 h-32 bg-green-400/20 rounded-full blur-3xl animate-pulse"></div>
+             <div className="absolute -z-10 bottom-12 -left-12 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl"></div>
+          </div>
 
-            {/* Additional stats */}
-            <div className="flex flex-wrap gap-8 pt-6">
-              <div>
-                <div className="text-3xl font-bold text-emerald-600 mb-1">100%</div>
-                <div className="text-sm text-gray-600">Certified Organic</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-emerald-600 mb-1">5+</div>
-                <div className="text-sm text-gray-600">Certified Farms</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-emerald-600 mb-1">200+</div>
-                <div className="text-sm text-gray-600">Happy Customers</div>
-              </div>
+          {/* Right Content */}
+          <div className="order-1 lg:order-2">
+            <span className="text-green-600 font-semibold tracking-wide uppercase text-sm">
+              Sustainable Practices
+            </span>
+            <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl mb-6">
+              Sustainable Farm Practices for a Better Tomorrow
+            </h2>
+            <p className="text-lg text-slate-600 leading-relaxed mb-10">
+              We integrate cutting-edge technology with traditional wisdom to create farming systems that are productive, profitable, and planet-friendly. 
+            </p>
+
+            <div className="grid gap-6">
+               {practices.map((practice) => (
+                 <div 
+                   key={practice.id}
+                   className="flex items-start gap-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-green-100 transition-all cursor-pointer group/card"
+                   onMouseEnter={() => setActiveImage(practice.image)}
+                   onClick={() => handleNavigate(practice.route)}
+                 >
+                    <div className={`w-12 h-12 ${practice.color} rounded-xl flex shrink-0 items-center justify-center transition-transform group-hover/card:scale-110`}>
+                       <practice.icon className="w-6 h-6" />
+                    </div>
+                    <div className="flex-1">
+                       <h3 className="font-bold text-slate-900 mb-1 group-hover/card:text-green-700 transition-colors flex items-center justify-between">
+                          {practice.title}
+                          <ArrowRight className="w-4 h-4 opacity-0 group-hover/card:opacity-100 -translate-x-2 group-hover/card:translate-x-0 transition-all text-green-500" />
+                       </h3>
+                       <p className="text-sm text-slate-500 leading-relaxed">{practice.description}</p>
+                    </div>
+                 </div>
+               ))}
             </div>
           </div>
+
         </div>
       </div>
     </section>

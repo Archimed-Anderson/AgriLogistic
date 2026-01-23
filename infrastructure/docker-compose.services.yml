@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  # Legacy (mock) auth-service.
+  # IMPORTANT: keep this OFF by default to avoid running two auth services at once.
+  # Use the new OAuth2/OIDC auth stack under `backend/auth-service/docker-compose.auth.yml`.
+  auth-service-legacy:
+    build:
+      context: ../backend/auth-service
+      dockerfile: Dockerfile
+    image: agrologistic/auth-service:latest
+    container_name: agrologistic-auth-service-legacy
+    restart: unless-stopped
+    profiles:
+      - legacy-auth
+    ports:
+      - "127.0.0.1:8006:8001" # Debug only (avoid conflict with new auth stack)
+    environment:
+      - JWT_KID=web-app-jwt-key
+      - JWT_ALGORITHM=RS256
+      - JWT_EXP=${JWT_EXP:-3600}
+      - JWT_PRIVATE_KEY_PATH=/keys/jwt-private.pem
+      - JWT_PUBLIC_KEY_PATH=/keys/jwt-public.pem
+      - LOG_LEVEL=debug
+    volumes:
+      - ./kong/keys:/keys:ro
+    networks:
+      - agrologistic-network
+    healthcheck:
+      # python:3.11-slim does not include curl/wget by default
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8001/health', timeout=2).read(); print('ok')",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  agrologistic-network:
+    external: true

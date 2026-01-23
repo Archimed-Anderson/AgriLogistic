@@ -5,8 +5,6 @@ import { RegisterRequestDTO } from '../../dto/request/register-request.dto';
 import { UserRole } from '@domain/enums/user-role.enum';
 import { BusinessType } from '@domain/enums/business-type.enum';
 import { FarmerSpecialization, LogisticsSpecialization } from '@domain/enums/specialization.enum';
-import { User } from '@domain/entities/user.entity';
-import { Email } from '@domain/value-objects/email.vo';
 
 describe('RegisterUseCase', () => {
   let registerUseCase: RegisterUseCase;
@@ -31,13 +29,10 @@ describe('RegisterUseCase', () => {
     mockAuthPort = {
       login: vi.fn(),
       register: vi.fn().mockResolvedValue({
-        user: User.create({
-          firstName: 'John',
-          lastName: 'Farmer',
-          email: new Email('john.farmer@example.com'),
-          role: UserRole.FARMER,
-        }),
-        token: 'mock-token',
+        email: 'john.farmer@example.com',
+        userId: 'user-123',
+        message: 'Verification email sent',
+        verificationToken: 'verify-token-123',
       }),
       logout: vi.fn(),
       getCurrentUser: vi.fn(),
@@ -51,8 +46,8 @@ describe('RegisterUseCase', () => {
       const result = await registerUseCase.execute(validRegisterRequest);
 
       expect(result).toBeDefined();
-      expect(result.user).toBeDefined();
-      expect(result.token).toBe('mock-token');
+      expect(result.email).toBe('john.farmer@example.com');
+      expect(result.userId).toBe('user-123');
       expect(mockAuthPort.register).toHaveBeenCalledWith(validRegisterRequest);
     });
 

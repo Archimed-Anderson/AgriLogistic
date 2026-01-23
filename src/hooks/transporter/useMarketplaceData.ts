@@ -1,0 +1,171 @@
+/**
+ * Marketplace Data Hook
+ * Manages available loads, bidding, and load matching
+ */
+import { useQuery } from '@tanstack/react-query';
+import type { Load } from '@/types/transporter';
+
+// Mock loads data
+const mockLoads: Load[] = [
+  {
+    id: 'L-001',
+    title: 'Transport de Mangues',
+    description: 'Chargement de 5 tonnes de mangues fraîches pour export',
+    pickupLocation: 'Ziguinchor, Sénégal',
+    pickupCoordinates: [-16.2733, 12.5658],
+    deliveryLocation: 'Port de Dakar',
+    deliveryCoordinates: [-17.4467, 14.6928],
+    distance: 450,
+    cargo: {
+      description: 'Mangues Kent',
+      weight: 5000,
+      volume: 15,
+      quantity: 500,
+      unit: 'caisses',
+      requiresRefrigeration: true,
+      temperatureRange: { min: 8, max: 12 },
+      fragile: true,
+      hazardous: false,
+    },
+    pickupDate: new Date('2024-02-01'),
+    deliveryDate: new Date('2024-02-02'),
+    offeredPrice: 450000,
+    currency: 'XOF',
+    paymentTerms: '50% avance, 50% livraison',
+    biddingEnabled: true,
+    minBid: 400000,
+    bids: [],
+    shipperId: 'S-001',
+    shipperName: 'Vergers de Casamance',
+    shipperRating: 4.8,
+    status: 'open',
+    postedAt: new Date('2024-01-22T08:00:00'),
+    expiresAt: new Date('2024-01-25T18:00:00'),
+  },
+  {
+    id: 'L-002',
+    title: 'Livraison Engrais',
+    description: 'Distribution d\'engrais vers zone agricole',
+    pickupLocation: 'ICS Mboro',
+    pickupCoordinates: [-16.9000, 15.1500],
+    deliveryLocation: 'Touba, Sénégal',
+    deliveryCoordinates: [-15.8833, 14.8667],
+    distance: 180,
+    cargo: {
+      description: 'Engrais NPK',
+      weight: 25000,
+      volume: 30,
+      quantity: 500,
+      unit: 'sacs',
+      requiresRefrigeration: false,
+      fragile: false,
+      hazardous: true,
+      specialInstructions: 'Transport de matières dangereuses - Certification requise',
+    },
+    pickupDate: new Date('2024-01-30'),
+    deliveryDate: new Date('2024-01-30'),
+    offeredPrice: 650000,
+    currency: 'XOF',
+    paymentTerms: '30 jours fin de mois',
+    biddingEnabled: false,
+    bids: [],
+    shipperId: 'S-002',
+    shipperName: 'AgroChimie SA',
+    shipperRating: 4.5,
+    status: 'open',
+    postedAt: new Date('2024-01-22T09:30:00'),
+  },
+  {
+    id: 'L-003',
+    title: 'Retour à vide - Arachides',
+    description: 'Chargement disponible pour retour Kaolack -> Dakar',
+    pickupLocation: 'Kaolack',
+    pickupCoordinates: [-16.0725, 14.1522],
+    deliveryLocation: 'Dakar',
+    deliveryCoordinates: [-17.4467, 14.6928],
+    distance: 190,
+    cargo: {
+      description: 'Arachides coques',
+      weight: 15000,
+      volume: 40,
+      quantity: 300,
+      unit: 'sacs',
+      requiresRefrigeration: false,
+      fragile: false,
+      hazardous: false,
+    },
+    pickupDate: new Date('2024-01-25'),
+    deliveryDate: new Date('2024-01-25'),
+    offeredPrice: 200000,
+    currency: 'XOF',
+    paymentTerms: 'Immédiat réception',
+    biddingEnabled: true,
+    minBid: 180000,
+    bids: [
+      {
+        id: 'B-001',
+        loadId: 'L-003',
+        transporterId: 'T-999',
+        transporterName: 'Autre Transporteur',
+        amount: 190000,
+        currency: 'XOF',
+        status: 'pending',
+        createdAt: new Date('2024-01-22T10:00:00'),
+      }
+    ],
+    shipperId: 'S-003',
+    shipperName: 'Coopérative Saloum',
+    shipperRating: 4.2,
+    status: 'open',
+    postedAt: new Date('2024-01-22T11:00:00'),
+  },
+  {
+    id: 'L-004',
+    title: 'Matériel Irrigation',
+    description: 'Transport de tuyaux et pompes',
+    pickupLocation: 'Dakar',
+    pickupCoordinates: [-17.4467, 14.6928],
+    deliveryLocation: 'Richard-Toll',
+    deliveryCoordinates: [-15.6833, 16.4667],
+    distance: 370,
+    cargo: {
+      description: 'Équipement irrigation',
+      weight: 8000,
+      volume: 25,
+      quantity: 1,
+      unit: 'lot',
+      requiresRefrigeration: false,
+      fragile: true,
+      hazardous: false,
+    },
+    pickupDate: new Date('2024-02-05'),
+    deliveryDate: new Date('2024-02-06'),
+    offeredPrice: 400000,
+    currency: 'XOF',
+    paymentTerms: 'Virement bancaire',
+    biddingEnabled: true,
+    minBid: 380000,
+    bids: [],
+    shipperId: 'S-004',
+    shipperName: 'HydroAgri Tech',
+    shipperRating: 4.9,
+    status: 'open',
+    postedAt: new Date('2024-01-21T15:00:00'),
+  },
+];
+
+export function useMarketplaceData() {
+  const { data: loads, isLoading } = useQuery({
+    queryKey: ['transporter', 'marketplace', 'loads'],
+    queryFn: async () => {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      return mockLoads;
+    },
+  });
+
+  return {
+    loads,
+    isLoading,
+  };
+}

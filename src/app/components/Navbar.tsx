@@ -49,6 +49,7 @@ export function Navbar({
   showSidebarToggle = false,
   onSidebarToggle,
 }: NavbarProps) {
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showCart, setShowCart] = useState(false);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
@@ -64,6 +65,7 @@ export function Navbar({
       if (e.key === "Escape") {
         setShowSearch(false);
         setSearchQuery("");
+        setShowMobileMenu(false);
       }
       // Ctrl/Cmd + K to open search
       if ((e.ctrlKey || e.metaKey) && e.key === "k") {
@@ -88,14 +90,7 @@ export function Navbar({
       )
     : SEARCH_SUGGESTIONS;
 
-  const navLinks = [
-    { path: "/admin/marketplace", label: "Marketplace" },
-    { path: "/admin/chat", label: "Chat" },
-    { path: "/admin/analytics", label: "Analytics" },
-    { path: "/admin/blog", label: "Blog" },
-    { path: "/admin/academy", label: "Académie" },
-    { path: "/admin/rental", label: "Loueur" },
-  ];
+
 
   return (
     <>
@@ -110,6 +105,18 @@ export function Navbar({
                 onClick={onSidebarToggle}
                 className="h-9 w-9 md:hidden hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
                 aria-label="Ouvrir le menu"
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+            )}
+            
+            {!isAuthenticated && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowMobileMenu(true)}
+                className="h-9 w-9 lg:hidden hover:bg-emerald-50 text-gray-700"
+                aria-label="Ouvrir le menu mobile"
               >
                 <Menu className="h-5 w-5" />
               </Button>
@@ -163,27 +170,111 @@ export function Navbar({
               </span>
             </button>
 
-            {/* Main Navigation */}
-            {isAuthenticated && (
-              <div className="hidden lg:flex items-center gap-1">
-                {navLinks.map((link) => {
-                  const isActive = currentRoute.includes(link.path.split("/").pop() || "");
-                  return (
-                    <button
-                      key={link.path}
-                      onClick={() => onNavigate(link.path)}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                        isActive
-                          ? "text-[#0B7A4B] bg-emerald-50 dark:bg-emerald-900/20"
-                          : "text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10"
-                      }`}
-                    >
-                      {link.label}
-                    </button>
-                  );
-                })}
+            {/* Main Navigation - Unified for both Auth and Guest */}
+            <div className="hidden lg:flex items-center gap-8 pl-8">
+              {/* Nos Logiciels Dropdown */}
+              <div className="relative group">
+                <button className="flex items-center gap-1 text-[15px] font-medium text-[#505558] hover:text-[#0B7A4B] transition-colors py-4">
+                  Nos Logiciels
+                  <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+                </button>
+                <div className="absolute top-full left-0 w-[250px] bg-white border border-slate-100 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 p-2 z-50 animate-fade-in-down">
+                   <button onClick={() => onNavigate('/demo')} className="w-full text-left block px-4 py-3 text-sm text-[#505558] hover:bg-emerald-50 hover:text-[#0B7A4B] rounded-md transition-colors">
+                    Démo Interactive
+                  </button>
+                  <div className="h-px bg-slate-100 my-1"></div>
+                  <button onClick={() => onNavigate('/solutions/farmers')} className="w-full text-left block px-4 py-3 text-sm text-[#505558] hover:bg-emerald-50 hover:text-[#0B7A4B] rounded-md transition-colors">
+                    Pour les Agriculteurs
+                  </button>
+                  <button className="w-full text-left block px-4 py-3 text-sm text-[#505558] hover:bg-emerald-50 hover:text-[#0B7A4B] rounded-md transition-colors">
+                    Pour les Agro-industriels
+                  </button>
+                  <button onClick={() => onNavigate('/solutions/logistics')} className="w-full text-left block px-4 py-3 text-sm text-[#505558] hover:bg-emerald-50 hover:text-[#0B7A4B] rounded-md transition-colors">
+                    Pour les Coopératives
+                  </button>
+                </div>
               </div>
-            )}
+
+              {/* Ressources Dropdown */}
+              <div className="relative group">
+                <button className="flex items-center gap-1 text-[15px] font-medium text-[#505558] hover:text-[#0B7A4B] transition-colors py-4">
+                  Ressources
+                  <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+                </button>
+                <div className="absolute top-full left-0 w-[280px] bg-white border border-slate-100 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 p-2 z-50 animate-fade-in-down">
+                  <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Plateformes</div>
+                  <button onClick={() => onNavigate(isAuthenticated ? '/admin/marketplace' : '/customer/marketplace')} className="w-full text-left block px-4 py-2 text-sm text-[#505558] hover:bg-emerald-50 hover:text-[#0B7A4B] rounded-md transition-colors">
+                    Marketplace
+                  </button>
+                  <button onClick={() => onNavigate(isAuthenticated ? '/admin/rental' : '/customer/rental')} className="w-full text-left block px-4 py-2 text-sm text-[#505558] hover:bg-emerald-50 hover:text-[#0B7A4B] rounded-md transition-colors">
+                    Loueur & Matériel
+                  </button>
+                  <button onClick={() => onNavigate(isAuthenticated ? '/admin/transport-calculator' : '/customer/transport-calculator')} className="w-full text-left block px-4 py-2 text-sm text-[#505558] hover:bg-emerald-50 hover:text-[#0B7A4B] rounded-md transition-colors">
+                    Calculateur Transport
+                  </button>
+                  
+                  <div className="h-px bg-slate-100 my-2"></div>
+                  <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Support & Apprentissage</div>
+                  
+                  <button onClick={() => onNavigate(isAuthenticated ? '/admin/academy' : '/customer/academy')} className="w-full text-left block px-4 py-2 text-sm text-[#505558] hover:bg-emerald-50 hover:text-[#0B7A4B] rounded-md transition-colors">
+                    Académie & Formations
+                  </button>
+                  <button onClick={() => onNavigate('/contact/support')} className="w-full text-left block px-4 py-2 text-sm text-[#505558] hover:bg-emerald-50 hover:text-[#0B7A4B] rounded-md transition-colors">
+                    Support Technique
+                  </button>
+                  <button onClick={() => onNavigate('/about/partners')} className="w-full text-left block px-4 py-2 text-sm text-[#505558] hover:bg-emerald-50 hover:text-[#0B7A4B] rounded-md transition-colors">
+                    Espace Partenaires
+                  </button>
+                </div>
+              </div>
+
+              {/* Qui sommes-nous Dropdown */}
+              <div className="relative group">
+                <button className="flex items-center gap-1 text-[15px] font-medium text-[#505558] hover:text-[#0B7A4B] transition-colors py-4">
+                  Qui sommes-nous
+                  <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+                </button>
+                <div className="absolute top-full left-0 w-[300px] bg-white border border-slate-100 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 p-2 z-50 animate-fade-in-down max-h-[80vh] overflow-y-auto">
+                  <button onClick={() => onNavigate('/contact/general')} className="w-full text-left block px-4 py-2 text-sm text-[#505558] hover:bg-emerald-50 hover:text-[#0B7A4B] rounded-md transition-colors">
+                    L'Entreprise
+                  </button>
+                  
+                  <div className="h-px bg-slate-100 my-1"></div>
+                  <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Nos Engagements</div>
+                  
+                  <button onClick={() => onNavigate('/commitments/sustainability')} className="w-full text-left block px-4 py-2 text-sm text-[#505558] hover:bg-emerald-50 hover:text-[#0B7A4B] rounded-md transition-colors">
+                    Pratiques Écologiques
+                  </button>
+                  <button onClick={() => onNavigate('/story/fair-trade')} className="w-full text-left block px-4 py-2 text-sm text-[#505558] hover:bg-emerald-50 hover:text-[#0B7A4B] rounded-md transition-colors">
+                    Commerce Équitable
+                  </button>
+                  <button onClick={() => onNavigate('/about/partners')} className="w-full text-left block px-4 py-2 text-sm text-[#505558] hover:bg-emerald-50 hover:text-[#0B7A4B] rounded-md transition-colors">
+                    Notre Écosystème
+                  </button>
+                  
+                  <div className="h-px bg-slate-100 my-1"></div>
+                  <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Innovation & Impact</div>
+                  
+                  <button onClick={() => onNavigate('/practices/yield-growth')} className="w-full text-left block px-4 py-2 text-sm text-[#505558] hover:bg-emerald-50 hover:text-[#0B7A4B] rounded-md transition-colors">
+                    Croissance des Rendements
+                  </button>
+                  <button onClick={() => onNavigate('/practices/water-efficiency')} className="w-full text-left block px-4 py-2 text-sm text-[#505558] hover:bg-emerald-50 hover:text-[#0B7A4B] rounded-md transition-colors">
+                    Efficacité Hydrique
+                  </button>
+                  <button onClick={() => onNavigate('/projects/smart-irrigation')} className="w-full text-left block px-4 py-2 text-sm text-[#505558] hover:bg-emerald-50 hover:text-[#0B7A4B] rounded-md transition-colors">
+                    Irrigation Intelligente
+                  </button>
+                   <button onClick={() => onNavigate('/projects/logistics')} className="w-full text-left block px-4 py-2 text-sm text-[#505558] hover:bg-emerald-50 hover:text-[#0B7A4B] rounded-md transition-colors">
+                    Logistique Durable
+                  </button>
+                </div>
+              </div>
+
+              {/* Blog Link */}
+              <button onClick={() => onNavigate('/blog')} className="text-[15px] font-medium text-[#505558] hover:text-[#0B7A4B] transition-colors">
+                Blog
+              </button>
+            </div>
           </div>
 
           {/* Right Side Actions */}
@@ -386,7 +477,7 @@ export function Navbar({
             {!isAuthenticated && (
               <Button 
                 onClick={() => onNavigate("/auth")} 
-                className="bg-gradient-to-r from-[#0B7A4B] to-[#059669] hover:from-[#059669] hover:to-[#047857] text-white shadow-lg shadow-emerald-500/20 transition-all duration-200 hover:shadow-emerald-500/30"
+                className="bg-gradient-to-r from-[#0B7A4B] to-[#059669] hover:from-[#059669] hover:to-[#047857] text-white shadow-lg shadow-emerald-500/20 transition-all duration-200 hover:shadow-emerald-500/30 ml-2 hidden sm:flex"
               >
                 Connexion
               </Button>
@@ -394,6 +485,66 @@ export function Navbar({
           </div>
         </div>
       </nav>
+
+      {/* Mobile Menu Overlay */}
+      {showMobileMenu && !isAuthenticated && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+           <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setShowMobileMenu(false)} />
+           <div className="fixed inset-y-0 left-0 w-[85%] max-w-sm bg-white shadow-2xl animate-in slide-in-from-left duration-200 overflow-y-auto">
+             <div className="p-6">
+               <div className="flex items-center justify-between mb-8">
+                 <div className="flex items-center gap-2">
+                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-600">
+                     <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5 stroke-white">
+                        <path d="M12 3C7.03 3 3 7.03 3 12c0 3.5 2 6.5 5 8" strokeWidth="1.5" strokeLinecap="round" />
+                        <path d="M14 9l6 3-6 3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M8 12h12" strokeWidth="2" strokeLinecap="round" />
+                     </svg>
+                   </div>
+                   <span className="text-lg font-bold text-slate-900">AgroLogistic</span>
+                 </div>
+                 <button onClick={() => setShowMobileMenu(false)} className="text-slate-400 hover:text-slate-600">
+                   <X className="h-6 w-6" />
+                 </button>
+               </div>
+
+               <div className="space-y-6">
+                 {/* Nos Logiciels Mockup Accordion */}
+                 <div className="border-b border-slate-100 pb-4">
+                   <div className="font-semibold text-slate-900 mb-3">Nos Logiciels</div>
+                   <div className="space-y-2 pl-4">
+                      <button onClick={() => {onNavigate('/demo'); setShowMobileMenu(false)}} className="block text-sm text-slate-600">Démo Interactive</button>
+                      <button className="block text-sm text-slate-600">Pour les Agriculteurs</button>
+                      <button onClick={() => {onNavigate('/solutions/logistics'); setShowMobileMenu(false)}} className="block text-sm text-slate-600">Pour les Coopératives</button>
+                   </div>
+                 </div>
+
+                 <div className="border-b border-slate-100 pb-4">
+                   <div className="font-semibold text-slate-900 mb-3">Ressources</div>
+                   <div className="space-y-2 pl-4">
+                      <button onClick={() => {onNavigate('/customer/marketplace'); setShowMobileMenu(false)}} className="block text-sm text-slate-600">Marketplace</button>
+                      <button onClick={() => {onNavigate('/customer/rental'); setShowMobileMenu(false)}} className="block text-sm text-slate-600">Loueur</button>
+                      <button onClick={() => {onNavigate('/resources/blog'); setShowMobileMenu(false)}} className="block text-sm text-slate-600">Blog</button>
+                   </div>
+                 </div>
+
+                 <div className="border-b border-slate-100 pb-4">
+                   <div className="font-semibold text-slate-900 mb-3">Qui sommes-nous</div>
+                   <div className="space-y-2 pl-4">
+                      <button onClick={() => {onNavigate('/contact/general'); setShowMobileMenu(false)}} className="block text-sm text-slate-600">L'Entreprise</button>
+                      <button onClick={() => {onNavigate('/commitments/sustainability'); setShowMobileMenu(false)}} className="block text-sm text-slate-600">Engagements RSE</button>
+                      <button onClick={() => {onNavigate('/about/partners'); setShowMobileMenu(false)}} className="block text-sm text-slate-600">Partenaires</button>
+                   </div>
+                 </div>
+               </div>
+
+               <div className="mt-8">
+                 <Button onClick={() => {onNavigate("/auth"); setShowMobileMenu(false)}} className="w-full bg-green-600 hover:bg-green-700 text-white">Connexion</Button>
+               </div>
+             </div>
+           </div>
+        </div>
+      )}
 
       {/* Search Overlay */}
       {showSearch && (

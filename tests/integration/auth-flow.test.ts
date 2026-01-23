@@ -29,19 +29,10 @@ describe('Auth Flow Integration Tests', () => {
 
   describe('Registration Flow', () => {
     it('should register a new buyer successfully', async () => {
-      const mockUser = {
-        id: 'user-123',
-        firstName: 'Test',
-        lastName: 'User',
-        email: testEmail,
-        role: UserRole.BUYER,
-      };
-
       const mockResponse = {
-        success: true,
-        token: 'mock-access-token',
-        user: mockUser,
-        expiresIn: 3600,
+        user_id: 'user-123',
+        message: 'Verification email sent',
+        verification_token: 'verify-token-123',
       };
 
       (global.fetch as any).mockResolvedValueOnce({
@@ -59,33 +50,32 @@ describe('Auth Flow Integration Tests', () => {
         acceptTerms: true,
       });
 
-      expect(result.user).toBeDefined();
-      expect(result.token).toBeDefined();
-      expect(result.user.email.value).toBe(testEmail);
-      expect(localStorage.getItem('accessToken')).toBeTruthy();
+      expect(result.userId).toBe('user-123');
+      expect(result.email).toBe(testEmail);
+      expect(result.verificationToken).toBe('verify-token-123');
+      expect(localStorage.getItem('accessToken')).toBeNull();
     });
   });
 
   describe('Login Flow', () => {
     it('should login with valid credentials', async () => {
-      const mockUser = {
-        id: 'user-123',
-        firstName: 'Test',
-        lastName: 'User',
-        email: testEmail,
-        role: UserRole.BUYER,
-      };
-
-      const mockResponse = {
-        success: true,
-        token: 'mock-access-token',
-        user: mockUser,
-        expiresIn: 3600,
-      };
-
+      // 1) /auth/login
       (global.fetch as any).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockResponse,
+        json: async () => ({
+          access_token: 'mock-access-token',
+          refresh_token: 'mock-refresh-token',
+          expires_in: 3600,
+        }),
+      });
+      // 2) /auth/me
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'user-123',
+          email: testEmail,
+          full_name: 'Test User',
+        }),
       });
 
       const result = await adapter.login(testEmail, testPassword);
@@ -109,22 +99,22 @@ describe('Auth Flow Integration Tests', () => {
 
   describe('Get Current User', () => {
     it('should get current user after login', async () => {
-      const mockUser = {
-        id: 'user-123',
-        firstName: 'Test',
-        lastName: 'User',
-        email: testEmail,
-        role: UserRole.BUYER,
-      };
-
       // Mock login response
       (global.fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          success: true,
-          token: 'mock-access-token',
-          user: mockUser,
-          expiresIn: 3600,
+          access_token: 'mock-access-token',
+          refresh_token: 'mock-refresh-token',
+          expires_in: 3600,
+        }),
+      });
+      // Mock /auth/me after login
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'user-123',
+          email: testEmail,
+          full_name: 'Test User',
         }),
       });
 
@@ -134,14 +124,9 @@ describe('Auth Flow Integration Tests', () => {
       (global.fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          success: true,
-          user: {
-            id: 'user-123',
-            firstName: 'Test',
-            lastName: 'User',
-            email: testEmail, // Include email in response
-            role: UserRole.BUYER,
-          },
+          id: 'user-123',
+          email: testEmail,
+          full_name: 'Test User',
         }),
       });
 
@@ -156,22 +141,22 @@ describe('Auth Flow Integration Tests', () => {
 
   describe('Logout Flow', () => {
     it('should logout and clear tokens', async () => {
-      const mockUser = {
-        id: 'user-123',
-        firstName: 'Test',
-        lastName: 'User',
-        email: testEmail,
-        role: UserRole.BUYER,
-      };
-
       // Mock login
       (global.fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          success: true,
-          token: 'mock-access-token',
-          user: mockUser,
-          expiresIn: 3600,
+          access_token: 'mock-access-token',
+          refresh_token: 'mock-refresh-token',
+          expires_in: 3600,
+        }),
+      });
+      // Mock /auth/me after login
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 'user-123',
+          email: testEmail,
+          full_name: 'Test User',
         }),
       });
 

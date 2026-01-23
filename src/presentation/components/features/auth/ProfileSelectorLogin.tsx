@@ -14,7 +14,6 @@ import { useLogin } from '@presentation/hooks/use-login';
 import { useFormValidation } from '@presentation/hooks/use-form-validation';
 import { useCSRFToken } from '@presentation/hooks/use-csrf-token';
 import { setSecureCookie, getCookie } from '@presentation/utils/cookie';
-import { hashPassword } from '@presentation/utils/password-hash';
 import { getErrorMessage } from '@presentation/utils/auth-messages';
 import { Button } from '@components/ui/button';
 import { Input } from '@components/ui/input';
@@ -168,14 +167,8 @@ export function ProfileSelectorLogin({
 
   const performLogin = async (emailToUse: string, passwordToUse: string) => {
     try {
-      let passwordToSend = passwordToUse;
-      try {
-        passwordToSend = await hashPassword(passwordToUse);
-      } catch (hashError) {
-        console.warn('Erreur lors du hachage côté client:', hashError);
-      }
-
-      await login({ email: emailToUse, password: passwordToSend });
+      // Password is sent in clear over HTTPS; server hashes with bcrypt
+      await login({ email: emailToUse, password: passwordToUse });
 
       if (rememberMe) {
         setSecureCookie('rememberMe', 'true', { maxAge: 30 });

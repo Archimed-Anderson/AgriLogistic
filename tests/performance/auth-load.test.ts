@@ -1,7 +1,6 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { RealAuthAdapter } from '../../src/infrastructure/api/rest/auth-api';
 import { apiClient } from '../../src/infrastructure/api/rest/api-client';
-import { vi } from 'vitest';
 
 // Mock apiClient
 vi.mock('../../src/infrastructure/api/rest/api-client', () => ({
@@ -19,7 +18,7 @@ const localStorageMock = {
   clear: vi.fn(),
 };
 
-global.localStorage = localStorageMock as any;
+(globalThis as any).localStorage = localStorageMock as any;
 
 describe('Auth Performance Tests', () => {
   let adapter: RealAuthAdapter;
@@ -31,45 +30,50 @@ describe('Auth Performance Tests', () => {
 
   describe('Login Performance', () => {
     it('should complete login within acceptable time', async () => {
-      const mockResponse = {
-        success: true,
-        token: 'token',
-        user: {
-          id: '1',
-          email: 'test@example.com',
-          firstName: 'Test',
-          lastName: 'User',
-          role: 'buyer',
-        },
+      const mockTokenResponse = {
+        access_token: 'token',
+        refresh_token: 'refresh-token',
+        expires_in: 3600,
+      };
+      const mockMeResponse = {
+        id: '1',
+        email: 'test@example.com',
+        full_name: 'Test User',
       };
 
-      // Simulate fast response (< 200ms)
-      vi.mocked(apiClient.post).mockImplementation(() => 
-        new Promise(resolve => setTimeout(() => resolve(mockResponse), 50))
-      );
+      // Use fake timers to make the test deterministic.
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date(0));
+      try {
+        vi.mocked(apiClient.post).mockImplementation(
+          () => new Promise(resolve => setTimeout(() => resolve(mockTokenResponse), 50))
+        );
+        vi.mocked(apiClient.get).mockResolvedValue(mockMeResponse);
 
-      const startTime = Date.now();
-      await adapter.login('test@example.com', 'password');
-      const endTime = Date.now();
+        const startTime = Date.now();
+        const p = adapter.login('test@example.com', 'password');
+        await vi.advanceTimersByTimeAsync(50);
+        await p;
+        const endTime = Date.now();
 
-      const duration = endTime - startTime;
-      expect(duration).toBeLessThan(200); // Should complete in < 200ms
+        const duration = endTime - startTime;
+        expect(duration).toBeLessThan(200); // Should complete in < 200ms
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('should handle concurrent login requests', async () => {
-      const mockResponse = {
-        success: true,
-        token: 'token',
-        user: {
-          id: '1',
-          email: 'test@example.com',
-          firstName: 'Test',
-          lastName: 'User',
-          role: 'buyer',
-        },
-      };
-
-      vi.mocked(apiClient.post).mockResolvedValue(mockResponse);
+      vi.mocked(apiClient.post).mockResolvedValue({
+        access_token: 'token',
+        refresh_token: 'refresh-token',
+        expires_in: 3600,
+      });
+      vi.mocked(apiClient.get).mockResolvedValue({
+        id: '1',
+        email: 'test@example.com',
+        full_name: 'Test User',
+      });
 
       const startTime = Date.now();
       const promises = Array.from({ length: 10 }, () =>
@@ -90,39 +94,43 @@ describe('Auth Performance Tests', () => {
       const mockResponse = {
         id: '1',
         email: 'test@example.com',
-        firstName: 'Test',
-        lastName: 'User',
-        role: 'buyer',
+        full_name: 'Test User',
       };
 
-      vi.mocked(apiClient.get).mockImplementation(() =>
-        new Promise(resolve => setTimeout(() => resolve(mockResponse), 30))
-      );
+      // Use fake timers to make the test deterministic.
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date(0));
+      try {
+        vi.mocked(apiClient.get).mockImplementation(
+          () => new Promise(resolve => setTimeout(() => resolve(mockResponse), 30))
+        );
 
-      const startTime = Date.now();
-      await adapter.getCurrentUser();
-      const endTime = Date.now();
+        const startTime = Date.now();
+        const p = adapter.getCurrentUser();
+        await vi.advanceTimersByTimeAsync(30);
+        await p;
+        const endTime = Date.now();
 
-      const duration = endTime - startTime;
-      expect(duration).toBeLessThan(100); // Should be very fast
+        const duration = endTime - startTime;
+        expect(duration).toBeLessThan(100); // Should be very fast
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 
   describe('Memory Usage', () => {
     it('should not leak memory with multiple logins', async () => {
-      const mockResponse = {
-        success: true,
-        token: 'token',
-        user: {
-          id: '1',
-          email: 'test@example.com',
-          firstName: 'Test',
-          lastName: 'User',
-          role: 'buyer',
-        },
-      };
-
-      vi.mocked(apiClient.post).mockResolvedValue(mockResponse);
+      vi.mocked(apiClient.post).mockResolvedValue({
+        access_token: 'token',
+        refresh_token: 'refresh-token',
+        expires_in: 3600,
+      });
+      vi.mocked(apiClient.get).mockResolvedValue({
+        id: '1',
+        email: 'test@example.com',
+        full_name: 'Test User',
+      });
 
       // Perform multiple logins
       for (let i = 0; i < 100; i++) {
@@ -137,24 +145,24 @@ describe('Auth Performance Tests', () => {
   describe('Response Time Metrics', () => {
     it('should track login response times', async () => {
       const responseTimes: number[] = [];
-      const mockResponse = {
-        success: true,
-        token: 'token',
-        user: {
-          id: '1',
-          email: 'test@example.com',
-          firstName: 'Test',
-          lastName: 'User',
-          role: 'buyer',
-        },
+      const mockTokenResponse = {
+        access_token: 'token',
+        refresh_token: 'refresh-token',
+        expires_in: 3600,
       };
+
+      vi.mocked(apiClient.get).mockResolvedValue({
+        id: '1',
+        email: 'test@example.com',
+        full_name: 'Test User',
+      });
 
       vi.mocked(apiClient.post).mockImplementation(() =>
         new Promise(resolve => {
           const start = Date.now();
           setTimeout(() => {
             responseTimes.push(Date.now() - start);
-            resolve(mockResponse);
+            resolve(mockTokenResponse);
           }, Math.random() * 100);
         })
       );

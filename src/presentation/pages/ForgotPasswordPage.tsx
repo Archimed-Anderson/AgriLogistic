@@ -17,7 +17,8 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await apiClient.post('/auth/forgot-password', { email: email.trim() });
+      // New auth-service: /api/v1/auth/password-reset/request
+      await apiClient.post('/auth/password-reset/request', { email: email.trim() });
       // Message générique (évite l’énumération d’emails)
       toast.success('Si ce compte existe, un code de réinitialisation a été envoyé.');
       onNavigate('/reset-password');

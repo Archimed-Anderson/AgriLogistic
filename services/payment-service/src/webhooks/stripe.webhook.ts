@@ -71,7 +71,6 @@ async function handlePaymentSucceeded(paymentIntent: any) {
   console.log('[Webhook] Payment succeeded:', paymentIntent.id);
 
   const orderId = paymentIntent.metadata?.orderId;
-  const userId = paymentIntent.metadata?.userId;
 
   try {
     // Update payment record

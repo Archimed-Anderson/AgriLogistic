@@ -1,1092 +1,1158 @@
 {
   "performanceMetrics": {
-    "domContentLoaded": 0.09999999962747097,
+    "domContentLoaded": 0.09999999403953552,
     "loadComplete": 0,
-    "firstPaint": 2176,
-    "firstContentfulPaint": 2176,
-    "domInteractive": 202.3999999994412,
-    "totalTime": 2519
+    "firstPaint": 9464,
+    "firstContentfulPaint": 9464,
+    "domInteractive": 7477.5,
+    "totalTime": 10481.59999999404
   },
   "resources": [
     {
       "name": "http://localhost:5173/@vite/client",
       "type": "script",
       "size": 182835,
-      "duration": 66.5
+      "duration": 42.5
     },
     {
       "name": "http://localhost:5173/src/main.tsx",
       "type": "script",
       "size": 1779,
-      "duration": 96.19999999925494
+      "duration": 47.6000000089407
     },
     {
       "name": "http://localhost:5173/@react-refresh",
       "type": "script",
       "size": 113432,
-      "duration": 98.70000000018626
+      "duration": 56.8999999910593
     },
     {
       "name": "http://localhost:5173/node_modules/vite/dist/client/env.mjs",
       "type": "script",
       "size": 4161,
-      "duration": 66.5
+      "duration": 18.400000005960464
     },
     {
-      "name": "http://localhost:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=e5a62b17",
+      "name": "http://localhost:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=3ef9859f",
       "type": "script",
       "size": 37335,
-      "duration": 52.59999999962747
+      "duration": 19.799999997019768
     },
     {
-      "name": "http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=995712d2",
+      "name": "http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=31a29173",
       "type": "script",
       "size": 1418,
-      "duration": 57.60000000055879
+      "duration": 20.400000005960464
     },
     {
       "name": "http://localhost:5173/src/app/App.tsx",
       "type": "script",
-      "size": 53932,
-      "duration": 58.39999999944121
+      "size": 129956,
+      "duration": 34.3999999910593
     },
     {
       "name": "http://localhost:5173/src/styles/index.css",
       "type": "script",
-      "size": 346952,
-      "duration": 194.5
+      "size": 383266,
+      "duration": 37.5
     },
     {
-      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-DRWLMN53.js?v=9c57e2f8",
-      "type": "script",
-      "size": 78118,
-      "duration": 126
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-G3PMV62Z.js?v=9c57e2f8",
-      "type": "script",
-      "size": 8268,
-      "duration": 126.70000000018626
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-NXESFFTV.js?v=9c57e2f8",
+      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-KDCVS43I.js?v=079cc929",
       "type": "script",
       "size": 932240,
-      "duration": 148.5
+      "duration": 37.400000005960464
     },
     {
-      "name": "http://localhost:5173/node_modules/.vite/deps/react.js?v=e5a62b17",
+      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-RLJ2RCJQ.js?v=079cc929",
+      "type": "script",
+      "size": 78118,
+      "duration": 27.599999994039536
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-DC5AMYBS.js?v=079cc929",
+      "type": "script",
+      "size": 9810,
+      "duration": 26.600000008940697
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/react.js?v=3ef9859f",
       "type": "script",
       "size": 1324,
-      "duration": 146
+      "duration": 16.200000002980232
     },
     {
-      "name": "http://localhost:5173/node_modules/.vite/deps/sonner.js?v=e5a62b17",
+      "name": "http://localhost:5173/node_modules/.vite/deps/sonner.js?v=3ef9859f",
       "type": "script",
       "size": 58269,
-      "duration": 148.09999999962747
+      "duration": 24
     },
     {
       "name": "http://localhost:5173/src/presentation/contexts/AuthContext.tsx",
       "type": "script",
       "size": 18110,
-      "duration": 212
+      "duration": 26
     },
     {
       "name": "http://localhost:5173/src/app/components/ConsentBanner.tsx",
       "type": "script",
       "size": 12397,
-      "duration": 213.20000000018626
+      "duration": 27.100000008940697
     },
     {
       "name": "http://localhost:5173/src/app/components/BackendStatus.tsx",
       "type": "script",
       "size": 28601,
-      "duration": 219.70000000018626
+      "duration": 27.399999991059303
     },
     {
       "name": "http://localhost:5173/src/app/lib/analytics/ga.ts",
       "type": "script",
       "size": 7193,
-      "duration": 227.5
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/Navbar.tsx",
-      "type": "script",
-      "size": 52238,
-      "duration": 230
+      "duration": 30.900000005960464
     },
     {
       "name": "http://localhost:5173/src/app/components/Sidebar.tsx",
       "type": "script",
-      "size": 21502,
-      "duration": 231.29999999981374
+      "size": 83824,
+      "duration": 42.099999994039536
     },
     {
-      "name": "http://localhost:5173/src/app/components/landing/AgroLogisticLandingPage.tsx",
+      "name": "http://localhost:5173/src/app/components/Navbar.tsx",
       "type": "script",
-      "size": 13932,
-      "duration": 302.1000000005588
+      "size": 97802,
+      "duration": 37.5
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/AccessDenied.tsx",
+      "type": "script",
+      "size": 8089,
+      "duration": 41.5
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/landing/AgroLogisticRedesigned.tsx",
+      "type": "script",
+      "size": 12591,
+      "duration": 42.5
     },
     {
       "name": "http://localhost:5173/src/presentation/pages/LoginPage.tsx",
       "type": "script",
       "size": 4464,
-      "duration": 303.20000000018626
+      "duration": 42.900000005960464
     },
     {
       "name": "http://localhost:5173/src/presentation/pages/RegisterPage.tsx",
       "type": "script",
       "size": 5212,
-      "duration": 306
+      "duration": 46.29999999701977
     },
     {
       "name": "http://localhost:5173/src/presentation/pages/ModernAuthPage.tsx",
       "type": "script",
-      "size": 22729,
-      "duration": 307.09999999962747
+      "size": 22772,
+      "duration": 48.900000005960464
     },
     {
       "name": "http://localhost:5173/src/presentation/pages/ForgotPasswordPage.tsx",
       "type": "script",
       "size": 14472,
-      "duration": 308.09999999962747
+      "duration": 49.19999998807907
     },
     {
       "name": "http://localhost:5173/src/presentation/pages/ResetPasswordPage.tsx",
       "type": "script",
       "size": 20652,
-      "duration": 308.30000000074506
+      "duration": 53.20000000298023
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/dashboard/ModernizedDashboard.tsx",
+      "type": "script",
+      "size": 47607,
+      "duration": 66.40000000596046
     },
     {
       "name": "http://localhost:5173/src/app/components/ModernDashboard.tsx",
       "type": "script",
       "size": 224680,
-      "duration": 410.5
+      "duration": 65.79999999701977
     },
     {
       "name": "http://localhost:5173/src/app/components/ChatInterface.tsx",
       "type": "script",
       "size": 103468,
-      "duration": 399.5
+      "duration": 69.6000000089407
     },
     {
       "name": "http://localhost:5173/src/app/components/AnalyticsDashboard.tsx",
       "type": "script",
       "size": 423461,
-      "duration": 443.1000000005588
+      "duration": 107.3999999910593
     },
     {
       "name": "http://localhost:5173/src/app/components/MarketplaceModern.tsx",
       "type": "script",
       "size": 849725,
-      "duration": 461
+      "duration": 122.3999999910593
     },
     {
       "name": "http://localhost:5173/src/app/components/RentalMarketplace2.tsx",
       "type": "script",
       "size": 70734,
-      "duration": 447.79999999981374
+      "duration": 112.5
     },
     {
       "name": "http://localhost:5173/src/app/components/Settings.tsx",
       "type": "script",
       "size": 498004,
-      "duration": 473.5
+      "duration": 169.70000000298023
     },
     {
       "name": "http://localhost:5173/src/app/components/ProfilePage.tsx",
       "type": "script",
       "size": 105372,
-      "duration": 524.2999999998137
+      "duration": 163
     },
     {
       "name": "http://localhost:5173/src/app/components/NotificationsPage.tsx",
       "type": "script",
       "size": 34631,
-      "duration": 530.5
+      "duration": 167.6000000089407
     },
     {
       "name": "http://localhost:5173/src/app/components/BlogHome.tsx",
       "type": "script",
       "size": 143375,
-      "duration": 537.6000000005588
+      "duration": 197.70000000298023
     },
     {
       "name": "http://localhost:5173/src/app/components/BlogArticle.tsx",
       "type": "script",
       "size": 163933,
-      "duration": 542.6999999992549
+      "duration": 210.20000000298023
     },
     {
       "name": "http://localhost:5173/src/app/components/BlogAdmin.tsx",
       "type": "script",
       "size": 200612,
-      "duration": 547.1999999992549
+      "duration": 216.3999999910593
     },
     {
       "name": "http://localhost:5173/src/app/components/AcademyPortal.tsx",
       "type": "script",
       "size": 114959,
-      "duration": 557.5999999996275
+      "duration": 221.29999999701977
     },
     {
       "name": "http://localhost:5173/src/app/components/UserManagement.tsx",
       "type": "script",
       "size": 362586,
-      "duration": 618.9000000003725
+      "duration": 230.19999998807907
     },
     {
       "name": "http://localhost:5173/src/app/components/ProductInventory.tsx",
       "type": "script",
       "size": 282868,
-      "duration": 642.8000000007451
+      "duration": 239.20000000298023
     },
     {
       "name": "http://localhost:5173/src/app/components/OrdersManagement.tsx",
       "type": "script",
       "size": 253216,
-      "duration": 643.2000000001863
+      "duration": 256
     },
     {
       "name": "http://localhost:5173/src/app/components/CategoryManagement.tsx",
       "type": "script",
       "size": 242577,
-      "duration": 655.7000000001863
+      "duration": 269.1000000089407
     },
     {
       "name": "http://localhost:5173/src/app/components/ReportEngine.tsx",
       "type": "script",
       "size": 255883,
-      "duration": 661
+      "duration": 278.69999998807907
     },
     {
       "name": "http://localhost:5173/src/app/components/AdminPanelHome.tsx",
       "type": "script",
       "size": 65760,
-      "duration": 664.7999999998137
+      "duration": 285.19999998807907
     },
     {
       "name": "http://localhost:5173/src/app/components/IoTDeviceHub.tsx",
       "type": "script",
       "size": 187975,
-      "duration": 764.8999999994412
+      "duration": 302.79999999701977
     },
     {
       "name": "http://localhost:5173/src/app/components/AutomationWorkflows.tsx",
       "type": "script",
       "size": 226487,
-      "duration": 764.8000000007451
+      "duration": 299
     },
     {
       "name": "http://localhost:5173/src/app/components/AIInsights.tsx",
       "type": "script",
       "size": 237191,
-      "duration": 780.3000000007451
+      "duration": 336.6000000089407
     },
     {
       "name": "http://localhost:5173/src/app/components/FinancialSuite.tsx",
       "type": "script",
       "size": 454795,
-      "duration": 797.6000000005588
+      "duration": 369
     },
     {
       "name": "http://localhost:5173/src/app/components/LogisticsTracking.tsx",
       "type": "script",
       "size": 438793,
-      "duration": 797.7000000001863
+      "duration": 399.09999999403954
     },
     {
-      "name": "http://localhost:5173/src/app/components/CropIntelligence.tsx",
+      "name": "http://localhost:5173/src/app/components/WeatherDashboard.tsx",
       "type": "script",
-      "size": 261080,
-      "duration": 802.7999999998137
+      "size": 46927,
+      "duration": 397.6000000089407
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/SoilWaterManagement.tsx",
+      "type": "script",
+      "size": 54894,
+      "duration": 400.20000000298023
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/EquipmentManagement.tsx",
+      "type": "script",
+      "size": 53983,
+      "duration": 403.5
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/TaskManagement.tsx",
+      "type": "script",
+      "size": 48927,
+      "duration": 464.79999999701977
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/HelpSupport.tsx",
+      "type": "script",
+      "size": 27450,
+      "duration": 475.70000000298023
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/CropManagement.tsx",
+      "type": "script",
+      "size": 42778,
+      "duration": 476.70000000298023
     },
     {
       "name": "http://localhost:5173/src/app/components/TransportCalculator.tsx",
       "type": "script",
       "size": 92110,
-      "duration": 869
+      "duration": 481.6000000089407
     },
     {
       "name": "http://localhost:5173/src/app/components/ShippingTracker.tsx",
       "type": "script",
       "size": 84474,
-      "duration": 870.5
+      "duration": 497.29999999701977
     },
     {
       "name": "http://localhost:5173/src/app/components/B2BChat.tsx",
       "type": "script",
       "size": 78066,
-      "duration": 876.1999999992549
+      "duration": 503.29999999701977
     },
     {
       "name": "http://localhost:5173/src/app/components/CarrierDashboard.tsx",
       "type": "script",
       "size": 174189,
-      "duration": 879.0999999996275
+      "duration": 534.9000000059605
     },
     {
       "name": "http://localhost:5173/src/app/components/AffiliateDashboard.tsx",
       "type": "script",
       "size": 133370,
-      "duration": 882.2000000001863
+      "duration": 553.5
     },
     {
-      "name": "http://localhost:5173/src/infrastructure/adapters/auth-provider.factory.ts",
+      "name": "http://localhost:5173/src/app/components/LaborManagement.tsx",
       "type": "script",
-      "size": 8924,
-      "duration": 671.8999999994412
+      "size": 120071,
+      "duration": 557.8999999910593
     },
     {
-      "name": "http://localhost:5173/node_modules/.vite/deps/lucide-react.js?v=e05a7c1d",
+      "name": "http://localhost:5173/src/app/components/landing/pages/ProjectDetailPage.tsx",
       "type": "script",
-      "size": 944940,
-      "duration": 723.8000000007451
+      "size": 28847,
+      "duration": 560
     },
     {
-      "name": "http://localhost:5173/src/infrastructure/api/health-check.ts",
+      "name": "http://localhost:5173/src/app/components/landing/pages/DemoPage.tsx",
       "type": "script",
-      "size": 11645,
-      "duration": 708.7000000001863
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/ui/button.tsx",
-      "type": "script",
-      "size": 9883,
-      "duration": 699.1000000005588
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/ui/dropdown-menu.tsx",
-      "type": "script",
-      "size": 35198,
-      "duration": 700.0999999996275
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/NotificationsDropdown.tsx",
-      "type": "script",
-      "size": 46975,
-      "duration": 701.4000000003725
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/CartDropdown.tsx",
-      "type": "script",
-      "size": 44930,
-      "duration": 703
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/SignOutModal.tsx",
-      "type": "script",
-      "size": 50542,
-      "duration": 744.5
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/landing/sections/HeroSection.tsx",
-      "type": "script",
-      "size": 29281,
-      "duration": 673.7000000001863
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/landing/sections/StorySection.tsx",
-      "type": "script",
-      "size": 35430,
-      "duration": 674.2999999998137
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/landing/sections/ServicesSection.tsx",
-      "type": "script",
-      "size": 16712,
-      "duration": 675
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/landing/sections/PracticesSection.tsx",
-      "type": "script",
-      "size": 27116,
-      "duration": 675.4000000003725
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/landing/sections/ContactSection.tsx",
-      "type": "script",
-      "size": 38580,
-      "duration": 687.1999999992549
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/landing/sections/FooterSection.tsx",
-      "type": "script",
-      "size": 42213,
-      "duration": 715
-    },
-    {
-      "name": "http://localhost:5173/src/presentation/components/features/auth/RegisterForm.tsx",
-      "type": "script",
-      "size": 98264,
-      "duration": 712.7999999998137
-    },
-    {
-      "name": "http://localhost:5173/src/presentation/components/features/auth/ModernLoginForm.tsx",
-      "type": "script",
-      "size": 44096,
-      "duration": 712.5
-    },
-    {
-      "name": "http://localhost:5173/src/presentation/components/features/auth/MultiStepRegisterForm.tsx",
-      "type": "script",
-      "size": 132385,
-      "duration": 717.6000000005588
-    },
-    {
-      "name": "http://localhost:5173/src/presentation/components/features/auth/AuthTransition.tsx",
-      "type": "script",
-      "size": 6915,
-      "duration": 718.7999999998137
-    },
-    {
-      "name": "http://localhost:5173/src/infrastructure/api/rest/api-client.ts",
-      "type": "script",
-      "size": 16684,
-      "duration": 738.5
-    },
-    {
-      "name": "http://localhost:5173/src/presentation/hooks/use-csrf-token.ts",
-      "type": "script",
-      "size": 8719,
-      "duration": 753
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/ui/input.tsx",
-      "type": "script",
-      "size": 5556,
-      "duration": 664
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/ui/card.tsx",
-      "type": "script",
-      "size": 11947,
-      "duration": 665.7999999998137
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/ui/avatar.tsx",
-      "type": "script",
-      "size": 7344,
-      "duration": 667.5
-    },
-    {
-      "name": "http://localhost:5173/src/app/data/mockData.ts",
-      "type": "script",
-      "size": 22166,
-      "duration": 671.3000000007451
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/figma/ImageWithFallback.tsx",
-      "type": "script",
-      "size": 7543,
-      "duration": 659.6000000005588
-    },
-    {
-      "name": "http://localhost:5173/src/modules/loueur/marketplace/EquipmentCard2.tsx",
-      "type": "script",
-      "size": 67821,
-      "duration": 636.3999999994412
-    },
-    {
-      "name": "http://localhost:5173/src/modules/loueur/marketplace/EquipmentDetail.tsx",
-      "type": "script",
-      "size": 107374,
-      "duration": 631.0999999996275
-    },
-    {
-      "name": "http://localhost:5173/src/modules/loueur/analytics/OwnerDashboard.tsx",
-      "type": "script",
-      "size": 104221,
-      "duration": 639.4000000003725
-    },
-    {
-      "name": "http://localhost:5173/src/modules/loueur/analytics/RenterAnalytics.tsx",
-      "type": "script",
-      "size": 125049,
-      "duration": 642.9000000003725
-    },
-    {
-      "name": "http://localhost:5173/src/modules/loueur/reservations/MyReservations.tsx",
-      "type": "script",
-      "size": 85664,
-      "duration": 646.3000000007451
-    },
-    {
-      "name": "http://localhost:5173/src/modules/loueur/equipment/MyEquipment.tsx",
-      "type": "script",
-      "size": 126341,
-      "duration": 649.5999999996275
-    },
-    {
-      "name": "http://localhost:5173/src/modules/loueur/community/Community.tsx",
-      "type": "script",
-      "size": 160135,
-      "duration": 658.2999999998137
-    },
-    {
-      "name": "http://localhost:5173/src/modules/loueur/data/mockEquipments.ts",
-      "type": "script",
-      "size": 62347,
-      "duration": 665
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/marketplace/hero/MarketplaceHero.tsx",
-      "type": "script",
-      "size": 50201,
-      "duration": 649.4000000003725
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/marketplace/filters/ProductFilterSidebar.tsx",
-      "type": "script",
-      "size": 55698,
-      "duration": 651.7999999998137
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/marketplace/grid/ProductGrid.tsx",
-      "type": "script",
-      "size": 26481,
-      "duration": 654.0999999996275
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/ui/badge.tsx",
-      "type": "script",
-      "size": 7792,
-      "duration": 592.7000000001863
-    },
-    {
-      "name": "http://localhost:5173/src/shared/utils/csv.ts",
-      "type": "script",
-      "size": 8759,
-      "duration": 504.79999999981374
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/recharts.js?v=dc21078c",
-      "type": "script",
-      "size": 1258494,
-      "duration": 506.90000000037253
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/react-dnd.js?v=23a8dd5d",
-      "type": "script",
-      "size": 77004,
-      "duration": 490.70000000018626
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/react-dnd-html5-backend.js?v=68c1ca38",
-      "type": "script",
-      "size": 30211,
-      "duration": 491.79999999981374
-    },
-    {
-      "name": "http://localhost:5173/src/infrastructure/adapters/mock-auth.adapter.ts",
-      "type": "script",
-      "size": 33803,
-      "duration": 272
-    },
-    {
-      "name": "http://localhost:5173/src/infrastructure/api/rest/auth-api.ts",
-      "type": "script",
-      "size": 16655,
-      "duration": 272
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/@radix-ui_react-slot.js?v=c1021d0f",
-      "type": "script",
-      "size": 2108,
-      "duration": 233.20000000018626
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/class-variance-authority.js?v=7704dff2",
-      "type": "script",
-      "size": 2645,
-      "duration": 240
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/ui/utils.ts",
-      "type": "script",
-      "size": 1054,
-      "duration": 242.70000000018626
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/@radix-ui_react-dropdown-menu.js?v=c13b9a42",
-      "type": "script",
-      "size": 56567,
-      "duration": 243.5
-    },
-    {
-      "name": "http://localhost:5173/src/app/assets/landing/hero.webp?import",
-      "type": "script",
-      "size": 713,
-      "duration": 194.5
-    },
-    {
-      "name": "http://localhost:5173/src/app/assets/landing/story-1.webp?import",
-      "type": "script",
-      "size": 736,
-      "duration": 195.20000000018626
-    },
-    {
-      "name": "http://localhost:5173/src/app/assets/landing/story-2.webp?import",
-      "type": "script",
-      "size": 736,
-      "duration": 204.29999999981374
-    },
-    {
-      "name": "http://localhost:5173/src/app/assets/landing/story-3.webp?import",
-      "type": "script",
-      "size": 736,
-      "duration": 210.20000000018626
-    },
-    {
-      "name": "http://localhost:5173/src/app/assets/landing/story-4.webp?import",
-      "type": "script",
-      "size": 736,
-      "duration": 217.59999999962747
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/landing/ui/ServiceCard.tsx",
-      "type": "script",
-      "size": 8273,
-      "duration": 217.79999999981374
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/landing/ui/CertificationBadge.tsx",
-      "type": "script",
-      "size": 7049,
-      "duration": 219.09999999962747
-    },
-    {
-      "name": "http://localhost:5173/src/app/assets/landing/practices.webp?import",
-      "type": "script",
-      "size": 730,
-      "duration": 221.90000000037253
-    },
-    {
-      "name": "http://localhost:5173/src/app/assets/landing/project-4.webp?import",
-      "type": "script",
-      "size": 742,
-      "duration": 229.20000000018626
-    },
-    {
-      "name": "http://localhost:5173/src/app/assets/landing/contact.webp?import",
-      "type": "script",
-      "size": 724,
-      "duration": 226.20000000018626
-    },
-    {
-      "name": "http://localhost:5173/src/presentation/hooks/use-register.ts",
-      "type": "script",
-      "size": 23039,
-      "duration": 199.5
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/ui/label.tsx",
-      "type": "script",
-      "size": 4798,
-      "duration": 200.5
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/ui/checkbox.tsx",
-      "type": "script",
-      "size": 7162,
-      "duration": 201.90000000037253
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/ui/select.tsx",
-      "type": "script",
-      "size": 28017,
-      "duration": 203
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/ui/progress.tsx",
-      "type": "script",
-      "size": 5735,
-      "duration": 206.69999999925494
-    },
-    {
-      "name": "http://localhost:5173/src/domain/enums/user-role.enum.ts",
-      "type": "script",
-      "size": 1169,
-      "duration": 211.5
-    },
-    {
-      "name": "http://localhost:5173/src/domain/enums/business-type.enum.ts",
-      "type": "script",
-      "size": 1665,
-      "duration": 215.90000000037253
-    },
-    {
-      "name": "http://localhost:5173/src/domain/enums/specialization.enum.ts",
-      "type": "script",
-      "size": 3671,
-      "duration": 216.79999999981374
-    },
-    {
-      "name": "http://localhost:5173/src/presentation/hooks/use-login.ts",
-      "type": "script",
-      "size": 5007,
-      "duration": 217.29999999981374
-    },
-    {
-      "name": "http://localhost:5173/src/presentation/hooks/use-form-validation.ts",
-      "type": "script",
-      "size": 17705,
-      "duration": 217.90000000037253
-    },
-    {
-      "name": "http://localhost:5173/src/presentation/utils/cookie.ts",
-      "type": "script",
-      "size": 5453,
-      "duration": 220.90000000037253
-    },
-    {
-      "name": "http://localhost:5173/src/presentation/utils/password-hash.ts",
-      "type": "script",
-      "size": 4516,
-      "duration": 227.90000000037253
-    },
-    {
-      "name": "http://localhost:5173/src/presentation/utils/auth-messages.ts",
-      "type": "script",
-      "size": 11208,
-      "duration": 233.40000000037253
-    },
-    {
-      "name": "http://localhost:5173/src/presentation/components/features/auth/PasswordStrength.tsx",
-      "type": "script",
-      "size": 19579,
-      "duration": 227.70000000018626
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/@radix-ui_react-avatar.js?v=249dd39e",
-      "type": "script",
-      "size": 4443,
-      "duration": 191
-    },
-    {
-      "name": "http://localhost:5173/src/modules/loueur/reservation/BookingWizard.tsx",
-      "type": "script",
-      "size": 124956,
-      "duration": 180.29999999981374
-    },
-    {
-      "name": "http://localhost:5173/src/modules/loueur/reservation/AvailabilityCalendar.tsx",
-      "type": "script",
-      "size": 72407,
-      "duration": 183.79999999981374
-    },
-    {
-      "name": "http://localhost:5173/src/modules/loueur/data/mockAvailability.ts",
-      "type": "script",
-      "size": 11200,
-      "duration": 186.69999999925494
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/marketplace/cards/ProductCard.tsx",
-      "type": "script",
-      "size": 87604,
-      "duration": 151.79999999981374
-    },
-    {
-      "name": "http://localhost:5173/src/domain/entities/user.entity.ts",
-      "type": "script",
-      "size": 12765,
-      "duration": 117.09999999962747
-    },
-    {
-      "name": "http://localhost:5173/src/domain/value-objects/email.vo.ts",
-      "type": "script",
-      "size": 2073,
-      "duration": 117.5
-    },
-    {
-      "name": "http://localhost:5173/src/domain/value-objects/phone-number.vo.ts",
-      "type": "script",
-      "size": 4033,
-      "duration": 116.70000000018626
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-6PXSGDAH.js?v=9c57e2f8",
-      "type": "script",
-      "size": 37668,
-      "duration": 121.40000000037253
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-7CEJWY55.js?v=9c57e2f8",
-      "type": "script",
-      "size": 4964,
-      "duration": 116.70000000018626
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-U7P2NEEE.js?v=9c57e2f8",
-      "type": "script",
-      "size": 926,
-      "duration": 111.90000000037253
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/clsx.js?v=3e2179f0",
-      "type": "script",
-      "size": 1457,
-      "duration": 109.20000000018626
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/tailwind-merge.js?v=b5702775",
-      "type": "script",
-      "size": 91707,
-      "duration": 110.20000000018626
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-SMMLMAZS.js?v=9c57e2f8",
-      "type": "script",
-      "size": 43280,
-      "duration": 107
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-65NPRN2U.js?v=9c57e2f8",
-      "type": "script",
-      "size": 85062,
-      "duration": 108.29999999981374
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-P36NVDN2.js?v=9c57e2f8",
-      "type": "script",
-      "size": 5534,
-      "duration": 108.40000000037253
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-X2ARPNOA.js?v=9c57e2f8",
-      "type": "script",
-      "size": 3647,
-      "duration": 112.59999999962747
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-P622ID5U.js?v=9c57e2f8",
-      "type": "script",
-      "size": 1205,
-      "duration": 114.8999999994412
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-LXBUKOQ2.js?v=9c57e2f8",
-      "type": "script",
-      "size": 3385,
-      "duration": 124.20000000018626
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-SNAHY43V.js?v=9c57e2f8",
-      "type": "script",
-      "size": 1809,
-      "duration": 140.20000000018626
-    },
-    {
-      "name": "http://localhost:5173/src/presentation/utils/error-handler.ts",
-      "type": "script",
-      "size": 14646,
-      "duration": 103
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/@radix-ui_react-label.js?v=093dc14f",
-      "type": "script",
-      "size": 1588,
-      "duration": 75.40000000037253
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/@radix-ui_react-checkbox.js?v=d57327de",
-      "type": "script",
-      "size": 6760,
-      "duration": 106.90000000037253
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/@radix-ui_react-select.js?v=d9821b2d",
-      "type": "script",
-      "size": 51259,
-      "duration": 76.29999999981374
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/@radix-ui_react-progress.js?v=8e5b69c9",
-      "type": "script",
-      "size": 4474,
-      "duration": 110.40000000037253
-    },
-    {
-      "name": "http://localhost:5173/src/domain/entities/entity.ts",
-      "type": "script",
-      "size": 2415,
-      "duration": 71.20000000018626
+      "size": 56864,
+      "duration": 564.4000000059605
     },
     {
       "name": "http://localhost:5173/src/domain/value-objects/permissions.vo.ts",
       "type": "script",
       "size": 12176,
-      "duration": 71.90000000037253
+      "duration": 565.5
+    },
+    {
+      "name": "http://localhost:5173/src/domain/enums/user-role.enum.ts",
+      "type": "script",
+      "size": 1169,
+      "duration": 601.2000000029802
+    },
+    {
+      "name": "http://localhost:5173/src/infrastructure/adapters/auth-provider.factory.ts",
+      "type": "script",
+      "size": 9563,
+      "duration": 568.7999999970198
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/lucide-react.js?v=13306e2b",
+      "type": "script",
+      "size": 944940,
+      "duration": 592.1000000089407
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/ui/button.tsx",
+      "type": "script",
+      "size": 9883,
+      "duration": 580.5
+    },
+    {
+      "name": "http://localhost:5173/src/infrastructure/api/health-check.ts",
+      "type": "script",
+      "size": 11645,
+      "duration": 581.4000000059605
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/landing/sections/HeroSection.tsx",
+      "type": "script",
+      "size": 42081,
+      "duration": 583
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/landing/sections/StorySection.tsx",
+      "type": "script",
+      "size": 33557,
+      "duration": 605.7000000029802
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/landing/sections/ServicesSection.tsx",
+      "type": "script",
+      "size": 15886,
+      "duration": 615.5
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/landing/sections/PracticesSection.tsx",
+      "type": "script",
+      "size": 25371,
+      "duration": 629.0999999940395
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/landing/sections/ProjectsSection.tsx",
+      "type": "script",
+      "size": 17677,
+      "duration": 629.4000000059605
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/landing/sections/TestimonialsSection.tsx",
+      "type": "script",
+      "size": 16874,
+      "duration": 629.4000000059605
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/landing/sections/ContactSection.tsx",
+      "type": "script",
+      "size": 31619,
+      "duration": 629.6000000089407
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/landing/sections/TrustSection.tsx",
+      "type": "script",
+      "size": 12522,
+      "duration": 630
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/landing/sections/FooterSection.tsx",
+      "type": "script",
+      "size": 42231,
+      "duration": 640.2999999970198
+    },
+    {
+      "name": "http://localhost:5173/src/presentation/components/features/auth/ProfileSelectorLogin.tsx",
+      "type": "script",
+      "size": 76678,
+      "duration": 652.9000000059605
+    },
+    {
+      "name": "http://localhost:5173/src/presentation/components/features/auth/MultiStepRegisterForm.tsx",
+      "type": "script",
+      "size": 132385,
+      "duration": 656
+    },
+    {
+      "name": "http://localhost:5173/src/presentation/components/features/auth/AuthTransition.tsx",
+      "type": "script",
+      "size": 6915,
+      "duration": 660.2000000029802
+    },
+    {
+      "name": "http://localhost:5173/src/presentation/components/features/auth/RegisterForm.tsx",
+      "type": "script",
+      "size": 98264,
+      "duration": 663.6999999880791
+    },
+    {
+      "name": "http://localhost:5173/src/infrastructure/api/rest/api-client.ts",
+      "type": "script",
+      "size": 17240,
+      "duration": 667.5
+    },
+    {
+      "name": "http://localhost:5173/src/presentation/hooks/use-csrf-token.ts",
+      "type": "script",
+      "size": 8719,
+      "duration": 681.2000000029802
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/ui/dropdown-menu.tsx",
+      "type": "script",
+      "size": 35198,
+      "duration": 699.5999999940395
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/NotificationsDropdown.tsx",
+      "type": "script",
+      "size": 46959,
+      "duration": 703.2000000029802
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/CartDropdown.tsx",
+      "type": "script",
+      "size": 44930,
+      "duration": 713
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/SignOutModal.tsx",
+      "type": "script",
+      "size": 50542,
+      "duration": 714.3999999910593
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/dashboard/widgets/ProductionOverviewWidget.tsx",
+      "type": "script",
+      "size": 12896,
+      "duration": 691
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/dashboard/widgets/RevenueTrendsWidget.tsx",
+      "type": "script",
+      "size": 19360,
+      "duration": 697.7000000029802
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/dashboard/widgets/KPICardsWidget.tsx",
+      "type": "script",
+      "size": 11148,
+      "duration": 705.9000000059605
+    },
+    {
+      "name": "http://localhost:5173/src/data/mockDashboardData.ts",
+      "type": "script",
+      "size": 14509,
+      "duration": 709.5999999940395
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/dashboard/widgets/LogisticsTrackerWidget.tsx",
+      "type": "script",
+      "size": 19888,
+      "duration": 707.7999999970198
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/ui/card.tsx",
+      "type": "script",
+      "size": 11947,
+      "duration": 709.9000000059605
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/figma/ImageWithFallback.tsx",
+      "type": "script",
+      "size": 7543,
+      "duration": 711.4000000059605
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/ui/avatar.tsx",
+      "type": "script",
+      "size": 7344,
+      "duration": 713.2000000029802
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/ui/input.tsx",
+      "type": "script",
+      "size": 5556,
+      "duration": 712.2000000029802
+    },
+    {
+      "name": "http://localhost:5173/src/app/data/mockData.ts",
+      "type": "script",
+      "size": 22166,
+      "duration": 714.2000000029802
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/marketplace/hero/MarketplaceHero.tsx",
+      "type": "script",
+      "size": 50201,
+      "duration": 649.7999999970198
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/marketplace/filters/ProductFilterSidebar.tsx",
+      "type": "script",
+      "size": 55698,
+      "duration": 653.4000000059605
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/marketplace/grid/ProductGrid.tsx",
+      "type": "script",
+      "size": 26481,
+      "duration": 654.5
+    },
+    {
+      "name": "http://localhost:5173/src/modules/loueur/marketplace/EquipmentCard2.tsx",
+      "type": "script",
+      "size": 67821,
+      "duration": 656.0999999940395
+    },
+    {
+      "name": "http://localhost:5173/src/modules/loueur/marketplace/EquipmentDetail.tsx",
+      "type": "script",
+      "size": 107374,
+      "duration": 660.1000000089407
+    },
+    {
+      "name": "http://localhost:5173/src/modules/loueur/analytics/OwnerDashboard.tsx",
+      "type": "script",
+      "size": 104221,
+      "duration": 663.8000000119209
+    },
+    {
+      "name": "http://localhost:5173/src/modules/loueur/analytics/RenterAnalytics.tsx",
+      "type": "script",
+      "size": 125049,
+      "duration": 668
+    },
+    {
+      "name": "http://localhost:5173/src/modules/loueur/reservations/MyReservations.tsx",
+      "type": "script",
+      "size": 85664,
+      "duration": 670.2000000029802
+    },
+    {
+      "name": "http://localhost:5173/src/modules/loueur/equipment/MyEquipment.tsx",
+      "type": "script",
+      "size": 126341,
+      "duration": 671.5999999940395
+    },
+    {
+      "name": "http://localhost:5173/src/modules/loueur/community/Community.tsx",
+      "type": "script",
+      "size": 160135,
+      "duration": 677.9000000059605
+    },
+    {
+      "name": "http://localhost:5173/src/modules/loueur/data/mockEquipments.ts",
+      "type": "script",
+      "size": 62347,
+      "duration": 680.7000000029802
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/ui/badge.tsx",
+      "type": "script",
+      "size": 7792,
+      "duration": 678.6000000089407
+    },
+    {
+      "name": "http://localhost:5173/src/shared/utils/csv.ts",
+      "type": "script",
+      "size": 8759,
+      "duration": 621.6000000089407
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/recharts.js?v=6c3341f7",
+      "type": "script",
+      "size": 1258494,
+      "duration": 650.2000000029802
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/react-dnd.js?v=93c1ccfb",
+      "type": "script",
+      "size": 77004,
+      "duration": 596.5
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/react-dnd-html5-backend.js?v=4411f946",
+      "type": "script",
+      "size": 30211,
+      "duration": 598.5
+    },
+    {
+      "name": "http://localhost:5173/src/infrastructure/adapters/mock-auth.adapter.ts",
+      "type": "script",
+      "size": 36022,
+      "duration": 244
+    },
+    {
+      "name": "http://localhost:5173/src/infrastructure/api/rest/auth-api.ts",
+      "type": "script",
+      "size": 23260,
+      "duration": 245.19999998807907
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/@radix-ui_react-slot.js?v=b210e23d",
+      "type": "script",
+      "size": 2108,
+      "duration": 225.90000000596046
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/class-variance-authority.js?v=d5ebeaa1",
+      "type": "script",
+      "size": 2645,
+      "duration": 228.59999999403954
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/ui/utils.ts",
+      "type": "script",
+      "size": 1054,
+      "duration": 234.59999999403954
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/ui/textarea.tsx",
+      "type": "script",
+      "size": 5056,
+      "duration": 204.5
+    },
+    {
+      "name": "http://localhost:5173/src/app/assets/landing/story-1.webp?import",
+      "type": "script",
+      "size": 736,
+      "duration": 197.8999999910593
+    },
+    {
+      "name": "http://localhost:5173/src/presentation/hooks/use-login.ts",
+      "type": "script",
+      "size": 5007,
+      "duration": 194.09999999403954
+    },
+    {
+      "name": "http://localhost:5173/src/presentation/hooks/use-form-validation.ts",
+      "type": "script",
+      "size": 17705,
+      "duration": 194.40000000596046
+    },
+    {
+      "name": "http://localhost:5173/src/presentation/utils/cookie.ts",
+      "type": "script",
+      "size": 5453,
+      "duration": 195.70000000298023
+    },
+    {
+      "name": "http://localhost:5173/src/presentation/utils/password-hash.ts",
+      "type": "script",
+      "size": 4516,
+      "duration": 196.8999999910593
+    },
+    {
+      "name": "http://localhost:5173/src/presentation/utils/auth-messages.ts",
+      "type": "script",
+      "size": 11208,
+      "duration": 198.3999999910593
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/ui/label.tsx",
+      "type": "script",
+      "size": 4798,
+      "duration": 199.80000001192093
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/ui/checkbox.tsx",
+      "type": "script",
+      "size": 7162,
+      "duration": 226
+    },
+    {
+      "name": "http://localhost:5173/src/domain/enums/business-type.enum.ts",
+      "type": "script",
+      "size": 1665,
+      "duration": 222.09999999403954
+    },
+    {
+      "name": "http://localhost:5173/src/domain/enums/specialization.enum.ts",
+      "type": "script",
+      "size": 3671,
+      "duration": 235.8999999910593
+    },
+    {
+      "name": "http://localhost:5173/src/presentation/components/features/auth/PasswordStrength.tsx",
+      "type": "script",
+      "size": 19579,
+      "duration": 241.09999999403954
+    },
+    {
+      "name": "http://localhost:5173/src/presentation/hooks/use-register.ts",
+      "type": "script",
+      "size": 23039,
+      "duration": 237.29999999701977
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/ui/select.tsx",
+      "type": "script",
+      "size": 28017,
+      "duration": 242.6000000089407
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/ui/progress.tsx",
+      "type": "script",
+      "size": 5735,
+      "duration": 245.79999999701977
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/@radix-ui_react-dropdown-menu.js?v=0cc698bd",
+      "type": "script",
+      "size": 56567,
+      "duration": 211.09999999403954
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/dashboard/charts/DonutChartComponent.tsx",
+      "type": "script",
+      "size": 15631,
+      "duration": 187.79999999701977
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/dashboard/charts/AreaChartComponent.tsx",
+      "type": "script",
+      "size": 15146,
+      "duration": 196.79999999701977
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/date-fns.js?v=19cc1b36",
+      "type": "script",
+      "size": 184859,
+      "duration": 184.59999999403954
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/@radix-ui_react-avatar.js?v=9ff9c77d",
+      "type": "script",
+      "size": 4443,
+      "duration": 196.5
+    },
+    {
+      "name": "http://localhost:5173/src/app/components/marketplace/cards/ProductCard.tsx",
+      "type": "script",
+      "size": 87604,
+      "duration": 194.70000000298023
+    },
+    {
+      "name": "http://localhost:5173/src/modules/loueur/reservation/BookingWizard.tsx",
+      "type": "script",
+      "size": 124956,
+      "duration": 187.59999999403954
+    },
+    {
+      "name": "http://localhost:5173/src/modules/loueur/reservation/AvailabilityCalendar.tsx",
+      "type": "script",
+      "size": 72407,
+      "duration": 189.40000000596046
+    },
+    {
+      "name": "http://localhost:5173/src/modules/loueur/data/mockAvailability.ts",
+      "type": "script",
+      "size": 11200,
+      "duration": 192
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-S725DACQ.js?v=079cc929",
+      "type": "script",
+      "size": 37668,
+      "duration": 154.29999999701977
+    },
+    {
+      "name": "http://localhost:5173/src/domain/entities/user.entity.ts",
+      "type": "script",
+      "size": 12765,
+      "duration": 149.69999998807907
+    },
+    {
+      "name": "http://localhost:5173/src/domain/value-objects/email.vo.ts",
+      "type": "script",
+      "size": 2073,
+      "duration": 153.20000000298023
+    },
+    {
+      "name": "http://localhost:5173/src/domain/value-objects/phone-number.vo.ts",
+      "type": "script",
+      "size": 4033,
+      "duration": 157.90000000596046
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-6E6FFEPB.js?v=079cc929",
+      "type": "script",
+      "size": 4964,
+      "duration": 153.79999999701977
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/clsx.js?v=6ddc7091",
+      "type": "script",
+      "size": 1457,
+      "duration": 139.29999999701977
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/tailwind-merge.js?v=f52f98df",
+      "type": "script",
+      "size": 91707,
+      "duration": 141.59999999403954
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-U7P2NEEE.js?v=079cc929",
+      "type": "script",
+      "size": 926,
+      "duration": 142.79999999701977
+    },
+    {
+      "name": "http://localhost:5173/src/presentation/utils/error-handler.ts",
+      "type": "script",
+      "size": 14646,
+      "duration": 136.70000000298023
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/@radix-ui_react-label.js?v=1e4ab609",
+      "type": "script",
+      "size": 1588,
+      "duration": 134.90000000596046
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/@radix-ui_react-checkbox.js?v=07d04328",
+      "type": "script",
+      "size": 6760,
+      "duration": 110.6000000089407
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/@radix-ui_react-select.js?v=41f19cc5",
+      "type": "script",
+      "size": 51259,
+      "duration": 81.59999999403954
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/@radix-ui_react-progress.js?v=20650651",
+      "type": "script",
+      "size": 4474,
+      "duration": 83.70000000298023
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-KA5BSXHU.js?v=079cc929",
+      "type": "script",
+      "size": 5534,
+      "duration": 61.599999994039536
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-266JBQCG.js?v=079cc929",
+      "type": "script",
+      "size": 43280,
+      "duration": 83.09999999403954
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-HHN77Q6K.js?v=079cc929",
+      "type": "script",
+      "size": 85062,
+      "duration": 84.79999999701977
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-43HPF5U3.js?v=079cc929",
+      "type": "script",
+      "size": 3644,
+      "duration": 90.1000000089407
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-2YIFB6BX.js?v=079cc929",
+      "type": "script",
+      "size": 1205,
+      "duration": 94
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-4E5Z2HTF.js?v=079cc929",
+      "type": "script",
+      "size": 3385,
+      "duration": 96.09999999403954
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-6MGFY25Z.js?v=079cc929",
+      "type": "script",
+      "size": 1809,
+      "duration": 96.5
     },
     {
       "name": "http://localhost:5173/src/app/components/ui/tooltip.tsx",
       "type": "script",
       "size": 10413,
-      "duration": 64.5
+      "duration": 74.40000000596046
     },
     {
-      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-T63I275V.js?v=9c57e2f8",
+      "name": "http://localhost:5173/src/domain/entities/entity.ts",
       "type": "script",
-      "size": 937,
-      "duration": 29.700000000186265
-    },
-    {
-      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-LGONNWFK.js?v=9c57e2f8",
-      "type": "script",
-      "size": 1608,
-      "duration": 39.700000000186265
+      "size": 2415,
+      "duration": 66.19999998807907
     },
     {
       "name": "http://localhost:5173/src/infrastructure/api/rest/api-client-enhanced.ts",
       "type": "script",
-      "size": 37126,
-      "duration": 28.40000000037253
+      "size": 37662,
+      "duration": 43.29999999701977
     },
     {
-      "name": "http://localhost:5173/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=a3e43257",
+      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-H6JHIUBL.js?v=079cc929",
+      "type": "script",
+      "size": 937,
+      "duration": 39.900000005960464
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/chunk-S3TGW27N.js?v=079cc929",
+      "type": "script",
+      "size": 1608,
+      "duration": 38.3999999910593
+    },
+    {
+      "name": "http://localhost:5173/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1a2b3a51",
       "type": "script",
       "size": 20102,
-      "duration": 17.299999999813735
+      "duration": 13.600000008940697
     },
     {
       "name": "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&display=swap",
       "type": "css",
       "size": 1390,
-      "duration": 119.5
+      "duration": 285.69999998807907
     },
     {
-      "name": "http://localhost:5173/src/app/components/landing/sections/ProjectsSection.tsx",
-      "type": "script",
-      "size": 17123,
-      "duration": 115.1000000005588
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/landing/sections/TestimonialsSection.tsx",
-      "type": "script",
-      "size": 31233,
-      "duration": 153.40000000037253
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/landing/sections/BlogSection.tsx",
-      "type": "script",
-      "size": 17649,
-      "duration": 215.8999999994412
-    },
-    {
-      "name": "http://localhost:5173/src/app/assets/landing/hero.webp",
+      "name": "http://localhost:5173/assets/images/landing/hero-bg.png",
       "type": "img",
-      "size": 68742,
-      "duration": 567.1000000005588
+      "size": 933466,
+      "duration": 545.5999999940395
     },
     {
-      "name": "http://localhost:5173/src/app/assets/landing/story-1.webp",
+      "name": "http://localhost:5173/assets/images/landing/hero-floating-growth.png",
       "type": "img",
-      "size": 20382,
-      "duration": 494.6000000005588
+      "size": 492623,
+      "duration": 72.5
     },
     {
-      "name": "http://localhost:5173/src/app/assets/landing/story-2.webp",
+      "name": "http://localhost:5173/assets/images/landing/hero-floating-market.png",
       "type": "img",
-      "size": 86198,
-      "duration": 567.0999999996275
+      "size": 561140,
+      "duration": 198.79999999701977
     },
     {
-      "name": "http://localhost:5173/src/app/assets/landing/story-3.webp",
+      "name": "http://localhost:5173/assets/images/landing/story-innovation.png",
       "type": "img",
-      "size": 64668,
-      "duration": 441
+      "size": 1050862,
+      "duration": 562.7999999970198
     },
     {
-      "name": "http://localhost:5173/src/app/assets/landing/story-4.webp",
+      "name": "http://localhost:5173/assets/images/landing/icon-marketplace.png",
       "type": "img",
-      "size": 57690,
-      "duration": 346.79999999981374
+      "size": 561140,
+      "duration": 456.19999998807907
     },
     {
-      "name": "http://localhost:5173/src/app/assets/landing/practices.webp",
+      "name": "http://localhost:5173/assets/images/landing/icon-logistics.png",
       "type": "img",
-      "size": 99776,
-      "duration": 440.40000000037253
+      "size": 616963,
+      "duration": 232.90000000596046
     },
     {
-      "name": "http://localhost:5173/src/app/assets/landing/project-4.webp",
+      "name": "http://localhost:5173/assets/images/landing/icon-ai.png",
       "type": "img",
-      "size": 20776,
-      "duration": 718.8000000007451
+      "size": 534320,
+      "duration": 568.2999999970198
     },
     {
-      "name": "http://localhost:5173/src/app/components/landing/ui/ProjectCard.tsx",
-      "type": "script",
-      "size": 9593,
-      "duration": 316.30000000074506
-    },
-    {
-      "name": "http://localhost:5173/src/app/assets/landing/project-1.webp?import",
-      "type": "script",
-      "size": 742,
-      "duration": 363
-    },
-    {
-      "name": "http://localhost:5173/src/app/assets/landing/project-2.webp?import",
-      "type": "script",
-      "size": 742,
-      "duration": 419.1000000005588
-    },
-    {
-      "name": "http://localhost:5173/src/app/assets/landing/project-3.webp?import",
-      "type": "script",
-      "size": 742,
-      "duration": 485.29999999981374
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/landing/ui/TestimonialCard.tsx",
-      "type": "script",
-      "size": 11615,
-      "duration": 485
-    },
-    {
-      "name": "http://localhost:5173/src/app/components/landing/ui/BlogCard.tsx",
-      "type": "script",
-      "size": 11834,
-      "duration": 483.29999999981374
-    },
-    {
-      "name": "http://localhost:5173/src/app/assets/landing/blog-1.webp?import",
-      "type": "script",
-      "size": 731,
-      "duration": 490.20000000018626
-    },
-    {
-      "name": "http://localhost:5173/src/app/assets/landing/blog-2.webp?import",
-      "type": "script",
-      "size": 731,
-      "duration": 463.8999999994412
-    },
-    {
-      "name": "http://localhost:5173/src/app/assets/landing/blog-3.webp?import",
-      "type": "script",
-      "size": 731,
-      "duration": 517.9000000003725
-    },
-    {
-      "name": "http://localhost:5173/src/app/assets/landing/project-1.webp",
+      "name": "http://localhost:5173/assets/images/landing/icon-finance.png",
       "type": "img",
-      "size": 13178,
-      "duration": 135.40000000037253
+      "size": 531822,
+      "duration": 666.6000000089407
     },
     {
-      "name": "http://localhost:5173/src/app/assets/landing/project-2.webp",
+      "name": "http://localhost:5173/assets/images/landing/practice-yield-growth.png",
       "type": "img",
-      "size": 23834,
-      "duration": 144.59999999962747
+      "size": 874490,
+      "duration": 825
     },
     {
-      "name": "http://localhost:5173/src/app/assets/landing/project-3.webp",
+      "name": "http://localhost:5173/assets/images/landing/project-eco-farm.png",
       "type": "img",
-      "size": 99586,
-      "duration": 156.59999999962747
+      "size": 1134255,
+      "duration": 1251.8999999910593
+    },
+    {
+      "name": "http://localhost:5173/assets/images/landing/project-smart-irrigation.png",
+      "type": "img",
+      "size": 873591,
+      "duration": 1143.2999999970198
+    },
+    {
+      "name": "http://localhost:5173/assets/images/landing/project-logistics.png",
+      "type": "img",
+      "size": 937449,
+      "duration": 1337.7000000029802
+    },
+    {
+      "name": "https://ui-avatars.com/api/?name=Jean%20Dupont&background=random",
+      "type": "img",
+      "size": 0,
+      "duration": 148.1000000089407
+    },
+    {
+      "name": "https://ui-avatars.com/api/?name=Sophie%20Marceau&background=random",
+      "type": "img",
+      "size": 0,
+      "duration": 149
+    },
+    {
+      "name": "https://ui-avatars.com/api/?name=Pierre%20Martin&background=random",
+      "type": "img",
+      "size": 0,
+      "duration": 145.90000000596046
+    },
+    {
+      "name": "http://localhost:5173/assets/images/landing/contact-general.png",
+      "type": "img",
+      "size": 1140653,
+      "duration": 1390.2000000029802
+    },
+    {
+      "name": "https://i.pravatar.cc/100?img=11",
+      "type": "css",
+      "size": 0,
+      "duration": 422.3999999910593
+    },
+    {
+      "name": "https://i.pravatar.cc/100?img=12",
+      "type": "css",
+      "size": 0,
+      "duration": 418.8999999910593
+    },
+    {
+      "name": "https://i.pravatar.cc/100?img=13",
+      "type": "css",
+      "size": 0,
+      "duration": 420.20000000298023
+    },
+    {
+      "name": "https://i.pravatar.cc/100?img=14",
+      "type": "css",
+      "size": 0,
+      "duration": 423.29999999701977
     }
   ]
 }

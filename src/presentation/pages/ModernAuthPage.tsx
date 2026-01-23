@@ -19,13 +19,15 @@ export function ModernAuthPage({ onNavigate }: ModernAuthPageProps) {
       // Rediriger selon le rôle
       const role = user.role?.toLowerCase();
       if (role === 'admin') {
-        onNavigate('/admin/overview');
-      } else if (role === 'farmer' || role === 'buyer') {
-        onNavigate('/customer/overview');
+        onNavigate('/admin/dashboard');
+      } else if (role === 'farmer') {
+        onNavigate('/farmer/dashboard');
+      } else if (role === 'buyer') {
+        onNavigate('/buyer/dashboard');
       } else if (role === 'transporter') {
-        onNavigate('/customer/overview');
+        onNavigate('/transporter/dashboard');
       } else {
-        onNavigate('/admin/overview');
+        onNavigate('/admin/dashboard');
       }
     }
   }, [isAuthenticated, user, onNavigate]);
@@ -44,8 +46,8 @@ export function ModernAuthPage({ onNavigate }: ModernAuthPageProps) {
   };
 
   const handleRegisterSuccess = () => {
-    // Rediriger vers le dashboard après inscription réussie
-    onNavigate('/admin/overview');
+    // Verify-first: go to email verification screen
+    onNavigate('/verify-email');
   };
 
   const handleForgotPassword = () => {

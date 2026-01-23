@@ -6,6 +6,7 @@ import { createServer } from 'http';
 import { Server as SocketServer } from 'socket.io';
 import deliveryRoutes from './routes/delivery.routes';
 import trackingRoutes from './routes/tracking.routes';
+import logisticsRoutes from './routes/logistics.routes';
 import { Database } from './config/database';
 import { RedisClient } from './config/redis';
 import { metricsMiddleware, metricsEndpoint } from './middleware/metrics.middleware';
@@ -67,6 +68,7 @@ app.get('/ready', async (_req: Request, res: Response) => {
 // Routes
 app.use('/deliveries', deliveryRoutes);
 app.use('/tracking', trackingRoutes);
+app.use('/logistics', logisticsRoutes);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {

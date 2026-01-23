@@ -7,7 +7,6 @@ import contactRoutes from './routes/contact.routes';
 import { Database } from './config/database';
 import { RedisClient } from './config/redis';
 import { NotificationQueue } from './services/queue.service';
-import { metricsMiddleware, metricsEndpoint } from './middleware/metrics.middleware';
 
 dotenv.config();
 
@@ -17,9 +16,6 @@ const PORT = process.env.PORT || 3006;
 app.use(helmet());
 app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:5173', credentials: true }));
 app.use(express.json());
-app.use(metricsMiddleware);
-
-app.get('/metrics', metricsEndpoint);
 
 app.get('/health', async (_req: Request, res: Response) => {
   const dbHealthy = await Database.isHealthy();

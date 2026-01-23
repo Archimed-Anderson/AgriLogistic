@@ -1,7 +1,7 @@
 // Product Service API Adapter
 // This connects the frontend to the backend microservices via Kong Gateway
 
-const API_BASE_URL = 'http://localhost:8000/api/v1'; // Kong Gateway
+const API_BASE_URL = import.meta.env.VITE_API_GATEWAY_URL || 'http://localhost:8000/api/v1'; // Kong Gateway
 // const API_BASE_URL = 'http://localhost:3002'; // Direct to Product Service (fallback)
 
 interface Product {

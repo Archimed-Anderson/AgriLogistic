@@ -4,7 +4,6 @@ import { useLogin } from '@presentation/hooks/use-login';
 import { useFormValidation } from '@presentation/hooks/use-form-validation';
 import { useCSRFToken } from '@presentation/hooks/use-csrf-token';
 import { setSecureCookie, getCookie } from '@presentation/utils/cookie';
-import { hashPassword } from '@presentation/utils/password-hash';
 import { getErrorMessage } from '@presentation/utils/auth-messages';
 import { Button } from '@components/ui/button';
 import { Input } from '@components/ui/input';
@@ -72,14 +71,8 @@ export function ModernLoginForm({
     }
 
     try {
-      let passwordToSend = password;
-      try {
-        passwordToSend = await hashPassword(password);
-      } catch (hashError) {
-        console.warn('Erreur lors du hachage côté client:', hashError);
-      }
-
-      await login({ email, password: passwordToSend });
+      // Password is sent in clear over HTTPS; server hashes with bcrypt
+      await login({ email, password });
       
       if (rememberMe) {
         setSecureCookie('rememberMe', 'true', { maxAge: 30 });

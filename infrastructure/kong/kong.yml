@@ -1,0 +1,1245 @@
+_format_version: "3.0"
+_transform: true
+
+# ============================================================
+# AgroLogistic 2.0 - Kong Declarative Configuration
+# Docker Compose Version - FastAPI Backend Services
+# ============================================================
+
+# ============================================================
+# Global Plugins
+# ============================================================
+plugins:
+  # Correlation ID (useful for tracing across services)
+  - name: correlation-id
+    config:
+      header_name: X-Request-ID
+      generator: uuid
+      echo_downstream: true
+
+  # CORS - Frontend Next.js/React
+  - name: cors
+    config:
+      origins:
+        - "http://localhost:3000"
+        - "http://localhost:5173"
+        - "https://agrologistic.app"
+        - "https://www.agrologistic.app"
+      methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - PATCH
+        - OPTIONS
+      headers:
+        - Accept
+        - Accept-Version
+        - Content-Length
+        - Content-MD5
+        - Content-Type
+        - Date
+        - Authorization
+        - X-CSRF-Token
+        - X-Auth-Token
+        - X-Request-ID
+      exposed_headers:
+        - X-Auth-Token
+        - X-Request-ID
+        - X-RateLimit-Limit
+        - X-RateLimit-Remaining
+      credentials: true
+      max_age: 3600
+      preflight_continue: false
+
+  # Global Rate Limiting
+  - name: rate-limiting
+    config:
+      minute: 1000
+      hour: 10000
+      policy: local
+      limit_by: ip
+      fault_tolerant: true
+      hide_client_headers: false
+      redis_ssl: false
+
+  # Default request size limit (10 MB)
+  - name: request-size-limiting
+    config:
+      allowed_payload_size: 10
+
+  # Prometheus Metrics
+  - name: prometheus
+    config:
+      per_consumer: true
+      status_code_metrics: true
+      latency_metrics: true
+      bandwidth_metrics: true
+      upstream_health_metrics: true
+
+  # Distributed Tracing (Jaeger via Zipkin endpoint)
+  - name: zipkin
+    config:
+      http_endpoint: http://jaeger:9411/api/v2/spans
+      sample_ratio: 0.1
+      include_credential: true
+      default_service_name: kong-gateway
+
+  # File Logging
+  - name: file-log
+    config:
+      path: /var/log/kong/access.log
+      reopen: true
+
+  # Request/Response Transformation
+  - name: request-transformer
+    config:
+      add:
+        headers:
+          - "X-Gateway-Version:1.0.0"
+          - "X-Platform:AgroLogistic"
+          - "X-Request-ID:$(uuid)"
+
+  - name: response-transformer
+    config:
+      add:
+        headers:
+          - "X-Response-Time:$upstream_response_time"
+          - "X-Kong-Latency:$kong_latency"
+
+# ============================================================
+# Services & Routes
+# ============================================================
+
+services:
+  # -------------------- Auth Service (Port 8001) --------------------
+  - name: auth-service
+    host: auth-upstream
+    port: 8001
+    protocol: http
+    connect_timeout: 60000
+    write_timeout: 60000
+    read_timeout: 60000
+    retries: 3
+    tags:
+      - auth
+      - critical
+    
+    routes:
+      # CORS preflight helper:
+      # Many routes below restrict `methods` and therefore won't match `OPTIONS`,
+      # causing browser preflight requests to return "no Route matched".
+      # This route ensures `/api/v1/*` preflights always match a route so the
+      # global `cors` plugin can answer with 204 and proper headers.
+      - name: api-v1-preflight
+        paths:
+          - /api/v1
+        methods:
+          - OPTIONS
+        strip_path: false
+        preserve_host: false
+
+      - name: auth-login
+        paths:
+          - /api/v1/auth/login
+        methods:
+          - POST
+        strip_path: false
+        preserve_host: false
+        
+      - name: auth-register
+        paths:
+          - /api/v1/auth/register
+        methods:
+          - POST
+        strip_path: false
+
+      - name: auth-refresh
+        paths:
+          - /api/v1/auth/refresh
+        methods:
+          - POST
+        strip_path: false
+
+      - name: auth-verify-email
+        paths:
+          - /api/v1/auth/verify-email
+        methods:
+          - GET
+        strip_path: false
+
+      - name: auth-resend-verification
+        paths:
+          - /api/v1/auth/resend-verification
+        methods:
+          - POST
+        strip_path: false
+
+      - name: auth-password-reset-request
+        paths:
+          - /api/v1/auth/password-reset/request
+        methods:
+          - POST
+        strip_path: false
+
+      - name: auth-password-reset-confirm
+        paths:
+          - /api/v1/auth/password-reset/confirm
+        methods:
+          - POST
+        strip_path: false
+
+      - name: auth-password-change
+        paths:
+          - /api/v1/auth/password/change
+        methods:
+          - POST
+        strip_path: false
+
+      - name: auth-logout
+        paths:
+          - /api/v1/auth/logout
+        methods:
+          - POST
+        strip_path: false
+
+      - name: auth-logout-all
+        paths:
+          - /api/v1/auth/logout-all
+        methods:
+          - POST
+        strip_path: false
+
+      - name: auth-me
+        paths:
+          - /api/v1/auth/me
+        methods:
+          - GET
+        strip_path: false
+
+      - name: auth-sessions
+        paths:
+          - /api/v1/auth/sessions
+        methods:
+          - GET
+        strip_path: false
+
+      - name: auth-sessions-delete
+        paths:
+          - /api/v1/auth/sessions/
+        methods:
+          - DELETE
+        strip_path: false
+
+      # MFA (TOTP)
+      - name: auth-mfa-enable
+        paths:
+          - /api/v1/auth/mfa/enable
+        methods:
+          - POST
+        strip_path: false
+
+      - name: auth-mfa-verify-setup
+        paths:
+          - /api/v1/auth/mfa/verify-setup
+        methods:
+          - POST
+        strip_path: false
+
+      - name: auth-mfa-login
+        paths:
+          - /api/v1/auth/mfa/login
+        methods:
+          - POST
+        strip_path: false
+
+      - name: auth-mfa-disable
+        paths:
+          - /api/v1/auth/mfa/disable
+        methods:
+          - POST
+        strip_path: false
+
+      # Social login (OAuth client flows)
+      - name: auth-google
+        paths:
+          - /api/v1/auth/google
+        methods:
+          - GET
+        strip_path: false
+
+      - name: auth-google-callback
+        paths:
+          - /api/v1/auth/google/callback
+        methods:
+          - GET
+        strip_path: false
+
+      - name: auth-github
+        paths:
+          - /api/v1/auth/github
+        methods:
+          - GET
+        strip_path: false
+
+      - name: auth-github-callback
+        paths:
+          - /api/v1/auth/github/callback
+        methods:
+          - GET
+        strip_path: false
+
+      # OAuth2 + OIDC endpoints (root-level)
+      - name: oauth-authorize
+        paths:
+          - /oauth/authorize
+        methods:
+          - GET
+        strip_path: false
+
+      - name: oauth-token
+        paths:
+          - /oauth/token
+        methods:
+          - POST
+        strip_path: false
+
+      - name: oauth-revoke
+        paths:
+          - /oauth/revoke
+        methods:
+          - POST
+        strip_path: false
+
+      - name: oauth-introspect
+        paths:
+          - /oauth/introspect
+        methods:
+          - POST
+        strip_path: false
+
+      - name: oauth-userinfo
+        paths:
+          - /oauth/userinfo
+        methods:
+          - GET
+        strip_path: false
+
+      - name: oidc-discovery
+        paths:
+          - /.well-known/openid-configuration
+        methods:
+          - GET
+        strip_path: false
+
+      - name: oidc-jwks
+        paths:
+          - /.well-known/jwks.json
+        methods:
+          - GET
+        strip_path: false
+    
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+          policy: local
+
+  # -------------------- Auth Service Health (maps /api/v1/auth/health -> /health) --------------------
+  # Rationale:
+  # - Backend health endpoint is exposed at `/health` (root-level).
+  # - We want a stable gateway health URL under `/api/v1/auth/health`.
+  # - This service sets `path: /health` and the route strips the request path,
+  #   resulting in an upstream request to `/health`.
+  - name: auth-health
+    host: auth-upstream
+    port: 8001
+    protocol: http
+    path: /health
+    retries: 1
+    tags:
+      - auth
+      - health
+
+    routes:
+      - name: auth-health
+        paths:
+          - /api/v1/auth/health
+        methods:
+          - GET
+        strip_path: true
+        preserve_host: false
+
+  # -------------------- Product Service (Port 8002) --------------------
+  - name: product-service
+    host: product-upstream
+    port: 8002
+    protocol: http
+    # The product-service exposes its API under `/products` (not `/api/v1/products`).
+    # We keep a stable public prefix (`/api/v1/products`) at the gateway, and map it
+    # to upstream `/products` using `path` + `strip_path`.
+    path: /products
+    retries: 3
+    tags:
+      - marketplace
+      - product
+    
+    routes:
+      # Single prefix route is enough:
+      # - `/api/v1/products` (GET/POST) -> `/products`
+      # - `/api/v1/products/search`     -> `/products/search`
+      # - `/api/v1/products/:id`        -> `/products/:id`
+      - name: products
+        paths:
+          - /api/v1/products
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+        strip_path: true
+        preserve_host: false
+    
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+          secret_is_base64: false
+          claims_to_verify:
+            - exp
+
+      # Rate limiting per consumer (in addition to global IP rate limiting)
+      - name: rate-limiting
+        config:
+          minute: 300
+          hour: 5000
+          policy: local
+          limit_by: consumer
+      
+      - name: proxy-cache
+        config:
+          strategy: memory
+          content_type:
+            - "application/json; charset=utf-8"
+          cache_ttl: 300
+          cache_control: true
+
+  # -------------------- Order Service (Port 8003) --------------------
+  - name: order-service
+    host: order-upstream
+    port: 8003
+    protocol: http
+    # Upstream mounts routes under `/orders`
+    path: /orders
+    retries: 5
+    tags:
+      - order
+      - transaction
+    
+    routes:
+      - name: orders
+        paths:
+          - /api/v1/orders
+        methods:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+        strip_path: true
+    
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+      
+      - name: rate-limiting
+        config:
+          minute: 200
+          hour: 5000
+          policy: local
+          limit_by: consumer
+
+  # Public health (no JWT) for Order Service
+  - name: order-health
+    host: order-upstream
+    port: 8003
+    protocol: http
+    path: /health
+    retries: 2
+    routes:
+      - name: order-health
+        paths:
+          - /api/v1/orders/health
+        methods:
+          - GET
+        strip_path: true
+
+  # -------------------- Logistics Service (Port 8004) --------------------
+  - name: logistics-service
+    host: logistics-upstream
+    port: 8004
+    protocol: http
+    # Keep public `/api/v1/logistics/*` mapped to upstream `/logistics/*`
+    path: /logistics
+    retries: 3
+    tags:
+      - logistics
+      - shipping
+    
+    routes:
+      - name: logistics
+        paths:
+          - /api/v1/logistics
+        methods:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+        strip_path: true
+    
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+
+  # Public health (no JWT) for Logistics Service
+  - name: logistics-health
+    host: logistics-upstream
+    port: 8004
+    protocol: http
+    path: /health
+    retries: 2
+    routes:
+      - name: logistics-health
+        paths:
+          - /api/v1/logistics/health
+        methods:
+          - GET
+        strip_path: true
+
+  # -------------------- Payment Service (Port 8005) --------------------
+  - name: payment-service
+    host: payment-upstream
+    port: 8005
+    protocol: http
+    path: /payments
+    retries: 5
+    connect_timeout: 120000
+    tags:
+      - payment
+      - financial
+      - critical
+    
+    routes:
+      - name: payments
+        paths:
+          - /api/v1/payments
+        methods:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+        strip_path: true
+    
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+      
+      - name: rate-limiting
+        config:
+          minute: 50
+          hour: 500
+          policy: local
+          limit_by: consumer
+      
+      - name: ip-restriction
+        config:
+          allow:
+            - "0.0.0.0/0"  # Update with actual payment gateway IPs
+
+  # Payment webhooks (no JWT)
+  - name: payment-webhooks
+    host: payment-upstream
+    port: 8005
+    protocol: http
+    path: /webhooks
+    retries: 2
+    routes:
+      - name: payment-webhooks
+        paths:
+          - /api/v1/payments/webhooks
+        methods:
+          - POST
+        strip_path: true
+    plugins:
+      - name: ip-restriction
+        config:
+          allow:
+            - "0.0.0.0/0"
+      - name: request-size-limiting
+        config:
+          allowed_payload_size: 2
+
+  # Public health (no JWT) for Payment Service
+  - name: payment-health
+    host: payment-upstream
+    port: 8005
+    protocol: http
+    path: /health
+    retries: 2
+    routes:
+      - name: payment-health
+        paths:
+          - /api/v1/payments/health
+        methods:
+          - GET
+        strip_path: true
+
+  # -------------------- Notification Service (Port 8006) --------------------
+  - name: notification-service
+    host: notification-upstream
+    port: 8006
+    protocol: http
+    path: /notifications
+    retries: 3
+    tags:
+      - notification
+      - messaging
+    
+    routes:
+      - name: notifications
+        paths:
+          - /api/v1/notifications
+        methods:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+        strip_path: true
+    
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+
+  # Contact (no JWT)
+  - name: notification-contact
+    host: notification-upstream
+    port: 8006
+    protocol: http
+    path: /contact
+    retries: 2
+    routes:
+      - name: notification-contact
+        paths:
+          - /api/v1/contact
+        methods:
+          - POST
+        strip_path: true
+
+  # Public health (no JWT) for Notification Service
+  - name: notification-health
+    host: notification-upstream
+    port: 8006
+    protocol: http
+    path: /health
+    retries: 2
+    routes:
+      - name: notification-health
+        paths:
+          - /api/v1/notifications/health
+        methods:
+          - GET
+        strip_path: true
+
+  # -------------------- Analytics Service (Port 8007) --------------------
+  - name: analytics-service
+    host: analytics-upstream
+    port: 8007
+    protocol: http
+    path: /analytics
+    retries: 3
+    read_timeout: 120000
+    tags:
+      - analytics
+      - reporting
+    
+    routes:
+      - name: analytics
+        paths:
+          - /api/v1/analytics
+        methods:
+          - GET
+          - POST
+        strip_path: true
+    
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 2000
+          policy: local
+          limit_by: consumer
+      
+      - name: response-transformer
+        config:
+          add:
+            headers:
+              - "X-Analytics-Version:1.0"
+
+  # Events (JWT)
+  - name: analytics-events
+    host: analytics-upstream
+    port: 8007
+    protocol: http
+    path: /events
+    retries: 3
+    routes:
+      - name: analytics-events
+        paths:
+          - /api/v1/events
+        methods:
+          - POST
+          - GET
+        strip_path: true
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+
+  # Public health (no JWT) for Analytics Service
+  - name: analytics-health
+    host: analytics-upstream
+    port: 8007
+    protocol: http
+    path: /health
+    retries: 2
+    routes:
+      - name: analytics-health
+        paths:
+          - /api/v1/analytics/health
+        methods:
+          - GET
+        strip_path: true
+
+  # -------------------- AI Service (Port 8008) --------------------
+  - name: ai-service
+    host: ai-upstream
+    port: 8008
+    protocol: http
+    path: /ai
+    retries: 3
+    connect_timeout: 180000
+    read_timeout: 180000
+    write_timeout: 180000
+    tags:
+      - ai
+      - ml
+    
+    routes:
+      - name: ai
+        paths:
+          - /api/v1/ai
+        methods:
+          - GET
+          - POST
+        strip_path: true
+    
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+      
+      - name: rate-limiting
+        config:
+          minute: 30
+          hour: 500
+          policy: local
+          limit_by: consumer
+      
+      - name: request-size-limiting
+        config:
+          allowed_payload_size: 10  # 10 MB for image uploads
+
+  # Public health (no JWT) for AI Service
+  - name: ai-health
+    host: ai-upstream
+    port: 8008
+    protocol: http
+    path: /health
+    retries: 2
+    routes:
+      - name: ai-health
+        paths:
+          - /api/v1/ai/health
+        methods:
+          - GET
+        strip_path: true
+
+  # -------------------- Blockchain Service (Port 8009) --------------------
+  - name: blockchain-service
+    host: blockchain-upstream
+    port: 8009
+    protocol: http
+    path: /blockchain
+    retries: 5
+    connect_timeout: 120000
+    tags:
+      - blockchain
+      - traceability
+    
+    routes:
+      - name: blockchain
+        paths:
+          - /api/v1/blockchain
+        methods:
+          - GET
+          - POST
+        strip_path: true
+    
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+      
+      - name: request-size-limiting
+        config:
+          allowed_payload_size: 5
+
+  # Public health (no JWT) for Blockchain Service
+  - name: blockchain-health
+    host: blockchain-upstream
+    port: 8009
+    protocol: http
+    path: /health
+    retries: 2
+    routes:
+      - name: blockchain-health
+        paths:
+          - /api/v1/blockchain/health
+        methods:
+          - GET
+        strip_path: true
+
+  # -------------------- Inventory Service (Port 8010) --------------------
+  - name: inventory-service
+    host: inventory-upstream
+    port: 8010
+    protocol: http
+    path: /inventory
+    retries: 3
+    tags:
+      - inventory
+      - stock
+    
+    routes:
+      - name: inventory
+        paths:
+          - /api/v1/inventory
+        methods:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+        strip_path: true
+    
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+
+  # Public health (no JWT) for Inventory Service
+  - name: inventory-health
+    host: inventory-upstream
+    port: 8010
+    protocol: http
+    path: /health
+    retries: 2
+    routes:
+      - name: inventory-health
+        paths:
+          - /api/v1/inventory/health
+        methods:
+          - GET
+        strip_path: true
+
+  # -------------------- User Service (Port 8011) --------------------
+  - name: user-service
+    host: user-upstream
+    port: 8011
+    protocol: http
+    path: /users
+    retries: 3
+    tags:
+      - user
+      - profile
+    
+    routes:
+      - name: users
+        paths:
+          - /api/v1/users
+        methods:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+        strip_path: true
+    
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+      
+      - name: acl
+        config:
+          allow:
+            - admin
+            - user
+
+  # Public health (no JWT) for User Service
+  - name: user-health
+    host: user-upstream
+    port: 8011
+    protocol: http
+    path: /health
+    retries: 2
+    routes:
+      - name: user-health
+        paths:
+          - /api/v1/users/health
+        methods:
+          - GET
+        strip_path: true
+
+# ============================================================
+# JWT Consumers
+# ============================================================
+
+consumers:
+  - username: agrologistic-web-app
+    custom_id: web-client-v1
+    tags:
+      - frontend
+      - spa
+    jwt_secrets:
+      - key: web-app-jwt-key
+        algorithm: RS256
+        rsa_public_key: |
+          -----BEGIN PUBLIC KEY-----
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxC8/mTI+Eet8a+4/DXhA
+          eP06xUFU1MvBo9sNnFj7yWk3+WfZ2qm6PHgPJq2Z45WCdcVCnmHvNxyV86NTvMKe
+          UWhVGZHCZPyGTtaJJrjXJHuTAO2I2CpBJTvgXVqY/JMKY++PvDyipun9Yr5RMNkt
+          m3Nq4ty6gUEcMgEZN78hTYWcjPMM8hivjUi98/xg/m9MSDzP2S2/dTkf2qLAbZUa
+          gLIk9ssJr2jnohzBFWEa34iXN7oThTDjL0m0oX5ClEHl5WLTjPgl3YxADYqMtkGP
+          kZVQNNGoevYH9RxsGHIIU7hysjJ1oOILCTCRNSFNblNx7+yc56bu7SXaMArvwxIz
+          CQIDAQAB
+          -----END PUBLIC KEY-----
+
+  - username: agrologistic-mobile-app
+    custom_id: mobile-client-v1
+    tags:
+      - mobile
+      - ios
+      - android
+    jwt_secrets:
+      - key: mobile-app-jwt-key
+        algorithm: RS256
+        rsa_public_key: |
+          -----BEGIN PUBLIC KEY-----
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxC8/mTI+Eet8a+4/DXhA
+          eP06xUFU1MvBo9sNnFj7yWk3+WfZ2qm6PHgPJq2Z45WCdcVCnmHvNxyV86NTvMKe
+          UWhVGZHCZPyGTtaJJrjXJHuTAO2I2CpBJTvgXVqY/JMKY++PvDyipun9Yr5RMNkt
+          m3Nq4ty6gUEcMgEZN78hTYWcjPMM8hivjUi98/xg/m9MSDzP2S2/dTkf2qLAbZUa
+          gLIk9ssJr2jnohzBFWEa34iXN7oThTDjL0m0oX5ClEHl5WLTjPgl3YxADYqMtkGP
+          kZVQNNGoevYH9RxsGHIIU7hysjJ1oOILCTCRNSFNblNx7+yc56bu7SXaMArvwxIz
+          CQIDAQAB
+          -----END PUBLIC KEY-----
+
+  - username: agrologistic-admin
+    custom_id: admin-client-v1
+    tags:
+      - admin
+      - privileged
+    jwt_secrets:
+      - key: admin-jwt-key
+        algorithm: RS256
+        rsa_public_key: |
+          -----BEGIN PUBLIC KEY-----
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxC8/mTI+Eet8a+4/DXhA
+          eP06xUFU1MvBo9sNnFj7yWk3+WfZ2qm6PHgPJq2Z45WCdcVCnmHvNxyV86NTvMKe
+          UWhVGZHCZPyGTtaJJrjXJHuTAO2I2CpBJTvgXVqY/JMKY++PvDyipun9Yr5RMNkt
+          m3Nq4ty6gUEcMgEZN78hTYWcjPMM8hivjUi98/xg/m9MSDzP2S2/dTkf2qLAbZUa
+          gLIk9ssJr2jnohzBFWEa34iXN7oThTDjL0m0oX5ClEHl5WLTjPgl3YxADYqMtkGP
+          kZVQNNGoevYH9RxsGHIIU7hysjJ1oOILCTCRNSFNblNx7+yc56bu7SXaMArvwxIz
+          CQIDAQAB
+          -----END PUBLIC KEY-----
+    acls:
+      - group: admin
+
+# ============================================================
+# Upstreams (Health Checks Configuration)
+# ============================================================
+
+upstreams:
+  - name: auth-upstream
+    algorithm: round-robin
+    hash_on: none
+    hash_fallback: none
+    healthchecks:
+      active:
+        type: http
+        http_path: /health
+        timeout: 10
+        concurrency: 10
+        healthy:
+          interval: 10
+          successes: 2
+          http_statuses:
+            - 200
+            - 302
+        unhealthy:
+          interval: 5
+          http_failures: 3
+          tcp_failures: 3
+          timeouts: 3
+          http_statuses:
+            - 429
+            - 500
+            - 503
+    targets:
+      # Use the container name from `backend/auth-service/docker-compose.auth.yml`.
+      # This avoids ambiguous DNS if a legacy `auth-service` also exists.
+      - target: agrologistic-auth-service:8001
+        weight: 100
+
+  - name: product-upstream
+    algorithm: round-robin
+    healthchecks:
+      active:
+        type: http
+        http_path: /health
+        timeout: 10
+        concurrency: 10
+        healthy:
+          interval: 10
+          successes: 2
+          http_statuses: [200, 302]
+        unhealthy:
+          interval: 5
+          http_failures: 3
+          tcp_failures: 3
+          timeouts: 3
+          http_statuses: [429, 500, 503]
+    targets:
+      - target: product-service:8002
+        weight: 100
+
+  - name: order-upstream
+    algorithm: round-robin
+    healthchecks:
+      active:
+        type: http
+        http_path: /health
+        timeout: 10
+        concurrency: 10
+        healthy:
+          interval: 10
+          successes: 2
+          http_statuses: [200, 302]
+        unhealthy:
+          interval: 5
+          http_failures: 3
+          tcp_failures: 3
+          timeouts: 3
+          http_statuses: [429, 500, 503]
+    targets:
+      - target: order-service:8003
+        weight: 100
+
+  - name: logistics-upstream
+    algorithm: round-robin
+    healthchecks:
+      active:
+        type: http
+        http_path: /health
+        timeout: 10
+        concurrency: 10
+        healthy:
+          interval: 10
+          successes: 2
+          http_statuses: [200, 302]
+        unhealthy:
+          interval: 5
+          http_failures: 3
+          tcp_failures: 3
+          timeouts: 3
+          http_statuses: [429, 500, 503]
+    targets:
+      - target: logistics-service:8004
+        weight: 100
+
+  - name: payment-upstream
+    algorithm: round-robin
+    healthchecks:
+      active:
+        type: http
+        http_path: /health
+        timeout: 10
+        concurrency: 10
+        healthy:
+          interval: 10
+          successes: 2
+          http_statuses: [200, 302]
+        unhealthy:
+          interval: 5
+          http_failures: 3
+          tcp_failures: 3
+          timeouts: 3
+          http_statuses: [429, 500, 503]
+    targets:
+      - target: payment-service:8005
+        weight: 100
+
+  - name: notification-upstream
+    algorithm: round-robin
+    healthchecks:
+      active:
+        type: http
+        http_path: /health
+        timeout: 10
+        concurrency: 10
+        healthy:
+          interval: 10
+          successes: 2
+          http_statuses: [200, 302]
+        unhealthy:
+          interval: 5
+          http_failures: 3
+          tcp_failures: 3
+          timeouts: 3
+          http_statuses: [429, 500, 503]
+    targets:
+      - target: notification-service:8006
+        weight: 100
+
+  - name: analytics-upstream
+    algorithm: round-robin
+    healthchecks:
+      active:
+        type: http
+        http_path: /health
+        timeout: 10
+        concurrency: 10
+        healthy:
+          interval: 10
+          successes: 2
+          http_statuses: [200, 302]
+        unhealthy:
+          interval: 5
+          http_failures: 3
+          tcp_failures: 3
+          timeouts: 3
+          http_statuses: [429, 500, 503]
+    targets:
+      - target: analytics-service:8007
+        weight: 100
+
+  - name: ai-upstream
+    algorithm: round-robin
+    healthchecks:
+      active:
+        type: http
+        http_path: /health
+        timeout: 10
+        concurrency: 10
+        healthy:
+          interval: 10
+          successes: 2
+          http_statuses: [200, 302]
+        unhealthy:
+          interval: 5
+          http_failures: 3
+          tcp_failures: 3
+          timeouts: 3
+          http_statuses: [429, 500, 503]
+    targets:
+      - target: ai-service:8008
+        weight: 100
+
+  - name: blockchain-upstream
+    algorithm: round-robin
+    healthchecks:
+      active:
+        type: http
+        http_path: /health
+        timeout: 10
+        concurrency: 10
+        healthy:
+          interval: 10
+          successes: 2
+          http_statuses: [200, 302]
+        unhealthy:
+          interval: 5
+          http_failures: 3
+          tcp_failures: 3
+          timeouts: 3
+          http_statuses: [429, 500, 503]
+    targets:
+      - target: blockchain-service:8009
+        weight: 100
+
+  - name: inventory-upstream
+    algorithm: round-robin
+    healthchecks:
+      active:
+        type: http
+        http_path: /health
+        timeout: 10
+        concurrency: 10
+        healthy:
+          interval: 10
+          successes: 2
+          http_statuses: [200, 302]
+        unhealthy:
+          interval: 5
+          http_failures: 3
+          tcp_failures: 3
+          timeouts: 3
+          http_statuses: [429, 500, 503]
+    targets:
+      - target: inventory-service:8010
+        weight: 100
+
+  - name: user-upstream
+    algorithm: round-robin
+    healthchecks:
+      active:
+        type: http
+        http_path: /health
+        timeout: 10
+        concurrency: 10
+        healthy:
+          interval: 10
+          successes: 2
+          http_statuses: [200, 302]
+        unhealthy:
+          interval: 5
+          http_failures: 3
+          tcp_failures: 3
+          timeouts: 3
+          http_statuses: [429, 500, 503]
+    targets:
+      - target: user-service:8011
+        weight: 100

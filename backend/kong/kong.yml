@@ -1,0 +1,177 @@
+# Kong Gateway Configuration for AgroLogistic Services
+# Deploy with: kong config db_import kong.yml
+
+_format_version: "3.0"
+_transform: true
+
+# Services
+services:
+  # Payment Service
+  - name: payment-service
+    url: http://payment-service:5010
+    routes:
+      - name: payment-stripe-routes
+        paths:
+          - /api/v1/payments/stripe
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+        strip_path: false
+      - name: payment-paypal-routes
+        paths:
+          - /api/v1/payments/paypal
+        methods:
+          - GET
+          - POST
+        strip_path: false
+      - name: payment-wallet-routes
+        paths:
+          - /api/v1/wallet
+        methods:
+          - GET
+          - POST
+        strip_path: false
+      - name: payment-webhooks
+        paths:
+          - /api/v1/webhooks
+        methods:
+          - POST
+        strip_path: false
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 60
+          hour: 1000
+          policy: local
+      - name: cors
+        config:
+          origins:
+            - http://localhost:5173
+            - https://agrologistic.com
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+          headers:
+            - Authorization
+            - Content-Type
+            - X-Idempotency-Key
+          credentials: true
+      - name: request-transformer
+        config:
+          add:
+            headers:
+              - X-Service-Name:payment-service
+
+  # Affiliation Service
+  - name: affiliation-service
+    url: http://affiliation-service:5011
+    routes:
+      - name: affiliation-routes
+        paths:
+          - /api/v1/affiliates
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+        strip_path: false
+      - name: affiliation-tracking
+        paths:
+          - /api/v1/track
+          - /r
+        methods:
+          - GET
+          - POST
+        strip_path: false
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 2000
+          policy: local
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+          credentials: false
+
+# Global Plugins
+plugins:
+  # JWT Authentication
+  - name: jwt
+    config:
+      key_claim_name: kid
+      claims_to_verify:
+        - exp
+    route: payment-stripe-routes
+  
+  - name: jwt
+    route: payment-wallet-routes
+  
+  - name: jwt
+    route: affiliation-routes
+
+  # Request Logging
+  - name: file-log
+    config:
+      path: /var/log/kong/requests.log
+      reopen: true
+
+  # Prometheus Metrics
+  - name: prometheus
+    config:
+      per_consumer: false
+      status_code_metrics: true
+      latency_metrics: true
+
+# Consumers (for JWT)
+consumers:
+  - username: agrologistic-frontend
+    custom_id: frontend-app
+    jwt_secrets:
+      - key: agrologistic-frontend-key
+        algorithm: RS256
+
+  - username: agrologistic-mobile
+    custom_id: mobile-app
+    jwt_secrets:
+      - key: agrologistic-mobile-key
+        algorithm: RS256
+
+# Upstreams for Load Balancing
+upstreams:
+  - name: payment-upstream
+    targets:
+      - target: payment-service:5010
+        weight: 100
+    healthchecks:
+      active:
+        http_path: /health
+        healthy:
+          interval: 5
+          successes: 2
+        unhealthy:
+          interval: 5
+          http_failures: 3
+
+  - name: affiliation-upstream
+    targets:
+      - target: affiliation-service:5011
+        weight: 100
+    healthchecks:
+      active:
+        http_path: /health
+        healthy:
+          interval: 5
+          successes: 2
+        unhealthy:
+          interval: 5
+          http_failures: 3

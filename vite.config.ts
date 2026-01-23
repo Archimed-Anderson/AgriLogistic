@@ -26,6 +26,9 @@ export default defineConfig({
       '@infrastructure': path.resolve(__dirname, './src/infrastructure'),
       '@presentation': path.resolve(__dirname, './src/presentation'),
       '@shared': path.resolve(__dirname, './src/shared'),
+      '@pages': path.resolve(__dirname, './src/pages'),
+      '@layouts': path.resolve(__dirname, './src/layouts'),
+      '@router': path.resolve(__dirname, './src/router'),
       '@components': path.resolve(__dirname, './src/app/components'),
     },
   },
@@ -50,8 +53,6 @@ export default defineConfig({
             '@radix-ui/react-popover',
             '@radix-ui/react-accordion',
           ],
-          // MUI components
-          'mui-vendor': ['@mui/material', '@mui/icons-material'],
           // Charts & visualization
           'charts-vendor': ['recharts'],
           // Forms & utilities

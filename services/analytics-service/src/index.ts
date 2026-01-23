@@ -7,7 +7,6 @@ import eventsRoutes from './routes/events.routes';
 import { ClickHouseClient } from './config/clickhouse';
 import { RedisClient } from './config/redis';
 import { KafkaConsumer } from './events/kafka.consumer';
-import { metricsMiddleware, metricsEndpoint } from './middleware/metrics.middleware';
 
 dotenv.config();
 
@@ -17,15 +16,13 @@ const PORT = process.env.PORT || 3008;
 app.use(helmet());
 app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:5173', credentials: true }));
 app.use(express.json());
-app.use(metricsMiddleware);
-
-app.get('/metrics', metricsEndpoint);
 
 app.get('/health', async (_req: Request, res: Response) => {
   const clickhouseHealthy = await ClickHouseClient.isHealthy();
   const redisHealthy = await RedisClient.isHealthy();
-  res.status(clickhouseHealthy ? 200 : 503).json({
-    status: clickhouseHealthy ? 'healthy' : 'degraded',
+  const overallHealthy = clickhouseHealthy && redisHealthy;
+  res.status(overallHealthy ? 200 : 503).json({
+    status: overallHealthy ? 'healthy' : 'degraded',
     service: 'analytics-service',
     timestamp: new Date().toISOString(),
     dependencies: {

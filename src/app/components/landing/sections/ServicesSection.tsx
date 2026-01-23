@@ -2,81 +2,71 @@ import { ArrowRight } from "lucide-react";
 
 const services = [
   {
-    id: "marketplace",
     title: "Marketplace B2B",
-    description: "Connectez-vous directement avec des acheteurs et fournisseurs certifiés. Vendez vos récoltes au meilleur prix sans intermédiaires.",
+    description: "Connectez-vous directement avec des acheteurs et vendeurs vérifiés.",
     icon: "/assets/images/landing/icon-marketplace.png",
-    color: "bg-blue-500/10 text-blue-500",
+    color: "bg-blue-50 text-blue-600",
   },
   {
-    id: "logistics",
     title: "Logistique Intelligente",
-    description: "Optimisez vos tournées et suivez vos livraisons en temps réel. Réduisez vos coûts de transport grâce à notre algorithme de groupage.",
+    description: "Suivi en temps réel et optimisation des itinéraires de livraison.",
     icon: "/assets/images/landing/icon-logistics.png",
-    color: "bg-orange-500/10 text-orange-500",
+    color: "bg-orange-50 text-orange-600",
   },
   {
-    id: "ai",
-    title: "IA & Prédictions",
-    description: "Anticipez les rendements et les maladies grâce à nos modèles prédictifs basés sur l'IA et les données satellites.",
+    title: "Prévisions IA",
+    description: "Anticipez les rendements et les prix du marché grâce à l'IA.",
     icon: "/assets/images/landing/icon-ai.png",
-    color: "bg-purple-500/10 text-purple-500",
+    color: "bg-purple-50 text-purple-600",
   },
   {
-    id: "finance",
-    title: "Finance Agricole",
-    description: "Accédez à des solutions de financement adaptées et gérez votre trésorerie avec nos outils de facturation intégrés.",
+    title: "Solutions Financières",
+    description: "Accédez à des financements adaptés à votre cycle de production.",
     icon: "/assets/images/landing/icon-finance.png",
-    color: "bg-green-500/10 text-green-500",
+    color: "bg-green-50 text-green-600",
   },
 ];
 
-export function ServicesSection() {
+export default function ServicesSection() {
   return (
-    <section className="relative py-24 bg-white sm:py-32 overflow-hidden">
-      {/* Decorative blobs */}
-      <div className="absolute top-0 right-0 -mr-400 -mt-24 h-[500px] w-[500px] rounded-full bg-green-50 opacity-50 blur-3xl" />
-      <div className="absolute bottom-0 left-0 -ml-40 -mb-24 h-[500px] w-[500px] rounded-full bg-blue-50 opacity-50 blur-3xl" />
-
-      <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
-        <div className="mx-auto max-w-2xl text-center mb-16">
-          <h2 className="text-base font-semibold leading-7 text-green-600">Solutions Complètes</h2>
-          <p className="mt-2 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+    <section id="services" className="py-24 bg-white">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <span className="text-green-600 font-semibold tracking-wide uppercase text-sm">
+            Our Services
+          </span>
+          <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
             Tout ce dont vous avez besoin pour grandir
-          </p>
-          <p className="mt-6 text-lg leading-8 text-slate-600">
-            Une suite d'outils interconnectés pour moderniser chaque aspect de votre exploitation agricole ou activité logistique.
+          </h2>
+          <p className="mt-4 text-lg text-slate-600">
+            Une suite complète d'outils interconnectés pour gérer votre activité agricole.
           </p>
         </div>
 
-        <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-12 lg:mx-0 lg:max-w-none lg:grid-cols-2">
-          {services.map((service) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {services.map((service, index) => (
             <div 
-              key={service.id} 
-              className="flex flex-col sm:flex-row gap-6 rounded-3xl bg-white p-8 shadow-xl ring-1 ring-slate-900/10 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] hover:ring-green-500/30"
+              key={index} 
+              className="group relative p-8 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
             >
-              <div className="flex-none">
-                <div className={`flex h-20 w-20 items-center justify-center rounded-2xl ${service.color} p-2`}>
-                  <img 
-                    src={service.icon} 
-                    alt={service.title} 
-                    className="h-full w-full object-contain drop-shadow-md"
-                  />
-                </div>
+              <div className={`w-16 h-16 rounded-2xl ${service.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                 <img 
+                   src={service.icon} 
+                   alt={service.title} 
+                   className="w-10 h-10 object-contain drop-shadow-sm" 
+                 />
               </div>
-              <div className="flex flex-col justify-center">
-                <h3 className="text-xl font-bold leading-8 text-slate-900">
-                  {service.title}
-                </h3>
-                <p className="mt-2 text-base leading-7 text-slate-600">
-                  {service.description}
-                </p>
-                <div className="mt-4">
-                  <span className="inline-flex items-center text-sm font-semibold leading-6 text-green-600 hover:text-green-500 cursor-pointer group">
-                    En savoir plus
-                    <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </span>
-                </div>
+              
+              <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-green-700 transition-colors">
+                {service.title}
+              </h3>
+              
+              <p className="text-slate-500 mb-6 leading-relaxed text-sm">
+                {service.description}
+              </p>
+              
+              <div className="flex items-center text-green-600 font-medium text-sm group-hover:translate-x-2 transition-transform cursor-pointer">
+                En savoir plus <ArrowRight className="ml-2 w-4 h-4" />
               </div>
             </div>
           ))}

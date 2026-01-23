@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-01-19T17:01:39.075Z",
+  "timestamp": "2026-01-20T23:58:40.624Z",
   "imagesWithoutAlt": 0,
-  "elementsWithAriaLabel": 11,
+  "elementsWithAriaLabel": 6,
   "elementsWithRole": 0,
   "headings": {
     "h1": 1,
     "h2": 7,
     "h3": 16,
-    "h4": 4
+    "h4": 0
   },
   "contrastIssues": 0,
-  "focusableElements": 47
+  "focusableElements": 30
 }

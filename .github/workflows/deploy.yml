@@ -1,0 +1,85 @@
+name: Deploy Farmer Dashboard
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run linter
+        run: npm run lint
+      
+      - name: Run unit tests
+        run: npm run test
+      
+      - name: Run E2E tests
+        run: npm run test:e2e
+        env:
+          CI: true
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile.farmer
+          push: true
+          tags: |
+            agrodeep/farmer-dashboard:latest
+            agrodeep/farmer-dashboard:${{ github.sha }}
+          cache-from: type=registry,ref=agrodeep/farmer-dashboard:buildcache
+          cache-to: type=registry,ref=agrodeep/farmer-dashboard:buildcache,mode=max
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Deploy to production
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /app/agrodeep
+            docker-compose -f docker-compose.prod.yml pull farmer-dashboard
+            docker-compose -f docker-compose.prod.yml up -d farmer-dashboard
+            docker system prune -f
+      
+      - name: Health check
+        run: |
+          sleep 10
+          curl -f ${{ secrets.PRODUCTION_URL }}/api/health || exit 1

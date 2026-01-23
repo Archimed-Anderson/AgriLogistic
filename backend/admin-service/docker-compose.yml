@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  admin-service:
+    build: .
+    container_name: admin-service
+    ports:
+      - '5005:5005'
+    environment:
+      - NODE_ENV=development
+      - PORT=5005
+      - DATABASE_URL=postgresql://admin:admin@admin-db:5432/admin_db
+      - JWT_PUBLIC_KEY_PATH=../auth-service/keys/public.pem
+      - CORS_ORIGIN=http://localhost:5173
+      - LOG_LEVEL=debug
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ../auth-service/keys:/keys:ro
+    depends_on:
+      - admin-db
+    networks:
+      - admin-net
+    command: npm run dev
+
+  admin-db:
+    image: postgres:15-alpine
+    container_name: admin-db
+    environment:
+      - POSTGRES_DB=admin_db
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    ports:
+      - '5433:5432'
+    volumes:
+      - admin-db-data:/var/lib/postgresql/data
+    networks:
+      - admin-net
+
+volumes:
+  admin-db-data:
+
+networks:
+  admin-net:
+    driver: bridge

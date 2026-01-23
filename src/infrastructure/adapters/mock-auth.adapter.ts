@@ -1,6 +1,7 @@
 import { AuthPort } from '../../application/ports/auth.port';
 import { AuthProvider } from './auth-provider.interface';
 import { RegisterRequestDTO } from '../../application/dto/request/register-request.dto';
+import { RegisterResponseDTO } from '../../application/dto/response/register-response.dto';
 import { User } from '../../domain/entities/user.entity';
 import { Email } from '../../domain/value-objects/email.vo';
 import { PhoneNumber } from '../../domain/value-objects/phone-number.vo';
@@ -190,7 +191,7 @@ export class MockAuthAdapter implements AuthPort, AuthProvider {
     return { user: tempUser, token };
   }
 
-  async register(request: RegisterRequestDTO): Promise<{ user: User; token: string }> {
+  async register(request: RegisterRequestDTO): Promise<RegisterResponseDTO> {
     console.log('📝 [MockAuth] Registration attempt:', {
       email: request.email,
       role: request.accountType,
@@ -252,15 +253,16 @@ export class MockAuthAdapter implements AuthPort, AuthProvider {
     user.acceptTerms();
     
     this.currentUser = user;
-    
-    // Generate token
-    const token = this.generateToken(userId);
-    localStorage.setItem('accessToken', token);
 
     // Simulate email verification sending
     this.simulateEmailVerificationSend(request.email, request.firstName);
 
-    return { user, token };
+    return {
+      email: storedUser.email,
+      userId,
+      message: 'Verification email sent',
+      verificationToken: `verify-${Date.now()}`,
+    };
   }
 
   private simulateEmailVerificationSend(email: string, firstName: string): void {

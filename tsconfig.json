@@ -30,6 +30,9 @@
       "@infrastructure/*": ["./src/infrastructure/*"],
       "@presentation/*": ["./src/presentation/*"],
       "@shared/*": ["./src/shared/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@layouts/*": ["./src/layouts/*"],
+      "@router/*": ["./src/router/*"],
       "@components/*": ["./src/app/components/*"]
     }
   },

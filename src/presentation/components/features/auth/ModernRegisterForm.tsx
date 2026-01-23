@@ -3,7 +3,6 @@ import { Eye, EyeOff, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { useAuth } from '@presentation/contexts/AuthContext';
 import { useFormValidation } from '@presentation/hooks/use-form-validation';
 import { useCSRFToken } from '@presentation/hooks/use-csrf-token';
-import { hashPassword } from '@presentation/utils/password-hash';
 import { AUTH_MESSAGES, getErrorMessage } from '@presentation/utils/auth-messages';
 import { RegisterRequestDTO } from '@application/dto/request/register-request.dto';
 import { UserRole } from '@domain/enums/user-role.enum';
@@ -115,19 +114,11 @@ export function ModernRegisterForm({
     }
 
     try {
-      // Hachage du mot de passe côté client
-      let passwordToSend = password;
-      try {
-        passwordToSend = await hashPassword(password);
-      } catch (hashError) {
-        console.warn('Erreur lors du hachage côté client:', hashError);
-      }
-
       // Préparer les données pour l'inscription
       const registerData: RegisterRequestDTO = {
         email,
-        password: passwordToSend,
-        confirmPassword: passwordToSend, // Backend peut ignorer si password est hashé
+        password,
+        confirmPassword,
         firstName,
         lastName,
         phone: '+33600000000', // Requis par le DTO, valeur par défaut
@@ -136,7 +127,14 @@ export function ModernRegisterForm({
       };
 
       const response = await authRegister(registerData);
-      toast.success(`Bienvenue ${firstName} ! Votre compte a été créé avec succès.`);
+      if (response.verificationToken) {
+        sessionStorage.setItem('email_verification_token', response.verificationToken);
+      }
+      sessionStorage.setItem('pending_verification_email', response.email);
+
+      toast.success('Compte créé. Vérifiez votre email.', {
+        description: "Un lien de vérification a été envoyé. En dev, utilisez le token pour vérifier.",
+      });
       onSuccess();
     } catch (error) {
       const errorMessage = getErrorMessage(error);

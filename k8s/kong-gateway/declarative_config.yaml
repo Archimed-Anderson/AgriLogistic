@@ -1,0 +1,687 @@
+_format_version: "3.0"
+_transform: true
+
+# ============================================================
+# AgroLogistic 2.0 - Kong Gateway Declarative Configuration
+# ============================================================
+
+# Global Plugins
+plugins:
+  - name: prometheus
+    config:
+      per_consumer: true
+      status_code_metrics: true
+      latency_metrics: true
+      bandwidth_metrics: true
+      upstream_health_metrics: true
+
+  - name: correlation-id
+    config:
+      header_name: X-Correlation-ID
+      generator: uuid
+      echo_downstream: true
+
+  - name: request-transformer
+    config:
+      add:
+        headers:
+          - X-Gateway-Version:1.0.0
+          - X-Platform:AgroLogistic
+        
+  - name: response-transformer
+    config:
+      add:
+        headers:
+          - X-Response-Time:$upstream_response_time
+          - X-Kong-Proxy-Latency:$kong_proxy_latency
+
+# ============================================================
+# Service Definitions
+# ============================================================
+
+services:
+  # -------------------- Auth Service --------------------
+  - name: auth-service
+    url: http://auth-service.agrologistic-services.svc.cluster.local:3001
+    retries: 3
+    connect_timeout: 60000
+    write_timeout: 60000
+    read_timeout: 60000
+    tags:
+      - auth
+      - critical
+    routes:
+      - name: auth-login
+        methods:
+          - POST
+        paths:
+          - /api/v1/auth/login
+        strip_path: false
+        preserve_host: false
+        
+      - name: auth-register
+        methods:
+          - POST
+        paths:
+          - /api/v1/auth/register
+        strip_path: false
+        
+      - name: auth-refresh
+        methods:
+          - POST
+        paths:
+          - /api/v1/auth/refresh
+        strip_path: false
+        
+      - name: auth-logout
+        methods:
+          - POST
+        paths:
+          - /api/v1/auth/logout
+        strip_path: false
+        
+      - name: auth-oauth
+        methods:
+          - GET
+          - POST
+        paths:
+          - /api/v1/auth/oauth
+        strip_path: false
+        
+    plugins:
+      - name: rate-limiting
+        config:
+          second: 5
+          minute: 100
+          hour: 1000
+          policy: local
+          fault_tolerant: true
+          hide_client_headers: false
+          
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+          headers:
+            - Authorization
+            - Content-Type
+            - X-Correlation-ID
+          exposed_headers:
+            - X-Auth-Token
+            - X-Request-ID
+          credentials: true
+          max_age: 3600
+
+  # -------------------- User Service --------------------
+  - name: user-service
+    url: http://user-service.agrologistic-services.svc.cluster.local:3002
+    retries: 3
+    tags:
+      - user
+      - profile
+    routes:
+      - name: user-profile
+        methods:
+          - GET
+          - PUT
+          - PATCH
+        paths:
+          - /api/v1/users/profile
+        strip_path: false
+        
+      - name: user-list
+        methods:
+          - GET
+        paths:
+          - /api/v1/users
+        strip_path: false
+        
+      - name: user-detail
+        methods:
+          - GET
+          - PUT
+          - DELETE
+        paths:
+          - /api/v1/users/~/[0-9a-f-]+
+        strip_path: false
+        
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+          secret_is_base64: false
+          claims_to_verify:
+            - exp
+          maximum_expiration: 86400
+          
+      - name: rate-limiting
+        config:
+          minute: 200
+          hour: 5000
+          policy: local
+
+  # -------------------- Marketplace Service --------------------
+  - name: marketplace-service
+    url: http://marketplace-service.agrologistic-services.svc.cluster.local:3003
+    retries: 3
+    tags:
+      - marketplace
+      - ecommerce
+    routes:
+      - name: products-list
+        methods:
+          - GET
+        paths:
+          - /api/v1/marketplace/products
+        strip_path: false
+        
+      - name: product-detail
+        methods:
+          - GET
+        paths:
+          - /api/v1/marketplace/products/~/[0-9a-f-]+
+        strip_path: false
+        
+      - name: product-search
+        methods:
+          - POST
+        paths:
+          - /api/v1/marketplace/search
+        strip_path: false
+        
+      - name: cart-operations
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+        paths:
+          - /api/v1/marketplace/cart
+        strip_path: false
+        
+      - name: order-create
+        methods:
+          - POST
+        paths:
+          - /api/v1/marketplace/orders
+        strip_path: false
+        
+      - name: order-list
+        methods:
+          - GET
+        paths:
+          - /api/v1/marketplace/orders
+        strip_path: false
+        
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+          
+      - name: rate-limiting
+        config:
+          minute: 300
+          hour: 10000
+          policy: local
+          
+      - name: proxy-cache
+        config:
+          strategy: memory
+          content_type:
+            - application/json
+          cache_ttl: 300
+          cache_control: true
+
+  # -------------------- Payment Service --------------------
+  - name: payment-service
+    url: http://payment-service.agrologistic-services.svc.cluster.local:3004
+    retries: 5
+    tags:
+      - payment
+      - critical
+      - financial
+    routes:
+      - name: payment-create
+        methods:
+          - POST
+        paths:
+          - /api/v1/payments
+        strip_path: false
+        
+      - name: payment-status
+        methods:
+          - GET
+        paths:
+          - /api/v1/payments/~/[0-9a-f-]+
+        strip_path: false
+        
+      - name: payment-webhook
+        methods:
+          - POST
+        paths:
+          - /api/v1/payments/webhooks
+        strip_path: false
+        
+      - name: refund-create
+        methods:
+          - POST
+        paths:
+          - /api/v1/payments/~/[0-9a-f-]+/refund
+        strip_path: false
+        
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+          
+      - name: rate-limiting
+        config:
+          minute: 50
+          hour: 500
+          policy: local
+          
+      - name: ip-restriction
+        config:
+          allow:
+            - 0.0.0.0/0  # Update with actual IP whitelist for webhooks
+
+  # -------------------- Logistic Service --------------------
+  - name: logistic-service
+    url: http://logistic-service.agrologistic-services.svc.cluster.local:3005
+    retries: 3
+    tags:
+      - logistics
+      - shipping
+    routes:
+      - name: shipment-track
+        methods:
+          - GET
+        paths:
+          - /api/v1/logistics/shipments/~/[0-9a-f-]+/track
+        strip_path: false
+        
+      - name: shipment-create
+        methods:
+          - POST
+        paths:
+          - /api/v1/logistics/shipments
+        strip_path: false
+        
+      - name: calculate-shipping
+        methods:
+          - POST
+        paths:
+          - /api/v1/logistics/calculate
+        strip_path: false
+        
+      - name: driver-location
+        methods:
+          - GET
+          - PUT
+        paths:
+          - /api/v1/logistics/drivers/~/[0-9a-f-]+/location
+        strip_path: false
+        
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+          
+      - name: rate-limiting
+        config:
+          second: 10
+          minute: 300
+          hour: 10000
+          policy: local
+
+  # -------------------- Rental Service --------------------
+  - name: rental-service
+    url: http://rental-service.agrologistic-services.svc.cluster.local:3006
+    retries: 3
+    tags:
+      - rental
+      - equipment
+    routes:
+      - name: equipment-list
+        methods:
+          - GET
+        paths:
+          - /api/v1/rentals/equipment
+        strip_path: false
+        
+      - name: rental-booking
+        methods:
+          - POST
+        paths:
+          - /api/v1/rentals/bookings
+        strip_path: false
+        
+      - name: rental-status
+        methods:
+          - GET
+          - PUT
+        paths:
+          - /api/v1/rentals/bookings/~/[0-9a-f-]+
+        strip_path: false
+        
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+          
+      - name: rate-limiting
+        config:
+          minute: 150
+          hour: 3000
+          policy: local
+
+  # -------------------- Notification Service --------------------
+  - name: notification-service
+    url: http://notification-service.agrologistic-services.svc.cluster.local:3007
+    retries: 3
+    tags:
+      - notification
+      - messaging
+    routes:
+      - name: notification-send
+        methods:
+          - POST
+        paths:
+          - /api/v1/notifications
+        strip_path: false
+        
+      - name: notification-templates
+        methods:
+          - GET
+        paths:
+          - /api/v1/notifications/templates
+        strip_path: false
+        
+      - name: notification-history
+        methods:
+          - GET
+        paths:
+          - /api/v1/notifications/history
+        strip_path: false
+        
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+          
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 2000
+          policy: local
+
+  # -------------------- AI Service --------------------
+  - name: ai-service
+    url: http://ai-service.agrologistic-services.svc.cluster.local:3008
+    retries: 3
+    connect_timeout: 120000
+    write_timeout: 120000
+    read_timeout: 120000
+    tags:
+      - ai
+      - ml
+      - analytics
+    routes:
+      - name: ai-recommendations
+        methods:
+          - POST
+        paths:
+          - /api/v1/ai/recommendations
+        strip_path: false
+        
+      - name: ai-crop-analysis
+        methods:
+          - POST
+        paths:
+          - /api/v1/ai/crop-analysis
+        strip_path: false
+        
+      - name: ai-disease-detection
+        methods:
+          - POST
+        paths:
+          - /api/v1/ai/disease-detection
+        strip_path: false
+        
+      - name: ai-price-forecast
+        methods:
+          - POST
+        paths:
+          - /api/v1/ai/price-forecast
+        strip_path: false
+        
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+          
+      - name: rate-limiting
+        config:
+          minute: 30
+          hour: 500
+          policy: local
+          
+      - name: request-size-limiting
+        config:
+          allowed_payload_size: 10  # 10 MB for image uploads
+
+  # -------------------- Blockchain Service --------------------
+  - name: blockchain-service
+    url: http://blockchain-service.agrologistic-services.svc.cluster.local:3009
+    retries: 5
+    connect_timeout: 90000
+    tags:
+      - blockchain
+      - traceability
+    routes:
+      - name: blockchain-trace
+        methods:
+          - GET
+        paths:
+          - /api/v1/blockchain/trace/~/[0-9a-f-]+
+        strip_path: false
+        
+      - name: blockchain-record
+        methods:
+          - POST
+        paths:
+          - /api/v1/blockchain/events
+        strip_path: false
+        
+      - name: blockchain-verify
+        methods:
+          - POST
+        paths:
+          - /api/v1/blockchain/verify
+        strip_path: false
+        
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+          
+      - name: rate-limiting
+        config:
+          minute: 50
+          hour: 1000
+          policy: local
+
+  # -------------------- Inventory Service --------------------
+  - name: inventory-service
+    url: http://inventory-service.agrologistic-services.svc.cluster.local:3010
+    retries: 3
+    tags:
+      - inventory
+      - stock
+    routes:
+      - name: inventory-status
+        methods:
+          - GET
+        paths:
+          - /api/v1/inventory
+        strip_path: false
+        
+      - name: inventory-update
+        methods:
+          - PUT
+          - PATCH
+        paths:
+          - /api/v1/inventory/~/[0-9a-f-]+
+        strip_path: false
+        
+      - name: inventory-reserve
+        methods:
+          - POST
+        paths:
+          - /api/v1/inventory/reserve
+        strip_path: false
+        
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+          
+      - name: rate-limiting
+        config:
+          minute: 200
+          hour: 5000
+          policy: local
+
+  # -------------------- Analytics Service --------------------
+  - name: analytics-service
+    url: http://analytics-service.agrologistic-services.svc.cluster.local:3011
+    retries: 3
+    connect_timeout: 90000
+    read_timeout: 90000
+    tags:
+      - analytics
+      - reporting
+    routes:
+      - name: analytics-dashboard
+        methods:
+          - GET
+        paths:
+          - /api/v1/analytics/dashboard
+        strip_path: false
+        
+      - name: analytics-reports
+        methods:
+          - GET
+          - POST
+        paths:
+          - /api/v1/analytics/reports
+        strip_path: false
+        
+      - name: analytics-export
+        methods:
+          - POST
+        paths:
+          - /api/v1/analytics/export
+        strip_path: false
+        
+      - name: analytics-real-time
+        methods:
+          - GET
+        paths:
+          - /api/v1/analytics/realtime
+        strip_path: false
+        
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+          
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 2000
+          policy: local
+          
+      - name: proxy-cache
+        config:
+          strategy: memory
+          content_type:
+            - application/json
+          cache_ttl: 60
+          cache_control: true
+
+# ============================================================
+# Consumers (JWT Secrets)
+# ============================================================
+
+consumers:
+  - username: agrologistic-web-app
+    custom_id: web-client-v1
+    tags:
+      - web
+      - spa
+    jwt_secrets:
+      - key: agrologistic-jwt-key
+        algorithm: HS256
+        secret: ${JWT_SECRET}  # Will be replaced via environment variable
+        
+  - username: agrologistic-mobile-app
+    custom_id: mobile-client-v1
+    tags:
+      - mobile
+      - ios
+      - android
+    jwt_secrets:
+      - key: agrologistic-mobile-jwt-key
+        algorithm: HS256
+        secret: ${JWT_MOBILE_SECRET}
+
+  - username: agrologistic-admin
+    custom_id: admin-client
+    tags:
+      - admin
+      - privileged
+    jwt_secrets:
+      - key: agrologistic-admin-jwt-key
+        algorithm: HS256
+        secret: ${JWT_ADMIN_SECRET}
+
+# ============================================================
+# Upstreams (Load Balancing Configuration)
+# ============================================================
+
+upstreams:
+  - name: marketplace-upstream
+    algorithm: round-robin
+    hash_on: none
+    hash_fallback: none
+    healthchecks:
+      active:
+        type: http
+        http_path: /health
+        timeout: 10
+        concurrency: 10
+        healthy:
+          interval: 10
+          successes: 2
+          http_statuses:
+            - 200
+            - 302
+        unhealthy:
+          interval: 5
+          http_failures: 3
+          tcp_failures: 3
+          timeouts: 3
+          http_statuses:
+            - 429
+            - 500
+            - 503
+    targets:
+      - target: marketplace-service.agrologistic-services.svc.cluster.local:3003
+        weight: 100

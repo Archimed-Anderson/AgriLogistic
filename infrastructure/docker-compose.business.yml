@@ -1,0 +1,558 @@
+version: "3.8"
+
+services:
+  # -------------------------
+  # Product Service (8002)
+  # -------------------------
+  product-db:
+    image: postgres:15-alpine
+    container_name: product-db
+    environment:
+      POSTGRES_DB: ${PRODUCT_DB_NAME:-AgroLogistic_products}
+      POSTGRES_USER: ${PRODUCT_DB_USER:-AgroLogistic}
+      POSTGRES_PASSWORD: ${PRODUCT_DB_PASSWORD:-AgroLogistic_password}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - product-db-data:/var/lib/postgresql/data
+      - ../services/product-service/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - agrologistic-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PRODUCT_DB_USER:-AgroLogistic}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  product-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: product-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - product-elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - agrologistic-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    restart: unless-stopped
+
+  product-service:
+    build:
+      context: ../services/product-service
+      dockerfile: Dockerfile
+    container_name: product-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 8002
+      DB_HOST: product-db
+      DB_PORT: 5432
+      DB_NAME: ${PRODUCT_DB_NAME:-AgroLogistic_products}
+      DB_USER: ${PRODUCT_DB_USER:-AgroLogistic}
+      DB_PASSWORD: ${PRODUCT_DB_PASSWORD:-AgroLogistic_password}
+      ELASTICSEARCH_URL: http://product-elasticsearch:9200
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+    depends_on:
+      product-db:
+        condition: service_healthy
+      product-elasticsearch:
+        condition: service_healthy
+    networks:
+      - agrologistic-network
+    restart: unless-stopped
+
+  # -------------------------
+  # Order Service (8003)
+  # -------------------------
+  order-db:
+    image: postgres:15-alpine
+    container_name: order-db
+    environment:
+      POSTGRES_DB: ${ORDER_DB_NAME:-AgroLogistic_orders}
+      POSTGRES_USER: ${ORDER_DB_USER:-AgroLogistic}
+      POSTGRES_PASSWORD: ${ORDER_DB_PASSWORD:-AgroLogistic_password}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - order-db-data:/var/lib/postgresql/data
+      - ../services/order-service/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - agrologistic-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${ORDER_DB_USER:-AgroLogistic}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  order-redis:
+    image: redis:7-alpine
+    container_name: order-redis
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-redis_secure_2026}"]
+    volumes:
+      - order-redis-data:/data
+    networks:
+      - agrologistic-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis_secure_2026}", "PING"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  order-service:
+    build:
+      context: ../services/order-service
+      dockerfile: Dockerfile
+    container_name: order-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 8003
+      DB_HOST: order-db
+      DB_PORT: 5432
+      DB_NAME: ${ORDER_DB_NAME:-AgroLogistic_orders}
+      DB_USER: ${ORDER_DB_USER:-AgroLogistic}
+      DB_PASSWORD: ${ORDER_DB_PASSWORD:-AgroLogistic_password}
+      REDIS_HOST: order-redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_secure_2026}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+    depends_on:
+      order-db:
+        condition: service_healthy
+      order-redis:
+        condition: service_healthy
+    networks:
+      - agrologistic-network
+    restart: unless-stopped
+
+  # -------------------------
+  # Logistics Service (8004) -> delivery-service as facade
+  # -------------------------
+  logistics-db:
+    image: postgres:15-alpine
+    container_name: logistics-db
+    environment:
+      POSTGRES_DB: ${LOGISTICS_DB_NAME:-AgroLogistic_logistics}
+      POSTGRES_USER: ${LOGISTICS_DB_USER:-AgroLogistic}
+      POSTGRES_PASSWORD: ${LOGISTICS_DB_PASSWORD:-AgroLogistic_password}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - logistics-db-data:/var/lib/postgresql/data
+      - ../services/delivery-service/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - agrologistic-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${LOGISTICS_DB_USER:-AgroLogistic}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  logistics-redis:
+    image: redis:7-alpine
+    container_name: logistics-redis
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-redis_secure_2026}"]
+    volumes:
+      - logistics-redis-data:/data
+    networks:
+      - agrologistic-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis_secure_2026}", "PING"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  logistics-service:
+    build:
+      context: ../services/delivery-service
+      dockerfile: Dockerfile
+    container_name: logistics-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 8004
+      DB_HOST: logistics-db
+      DB_PORT: 5432
+      DB_NAME: ${LOGISTICS_DB_NAME:-AgroLogistic_logistics}
+      DB_USER: ${LOGISTICS_DB_USER:-AgroLogistic}
+      DB_PASSWORD: ${LOGISTICS_DB_PASSWORD:-AgroLogistic_password}
+      REDIS_HOST: logistics-redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_secure_2026}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+    depends_on:
+      logistics-db:
+        condition: service_healthy
+      logistics-redis:
+        condition: service_healthy
+    networks:
+      - agrologistic-network
+    restart: unless-stopped
+
+  # -------------------------
+  # Payment Service (8005)
+  # -------------------------
+  payment-db:
+    image: postgres:15-alpine
+    container_name: payment-db
+    environment:
+      POSTGRES_DB: ${PAYMENT_DB_NAME:-AgroLogistic_payments}
+      POSTGRES_USER: ${PAYMENT_DB_USER:-AgroLogistic}
+      POSTGRES_PASSWORD: ${PAYMENT_DB_PASSWORD:-AgroLogistic_password}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - payment-db-data:/var/lib/postgresql/data
+      - ../services/payment-service/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - agrologistic-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PAYMENT_DB_USER:-AgroLogistic}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  payment-service:
+    build:
+      context: ../services/payment-service
+      dockerfile: Dockerfile
+    container_name: payment-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 8005
+      DB_HOST: payment-db
+      DB_PORT: 5432
+      DB_NAME: ${PAYMENT_DB_NAME:-AgroLogistic_payments}
+      DB_USER: ${PAYMENT_DB_USER:-AgroLogistic}
+      DB_PASSWORD: ${PAYMENT_DB_PASSWORD:-AgroLogistic_password}
+      ORDER_SERVICE_URL: http://order-service:8003
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+    depends_on:
+      payment-db:
+        condition: service_healthy
+      order-service:
+        condition: service_started
+    networks:
+      - agrologistic-network
+    restart: unless-stopped
+
+  # -------------------------
+  # Notification Service (8006)
+  # -------------------------
+  notification-db:
+    image: postgres:15-alpine
+    container_name: notification-db
+    environment:
+      POSTGRES_DB: ${NOTIFICATION_DB_NAME:-AgroLogistic_notifications}
+      POSTGRES_USER: ${NOTIFICATION_DB_USER:-AgroLogistic}
+      POSTGRES_PASSWORD: ${NOTIFICATION_DB_PASSWORD:-AgroLogistic_password}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - notification-db-data:/var/lib/postgresql/data
+      - ../services/notification-service/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - agrologistic-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${NOTIFICATION_DB_USER:-AgroLogistic}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  notification-redis:
+    image: redis:7-alpine
+    container_name: notification-redis
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-redis_secure_2026}"]
+    volumes:
+      - notification-redis-data:/data
+    networks:
+      - agrologistic-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis_secure_2026}", "PING"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  notification-service:
+    build:
+      context: ../services/notification-service
+      dockerfile: Dockerfile
+    container_name: notification-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 8006
+      DB_HOST: notification-db
+      DB_PORT: 5432
+      DB_NAME: ${NOTIFICATION_DB_NAME:-AgroLogistic_notifications}
+      DB_USER: ${NOTIFICATION_DB_USER:-AgroLogistic}
+      DB_PASSWORD: ${NOTIFICATION_DB_PASSWORD:-AgroLogistic_password}
+      REDIS_HOST: notification-redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_secure_2026}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+    depends_on:
+      notification-db:
+        condition: service_healthy
+      notification-redis:
+        condition: service_healthy
+    networks:
+      - agrologistic-network
+    restart: unless-stopped
+
+  # -------------------------
+  # Analytics Service (8007)
+  # -------------------------
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.3
+    container_name: clickhouse
+    environment:
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB:-agrologistic_analytics}
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-default}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-}
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+    networks:
+      - agrologistic-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8123/ping | grep -q Ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  analytics-redis:
+    image: redis:7-alpine
+    container_name: analytics-redis
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-redis_secure_2026}"]
+    volumes:
+      - analytics-redis-data:/data
+    networks:
+      - agrologistic-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis_secure_2026}", "PING"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  analytics-service:
+    build:
+      context: ../services/analytics-service
+      dockerfile: Dockerfile
+    container_name: analytics-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 8007
+      CLICKHOUSE_URL: http://clickhouse:8123
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB:-agrologistic_analytics}
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-default}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-}
+      REDIS_HOST: analytics-redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_secure_2026}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+      analytics-redis:
+        condition: service_healthy
+    networks:
+      - agrologistic-network
+    restart: unless-stopped
+
+  # -------------------------
+  # AI Service (8008)
+  # -------------------------
+  ai-db:
+    image: postgres:15-alpine
+    container_name: ai-db
+    environment:
+      POSTGRES_DB: ${AI_DB_NAME:-AgroLogistic_ai}
+      POSTGRES_USER: ${AI_DB_USER:-AgroLogistic}
+      POSTGRES_PASSWORD: ${AI_DB_PASSWORD:-AgroLogistic_password}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - ai-db-data:/var/lib/postgresql/data
+      - ../services/ai-service/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - agrologistic-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${AI_DB_USER:-AgroLogistic}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  ai-redis:
+    image: redis:7-alpine
+    container_name: ai-redis
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-redis_secure_2026}"]
+    volumes:
+      - ai-redis-data:/data
+    networks:
+      - agrologistic-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis_secure_2026}", "PING"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  ai-service:
+    build:
+      context: ../services/ai-service
+      dockerfile: Dockerfile
+    container_name: ai-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 8008
+      DB_HOST: ai-db
+      DB_PORT: 5432
+      DB_NAME: ${AI_DB_NAME:-AgroLogistic_ai}
+      DB_USER: ${AI_DB_USER:-AgroLogistic}
+      DB_PASSWORD: ${AI_DB_PASSWORD:-AgroLogistic_password}
+      REDIS_HOST: ai-redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_secure_2026}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+    depends_on:
+      ai-db:
+        condition: service_healthy
+      ai-redis:
+        condition: service_healthy
+    networks:
+      - agrologistic-network
+    restart: unless-stopped
+
+  # -------------------------
+  # Blockchain Service (8009)
+  # -------------------------
+  blockchain-service:
+    build:
+      context: ../services/blockchain-service
+      dockerfile: Dockerfile
+    container_name: blockchain-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 8009
+      FABRIC_ENABLED: "false"
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+    networks:
+      - agrologistic-network
+    restart: unless-stopped
+
+  # -------------------------
+  # Inventory Service (8010)
+  # -------------------------
+  inventory-db:
+    image: postgres:15-alpine
+    container_name: inventory-db
+    environment:
+      POSTGRES_DB: ${INVENTORY_DB_NAME:-AgroLogistic_inventory}
+      POSTGRES_USER: ${INVENTORY_DB_USER:-AgroLogistic}
+      POSTGRES_PASSWORD: ${INVENTORY_DB_PASSWORD:-AgroLogistic_password}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - inventory-db-data:/var/lib/postgresql/data
+      - ../services/inventory-service/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - agrologistic-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${INVENTORY_DB_USER:-AgroLogistic}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  inventory-service:
+    build:
+      context: ../services/inventory-service
+      dockerfile: Dockerfile
+    container_name: inventory-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 8010
+      DB_HOST: inventory-db
+      DB_PORT: 5432
+      DB_NAME: ${INVENTORY_DB_NAME:-AgroLogistic_inventory}
+      DB_USER: ${INVENTORY_DB_USER:-AgroLogistic}
+      DB_PASSWORD: ${INVENTORY_DB_PASSWORD:-AgroLogistic_password}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+    depends_on:
+      inventory-db:
+        condition: service_healthy
+    networks:
+      - agrologistic-network
+    restart: unless-stopped
+
+  # -------------------------
+  # User Service (8011)
+  # -------------------------
+  user-db:
+    image: postgres:15-alpine
+    container_name: user-db
+    environment:
+      POSTGRES_DB: ${USER_DB_NAME:-AgroLogistic_users}
+      POSTGRES_USER: ${USER_DB_USER:-AgroLogistic}
+      POSTGRES_PASSWORD: ${USER_DB_PASSWORD:-AgroLogistic_password}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+      - ../services/user-service/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - agrologistic-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${USER_DB_USER:-AgroLogistic}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  user-service:
+    build:
+      context: ../services/user-service
+      dockerfile: Dockerfile
+    container_name: user-service
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 8011
+      DB_HOST: user-db
+      DB_PORT: 5432
+      DB_NAME: ${USER_DB_NAME:-AgroLogistic_users}
+      DB_USER: ${USER_DB_USER:-AgroLogistic}
+      DB_PASSWORD: ${USER_DB_PASSWORD:-AgroLogistic_password}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+    depends_on:
+      user-db:
+        condition: service_healthy
+    networks:
+      - agrologistic-network
+    restart: unless-stopped
+
+volumes:
+  product-db-data:
+  product-elasticsearch-data:
+  order-db-data:
+  order-redis-data:
+  logistics-db-data:
+  logistics-redis-data:
+  payment-db-data:
+  notification-db-data:
+  notification-redis-data:
+  clickhouse-data:
+  analytics-redis-data:
+  ai-db-data:
+  ai-redis-data:
+  inventory-db-data:
+  user-db-data:
+
+networks:
+  agrologistic-network:
+    external: true
+

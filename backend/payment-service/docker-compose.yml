@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  payment-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agrologistic-payment-service
+    ports:
+      - "5010:5010"
+    environment:
+      - DATABASE_URL=postgresql://payment:payment@payment-db:5432/payment_db
+      - REDIS_URL=redis://payment-redis:6379/1
+      - CELERY_BROKER_URL=amqp://rabbitmq:5672
+    depends_on:
+      - payment-db
+      - payment-redis
+      - rabbitmq
+    volumes:
+      - ./app:/app/app
+    networks:
+      - payment-network
+      - agrologistic-network
+
+  payment-db:
+    image: postgres:15-alpine
+    container_name: payment-postgres
+    ports:
+      - "5440:5432"
+    environment:
+      POSTGRES_USER: payment
+      POSTGRES_PASSWORD: payment
+      POSTGRES_DB: payment_db
+    volumes:
+      - payment-db-data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+    networks:
+      - payment-network
+
+  payment-redis:
+    image: redis:7-alpine
+    container_name: payment-redis
+    ports:
+      - "6390:6379"
+    networks:
+      - payment-network
+
+  payment-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: payment-celery-worker
+    command: celery -A app.workers.celery_app worker --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql://payment:payment@payment-db:5432/payment_db
+      - REDIS_URL=redis://payment-redis:6379/1
+      - CELERY_BROKER_URL=amqp://rabbitmq:5672
+    depends_on:
+      - payment-db
+      - payment-redis
+      - rabbitmq
+    networks:
+      - payment-network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: payment-rabbitmq
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    networks:
+      - payment-network
+
+volumes:
+  payment-db-data:
+
+networks:
+  payment-network:
+    driver: bridge
+  agrologistic-network:
+    external: true

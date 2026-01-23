@@ -1,0 +1,260 @@
+# Dashboard Admin - Guide de Démarrage Rapide
+
+## 🚀 Démarrage
+
+### Prérequis
+- Node.js 20+
+- Docker Desktop (pour les services backend)
+- npm 9+
+
+### Installation
+
+1. **Installer les dépendances**
+```bash
+cd AgroDeep
+npm install
+```
+
+2. **Démarrer les services backend** (optionnel pour développement frontend)
+```bash
+# Démarrer Kong + Auth Service + Microservices
+cd infrastructure
+docker compose --env-file env.kong.local -f docker-compose.kong.yml up -d
+cd ../backend/auth-service
+docker compose -f docker-compose.auth.yml up -d
+```
+
+3. **Démarrer le frontend**
+```bash
+cd AgroDeep
+npm run dev
+```
+
+4. **Accéder au dashboard admin**
+- URL: `http://localhost:5173/admin`
+- Login avec un compte admin (à créer via auth-service)
+
+## 📁 Structure du Code Admin
+
+```
+src/
+├── domain/admin/
+│   ├── permissions.ts              # Système de permissions
+│   └── entities/
+│       ├── admin-user.entity.ts    # Entité utilisateur admin
+│       └── audit-log.entity.ts     # Entité logs d'audit
+│
+├── router/guards/
+│   ├── RequirePermission.tsx       # Guard par permission
+│   └── RequireAdminRole.tsx        # Guard par rôle
+│
+├── app/(admin)/
+│   ├── layout.tsx                  # Layout admin principal
+│   ├── page.tsx                    # Redirect vers dashboard
+│   └── dashboard/
+│       └── page.tsx                # Page dashboard
+│
+└── presentation/components/admin/
+    └── layout/
+        ├── AdminSidebar.tsx        # Sidebar navigation
+        └── AdminHeader.tsx         # Header avec search/notifs
+```
+
+## 🔐 Système de Permissions
+
+### Rôles Disponibles
+
+- **SUPER_ADMIN** (Niveau 3) : Accès complet
+- **ADMIN** (Niveau 2) : Gestion complète sauf système critique
+- **MANAGER** (Niveau 1) : Gestion opérationnelle
+- **SUPPORT** (Niveau 0) : Lecture seule + support client
+
+### Utilisation des Guards
+
+```typescript
+// Protéger une route par permission
+<Route
+  path="/admin/users"
+  element={
+    <RequirePermission permission={AdminPermission.USERS_VIEW}>
+      <UsersPage />
+    </RequirePermission>
+  }
+/>
+
+// Protéger une route par rôle minimum
+<Route
+  path="/admin/system"
+  element={
+    <RequireAdminRole minRole={AdminRole.ADMIN}>
+      <SystemPage />
+    </RequireAdminRole>
+  }
+/>
+```
+
+### Vérifier les Permissions dans les Composants
+
+```typescript
+import { hasPermission, AdminPermission } from '@/domain/admin/permissions';
+import { useAuth } from '@/hooks/useAuth';
+
+function MyComponent() {
+  const { user } = useAuth();
+  
+  const canEdit = user?.adminRole && 
+    hasPermission(user.adminRole, AdminPermission.USERS_EDIT);
+  
+  return (
+    <div>
+      {canEdit && <EditButton />}
+    </div>
+  );
+}
+```
+
+## 🎨 Composants UI
+
+### Utiliser le Sidebar
+
+Le sidebar filtre automatiquement les items selon les permissions de l'utilisateur.
+
+```typescript
+// Dans AdminSidebar.tsx
+const navItems: NavItem[] = [
+  {
+    label: 'Utilisateurs',
+    href: '/admin/users',
+    icon: Users,
+    permission: AdminPermission.USERS_VIEW, // Optionnel
+  },
+];
+```
+
+### Dark Mode
+
+Le toggle dark mode est dans le header. Il utilise l'attribut `data-theme` sur `<html>`.
+
+```typescript
+// Toggle programmatiquement
+document.documentElement.setAttribute('data-theme', 'dark');
+```
+
+## 🔧 Développement
+
+### Ajouter une Nouvelle Page Admin
+
+1. **Créer la page**
+```bash
+# Créer le fichier
+touch src/app/\(admin\)/ma-page/page.tsx
+```
+
+2. **Implémenter le composant**
+```typescript
+export default function MaPage() {
+  return (
+    <div>
+      <h1>Ma Page Admin</h1>
+    </div>
+  );
+}
+```
+
+3. **Ajouter au routing** (si nécessaire)
+```typescript
+// Dans AppRoutes.tsx
+<Route path="/admin/ma-page" element={<MaPage />} />
+```
+
+4. **Ajouter au sidebar** (optionnel)
+```typescript
+// Dans AdminSidebar.tsx
+{
+  label: 'Ma Page',
+  href: '/admin/ma-page',
+  icon: MonIcon,
+  permission: AdminPermission.MA_PERMISSION,
+}
+```
+
+### Ajouter une Nouvelle Permission
+
+1. **Ajouter l'enum**
+```typescript
+// Dans src/domain/admin/permissions.ts
+export enum AdminPermission {
+  // ...
+  MA_NOUVELLE_PERMISSION = 'module:action',
+}
+```
+
+2. **Ajouter aux rôles**
+```typescript
+export const ROLE_PERMISSIONS: Record<AdminRole, AdminPermission[]> = {
+  [AdminRole.ADMIN]: [
+    // ...
+    AdminPermission.MA_NOUVELLE_PERMISSION,
+  ],
+};
+```
+
+## 🧪 Tests
+
+```bash
+# Tests unitaires
+npm run test
+
+# Tests E2E
+npm run test:e2e
+
+# Tests avec couverture
+npm run test:coverage
+```
+
+## 📚 Documentation Complète
+
+- [Plan d'implémentation](./brain/implementation_plan.md)
+- [Matrice de permissions](./brain/permissions_matrix.md)
+- [Architecture des composants](./brain/component_architecture.md)
+- [Spécifications UI](./brain/ui_specifications.md)
+
+## 🐛 Troubleshooting
+
+### Le dashboard admin ne s'affiche pas
+
+1. Vérifier que l'utilisateur a un rôle admin dans le JWT
+2. Vérifier les guards dans la console du navigateur
+3. Vérifier que les routes sont bien configurées
+
+### Les permissions ne fonctionnent pas
+
+1. Vérifier que `user.adminRole` est défini
+2. Vérifier que la permission existe dans l'enum
+3. Vérifier que le rôle a bien la permission dans `ROLE_PERMISSIONS`
+
+### Erreurs TypeScript
+
+```bash
+# Vérifier les types
+npm run typecheck
+
+# Nettoyer et réinstaller
+npm run clean
+rm -rf node_modules
+npm install
+```
+
+## 🤝 Contribution
+
+1. Créer une branche : `git checkout -b feature/ma-feature`
+2. Développer et tester
+3. Valider : `npm run validate:full`
+4. Commit : `git commit -m "feat: ma feature"`
+5. Push : `git push origin feature/ma-feature`
+6. Créer une Pull Request
+
+---
+
+**Version** : 1.0.0  
+**Dernière mise à jour** : 2026-01-22

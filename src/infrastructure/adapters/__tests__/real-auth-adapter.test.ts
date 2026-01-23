@@ -32,20 +32,16 @@ describe('RealAuthAdapter', () => {
 
   describe('login', () => {
     it('should login successfully and store tokens', async () => {
-      const mockResponse = {
-        success: true,
-        token: 'access-token-123',
-        refreshToken: 'refresh-token-123',
-        user: {
-          id: 'user-1',
-          email: 'john@example.com',
-          firstName: 'John',
-          lastName: 'Doe',
-          role: 'buyer',
-        },
-      };
-
-      vi.mocked(apiClient.post).mockResolvedValue(mockResponse);
+      vi.mocked(apiClient.post).mockResolvedValue({
+        access_token: 'access-token-123',
+        refresh_token: 'refresh-token-123',
+        expires_in: 3600,
+      });
+      vi.mocked(apiClient.get).mockResolvedValue({
+        id: 'user-1',
+        email: 'john@example.com',
+        full_name: 'John Doe',
+      });
 
       const result = await adapter.login('john@example.com', 'password123');
 
@@ -53,6 +49,7 @@ describe('RealAuthAdapter', () => {
         email: 'john@example.com',
         password: 'password123',
       });
+      expect(apiClient.get).toHaveBeenCalledWith('/auth/me');
 
       expect(localStorage.setItem).toHaveBeenCalledWith('accessToken', 'access-token-123');
       expect(localStorage.setItem).toHaveBeenCalledWith('refreshToken', 'refresh-token-123');
@@ -85,16 +82,9 @@ describe('RealAuthAdapter', () => {
   describe('register', () => {
     it('should register successfully', async () => {
       const mockResponse = {
-        success: true,
-        token: 'access-token-123',
-        refreshToken: 'refresh-token-123',
-        user: {
-          id: 'user-1',
-          email: 'jane@example.com',
-          firstName: 'Jane',
-          lastName: 'Smith',
-          role: 'buyer',
-        },
+        user_id: 'user-1',
+        message: 'Verification email sent',
+        verification_token: 'verify-token-123',
       };
 
       vi.mocked(apiClient.post).mockResolvedValue(mockResponse);
@@ -112,16 +102,17 @@ describe('RealAuthAdapter', () => {
 
       const result = await adapter.register(registerData);
 
-      expect(apiClient.post).toHaveBeenCalledWith('/auth/register', expect.objectContaining({
-        email: 'jane@example.com',
-        firstName: 'Jane',
-        lastName: 'Smith',
-      }));
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/auth/register',
+        expect.objectContaining({
+          email: 'jane@example.com',
+          full_name: 'Jane Smith',
+        })
+      );
 
-      expect(result.token).toBe('access-token-123');
-      expect(result.user).toBeDefined();
-      expect(result.user.firstName).toBe('Jane');
-      expect(result.user.id).toBe('user-1');
+      expect(result.email).toBe('jane@example.com');
+      expect(result.userId).toBe('user-1');
+      expect(result.verificationToken).toBe('verify-token-123');
     });
   });
 
@@ -153,9 +144,7 @@ describe('RealAuthAdapter', () => {
       const mockResponse = {
         id: 'user-1',
         email: 'john@example.com',
-        firstName: 'John',
-        lastName: 'Doe',
-        role: 'buyer',
+        full_name: 'John Doe',
       };
 
       vi.mocked(apiClient.get).mockResolvedValue(mockResponse);

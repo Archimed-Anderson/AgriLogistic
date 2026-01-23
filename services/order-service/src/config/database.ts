@@ -12,14 +12,11 @@ const pool = new Pool({
 });
 
 export class Database {
-  private static initialized = false;
-
   static async initialize(): Promise<boolean> {
     try {
       const client = await pool.connect();
       await client.query('SELECT 1');
       client.release();
-      this.initialized = true;
       console.log('✅ Database connected successfully');
       return true;
     } catch (error) {

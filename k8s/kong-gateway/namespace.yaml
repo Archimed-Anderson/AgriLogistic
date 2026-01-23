@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: agrologistic-gateway
+  labels:
+    name: agrologistic-gateway
+    environment: production

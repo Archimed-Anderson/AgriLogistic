@@ -1,0 +1,201 @@
+# Kong Gateway Helm Values for AgroLogistic 2.0
+# Deploy Kong as API Gateway with PostgreSQL backend
+
+# Image configuration
+image:
+  repository: kong/kong-gateway
+  tag: "3.5"
+  pullPolicy: IfNotPresent
+
+# Environment variables
+env:
+  # Database configuration
+  database: postgres
+  pg_host: kong-postgresql
+  pg_port: 5432
+  pg_user: kong
+  pg_password:
+    valueFrom:
+      secretKeyRef:
+        name: kong-postgresql
+        key: password
+  pg_database: kong
+  
+  # Proxy configuration
+  proxy_access_log: /dev/stdout
+  admin_access_log: /dev/stdout
+  proxy_error_log: /dev/stderr
+  admin_error_log: /dev/stderr
+  
+  # Admin API
+  admin_listen: 0.0.0.0:8001
+  admin_gui_listen: 0.0.0.0:8002
+  
+  # Proxy listeners
+  proxy_listen: 0.0.0.0:8000, 0.0.0.0:8443 ssl http2
+  
+  # Plugins
+  plugins: bundled,jwt,rate-limiting,cors,request-transformer,response-transformer,prometheus,http-log
+  
+  # Declarative configuration
+  declarative_config: /kong_dbless/kong.yml
+  
+  # Performance tuning
+  nginx_worker_processes: "4"
+  mem_cache_size: 128m
+  
+  # Security
+  ssl_cipher_suite: modern
+  headers: "server_tokens off"
+
+# PostgreSQL configuration
+postgresql:
+  enabled: true
+  auth:
+    username: kong
+    password: kong-password-change-me
+    database: kong
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: standard
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 250m
+    limits:
+      memory: 1Gi
+      cpu: 500m
+
+# Ingress configuration
+proxy:
+  enabled: true
+  type: LoadBalancer
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+  http:
+    enabled: true
+    servicePort: 80
+    containerPort: 8000
+  tls:
+    enabled: true
+    servicePort: 443
+    containerPort: 8443
+    parameters:
+    - http2
+
+# Admin API service
+admin:
+  enabled: true
+  type: ClusterIP
+  http:
+    enabled: true
+    servicePort: 8001
+    containerPort: 8001
+  tls:
+    enabled: false
+
+# Manager UI (Kong Admin GUI)
+manager:
+  enabled: true
+  type: LoadBalancer
+  http:
+    enabled: true
+    servicePort: 8002
+    containerPort: 8002
+
+# Resources
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+
+# Autoscaling
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+# Readiness probe
+readinessProbe:
+  httpGet:
+    path: /status
+    port: 8001
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+
+# Liveness probe  
+livenessProbe:
+  httpGet:
+    path: /status
+    port: 8001
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 5
+
+# Service Monitor for Prometheus
+serviceMonitor:
+  enabled: true
+  interval: 30s
+  namespace: monitoring
+  labels:
+    release: prometheus
+
+# Declarative configuration via ConfigMap
+dblessConfig:
+  configMap: kong-declarative-config
+
+# Pod Security
+podSecurityPolicy:
+  enabled: true
+  spec:
+    privileged: false
+    allowPrivilegeEscalation: false
+    volumes:
+      - 'configMap'
+      - 'secret'
+      - 'emptyDir'
+    runAsUser:
+      rule: 'MustRunAsNonRoot'
+    seLinux:
+      rule: 'RunAsAny'
+    fsGroup:
+      rule: 'RunAsAny'
+
+# Pod annotations
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8100"
+  prometheus.io/path: "/metrics"
+
+# Update strategy
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+
+# Node affinity for production workloads
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - kong
+        topologyKey: kubernetes.io/hostname

@@ -91,6 +91,7 @@ const ADMIN_SECTIONS: MenuSection[] = [
       { icon: Cpu, label: "IoT Hub", route: "/admin/iot" },
       { icon: Brain, label: "AI Insights", route: "/admin/ai-insights" },
       { icon: DollarSign, label: "Finance", route: "/admin/finance" },
+      { icon: FileText, label: "Blog & Évents", route: "/admin/blog" },
       { icon: Zap, label: "Automation", route: "/admin/automation" },
     ],
   },

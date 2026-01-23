@@ -23,6 +23,7 @@ describe('useRegister', () => {
     token: null,
     isAuthenticated: false,
     login: vi.fn(),
+    verifyEmail: vi.fn(),
     logout: vi.fn(),
     getCurrentUser: vi.fn(),
     refreshToken: vi.fn(),
@@ -150,17 +151,11 @@ describe('useRegister', () => {
   });
 
   it('should complete registration successfully', async () => {
-    const mockUser = {
-      id: '1',
-      firstName: 'John',
-      lastName: 'Doe',
-      email: { value: 'john@example.com' },
-      role: 'buyer',
-    } as any;
-
     mockRegister.mockResolvedValue({
-      user: mockUser,
-      token: 'mock-token',
+      email: 'john@example.com',
+      userId: 'user-1',
+      message: 'Verification email sent',
+      verificationToken: 'verify-token-123',
     });
 
     const { result } = renderHook(() => useRegister());

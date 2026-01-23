@@ -23,7 +23,8 @@ export function ResetPasswordPage({ onNavigate }: ResetPasswordPageProps) {
     }
     setIsSubmitting(true);
     try {
-      await apiClient.post('/auth/reset-password', { token: token.trim(), password });
+      // New auth-service: /api/v1/auth/password-reset/confirm
+      await apiClient.post('/auth/password-reset/confirm', { token: token.trim(), new_password: password });
       toast.success('Mot de passe mis à jour. Vous pouvez vous connecter.');
       onNavigate('/auth');
     } catch (err: any) {

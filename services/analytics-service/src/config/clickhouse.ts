@@ -6,11 +6,19 @@ let isConnected = false;
 export class ClickHouseClient {
   static async initialize(): Promise<void> {
     try {
+      const host = process.env.CLICKHOUSE_URL || 'http://localhost:8123';
+      const database = process.env.CLICKHOUSE_DB || 'AgroLogistic_analytics';
+      const username = process.env.CLICKHOUSE_USER;
+      const password = process.env.CLICKHOUSE_PASSWORD;
+
+      // ClickHouse dev containers often run without HTTP auth.
+      // Passing username/password triggers an Authorization header, which can fail when auth is disabled.
+      const useAuth = !!(username && password && password.length > 0);
+
       client = createClient({
-        host: process.env.CLICKHOUSE_URL || 'http://localhost:8123',
-        username: process.env.CLICKHOUSE_USER || 'default',
-        password: process.env.CLICKHOUSE_PASSWORD || 'clickhouse_secure_2026',
-        database: process.env.CLICKHOUSE_DB || 'AgroLogistic_analytics',
+        host,
+        database,
+        ...(useAuth ? { username, password } : {}),
       });
 
       // Test connection

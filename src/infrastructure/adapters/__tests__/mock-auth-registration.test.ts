@@ -36,11 +36,15 @@ describe('MockAuthAdapter - User Registration', () => {
 
       const result = await authAdapter.register(farmerData);
 
-      expect(result.user).toBeDefined();
-      expect(result.token).toBeDefined();
-      expect(result.user.firstName).toBe('Pierre');
-      expect(result.user.lastName).toBe('Agriculteur');
-      expect(result.user.role).toBe(UserRole.FARMER);
+      expect(result.email).toContain('@test.com');
+      expect(result.userId).toBeTruthy();
+      expect(result.verificationToken).toBeTruthy();
+
+      // Verify-first: ensure the created user exists by logging in
+      const login = await authAdapter.login(farmerData.email, farmerData.password);
+      expect(login.user.firstName).toBe('Pierre');
+      expect(login.user.lastName).toBe('Agriculteur');
+      expect(login.user.role).toBe(UserRole.FARMER);
     });
 
     it('should register a new BUYER account with minimal required fields', async () => {
@@ -57,9 +61,9 @@ describe('MockAuthAdapter - User Registration', () => {
 
       const result = await authAdapter.register(buyerData);
 
-      expect(result.user).toBeDefined();
-      expect(result.user.role).toBe(UserRole.BUYER);
-      expect(result.token).toContain('mock-jwt-token-');
+      expect(result.userId).toBeTruthy();
+      const login = await authAdapter.login(buyerData.email, buyerData.password);
+      expect(login.user.role).toBe(UserRole.BUYER);
     });
 
     it('should register a new TRANSPORTER account with logistics specialization', async () => {
@@ -78,8 +82,9 @@ describe('MockAuthAdapter - User Registration', () => {
 
       const result = await authAdapter.register(transporterData);
 
-      expect(result.user).toBeDefined();
-      expect(result.user.role).toBe(UserRole.TRANSPORTER);
+      expect(result.userId).toBeTruthy();
+      const login = await authAdapter.login(transporterData.email, transporterData.password);
+      expect(login.user.role).toBe(UserRole.TRANSPORTER);
     });
 
     it('should register a new ADMIN account', async () => {
@@ -96,11 +101,12 @@ describe('MockAuthAdapter - User Registration', () => {
 
       const result = await authAdapter.register(adminData);
 
-      expect(result.user).toBeDefined();
-      expect(result.user.role).toBe(UserRole.ADMIN);
+      expect(result.userId).toBeTruthy();
+      const login = await authAdapter.login(adminData.email, adminData.password);
+      expect(login.user.role).toBe(UserRole.ADMIN);
     });
 
-    it('should store access token in localStorage after registration', async () => {
+    it('should not store access token in localStorage after registration (verify-first)', async () => {
       const userData: RegisterRequestDTO = {
         email: `token-test-${Date.now()}@test.com`,
         password: 'SecurePass123!',
@@ -115,8 +121,7 @@ describe('MockAuthAdapter - User Registration', () => {
       await authAdapter.register(userData);
 
       const storedToken = localStorage.getItem('accessToken');
-      expect(storedToken).toBeTruthy();
-      expect(storedToken).toContain('mock-jwt-token-');
+      expect(storedToken).toBeNull();
     });
   });
 

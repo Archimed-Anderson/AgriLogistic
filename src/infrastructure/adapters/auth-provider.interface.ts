@@ -1,4 +1,5 @@
 import { RegisterRequestDTO } from '../../application/dto/request/register-request.dto';
+import { RegisterResponseDTO } from '../../application/dto/response/register-response.dto';
 import { User } from '../../domain/entities/user.entity';
 
 /**
@@ -22,7 +23,7 @@ export interface AuthProvider {
   /**
    * Register a new user with complete profile data
    */
-  register(request: RegisterRequestDTO): Promise<{ user: User; token: string }>;
+  register(request: RegisterRequestDTO): Promise<RegisterResponseDTO>;
 
   /**
    * Log out the current user

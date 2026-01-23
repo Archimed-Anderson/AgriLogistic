@@ -4,6 +4,7 @@ import { AuthProviderFactory } from '../../infrastructure/adapters/auth-provider
 import { User } from '../../domain/entities/user.entity';
 import { LoginRequestDTO } from '../../application/dto/request/login-request.dto';
 import { RegisterRequestDTO } from '../../application/dto/request/register-request.dto';
+import { RegisterResponseDTO } from '../../application/dto/response/register-response.dto';
 
 interface AuthContextType {
   user: User | null;
@@ -11,7 +12,8 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (credentials: LoginRequestDTO) => Promise<{ user: User; token: string }>;
-  register: (data: RegisterRequestDTO) => Promise<{ user: User; token: string }>;
+  register: (data: RegisterRequestDTO) => Promise<RegisterResponseDTO>;
+  verifyEmail: (token: string) => Promise<boolean>;
   logout: () => Promise<void>;
   getCurrentUser: () => Promise<User | null>;
   refreshToken: () => Promise<void>;
@@ -76,17 +78,27 @@ export function AuthProviderComponent({ children, authProvider }: AuthProviderPr
     }
   };
 
-  const register = async (data: RegisterRequestDTO): Promise<{ user: User; token: string }> => {
+  const register = async (data: RegisterRequestDTO): Promise<RegisterResponseDTO> => {
     setIsLoading(true);
     try {
       const result = await provider.register(data);
-      setUser(result.user);
-      setToken(result.token);
+      // Verify-first: do not authenticate on register.
+      setUser(null);
+      setToken(null);
       return result;
     } catch (error) {
       setUser(null);
       setToken(null);
       throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const verifyEmail = async (token: string): Promise<boolean> => {
+    setIsLoading(true);
+    try {
+      return await provider.verifyEmail(token);
     } finally {
       setIsLoading(false);
     }
@@ -145,6 +157,7 @@ export function AuthProviderComponent({ children, authProvider }: AuthProviderPr
     isAuthenticated: !!user && !!token,
     login,
     register,
+    verifyEmail,
     logout,
     getCurrentUser,
     refreshToken,

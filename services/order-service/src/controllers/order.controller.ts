@@ -201,13 +201,13 @@ export class OrderController {
       // Cache for 1 hour
       await RedisClient.set(`order:${id}`, JSON.stringify(order), 3600);
 
-      res.json({
+      return res.json({
         success: true,
         data: order,
       });
     } catch (error: any) {
       console.error('[OrderController] Get order error:', error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         error: 'Failed to fetch order',
       });
@@ -289,13 +289,13 @@ export class OrderController {
         incrementOrdersCompleted();
       }
 
-      res.json({
+      return res.json({
         success: true,
         data: result.rows[0],
       });
     } catch (error: any) {
       console.error('[OrderController] Update status error:', error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         error: 'Failed to update order status',
       });
@@ -350,14 +350,14 @@ export class OrderController {
       // Invalidate cache
       await RedisClient.del(`order:${id}`);
 
-      res.json({
+      return res.json({
         success: true,
         data: result.rows[0],
         message: 'Order cancelled successfully',
       });
     } catch (error: any) {
       console.error('[OrderController] Cancel order error:', error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         error: 'Failed to cancel order',
       });

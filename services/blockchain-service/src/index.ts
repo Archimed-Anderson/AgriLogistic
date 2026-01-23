@@ -16,15 +16,19 @@ app.use(express.json());
 
 // Health checks
 app.get('/health', async (_req: Request, res: Response) => {
+  const fabricEnabled = (process.env.FABRIC_ENABLED || 'false').toLowerCase() === 'true';
   const blockchainConnected = BlockchainService.isConnected();
-  res.status(blockchainConnected ? 200 : 503).json({
-    status: blockchainConnected ? 'healthy' : 'degraded',
+  const overallHealthy = !fabricEnabled || blockchainConnected;
+
+  res.status(overallHealthy ? 200 : 503).json({
+    status: overallHealthy ? 'healthy' : 'degraded',
     service: 'blockchain-service',
     timestamp: new Date().toISOString(),
     network: {
-      hyperledger: blockchainConnected ? 'connected' : 'disconnected',
+      hyperledger: fabricEnabled ? (blockchainConnected ? 'connected' : 'disconnected') : 'disabled',
       channel: process.env.FABRIC_CHANNEL || 'AgroLogistic-channel',
     },
+    mode: fabricEnabled ? 'fabric' : 'simulation',
   });
 });
 

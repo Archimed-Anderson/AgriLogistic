@@ -1,0 +1,29 @@
+{
+  "Mobile": {
+    "viewport": {
+      "name": "Mobile",
+      "width": 375,
+      "height": 667
+    },
+    "visibleElements": 504,
+    "hasHorizontalScroll": false
+  },
+  "Tablet": {
+    "viewport": {
+      "name": "Tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "visibleElements": 506,
+    "hasHorizontalScroll": false
+  },
+  "Desktop": {
+    "viewport": {
+      "name": "Desktop",
+      "width": 1920,
+      "height": 1080
+    },
+    "visibleElements": 507,
+    "hasHorizontalScroll": false
+  }
+}

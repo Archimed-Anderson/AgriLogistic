@@ -88,7 +88,7 @@ router.post('/charge', validate(createPaymentSchema), async (req: Request, res: 
         status: result.status,
         amount: result.amount,
         currency: result.currency,
-        simulated: result.simulated,
+        simulated: 'simulated' in (result as any) ? (result as any).simulated : false,
       },
     });
   } catch (error: any) {

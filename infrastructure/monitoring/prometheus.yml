@@ -1,0 +1,75 @@
+# Prometheus configuration for Kong monitoring
+# AgroLogistic 2.0
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'agrologistic'
+    environment: 'production'
+
+# Alerting configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# Load rules
+rule_files:
+  # - "alerts/*.yml"
+
+# Scrape configurations
+scrape_configs:
+  # Kong Prometheus metrics
+  - job_name: 'kong'
+    static_configs:
+      - targets: ['kong-gateway:8100']
+        labels:
+          service: 'api-gateway'
+    
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # PostgreSQL metrics (if enabled)
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+        labels:
+          service: 'kong-database'
+    
+    scrape_interval: 60s
+
+  # Microservices health checks
+  - job_name: 'microservices'
+    static_configs:
+      - targets:
+          - 'agrologistic-auth-service:8001'
+          - 'product-service:8002'
+          - 'order-service:8003'
+          - 'logistics-service:8004'
+          - 'payment-service:8005'
+          - 'notification-service:8006'
+          - 'analytics-service:8007'
+          - 'ai-service:8008'
+          - 'blockchain-service:8009'
+          - 'inventory-service:8010'
+          - 'user-service:8011'
+        labels:
+          environment: 'production'
+    
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Auth Service detailed metrics (OAuth2/OIDC)
+  - job_name: 'auth-service'
+    static_configs:
+      - targets:
+          - 'agrologistic-auth-service:8001'
+        labels:
+          service: 'auth'
+          environment: 'production'
+    metrics_path: '/metrics'
+    scrape_interval: 15s
+    scrape_timeout: 5s

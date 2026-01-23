@@ -1,16 +1,16 @@
 import { UseCase } from '../use-case.interface';
 import { RegisterRequestDTO } from '../../dto/request/register-request.dto';
-import { AuthResponseDTO } from '../../dto/response/auth-response.dto';
+import { RegisterResponseDTO } from '../../dto/response/register-response.dto';
 import { AuthPort } from '../../ports/auth.port';
 import { Email } from '@domain/value-objects/email.vo';
 import { PhoneNumber } from '@domain/value-objects/phone-number.vo';
 import { Address } from '@domain/value-objects/address.vo';
 import { UserRole } from '@domain/enums/user-role.enum';
 
-export class RegisterUseCase implements UseCase<RegisterRequestDTO, AuthResponseDTO> {
+export class RegisterUseCase implements UseCase<RegisterRequestDTO, RegisterResponseDTO> {
   constructor(private readonly authPort: AuthPort) {}
 
-  async execute(request: RegisterRequestDTO): Promise<AuthResponseDTO> {
+  async execute(request: RegisterRequestDTO): Promise<RegisterResponseDTO> {
     // Step 1: Validate required fields
     this.validateRequiredFields(request);
     

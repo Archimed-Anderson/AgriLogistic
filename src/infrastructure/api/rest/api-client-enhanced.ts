@@ -136,18 +136,20 @@ class EnhancedAPIClient {
       const response = await fetch(`${this.baseURL}/auth/refresh`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken }),
+        // Support both legacy (camelCase) and OAuth2 (snake_case) payloads.
+        body: JSON.stringify({ refresh_token: refreshToken, refreshToken }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        const accessToken = data.token || data.accessToken;
+        const accessToken = data.access_token || data.accessToken || data.token;
         if (accessToken) {
           localStorage.setItem('accessToken', accessToken);
           this.log('info', 'Token refreshed successfully');
         }
-        if (data.refreshToken) {
-          localStorage.setItem('refreshToken', data.refreshToken);
+        const newRefreshToken = data.refresh_token || data.refreshToken;
+        if (newRefreshToken) {
+          localStorage.setItem('refreshToken', newRefreshToken);
         }
         return true;
       }
