@@ -1,4 +1,4 @@
-name: Deploy Farmer Dashboard
+﻿name: Deploy Farmer Dashboard
 
 on:
   push:
@@ -56,10 +56,10 @@ jobs:
           file: ./Dockerfile.farmer
           push: true
           tags: |
-            agrodeep/farmer-dashboard:latest
-            agrodeep/farmer-dashboard:${{ github.sha }}
-          cache-from: type=registry,ref=agrodeep/farmer-dashboard:buildcache
-          cache-to: type=registry,ref=agrodeep/farmer-dashboard:buildcache,mode=max
+            AgriLogistic/farmer-dashboard:latest
+            AgriLogistic/farmer-dashboard:${{ github.sha }}
+          cache-from: type=registry,ref=AgriLogistic/farmer-dashboard:buildcache
+          cache-to: type=registry,ref=AgriLogistic/farmer-dashboard:buildcache,mode=max
 
   deploy:
     needs: build
@@ -74,7 +74,7 @@ jobs:
           username: ${{ secrets.PRODUCTION_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /app/agrodeep
+            cd /app/AgriLogistic
             docker-compose -f docker-compose.prod.yml pull farmer-dashboard
             docker-compose -f docker-compose.prod.yml up -d farmer-dashboard
             docker system prune -f
@@ -83,3 +83,4 @@ jobs:
         run: |
           sleep 10
           curl -f ${{ secrets.PRODUCTION_URL }}/api/health || exit 1
+

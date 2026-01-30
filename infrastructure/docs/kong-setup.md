@@ -8,7 +8,7 @@
 ## Démarrage (Windows)
 
 ```powershell
-cd .\AgroDeep\infrastructure
+cd .\AgriLogistic\infrastructure
 
 # 1) Générer les clés RS256 + injecter la clé publique dans kong.yml
 .\scripts\generate-jwt-keys.ps1
@@ -31,7 +31,7 @@ curl http://localhost:8000/health
 ## Démarrage (Linux/macOS)
 
 ```bash
-cd AgroDeep/infrastructure
+cd AgriLogistic/infrastructure
 
 chmod +x scripts/generate-jwt-keys.sh
 ./scripts/generate-jwt-keys.sh
@@ -52,4 +52,6 @@ docker-compose -f docker-compose.kong.yml --profile monitoring up -d
 # Tracing (Jaeger)
 docker-compose -f docker-compose.kong.yml --profile tracing up -d
 ```
+
+
 

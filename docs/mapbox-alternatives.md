@@ -1,8 +1,8 @@
-# 🗺️ Alternatives Gratuites à Mapbox
+# ðŸ—ºï¸ Alternatives Gratuites à Mapbox
 
 ## Options Open Source
 
-### 1. **Leaflet** ✅ RECOMMANDÉ
+### 1. **Leaflet** âœ… RECOMMANDÉ
 - **100% Gratuit** et Open Source
 - **Aucune clé API** requise
 - Très léger (~40KB)
@@ -42,22 +42,22 @@ npm install leaflet react-leaflet @types/leaflet
 |---------|--------|---------|------------|----------|
 | **Prix** | Payant* | Gratuit | Gratuit | Gratuit |
 | **API Key** | Oui | Non | Non | Non |
-| **Facilité** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ |
-| **Performance** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| **Facilité** | â­â­â­â­ | â­â­â­â­â­ | â­â­â­ | â­â­â­â­ |
+| **Performance** | â­â­â­â­â­ | â­â­â­â­ | â­â­â­â­ | â­â­â­â­â­ |
 | **3D** | Oui | Non | Oui | Oui |
 | **Satellite** | Oui | Oui** | Oui** | Oui** |
 
 *Mapbox: 50,000 vues gratuites/mois  
 **Via tuiles tierces gratuites
 
-## Recommandation pour AgroDeep
+## Recommandation pour AgriLogistic
 
 **Utilisez Leaflet** car:
-1. ✅ Totalement gratuit
-2. ✅ Pas de limite d'utilisation
-3. ✅ Facile à utiliser
-4. ✅ Tuiles satellite gratuites (Esri)
-5. ✅ Parfait pour agriculture
+1. âœ… Totalement gratuit
+2. âœ… Pas de limite d'utilisation
+3. âœ… Facile à utiliser
+4. âœ… Tuiles satellite gratuites (Esri)
+5. âœ… Parfait pour agriculture
 
 ## Sources de Tuiles Gratuites
 
@@ -85,7 +85,7 @@ url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
 url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'
 ```
 
-## Migration Mapbox → Leaflet
+## Migration Mapbox â†’ Leaflet
 
 **Avant (Mapbox)**:
 ```typescript
@@ -107,10 +107,12 @@ import { MapContainer } from 'react-leaflet';
 4. **Markers custom** - Pour capteurs IoT
 5. **Plugins** - Heatmaps, clusters, etc.
 
-## Utilisation dans AgroDeep
+## Utilisation dans AgriLogistic
 
 Remplacez simplement:
-- `FarmMapInteractive` → `FarmMapLeaflet`
-- `DeliveryMap` → `DeliveryMapLeaflet`
+- `FarmMapInteractive` â†’ `FarmMapLeaflet`
+- `DeliveryMap` â†’ `DeliveryMapLeaflet`
 
 **Aucune autre modification nécessaire!**
+
+

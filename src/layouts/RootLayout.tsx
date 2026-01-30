@@ -30,8 +30,43 @@ export function RootLayout() {
     trackPageView(gaMeasurementId, currentRoute);
   }, [gaMeasurementId, currentRoute]);
 
+  // Routes handled by the modern AdminLayout (have their own sidebar)
+  const isModernAdminRoute = [
+    "/admin/dashboard", "/admin/overview", "/admin/war-room",
+    "/admin/users",
+    "/admin/products",
+    "/admin/orders",
+    "/admin/categories",
+    "/admin/reports",
+    "/admin/analytics",
+    "/admin/system",
+    "/admin/security",
+    "/admin/panel",
+    "/admin/labor",
+    "/admin/iot",
+    "/admin/automation",
+    "/admin/ai-insights",
+    "/admin/finance",
+    "/admin/logistics",
+    "/admin/chat",
+    "/admin/blog",
+    "/admin/academy",
+    "/admin/help",
+    "/admin/tasks",
+    "/admin/equipment",
+    "/admin/crops",
+    "/admin/weather",
+    "/admin/soil-water",
+    "/admin/transport-calculator",
+    "/admin/affiliate-dashboard",
+    "/admin/tracking",
+    "/admin/fleet",
+    "/admin/blockchain"
+  ].some(route => currentRoute.startsWith(route));
+
   const showSidebar =
-    isAuthenticated && (currentRoute.startsWith("/admin") || currentRoute.startsWith("/customer"));
+    isAuthenticated && 
+    ((currentRoute.startsWith("/admin") && !isModernAdminRoute) || currentRoute.startsWith("/customer"));
 
   const getSidebarType = (): "admin" | "customer" => (currentRoute.startsWith("/admin") ? "admin" : "customer");
 

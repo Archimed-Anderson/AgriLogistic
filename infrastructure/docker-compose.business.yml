@@ -14,7 +14,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - product-db-data:/var/lib/postgresql/data
-      - ../services/product-service/migrations:/docker-entrypoint-initdb.d
+      - ../services/marketplace/product-service/migrations:/docker-entrypoint-initdb.d
     networks:
       - agrologistic-network
     healthcheck:
@@ -44,7 +44,7 @@ services:
 
   product-service:
     build:
-      context: ../services/product-service
+      context: ../services/marketplace/product-service
       dockerfile: Dockerfile
     container_name: product-service
     environment:
@@ -79,7 +79,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - order-db-data:/var/lib/postgresql/data
-      - ../services/order-service/migrations:/docker-entrypoint-initdb.d
+      - ../services/marketplace/order-service/migrations:/docker-entrypoint-initdb.d
     networks:
       - agrologistic-network
     healthcheck:
@@ -106,7 +106,7 @@ services:
 
   order-service:
     build:
-      context: ../services/order-service
+      context: ../services/marketplace/order-service
       dockerfile: Dockerfile
     container_name: order-service
     environment:
@@ -143,7 +143,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - logistics-db-data:/var/lib/postgresql/data
-      - ../services/delivery-service/migrations:/docker-entrypoint-initdb.d
+      - ../services/logistics/delivery-service/migrations:/docker-entrypoint-initdb.d
     networks:
       - agrologistic-network
     healthcheck:
@@ -170,7 +170,7 @@ services:
 
   logistics-service:
     build:
-      context: ../services/delivery-service
+      context: ../services/logistics/delivery-service
       dockerfile: Dockerfile
     container_name: logistics-service
     environment:
@@ -207,7 +207,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - payment-db-data:/var/lib/postgresql/data
-      - ../services/payment-service/migrations:/docker-entrypoint-initdb.d
+      - ../services/fintech/payment-service/migrations:/docker-entrypoint-initdb.d
     networks:
       - agrologistic-network
     healthcheck:
@@ -219,7 +219,7 @@ services:
 
   payment-service:
     build:
-      context: ../services/payment-service
+      context: ../services/fintech/payment-service
       dockerfile: Dockerfile
     container_name: payment-service
     environment:
@@ -254,7 +254,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - notification-db-data:/var/lib/postgresql/data
-      - ../services/notification-service/migrations:/docker-entrypoint-initdb.d
+      - ../services/communication/notification-service/migrations:/docker-entrypoint-initdb.d
     networks:
       - agrologistic-network
     healthcheck:
@@ -281,7 +281,7 @@ services:
 
   notification-service:
     build:
-      context: ../services/notification-service
+      context: ../services/communication/notification-service
       dockerfile: Dockerfile
     container_name: notification-service
     environment:
@@ -343,7 +343,7 @@ services:
 
   analytics-service:
     build:
-      context: ../services/analytics-service
+      context: ../services/intelligence/analytics-service
       dockerfile: Dockerfile
     container_name: analytics-service
     environment:
@@ -379,7 +379,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - ai-db-data:/var/lib/postgresql/data
-      - ../services/ai-service/migrations:/docker-entrypoint-initdb.d
+      - ../services/intelligence/ai-service/migrations:/docker-entrypoint-initdb.d
     networks:
       - agrologistic-network
     healthcheck:
@@ -406,7 +406,7 @@ services:
 
   ai-service:
     build:
-      context: ../services/ai-service
+      context: ../services/intelligence/ai-service
       dockerfile: Dockerfile
     container_name: ai-service
     environment:
@@ -435,7 +435,7 @@ services:
   # -------------------------
   blockchain-service:
     build:
-      context: ../services/blockchain-service
+      context: ../services/trust/blockchain-service
       dockerfile: Dockerfile
     container_name: blockchain-service
     environment:
@@ -460,7 +460,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - inventory-db-data:/var/lib/postgresql/data
-      - ../services/inventory-service/migrations:/docker-entrypoint-initdb.d
+      - ../services/marketplace/inventory-service/migrations:/docker-entrypoint-initdb.d
     networks:
       - agrologistic-network
     healthcheck:
@@ -472,7 +472,7 @@ services:
 
   inventory-service:
     build:
-      context: ../services/inventory-service
+      context: ../services/marketplace/inventory-service
       dockerfile: Dockerfile
     container_name: inventory-service
     environment:
@@ -504,7 +504,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - user-db-data:/var/lib/postgresql/data
-      - ../services/user-service/migrations:/docker-entrypoint-initdb.d
+      - ../services/identity/user-service/migrations:/docker-entrypoint-initdb.d
     networks:
       - agrologistic-network
     healthcheck:
@@ -516,7 +516,7 @@ services:
 
   user-service:
     build:
-      context: ../services/user-service
+      context: ../services/identity/user-service
       dockerfile: Dockerfile
     container_name: user-service
     environment:

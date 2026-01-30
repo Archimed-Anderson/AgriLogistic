@@ -1,0 +1,222 @@
+export interface Product {
+  id: string;
+  name: string;
+  price: number;
+  currency: string;
+  category: "Céréales" | "Tubercules" | "Légumes & Légumineuses" | "Fruits";
+  image: string;
+  description: string;
+  stock: number;
+  rating: number;
+  unit: string;
+}
+
+export const marketplaceProducts: Product[] = [
+  // Céréales (15 items)
+  {
+    id: "cer-001",
+    name: "Maïs Blanc Premium",
+    price: 15000,
+    currency: "FCFA",
+    category: "Céréales",
+    image: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=800",
+    description: "Maïs blanc de qualité supérieure.",
+    stock: 500,
+    rating: 4.8,
+    unit: "Sac (50kg)"
+  },
+  {
+    id: "cer-002",
+    name: "Millet Rouge",
+    price: 18500,
+    currency: "FCFA",
+    category: "Céréales",
+    image: "https://images.unsplash.com/photo-1582234372722-50d7ccc30ebd?auto=format&fit=crop&w=800",
+    description: "Millet riche en nutriments.",
+    stock: 200,
+    rating: 4.5,
+    unit: "Sac (50kg)"
+  },
+  {
+    id: "cer-003",
+    name: "Sorgho Grain",
+    price: 14000,
+    currency: "FCFA",
+    category: "Céréales",
+    image: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=800",
+    description: "Sorgho à grain blanc.",
+    stock: 350,
+    rating: 4.2,
+    unit: "Sac (50kg)"
+  },
+  {
+    id: "cer-004",
+    name: "Blé Tendre",
+    price: 25,
+    currency: "€",
+    category: "Céréales",
+    image: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=800",
+    description: "Blé panifiable de haute qualité.",
+    stock: 120,
+    rating: 4.7,
+    unit: "Sac (25kg)"
+  },
+  { id: "cer-005", name: "Riz Long Grain", price: 28000, currency: "FCFA", category: "Céréales", image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=800", description: "Riz parfumé de première qualité.", stock: 400, rating: 4.7, unit: "Sac (50kg)" },
+  { id: "cer-006", name: "Fonio Blanc", price: 1200, currency: "FCFA", category: "Céréales", image: "https://images.unsplash.com/photo-1582234372722-50d7ccc30ebd?auto=format&fit=crop&w=800", description: "Céréale ancestrale digeste.", stock: 100, rating: 4.9, unit: "Kg" },
+  { id: "cer-007", name: "Orge Perlé", price: 12, currency: "€", category: "Céréales", image: "https://images.unsplash.com/photo-1594910411316-704c6a418432?auto=format&fit=crop&w=800", description: "Orge nettoyé et poli.", stock: 60, rating: 4.0, unit: "Kg" },
+  { id: "cer-008", name: "Quinoa Bio", price: 35, currency: "€", category: "Céréales", image: "https://images.unsplash.com/photo-1549590143-bc9757d59837?auto=format&fit=crop&w=800", description: "Quinoa blanc biologique.", stock: 150, rating: 4.8, unit: "Sac (5kg)" },
+  { id: "cer-009", name: "Avoine Entière", price: 18, currency: "€", category: "Céréales", image: "https://images.unsplash.com/photo-1594910411316-704c6a418432?auto=format&fit=crop&w=800", description: "Flocons d'avoine naturels.", stock: 90, rating: 4.4, unit: "Kg" },
+  { id: "cer-010", name: "Maïs Popcorn", price: 1000, currency: "FCFA", category: "Céréales", image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=800", description: "Maïs spécial popcorn.", stock: 100, rating: 4.1, unit: "Sachet" },
+  { id: "cer-011", name: "Maïs Jaune", price: 13500, currency: "FCFA", category: "Céréales", image: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=800", description: "Maïs jaune riche en vitamines.", stock: 300, rating: 4.6, unit: "Sac (50kg)" },
+  { id: "cer-012", name: "Riz Complet", price: 32000, currency: "FCFA", category: "Céréales", image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=800", description: "Riz brun riche en fibres.", stock: 150, rating: 4.5, unit: "Sac (50kg)" },
+  { id: "cer-013", name: "Sarrasin Bio", price: 15, currency: "€", category: "Céréales", image: "https://images.unsplash.com/photo-1594910411316-704c6a418432?auto=format&fit=crop&w=800", description: "Sarrasin sans gluten.", stock: 120, rating: 4.7, unit: "Kg" },
+  { id: "cer-014", name: "Seigle complet", price: 10, currency: "€", category: "Céréales", image: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=800", description: "Seigle pour pain noir.", stock: 80, rating: 4.2, unit: "Kg" },
+  { id: "cer-015", name: "Teff d'Ethiopie", price: 2500, currency: "FCFA", category: "Céréales", image: "https://images.unsplash.com/photo-1582234372722-50d7ccc30ebd?auto=format&fit=crop&w=800", description: "Super-aliment africain.", stock: 60, rating: 4.9, unit: "Kg" },
+
+  // Tubercules (12 items)
+  {
+    id: "tub-001",
+    name: "Manioc de Table",
+    price: 8000,
+    currency: "FCFA",
+    category: "Tubercules",
+    image: "https://images.unsplash.com/photo-1596561330441-59170312521c?auto=format&fit=crop&w=800",
+    description: "Tubercules de manioc frais.",
+    stock: 1000,
+    rating: 4.6,
+    unit: "Panier (20kg)"
+  },
+  {
+    id: "tub-002",
+    name: "Igname Pona",
+    price: 12000,
+    currency: "FCFA",
+    category: "Tubercules",
+    image: "https://images.unsplash.com/photo-1596040033229-a9821ebd0544?auto=format&fit=crop&w=800",
+    description: "Igname Pona authentique.",
+    stock: 300,
+    rating: 4.9,
+    unit: "Lot (5 tubercules)"
+  },
+  {
+    id: "tub-003",
+    name: "Patate Douce",
+    price: 5000,
+    currency: "FCFA",
+    category: "Tubercules",
+    image: "https://images.unsplash.com/photo-1596040033229-a9821ebd0544?auto=format&fit=crop&w=800",
+    description: "Patates douces à chair orange.",
+    stock: 450,
+    rating: 4.4,
+    unit: "Sac (15kg)"
+  },
+  { id: "tub-004", name: "Taro (Macabo)", price: 9000, currency: "FCFA", category: "Tubercules", image: "https://images.unsplash.com/photo-1596040033229-a9821ebd0544?auto=format&fit=crop&w=800", description: "Tubercules riches en fibres.", stock: 200, rating: 4.3, unit: "Panier" },
+  { id: "tub-005", name: "Pomme de Terre", price: 12500, currency: "FCFA", category: "Tubercules", image: "https://images.unsplash.com/photo-1518977676601-b53f02ac6d31?auto=format&fit=crop&w=800", description: "Variété chair ferme.", stock: 800, rating: 4.3, unit: "Sac (25kg)" },
+  { id: "tub-006", name: "Gingembre Frais", price: 3500, currency: "FCFA", category: "Tubercules", image: "https://images.unsplash.com/photo-1599940824399-b87987cb9624?auto=format&fit=crop&w=800", description: "Racines de gingembre.", stock: 120, rating: 4.8, unit: "Kg" },
+  { id: "tub-007", name: "Curcuma Racine", price: 5000, currency: "FCFA", category: "Tubercules", image: "https://images.unsplash.com/photo-1615484477778-ca3b77940c25?auto=format&fit=crop&w=800", description: "Racines de curcuma frais.", stock: 30, rating: 4.9, unit: "Kg" },
+  { id: "tub-008", name: "Pomme de Terre Charlotte", price: 12, currency: "€", category: "Tubercules", image: "https://images.unsplash.com/photo-1518977676601-b53f02ac6d31?auto=format&fit=crop&w=800", description: "Chair ferme.", stock: 100, rating: 4.4, unit: "Sac (5kg)" },
+  { id: "tub-009", name: "Manioc Amer", price: 6000, currency: "FCFA", category: "Tubercules", image: "https://images.unsplash.com/photo-1596561330441-59170312521c?auto=format&fit=crop&w=800", description: "Pour transformation.", stock: 500, rating: 4.0, unit: "Panier" },
+  { id: "tub-010", name: "Igname Florido", price: 10000, currency: "FCFA", category: "Tubercules", image: "https://images.unsplash.com/photo-1596040033229-a9821ebd0544?auto=format&fit=crop&w=800", description: "Igname chair jaune.", stock: 150, rating: 4.2, unit: "Lot" },
+  { id: "tub-011", name: "Betteraves", price: 3, currency: "€", category: "Tubercules", image: "https://images.unsplash.com/photo-1522204523234-8729aa6e3d5f?auto=format&fit=crop&w=800", description: "Betteraves rouges fraîches.", stock: 200, rating: 4.5, unit: "Kg" },
+  { id: "tub-012", name: "Konjac", price: 55, currency: "€", category: "Tubercules", image: "https://images.unsplash.com/photo-1599940824399-b87987cb9624?auto=format&fit=crop&w=800", description: "Racine de Konjac.", stock: 20, rating: 4.1, unit: "Kg" },
+
+  // Légumes & Légumineuses (15 items)
+  {
+    id: "leg-001",
+    name: "Niébé (Haricot Kpodjigué)",
+    price: 22000,
+    currency: "FCFA",
+    category: "Légumes & Légumineuses",
+    image: "https://images.unsplash.com/photo-1590301157890-4810ed352733?auto=format&fit=crop&w=800",
+    description: "Petits haricots blancs.",
+    stock: 150,
+    rating: 4.7,
+    unit: "Sac (50kg)"
+  },
+  {
+    id: "leg-002",
+    name: "Tomates de Saison",
+    price: 15,
+    currency: "€",
+    category: "Légumes & Légumineuses",
+    image: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=800",
+    description: "Tomates charnues.",
+    stock: 80,
+    rating: 4.3,
+    unit: "Caisse (10kg)"
+  },
+  {
+    id: "leg-003",
+    name: "Oignons Jaunes",
+    price: 7500,
+    currency: "FCFA",
+    category: "Légumes & Légumineuses",
+    image: "https://images.unsplash.com/photo-1508747703725-719777637510?auto=format&fit=crop&w=800",
+    description: "Oignons secs.",
+    stock: 600,
+    rating: 4.1,
+    unit: "Sac (25kg)"
+  },
+  { id: "leg-004", name: "Piment Oiseau", price: 2500, currency: "FCFA", category: "Légumes & Légumineuses", image: "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?auto=format&fit=crop&w=800", description: "Très piquants.", stock: 50, rating: 4.5, unit: "Kg" },
+  { id: "leg-005", name: "Gombo Frais", price: 3000, currency: "FCFA", category: "Légumes & Légumineuses", image: "https://images.unsplash.com/photo-1444731964726-70233b29013b?auto=format&fit=crop&w=800", description: "Tendres gombos.", stock: 120, rating: 4.2, unit: "Lot (2kg)" },
+  { id: "leg-006", name: "Haricots Noirs", price: 40, currency: "€", category: "Légumes & Légumineuses", image: "https://images.unsplash.com/photo-1517260911058-0fcfd733c021?auto=format&fit=crop&w=800", description: "Bio haute qualité.", stock: 40, rating: 4.7, unit: "Sac (10kg)" },
+  { id: "leg-007", name: "Poivrons Mix", price: 10, currency: "€", category: "Légumes & Légumineuses", image: "https://images.unsplash.com/photo-1563248692884-257a3e614144?auto=format&fit=crop&w=800", description: "Rouges, jaunes et verts.", stock: 60, rating: 4.2, unit: "Plateau" },
+  { id: "leg-008", name: "Lentilles", price: 6, currency: "€", category: "Légumes & Légumineuses", image: "https://images.unsplash.com/photo-1536510233921-8e5043fce771?auto=format&fit=crop&w=800", description: "Lentilles vertes.", stock: 200, rating: 4.5, unit: "Kg" },
+  { id: "leg-009", name: "Pois Chiches", price: 4, currency: "€", category: "Légumes & Légumineuses", image: "https://images.unsplash.com/photo-1515543904379-3d757afe72e2?auto=format&fit=crop&w=800", description: "Pois chiches secs.", stock: 150, rating: 4.6, unit: "Kg" },
+  { id: "leg-010", name: "Aubergines", price: 2000, currency: "FCFA", category: "Légumes & Légumineuses", image: "https://images.unsplash.com/photo-1563248692884-257a3e614144?auto=format&fit=crop&w=800", description: "Aubergines amères.", stock: 100, rating: 4.3, unit: "Kg" },
+  { id: "leg-011", name: "Haricots Rouges", price: 3000, currency: "FCFA", category: "Légumes & Légumineuses", image: "https://images.unsplash.com/photo-1517260911058-0fcfd733c021?auto=format&fit=crop&w=800", description: "Savoureux.", stock: 200, rating: 4.5, unit: "Kg" },
+  { id: "leg-012", name: "Chou Vert", price: 1500, currency: "FCFA", category: "Légumes & Légumineuses", image: "https://images.unsplash.com/photo-1568584711075-3d021a7c3ec3?auto=format&fit=crop&w=800", description: "Chou pommé.", stock: 80, rating: 4.1, unit: "Pièce" },
+  { id: "leg-013", name: "Carottes", price: 2, currency: "€", category: "Légumes & Légumineuses", image: "https://images.unsplash.com/photo-1590865102717-d2613dcfcf09?auto=format&fit=crop&w=800", description: "Botte de carottes.", stock: 300, rating: 4.6, unit: "Botte" },
+  { id: "leg-014", name: "Pois de Terre", price: 5000, currency: "FCFA", category: "Légumes & Légumineuses", image: "https://images.unsplash.com/photo-1515543904379-3d757afe72e2?auto=format&fit=crop&w=800", description: "Traditionnel.", stock: 40, rating: 4.8, unit: "Kg" },
+  { id: "leg-015", name: "Habanero", price: 4000, currency: "FCFA", category: "Légumes & Légumineuses", image: "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?auto=format&fit=crop&w=800", description: "Piment fort.", stock: 20, rating: 4.9, unit: "Kg" },
+
+  // Fruits (15 items)
+  {
+    id: "fru-001",
+    name: "Mangue Kent",
+    price: 3500,
+    currency: "FCFA",
+    category: "Fruits",
+    image: "https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&w=800",
+    description: "Mangues sans fibres.",
+    stock: 100,
+    rating: 5.0,
+    unit: "Carton (5kg)"
+  },
+  {
+    id: "fru-002",
+    name: "Avocat Hass",
+    price: 18,
+    currency: "€",
+    category: "Fruits",
+    image: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&w=800",
+    description: "Avocats crémeux.",
+    stock: 50,
+    rating: 4.8,
+    unit: "Boîte (12 pièces)"
+  },
+  {
+    id: "fru-003",
+    name: "Bananes Plantains",
+    price: 4500,
+    currency: "FCFA",
+    category: "Fruits",
+    image: "https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=800",
+    description: "Gros plantains.",
+    stock: 200,
+    rating: 4.6,
+    unit: "Régime"
+  },
+  { id: "fru-004", name: "Ananas Pain de Sucre", price: 1500, currency: "FCFA", category: "Fruits", image: "https://images.unsplash.com/photo-1550258114-68bd27475b1e?auto=format&fit=crop&w=800", description: "Très sucré.", stock: 150, rating: 4.8, unit: "Pièce" },
+  { id: "fru-005", name: "Papaye Solo", price: 1000, currency: "FCFA", category: "Fruits", image: "https://images.unsplash.com/photo-1526470498-9ae7f97abe81?auto=format&fit=crop&w=800", description: "Chair ferme.", stock: 80, rating: 4.4, unit: "Pièce" },
+  { id: "fru-006", name: "Citrons Verts", price: 5, currency: "€", category: "Fruits", image: "https://images.unsplash.com/photo-1590505682633-da9f1ce29fcc?auto=format&fit=crop&w=800", description: "Juteux.", stock: 100, rating: 4.6, unit: "Kg" },
+  { id: "fru-007", name: "Noix de Coco", price: 2000, currency: "FCFA", category: "Fruits", image: "https://images.unsplash.com/photo-1525904097882-44f5950d88ed?auto=format&fit=crop&w=800", description: "Coco sèches.", stock: 150, rating: 4.5, unit: "Lot" },
+  { id: "fru-008", name: "Goyaves Roses", price: 2800, currency: "FCFA", category: "Fruits", image: "https://images.unsplash.com/photo-1628151016065-59424e6de76b?auto=format&fit=crop&w=800", description: "Parfumées.", stock: 40, rating: 4.7, unit: "Kg" },
+  { id: "fru-009", name: "Passion", price: 4000, currency: "FCFA", category: "Fruits", image: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=800", description: "Mûrs.", stock: 50, rating: 4.9, unit: "Kg" },
+  { id: "fru-010", name: "Oranges", price: 4500, currency: "FCFA", category: "Fruits", image: "https://images.unsplash.com/photo-1547514701-42782101795e?auto=format&fit=crop&w=800", description: "Pour jus.", stock: 500, rating: 4.3, unit: "Filet" },
+  { id: "fru-011", name: "Pommes Gala", price: 3, currency: "€", category: "Fruits", image: "https://images.unsplash.com/photo-1560806887-1e4cd0b6bcd6?auto=format&fit=crop&w=800", description: "Sucrées.", stock: 300, rating: 4.7, unit: "Kg" },
+  { id: "fru-012", name: "Grenade", price: 8, currency: "€", category: "Fruits", image: "https://images.unsplash.com/photo-1541336032412-2048a678540d?auto=format&fit=crop&w=800", description: "Riches en antioxydants.", stock: 60, rating: 4.8, unit: "Kg" },
+  { id: "fru-013", name: "Kiwis", price: 5, currency: "€", category: "Fruits", image: "https://images.unsplash.com/photo-1585059895312-58e178204642?auto=format&fit=crop&w=800", description: "Vitamine C.", stock: 100, rating: 4.5, unit: "Plateau" },
+  { id: "fru-014", name: "Fraises", price: 12, currency: "€", category: "Fruits", image: "https://images.unsplash.com/photo-1464965254759-e3445f0bd58b?auto=format&fit=crop&w=800", description: "Gariguette.", stock: 40, rating: 4.9, unit: "Barquette" },
+  { id: "fru-015", name: "Poires", price: 3, currency: "€", category: "Fruits", image: "https://images.unsplash.com/photo-1514991000450-75c27771746a?auto=format&fit=crop&w=800", description: "Fondantes.", stock: 200, rating: 4.4, unit: "Kg" }
+];

@@ -95,7 +95,7 @@ export function FarmVistaDashboard({ onNavigate }: FarmVistaDashboardProps) {
 
   const kpis = useMemo(
     () => [
-      { label: 'Revenus mensuels', value: '€45 890', delta: '+23%', icon: TrendingUp },
+      { label: 'Revenus mensuels', value: 'â‚¬45 890', delta: '+23%', icon: TrendingUp },
       { label: 'Commandes actives', value: '127', delta: '+12%', icon: ShoppingCart },
       { label: 'Produits en stock', value: '1 234', delta: '+8%', icon: Package },
       { label: 'Utilisateurs actifs', value: '245', delta: '+15%', icon: Users },
@@ -117,7 +117,7 @@ export function FarmVistaDashboard({ onNavigate }: FarmVistaDashboardProps) {
 
   const recentActivity = useMemo(
     () => [
-      { title: 'Nouvelle commande #1245', subtitle: 'Tracteur John Deere • €45 000', time: 'Il y a 5 min' },
+      { title: 'Nouvelle commande #1245', subtitle: 'Tracteur John Deere â€¢ â‚¬45 000', time: 'Il y a 5 min' },
       { title: 'Stock faible', subtitle: '15 articles à réapprovisionner', time: 'Il y a 15 min' },
       { title: 'Nouveaux utilisateurs', subtitle: '5 inscriptions via la marketplace', time: 'Il y a 1 h' },
       { title: 'Livraison effectuée', subtitle: "Système d'irrigation automatique", time: 'Il y a 2 h' },
@@ -144,7 +144,7 @@ export function FarmVistaDashboard({ onNavigate }: FarmVistaDashboardProps) {
         <div>
           <div className="text-[22px] font-semibold text-[#111827]">Bonjour !</div>
           <div className="text-[12px] text-[#6B7280]">
-            Pilotez vos opérations avec des insights temps réel — style FarmVista, contenu AgroDeep.
+            Pilotez vos opérations avec des insights temps réel â€” style FarmVista, contenu AgriLogistic.
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -186,8 +186,8 @@ export function FarmVistaDashboard({ onNavigate }: FarmVistaDashboardProps) {
             <div>
               <div className="text-[14px] font-semibold text-[#111827]">{todayLabel.weekday}</div>
               <div className="text-[11px] text-[#6B7280]">{todayLabel.date}</div>
-              <div className="mt-3 text-[34px] font-semibold text-[#111827]">24° C</div>
-              <div className="text-[11px] text-[#6B7280]">Max 27° • Min 10°</div>
+              <div className="mt-3 text-[34px] font-semibold text-[#111827]">24Â° C</div>
+              <div className="text-[11px] text-[#6B7280]">Max 27Â° â€¢ Min 10Â°</div>
             </div>
             <div className="flex flex-col items-end justify-center">
               <div className="grid place-items-center rounded-2xl bg-[#F8FAFC] p-3">
@@ -239,7 +239,7 @@ export function FarmVistaDashboard({ onNavigate }: FarmVistaDashboardProps) {
           </Card>
           <Card className="rounded-2xl border-[#EEF2F7] bg-white p-4 shadow-sm">
             <div className="text-[12px] text-[#6B7280]">Revenus</div>
-            <div className="mt-1 text-[20px] font-semibold text-[#111827]">€50 000</div>
+            <div className="mt-1 text-[20px] font-semibold text-[#111827]">â‚¬50 000</div>
             <div className="mt-2 inline-flex items-center gap-1 text-[11px] text-[#0B7A4B]">
               <TrendingUp className="h-4 w-4" /> +12% vs mois précédent
             </div>
@@ -247,7 +247,7 @@ export function FarmVistaDashboard({ onNavigate }: FarmVistaDashboardProps) {
         </div>
       </div>
 
-      {/* KPI cards (AgroDeep data style in FarmVista layout) */}
+      {/* KPI cards (AgriLogistic data style in FarmVista layout) */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {kpis.map((k) => {
           const Icon = k.icon;
@@ -282,7 +282,7 @@ export function FarmVistaDashboard({ onNavigate }: FarmVistaDashboardProps) {
               <ChevronDown className="ml-2 h-4 w-4 text-[#6B7280]" />
             </Button>
           </div>
-          {/* Lightweight “chart” placeholder to match layout */}
+          {/* Lightweight â€œchartâ€ placeholder to match layout */}
           <div className="mt-4 h-[180px] rounded-xl bg-gradient-to-b from-[#F8FAFC] to-white p-4">
             <div className="h-full w-full rounded-lg border border-dashed border-[#E5E7EB] grid place-items-center text-[12px] text-[#6B7280]">
               Graphique (rendement)
@@ -404,4 +404,6 @@ export function FarmVistaDashboard({ onNavigate }: FarmVistaDashboardProps) {
     </div>
   );
 }
+
+
 

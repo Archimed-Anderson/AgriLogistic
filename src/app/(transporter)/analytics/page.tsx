@@ -28,7 +28,7 @@ export default function AnalyticsPage() {
           <div className="flex items-center justify-between h-16">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                📊 Analytics & Performance
+                ðŸ“Š Analytics & Performance
               </h1>
               <p className="text-sm text-gray-600">
                 Indicateurs clés et optimisation
@@ -74,7 +74,7 @@ export default function AnalyticsPage() {
               <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-16 -mt-16 pointer-events-none" />
               <div className="relative z-10">
                 <div className="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-xs font-medium mb-3 backdrop-blur-sm">
-                  ✨ IA AgroDeep
+                  âœ¨ IA AgriLogistic
                 </div>
                 <h3 className="text-xl font-bold mb-2">Conseil d'optimisation</h3>
                 <p className="text-indigo-100 max-w-2xl mb-4">
@@ -92,3 +92,5 @@ export default function AnalyticsPage() {
     </div>
   );
 }
+
+

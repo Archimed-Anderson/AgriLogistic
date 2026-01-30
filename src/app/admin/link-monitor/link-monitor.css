@@ -1,0 +1,128 @@
+/**
+ * ADMIN GLOBAL MONITOR - DASHBOARD STYLES
+ * Esthétique "God Mode", Cyberpunk, Noir & Cyan
+ */
+
+:root {
+  --admin-bg: #050505;
+  --panel-bg: rgba(20, 20, 20, 0.6);
+  --cyan: #00f2ff;
+  --green: #00ff41;
+  --magenta: #ff00d9;
+  --admin-border: rgba(255, 255, 255, 0.05);
+}
+
+.admin-monitor-container {
+  min-height: 100vh;
+  background-color: var(--admin-bg);
+  color: white;
+  padding: 2rem;
+  background-image: 
+    linear-gradient(rgba(0, 242, 255, 0.01) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 242, 255, 0.01) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+.monitor-header-premium {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+}
+
+.header-title-group h1 {
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+  background: linear-gradient(to right, #fff, #94a3b8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.badge-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0, 242, 255, 0.1);
+  color: var(--cyan);
+  padding: 0.25rem 0.75rem;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  border: 1px solid rgba(0, 242, 255, 0.2);
+}
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--cyan);
+  animation: pulse-cyan 1.5s infinite;
+}
+
+/* Map specific */
+.global-map-wrapper {
+  margin-bottom: 2.5rem;
+}
+
+.map-overlay-pulse {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  pointer-events: none;
+}
+
+.pulse-text {
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: var(--cyan);
+  background: black;
+  padding: 0.25rem 0.5rem;
+  border-left: 3px solid var(--cyan);
+  letter-spacing: 2px;
+}
+
+/* KPI Custom */
+.kpi-card-premium {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.kpi-card-premium:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255,255,255,0.1);
+}
+
+/* Animations */
+@keyframes pulse-cyan {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes scan-line {
+  from { top: 0; }
+  to { top: 100%; }
+}
+
+/* Transaction Console */
+.transaction-console {
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+}
+
+.transaction-console table th {
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.transaction-console table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Responsive Table */
+@media (max-width: 1024px) {
+  .admin-monitor-container {
+    padding: 1rem;
+  }
+}

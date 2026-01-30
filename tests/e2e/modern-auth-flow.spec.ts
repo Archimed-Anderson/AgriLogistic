@@ -9,7 +9,7 @@ test.describe('Modern Auth Flow', () => {
 
   test('should display login form by default', async ({ page }) => {
     // Check that login form is visible
-    await expect(page.locator('text=Bienvenue sur AgroDeep')).toBeVisible();
+    await expect(page.locator('text=Bienvenue sur AgriLogistic')).toBeVisible();
     await expect(page.locator('input[type="email"]')).toBeVisible();
     await expect(page.locator('input[type="password"]')).toBeVisible();
     await expect(page.locator('button:has-text("Se connecter")')).toBeVisible();
@@ -204,3 +204,5 @@ test.describe('Modern Auth Flow', () => {
     await expect(page.locator('button:has-text("Inscription")')).toBeVisible();
   });
 });
+
+

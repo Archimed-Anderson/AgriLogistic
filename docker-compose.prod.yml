@@ -1,13 +1,13 @@
-version: '3.8'
+﻿version: '3.8'
 
 services:
   farmer-dashboard:
     build:
       context: .
       dockerfile: Dockerfile.farmer
-    container_name: agrodeep-farmer-dashboard
+    container_name: AgriLogistic-farmer-dashboard
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_API_URL=http://api-gateway:8000
@@ -18,52 +18,53 @@ services:
     depends_on:
       - api-gateway
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:3000/api/health']
       interval: 30s
       timeout: 10s
       retries: 3
 
   api-gateway:
-    image: agrodeep-api-gateway:latest
-    container_name: agrodeep-api-gateway
+    image: AgriLogistic-api-gateway:latest
+    container_name: AgriLogistic-api-gateway
     ports:
-      - "8000:8000"
+      - '8000:8000'
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=${REDIS_URL}
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     restart: unless-stopped
 
   payment-service:
-    build: ./backend/payment-service
-    container_name: agrodeep-payment-service
+    build: ./services/legacy/payment-service-python
+    container_name: AgriLogistic-payment-service
     ports:
-      - "5010:5010"
+      - '5010:5010'
     environment:
       - DATABASE_URL=${PAYMENT_DB_URL}
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     restart: unless-stopped
 
   affiliation-service:
-    build: ./backend/affiliation-service
-    container_name: agrodeep-affiliation-service
+    build: ./services/affiliation-service
+    container_name: AgriLogistic-affiliation-service
     ports:
-      - "5011:5011"
+      - '5011:5011'
     environment:
       - DATABASE_URL=${AFFILIATION_DB_URL}
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     restart: unless-stopped
 
 networks:
-  agrodeep-network:
+  AgriLogistic-network:
     driver: bridge
 
 volumes:
   postgres-data:
   redis-data:
+

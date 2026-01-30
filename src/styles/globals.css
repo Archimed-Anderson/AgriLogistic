@@ -1,0 +1,56 @@
+@import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+@theme {
+  --color-background: #050505;
+  --color-foreground: #ffffff;
+  --color-primary: #0066ff;
+  --color-success: #00ff88;
+  --color-border: rgba(255, 255, 255, 0.1);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #0f172a;
+    --primary: #0066FF;
+    --primary-glow: rgba(0, 102, 255, 0.2);
+    --success: #10b981;
+    --success-glow: rgba(16, 185, 129, 0.2);
+    --border: #e2e8f0;
+    --radius: 0.75rem;
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b;
+    --card: #ffffff;
+    --card-foreground: #0f172a;
+    --ring: rgba(0, 102, 255, 0.5);
+  }
+
+  .dark {
+    --background: #050505;
+    --foreground: #f8fafc;
+    --primary: #0066ff;
+    --primary-glow: rgba(0, 102, 255, 0.4);
+    --success: #00ff88;
+    --success-glow: rgba(0, 255, 136, 0.4);
+    --border: rgba(255, 255, 255, 0.08);
+    --muted: #111111;
+    --muted-foreground: #808080;
+    --card: #0A0A0A;
+    --card-foreground: #ffffff;
+    --ring: rgba(0, 102, 255, 0.5);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

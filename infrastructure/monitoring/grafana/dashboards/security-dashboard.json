@@ -1,6 +1,6 @@
-{
+﻿{
   "dashboard": {
-    "title": "AgroDeep Security Dashboard",
+    "title": "AgriLogistic Security Dashboard",
     "tags": ["security", "auth", "monitoring"],
     "timezone": "browser",
     "schemaVersion": 27,
@@ -354,3 +354,4 @@
     }
   }
 }
+

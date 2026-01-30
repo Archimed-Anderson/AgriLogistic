@@ -1,11 +1,11 @@
-# Script de correction et demarrage complet
+﻿# Script de correction et demarrage complet
 # Corrige les problemes Docker et lance tous les services
 
 $ErrorActionPreference = "Continue"
 
 Write-Host ""
 Write-Host "======================================================" -ForegroundColor Cyan
-Write-Host "  AgroDeep - Correction et Demarrage Backend" -ForegroundColor Cyan
+Write-Host "  AgriLogistic - Correction et Demarrage Backend" -ForegroundColor Cyan
 Write-Host "======================================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -61,7 +61,7 @@ Write-Host ""
 
 # Etape 2: Nettoyer les conteneurs arretes
 Write-Host "[2/5] Nettoyage des conteneurs obsoletes..." -ForegroundColor Yellow
-$oldContainers = docker ps -a --filter "status=exited" --filter "name=agrodeep" -q 2>$null
+$oldContainers = docker ps -a --filter "status=exited" --filter "name=AgriLogistic" -q 2>$null
 if ($oldContainers) {
     docker rm $oldContainers 2>&1 | Out-Null
     Write-Host "  OK - Conteneurs obsoletes supprimes" -ForegroundColor Green
@@ -74,7 +74,7 @@ Write-Host ""
 # Etape 3: Demarrer les services principaux
 Write-Host "[3/5] Demarrage des services (PostgreSQL, Redis, Kong)..." -ForegroundColor Yellow
 
-# Résoudre le chemin de façon portable (script dans AgroDeep\scripts)
+# RÃ©soudre le chemin de faÃ§on portable (script dans AgriLogistic\scripts)
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 Set-Location $projectRoot
 
@@ -85,9 +85,9 @@ docker-compose up -d postgres redis kong 2>&1 | Out-Null
 Start-Sleep -Seconds 5
 
 # Verifier
-$postgresRunning = docker ps --filter "name=agrodeep-postgres" --filter "status=running" -q
-$redisRunning = docker ps --filter "name=agrodeep-redis" --filter "status=running" -q
-$kongRunning = docker ps --filter "name=agrodeep-kong" --filter "status=running" -q
+$postgresRunning = docker ps --filter "name=AgriLogistic-postgres" --filter "status=running" -q
+$redisRunning = docker ps --filter "name=AgriLogistic-redis" --filter "status=running" -q
+$kongRunning = docker ps --filter "name=AgriLogistic-kong" --filter "status=running" -q
 
 if ($postgresRunning) {
     Write-Host "  OK - PostgreSQL demarre" -ForegroundColor Green
@@ -114,8 +114,8 @@ Write-Host "[4/5] Attente initialisation des services (30s)..." -ForegroundColor
 Start-Sleep -Seconds 30
 
 # Verifier la sante
-$postgresReady = docker exec agrodeep-postgres pg_isready -U agrodeep 2>&1 | Out-String
-$redisReady = docker exec agrodeep-redis redis-cli --no-auth-warning -a redis_secure_2026 ping 2>&1 | Out-String
+$postgresReady = docker exec AgriLogistic-postgres pg_isready -U AgriLogistic 2>&1 | Out-String
+$redisReady = docker exec AgriLogistic-redis redis-cli --no-auth-warning -a redis_secure_2026 ping 2>&1 | Out-String
 
 if ($postgresReady -like "*accepting connections*") {
     Write-Host "  OK - PostgreSQL pret" -ForegroundColor Green
@@ -131,16 +131,16 @@ if ($redisReady -like "*PONG*") {
 
 Write-Host ""
 
-# Etape 5: Vérifier PostgreSQL (SANS abaisser la sécurité)
-Write-Host "[5/5] Vérification PostgreSQL..." -ForegroundColor Yellow
+# Etape 5: VÃ©rifier PostgreSQL (SANS abaisser la sÃ©curitÃ©)
+Write-Host "[5/5] VÃ©rification PostgreSQL..." -ForegroundColor Yellow
 
-$testConnection = docker exec agrodeep-postgres psql -U agrodeep -d agrodeep_auth -c "SELECT 1;" 2>&1 | Out-String
+$testConnection = docker exec AgriLogistic-postgres psql -U AgriLogistic -d AgriLogistic_auth -c "SELECT 1;" 2>&1 | Out-String
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "  OK - Connexion PostgreSQL OK (agrodeep_auth)" -ForegroundColor Green
+    Write-Host "  OK - Connexion PostgreSQL OK (AgriLogistic_auth)" -ForegroundColor Green
 } else {
-    Write-Host "  ATTENTION - Connexion PostgreSQL échouée" -ForegroundColor Yellow
-    Write-Host "  Détails: $testConnection" -ForegroundColor Gray
-    Write-Host "  Conseil: vérifiez DB_PASSWORD/POSTGRES_PASSWORD et relancez: docker-compose down && docker-compose up -d postgres" -ForegroundColor Yellow
+    Write-Host "  ATTENTION - Connexion PostgreSQL Ã©chouÃ©e" -ForegroundColor Yellow
+    Write-Host "  DÃ©tails: $testConnection" -ForegroundColor Gray
+    Write-Host "  Conseil: vÃ©rifiez DB_PASSWORD/POSTGRES_PASSWORD et relancez: docker-compose down && docker-compose up -d postgres" -ForegroundColor Yellow
 }
 
 Write-Host ""
@@ -149,7 +149,7 @@ Write-Host "  Configuration terminee!" -ForegroundColor Green
 Write-Host "======================================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Etat des services:" -ForegroundColor Cyan
-docker ps --filter "name=agrodeep" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" 2>$null
+docker ps --filter "name=AgriLogistic" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" 2>$null
 Write-Host ""
 Write-Host "Services disponibles:" -ForegroundColor Cyan
 $postgresPort = if ($env:POSTGRES_PORT) { $env:POSTGRES_PORT } else { "5433" }
@@ -164,3 +164,4 @@ Write-Host ""
 Write-Host "Ou utilisez le script complet:" -ForegroundColor Yellow
 Write-Host "  .\scripts\start-all.ps1" -ForegroundColor White
 Write-Host ""
+

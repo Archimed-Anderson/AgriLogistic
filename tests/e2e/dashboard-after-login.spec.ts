@@ -3,7 +3,7 @@ import { TEST_ACCOUNTS } from './test-data/modern-login-accounts';
 
 async function dismissConsentBanner(page: Page) {
   // Consent banner can intercept clicks on mobile.
-  const banner = page.locator('text=/Cookies & mesure d\\x27audience|Cookies & mesure d’audience/i').first();
+  const banner = page.locator('text=/Cookies & mesure d\\x27audience|Cookies & mesure d'audience/i').first();
   if (await banner.count()) {
     const accept = page.getByRole('button', { name: /Accepter/i }).first();
     const refuse = page.getByRole('button', { name: /Refuser/i }).first();
@@ -116,7 +116,7 @@ test.describe('Dashboard après connexion (admin) - UI & régressions', () => {
     // Sidebar checks
     await openSidebarIfMobile(page);
     const sidebar = page.locator('aside').first();
-    await expect(sidebar.getByText('AgroDeep')).toBeVisible();
+    await expect(sidebar.getByText('AgriLogistic')).toBeVisible();
 
     // Core modules
     await expect(sidebar.getByRole('button', { name: /^Dashboard$/ })).toBeVisible();
@@ -169,8 +169,8 @@ test.describe('Dashboard après connexion (admin) - UI & régressions', () => {
 
     // Ctrl/Cmd+K search palette should open and navigate to Weather
     await page.keyboard.press(process.platform === 'darwin' ? 'Meta+K' : 'Control+K');
-    await expect(page.getByPlaceholder('Rechercher un module…')).toBeVisible();
-    await page.getByPlaceholder('Rechercher un module…').fill('météo');
+    await expect(page.getByPlaceholder('Rechercher un moduleâ€¦')).toBeVisible();
+    await page.getByPlaceholder('Rechercher un moduleâ€¦').fill('météo');
     await page.getByRole('button', { name: /Météo/i }).first().click();
 
     // Weather module should render
@@ -196,4 +196,6 @@ test.describe('Dashboard après connexion (admin) - UI & régressions', () => {
     await expect(page.locator('aside').first()).toHaveClass(/-translate-x-full/);
   });
 });
+
+
 

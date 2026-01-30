@@ -1,11 +1,11 @@
-# 📚 Runbook d'Opérations - AgroLogistic Platform
+# ðŸ“š Runbook d'Opérations - AgroLogistic Platform
 
 **Version**: 1.0  
 **Dernière mise à jour**: 19 janvier 2026  
 
 ---
 
-## 📖 Table des Matières
+## ðŸ“– Table des Matières
 
 1. [Vue d'ensemble](#vue-densemble)
 2. [Procédures de démarrage](#procédures-de-démarrage)
@@ -23,33 +23,33 @@
 ### Architecture du Système
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                         CLIENTS                                  │
-│                    (Web / Mobile / API)                          │
-└─────────────────────────┬───────────────────────────────────────┘
-                          │
-                          ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      KONG GATEWAY                               │
-│                     (Load Balancer)                              │
-│                   Port: 8000 (HTTP)                              │
-└─────────────────────────┬───────────────────────────────────────┘
-                          │
-          ┌───────────────┼───────────────┬───────────────┐
-          ▼               ▼               ▼               ▼
-     ┌────────┐      ┌────────┐      ┌────────┐      ┌────────┐
-     │  Auth  │      │Product │      │ Order  │      │Payment │
-     │ :3001  │      │ :3002  │      │ :3003  │      │ :3004  │
-     └───┬────┘      └───┬────┘      └───┬────┘      └───┬────┘
-         │               │               │               │
-         └───────────────┴───────────────┴───────────────┘
-                          │
-          ┌───────────────┼───────────────┐
-          ▼               ▼               ▼
-     ┌────────┐      ┌────────┐      ┌────────┐
-     │Postgres│      │ Redis  │      │MongoDB │
-     │ :5433  │      │ :6379  │      │ :27017 │
-     └────────┘      └────────┘      └────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                         CLIENTS                                  â”‚
+â”‚                    (Web / Mobile / API)                          â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                          â”‚
+                          â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                      KONG GATEWAY                               â”‚
+â”‚                     (Load Balancer)                              â”‚
+â”‚                   Port: 8000 (HTTP)                              â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                          â”‚
+          â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+          â–¼               â–¼               â–¼               â–¼
+     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”
+     â”‚  Auth  â”‚      â”‚Product â”‚      â”‚ Order  â”‚      â”‚Payment â”‚
+     â”‚ :3001  â”‚      â”‚ :3002  â”‚      â”‚ :3003  â”‚      â”‚ :3004  â”‚
+     â””â”€â”€â”€â”¬â”€â”€â”€â”€â”˜      â””â”€â”€â”€â”¬â”€â”€â”€â”€â”˜      â””â”€â”€â”€â”¬â”€â”€â”€â”€â”˜      â””â”€â”€â”€â”¬â”€â”€â”€â”€â”˜
+         â”‚               â”‚               â”‚               â”‚
+         â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                          â”‚
+          â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+          â–¼               â–¼               â–¼
+     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”
+     â”‚Postgresâ”‚      â”‚ Redis  â”‚      â”‚MongoDB â”‚
+     â”‚ :5433  â”‚      â”‚ :6379  â”‚      â”‚ :27017 â”‚
+     â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜      â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜      â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### URLs Importantes
@@ -73,7 +73,7 @@
 
 ```powershell
 # 1. Démarrer l'infrastructure de base
-cd AgroDeep
+cd AgriLogistic
 docker-compose up -d postgres redis mongodb
 
 # 2. Attendre que les bases soient prêtes (30s)
@@ -89,7 +89,7 @@ docker-compose up -d kong-database kong-migrations kong
 docker-compose up -d prometheus grafana jaeger
 
 # 6. Démarrer l'application web
-docker-compose up -d agrodeep-web
+docker-compose up -d AgriLogistic-web
 
 # 7. Vérifier l'état de tous les services
 .\scripts\validate-health-endpoints.ps1
@@ -107,7 +107,7 @@ npm install
 npm run dev
 
 # 3. Dans un autre terminal, démarrer le frontend
-cd AgroDeep
+cd AgriLogistic
 $env:VITE_AUTH_PROVIDER="mock"  # ou "real" pour utiliser l'API
 npm run dev
 ```
@@ -120,7 +120,7 @@ npm run dev
 
 ```powershell
 # 1. Arrêter d'abord l'application web (plus de trafic entrant)
-docker-compose stop agrodeep-web
+docker-compose stop AgriLogistic-web
 
 # 2. Attendre le drainage des connexions (30s)
 Start-Sleep -Seconds 30
@@ -174,7 +174,7 @@ docker-compose kill
 
 ## Alertes et Résolution
 
-### 🔴 ServiceDown (CRITICAL)
+### ðŸ”´ ServiceDown (CRITICAL)
 
 **Symptôme**: Un service ne répond plus aux health checks
 
@@ -202,17 +202,17 @@ docker-compose up -d --force-recreate <service-name>
 docker-compose ps  # Vérifier que postgres/redis sont up
 ```
 
-### 🔴 PostgreSQLDown (CRITICAL)
+### ðŸ”´ PostgreSQLDown (CRITICAL)
 
 **Symptôme**: Base de données PostgreSQL inaccessible
 
 **Diagnostic**:
 ```powershell
 # Vérifier l'état du container
-docker logs agrodeep-postgres --tail 50
+docker logs AgriLogistic-postgres --tail 50
 
 # Tester la connexion
-docker exec agrodeep-postgres pg_isready -U agrodeep
+docker exec AgriLogistic-postgres pg_isready -U AgriLogistic
 ```
 
 **Résolution**:
@@ -222,19 +222,19 @@ docker-compose restart postgres
 
 # Si corruption des données
 docker-compose down postgres
-docker volume rm agrodeep_postgres-data  # ⚠️ PERTE DE DONNÉES
+docker volume rm AgriLogistic_postgres-data  # âš ï¸ PERTE DE DONNÉES
 docker-compose up -d postgres
 # Restaurer depuis le backup
 ```
 
-### 🔴 RedisDown (CRITICAL)
+### ðŸ”´ RedisDown (CRITICAL)
 
 **Symptôme**: Cache Redis inaccessible
 
 **Diagnostic**:
 ```powershell
-docker logs agrodeep-redis --tail 50
-docker exec agrodeep-redis redis-cli -a $REDIS_PASSWORD ping
+docker logs AgriLogistic-redis --tail 50
+docker exec AgriLogistic-redis redis-cli -a $REDIS_PASSWORD ping
 ```
 
 **Résolution**:
@@ -242,7 +242,7 @@ docker exec agrodeep-redis redis-cli -a $REDIS_PASSWORD ping
 docker-compose restart redis
 ```
 
-### 🟡 HighErrorRate (WARNING)
+### ðŸŸ¡ HighErrorRate (WARNING)
 
 **Symptôme**: Taux d'erreur > 5% sur un service
 
@@ -260,7 +260,7 @@ docker logs <service-container> 2>&1 | Select-String "error" | Select-Object -La
 - Analyser les patterns d'erreur
 - Rollback si nécessaire
 
-### 🟡 SlowResponseTime (WARNING)
+### ðŸŸ¡ SlowResponseTime (WARNING)
 
 **Symptôme**: Temps de réponse P95 > 500ms
 
@@ -278,7 +278,7 @@ docker stats --no-stream
 - Optimiser les requêtes DB
 - Vérifier les indexes
 
-### 🟡 HighMemoryUsage (WARNING)
+### ðŸŸ¡ HighMemoryUsage (WARNING)
 
 **Symptôme**: Utilisation mémoire > 85%
 
@@ -299,31 +299,31 @@ docker-compose restart <service-name>
 
 ```powershell
 # 1. Identifier la version précédente
-docker images | Select-String "agrodeep-web"
+docker images | Select-String "AgriLogistic-web"
 
 # 2. Modifier docker-compose.yml pour utiliser l'ancienne image
 # Changer la version de l'image
 
 # 3. Redéployer
-docker-compose up -d agrodeep-web
+docker-compose up -d AgriLogistic-web
 ```
 
 ### Rollback Kubernetes
 
 ```powershell
 # Voir l'historique des déploiements
-kubectl rollout history deployment/agrodeep-web -n agrodeep
+kubectl rollout history deployment/AgriLogistic-web -n AgriLogistic
 
 # Rollback vers la version précédente
-kubectl rollout undo deployment/agrodeep-web -n agrodeep
+kubectl rollout undo deployment/AgriLogistic-web -n AgriLogistic
 
 # Rollback vers une version spécifique
-kubectl rollout undo deployment/agrodeep-web -n agrodeep --to-revision=2
+kubectl rollout undo deployment/AgriLogistic-web -n AgriLogistic --to-revision=2
 ```
 
 ### Rollback Base de Données
 
-⚠️ **ATTENTION**: Opération sensible, nécessite coordination
+âš ï¸ **ATTENTION**: Opération sensible, nécessite coordination
 
 ```powershell
 # 1. Arrêter le trafic entrant
@@ -333,7 +333,7 @@ docker-compose stop kong
 # (procédure dépend du système de backup)
 
 # 3. Vérifier l'intégrité
-docker exec agrodeep-postgres psql -U agrodeep -c "SELECT count(*) FROM users;"
+docker exec AgriLogistic-postgres psql -U AgriLogistic -c "SELECT count(*) FROM users;"
 
 # 4. Redémarrer le trafic
 docker-compose start kong
@@ -365,13 +365,13 @@ npm run validate:full
 
 ```powershell
 # Backup PostgreSQL
-docker exec agrodeep-postgres pg_dump -U agrodeep agrodeep > backup_$(Get-Date -Format "yyyyMMdd").sql
+docker exec AgriLogistic-postgres pg_dump -U AgriLogistic AgriLogistic > backup_$(Get-Date -Format "yyyyMMdd").sql
 
 # Backup MongoDB
-docker exec agrodeep-mongodb mongodump --out /backup/$(Get-Date -Format "yyyyMMdd")
+docker exec AgriLogistic-mongodb mongodump --out /backup/$(Get-Date -Format "yyyyMMdd")
 
 # Backup Redis
-docker exec agrodeep-redis redis-cli -a $REDIS_PASSWORD BGSAVE
+docker exec AgriLogistic-redis redis-cli -a $REDIS_PASSWORD BGSAVE
 ```
 
 ### Rotation des Logs
@@ -448,3 +448,5 @@ up{job=~".*-service"}
 - [API Endpoints](./API_ENDPOINTS.md)
 - [Plan de Stabilisation](./STABILIZATION_PLAN.md)
 - [Rapport d'Audit](./SYSTEM_AUDIT_REPORT.md)
+
+

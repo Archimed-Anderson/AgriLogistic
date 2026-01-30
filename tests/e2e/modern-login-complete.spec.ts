@@ -160,9 +160,9 @@ function generateReport(): void {
   };
   
   fs.writeFileSync(reportPath, JSON.stringify(summary, null, 2));
-  console.log(`\n📊 Rapport généré: ${reportPath}`);
-  console.log(`✅ Passés: ${summary.passed}/${summary.total}`);
-  console.log(`❌ Échoués: ${summary.failed}/${summary.total}`);
+  console.log(`\nðŸ“Š Rapport généré: ${reportPath}`);
+  console.log(`âœ… Passés: ${summary.passed}/${summary.total}`);
+  console.log(`âŒ Échoués: ${summary.failed}/${summary.total}`);
 }
 
 // ============================================
@@ -263,12 +263,12 @@ test.describe('Modern Login Page - Tests Complets', () => {
   
   test.beforeAll(() => {
     startTime = Date.now();
-    console.log('🚀 Démarrage des tests Modern Login Page');
+    console.log('ðŸš€ Démarrage des tests Modern Login Page');
   });
   
   test.afterAll(() => {
     const totalTime = Date.now() - startTime;
-    console.log(`\n⏱️  Temps total d'exécution: ${totalTime}ms`);
+    console.log(`\nâ±ï¸  Temps total d'exécution: ${totalTime}ms`);
     generateReport();
   });
   
@@ -724,7 +724,7 @@ test.describe('Modern Login Page - Tests Complets', () => {
   test.describe('Tests de Transition', () => {
     test('8.1 - Transition fluide entre login et signup', async ({ page }) => {
       // Vérifier qu'on est en mode login par défaut
-      const loginForm = page.locator('text=/Bienvenue sur AgroDeep/i');
+      const loginForm = page.locator('text=/Bienvenue sur AgriLogistic/i');
       await expect(loginForm.first()).toBeVisible();
       
       // Cliquer sur le bouton Inscription
@@ -888,3 +888,5 @@ test.describe('Modern Login Page - Tests Complets', () => {
     });
   });
 });
+
+

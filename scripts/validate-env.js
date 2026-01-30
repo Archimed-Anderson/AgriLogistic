@@ -1,8 +1,8 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 
 /**
  * Script de validation des variables d'environnement
- * Vérifie que toutes les variables requises sont présentes et valides
+ * VÃ©rifie que toutes les variables requises sont prÃ©sentes et valides
  */
 
 import { readFileSync, existsSync } from 'fs';
@@ -26,18 +26,18 @@ const frontendRequired = {
 const authServiceRequired = {
   DB_HOST: 'localhost',
   DB_PORT: '5432',
-  DB_NAME: 'agrodeep_auth',
-  DB_USER: 'agrodeep',
-  DB_PASSWORD: 'agrodeep_password',
-  JWT_ACCESS_SECRET: 'agrodeep_secure_jwt_access_secret_2026',
-  JWT_REFRESH_SECRET: 'agrodeep_secure_jwt_refresh_secret_2026',
+  DB_NAME: 'AgriLogistic_auth',
+  DB_USER: 'AgriLogistic',
+  DB_PASSWORD: 'AgriLogistic_password',
+  JWT_ACCESS_SECRET: 'AgriLogistic_secure_jwt_access_secret_2026',
+  JWT_REFRESH_SECRET: 'AgriLogistic_secure_jwt_refresh_secret_2026',
   PORT: '3001',
   CORS_ORIGIN: 'http://localhost:5173',
 };
 
 function checkEnvFile(filePath, requiredVars, serviceName) {
   if (!existsSync(filePath)) {
-    warnings.push(`⚠️  ${serviceName}: Fichier .env non trouvé: ${filePath}`);
+    warnings.push(`âš ï¸  ${serviceName}: Fichier .env non trouvÃ©: ${filePath}`);
     return;
   }
 
@@ -56,43 +56,44 @@ function checkEnvFile(filePath, requiredVars, serviceName) {
 
   Object.keys(requiredVars).forEach(key => {
     if (!envVars[key] || envVars[key] === '') {
-      errors.push(`❌ ${serviceName}: Variable manquante ou vide: ${key}`);
+      errors.push(`âŒ ${serviceName}: Variable manquante ou vide: ${key}`);
     } else if (envVars[key].includes('your_') || envVars[key].includes('change_me')) {
-      warnings.push(`⚠️  ${serviceName}: Variable ${key} contient une valeur par défaut, veuillez la modifier`);
+      warnings.push(`âš ï¸  ${serviceName}: Variable ${key} contient une valeur par dÃ©faut, veuillez la modifier`);
     }
   });
 }
 
-console.log('🔍 Validation des variables d\'environnement...\n');
+console.log('ðŸ” Validation des variables d\'environnement...\n');
 
-// Vérifier le frontend
+// VÃ©rifier le frontend
 const frontendEnvPath = join(rootDir, '.env');
 checkEnvFile(frontendEnvPath, frontendRequired, 'Frontend');
 
-// Vérifier auth-service
+// VÃ©rifier auth-service
 const authServiceEnvPath = join(rootDir, 'services', 'auth-service', '.env');
 checkEnvFile(authServiceEnvPath, authServiceRequired, 'Auth Service');
 
-// Afficher les résultats
+// Afficher les rÃ©sultats
 if (errors.length > 0) {
-  console.log('❌ ERREURS:');
+  console.log('âŒ ERREURS:');
   errors.forEach(err => console.log(err));
   console.log('');
 }
 
 if (warnings.length > 0) {
-  console.log('⚠️  AVERTISSEMENTS:');
+  console.log('âš ï¸  AVERTISSEMENTS:');
   warnings.forEach(warn => console.log(warn));
   console.log('');
 }
 
 if (errors.length === 0 && warnings.length === 0) {
-  console.log('✅ Toutes les variables d\'environnement sont correctement configurées!\n');
+  console.log('âœ… Toutes les variables d\'environnement sont correctement configurÃ©es!\n');
   process.exit(0);
 } else if (errors.length > 0) {
-  console.log('❌ Des erreurs doivent être corrigées avant de continuer.\n');
+  console.log('âŒ Des erreurs doivent Ãªtre corrigÃ©es avant de continuer.\n');
   process.exit(1);
 } else {
-  console.log('⚠️  Des avertissements ont été détectés, mais vous pouvez continuer.\n');
+  console.log('âš ï¸  Des avertissements ont Ã©tÃ© dÃ©tectÃ©s, mais vous pouvez continuer.\n');
   process.exit(0);
 }
+

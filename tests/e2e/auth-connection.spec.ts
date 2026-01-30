@@ -8,7 +8,7 @@ test.describe('Authentication Connection Flow', () => {
 
   test('should display backend status indicator on login page', async ({ page }) => {
     // Wait for the login form to be visible
-    await expect(page.getByRole('heading', { name: /welcome to agrodeep/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /welcome to AgriLogistic/i })).toBeVisible();
     
     // Check if backend status is displayed
     const statusIndicator = page.locator('text=/Backend Status|Serveur backend/i');
@@ -291,3 +291,5 @@ test.describe('Backend Health Monitoring', () => {
     }
   });
 });
+
+

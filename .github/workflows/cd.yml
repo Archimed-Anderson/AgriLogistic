@@ -1,4 +1,4 @@
-name: CD Pipeline
+﻿name: CD Pipeline
 
 on:
   push:
@@ -36,11 +36,11 @@ jobs:
       - name: Deploy to staging
         run: |
           kubectl apply -k infrastructure/k8s/overlays/staging
-          kubectl rollout status deployment/agrodeep-web -n agrodeep-staging --timeout=5m
+          kubectl rollout status deployment/AgriLogistic-web -n AgriLogistic-staging --timeout=5m
 
       - name: Run smoke tests
         run: |
-          STAGING_URL=$(kubectl get svc agrodeep-web -n agrodeep-staging -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+          STAGING_URL=$(kubectl get svc AgriLogistic-web -n AgriLogistic-staging -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
           curl -f https://$STAGING_URL/health || exit 1
 
   deploy-production:
@@ -70,18 +70,18 @@ jobs:
       - name: Deploy to production (canary)
         run: |
           kubectl apply -k infrastructure/k8s/overlays/production
-          kubectl rollout status deployment/agrodeep-web -n agrodeep --timeout=10m
+          kubectl rollout status deployment/AgriLogistic-web -n AgriLogistic --timeout=10m
 
       - name: Notify Slack on success
         uses: slackapi/slack-github-action@v1.24.0
         with:
           payload: |
             {
-              "text": "✅ AgroDeep ${{ github.ref_name }} deployed to production",
+              "text": "âœ… AgriLogistic ${{ github.ref_name }} deployed to production",
               "blocks": [
                 {
                   "type": "section",
-                  "text": { "type": "mrkdwn", "text": "*AgroDeep ${{ github.ref_name }}* deployed to production successfully" }
+                  "text": { "type": "mrkdwn", "text": "*AgriLogistic ${{ github.ref_name }}* deployed to production successfully" }
                 }
               ]
             }
@@ -106,20 +106,21 @@ jobs:
         run: aws eks update-kubeconfig --name ${{ vars.EKS_CLUSTER_NAME }} --region ${{ vars.AWS_REGION }}
 
       - name: Rollback deployment
-        run: kubectl rollout undo deployment/agrodeep-web -n agrodeep
+        run: kubectl rollout undo deployment/AgriLogistic-web -n AgriLogistic
 
       - name: Notify Slack on rollback
         uses: slackapi/slack-github-action@v1.24.0
         with:
           payload: |
             {
-              "text": "⚠️ AgroDeep production deployment rolled back",
+              "text": "âš ï¸ AgriLogistic production deployment rolled back",
               "blocks": [
                 {
                   "type": "section",
-                  "text": { "type": "mrkdwn", "text": "*AgroDeep ${{ github.ref_name }}* production deployment failed and was rolled back" }
+                  "text": { "type": "mrkdwn", "text": "*AgriLogistic ${{ github.ref_name }}* production deployment failed and was rolled back" }
                 }
               ]
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+

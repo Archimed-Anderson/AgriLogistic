@@ -90,6 +90,7 @@ export default defineConfig({
   ],
 
   /* Serveur de développement local */
+  /*
   webServer: {
     // Use Mock Auth to make E2E tests fully isolated/deterministic.
     // Force port 5173 so baseURL stays stable across runs.
@@ -101,4 +102,5 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   },
+  */
 });

@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # Kong API Gateway Startup Script for Windows
 # AgroLogistic 2. - PowerShell Version
 # ============================================================
@@ -130,7 +130,7 @@ function Initialize-Kong {
     
     if (Test-Path "scripts\kong-init.sh") {
         Write-Info "Running initialization via WSL..."
-        wsl bash -c "cd /mnt/c/Users/$env:USERNAME/Downloads/Agrodeepwebapp-main/AgroDeep/infrastructure && bash scripts/kong-init.sh"
+        wsl bash -c "cd /mnt/c/Users/$env:USERNAME/Downloads/AgriLogisticwebapp-main/AgriLogistic/infrastructure && bash scripts/kong-init.sh"
         Write-Success "Kong initialized"
     }
     else {
@@ -207,3 +207,4 @@ function Main {
 
 # Run
 Main
+

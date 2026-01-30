@@ -1,6 +1,6 @@
 /**
  * =======================================================
- * PLAYWRIGHT E2E - Tests Landing Page AgroDeep Moderne
+ * PLAYWRIGHT E2E - Tests Landing Page AgriLogistic Moderne
  * =======================================================
  * Tests complets pour valider la nouvelle landing page
  * - Chargement et performance
@@ -16,7 +16,7 @@ import { test, expect, Page } from '@playwright/test';
 
 const BASE_URL = 'http://localhost:5173';
 
-test.describe('Landing Page AgroDeep - Tests Complets', () => {
+test.describe('Landing Page AgriLogistic - Tests Complets', () => {
   
   test.beforeEach(async ({ page }) => {
     // Mock API contact pour isoler les tests front (pas de dépendance au backend)
@@ -288,8 +288,8 @@ test.describe('Landing Page AgroDeep - Tests Complets', () => {
     
     // Vérifier les liens du footer
     await expect(page.locator('footer')).toBeVisible();
-    await expect(page.locator('text=AgroDeep')).toBeVisible();
-    await expect(page.locator('text=contact@agrodeep.com')).toBeVisible();
+    await expect(page.locator('text=AgriLogistic')).toBeVisible();
+    await expect(page.locator('text=contact@AgriLogistic.com')).toBeVisible();
   });
 
   // ============================================
@@ -353,3 +353,5 @@ test.describe('Landing Page AgroDeep - Tests Complets', () => {
     await expect(storySection).toBeInViewport();
   });
 });
+
+

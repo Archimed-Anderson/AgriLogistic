@@ -1,9 +1,9 @@
-# Script de demarrage des services backend AgroDeep
+﻿# Script de demarrage des services backend AgriLogistic
 $ErrorActionPreference = "Stop"
 
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Cyan
-Write-Host "  AgroDeep Backend Services - Demarrage" -ForegroundColor Cyan
+Write-Host "  AgriLogistic Backend Services - Demarrage" -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -21,7 +21,8 @@ Write-Host "[1/5] Verification Docker..." -ForegroundColor Yellow
 try {
     $dockerVersion = docker --version
     Write-Host "  OK - Docker installe: $dockerVersion" -ForegroundColor Green
-} catch {
+}
+catch {
     Write-Host "  ERREUR - Docker n'est pas installe ou n'est pas dans PATH" -ForegroundColor Red
     Write-Host "  Installez Docker Desktop depuis: https://www.docker.com/products/docker-desktop" -ForegroundColor Yellow
     exit 1
@@ -30,7 +31,8 @@ try {
 try {
     docker ps | Out-Null
     Write-Host "  OK - Docker daemon actif" -ForegroundColor Green
-} catch {
+}
+catch {
     Write-Host "  ERREUR - Docker daemon n'est pas demarre" -ForegroundColor Red
     Write-Host "  Lancez Docker Desktop" -ForegroundColor Yellow
     exit 1
@@ -44,7 +46,8 @@ Set-Location $projectRoot
 try {
     docker-compose up -d
     Write-Host "  OK - Infrastructure demarree" -ForegroundColor Green
-} catch {
+}
+catch {
     Write-Host "  ERREUR lors du demarrage de l'infrastructure" -ForegroundColor Red
     Write-Host $_.Exception.Message -ForegroundColor Red
     exit 1
@@ -61,17 +64,19 @@ Write-Host ""
 
 # Demarrage du service d'authentification
 Write-Host "[4/5] Demarrage service d'authentification..." -ForegroundColor Yellow
-Set-Location "$projectRoot\services\auth-service"
+Set-Location "$projectRoot\services\identity\auth-service"
 
 if (Test-Path "docker-compose.yml") {
     try {
         docker-compose up -d
         Write-Host "  OK - Service d'authentification demarre" -ForegroundColor Green
-    } catch {
+    }
+    catch {
         Write-Host "  AVERTISSEMENT - Erreur lors du demarrage" -ForegroundColor Yellow
         Write-Host "  Vous pouvez le demarrer manuellement avec: npm run dev" -ForegroundColor Yellow
     }
-} else {
+}
+else {
     Write-Host "  INFO - Pas de docker-compose.yml trouve" -ForegroundColor Yellow
     Write-Host "  Utilisez 'npm run dev' pour demarrer en mode developpement" -ForegroundColor Yellow
 }
@@ -87,7 +92,8 @@ $servicesOK = $true
 # Check Kong API Gateway
 if (Test-PortInUse -Port 8000) {
     Write-Host "  OK - Kong API Gateway (port 8000)" -ForegroundColor Green
-} else {
+}
+else {
     Write-Host "  ERREUR - Kong API Gateway non accessible" -ForegroundColor Red
     $servicesOK = $false
 }
@@ -95,14 +101,16 @@ if (Test-PortInUse -Port 8000) {
 # Check PostgreSQL
 if (Test-PortInUse -Port 5432) {
     Write-Host "  OK - PostgreSQL (port 5432)" -ForegroundColor Green
-} else {
+}
+else {
     Write-Host "  AVERTISSEMENT - PostgreSQL non accessible" -ForegroundColor Yellow
 }
 
 # Check Redis
 if (Test-PortInUse -Port 6379) {
     Write-Host "  OK - Redis (port 6379)" -ForegroundColor Green
-} else {
+}
+else {
     Write-Host "  AVERTISSEMENT - Redis non accessible" -ForegroundColor Yellow
 }
 
@@ -118,7 +126,8 @@ if ($servicesOK) {
     Write-Host ""
     Write-Host "Logs des services:" -ForegroundColor Cyan
     Write-Host "  docker-compose logs -f" -ForegroundColor White
-} else {
+}
+else {
     Write-Host "  ATTENTION - Certains services ont des problemes" -ForegroundColor Yellow
     Write-Host ""
     Write-Host "Commandes utiles:" -ForegroundColor Cyan
@@ -131,3 +140,4 @@ Write-Host "================================================" -ForegroundColor C
 Write-Host ""
 
 Set-Location $projectRoot
+

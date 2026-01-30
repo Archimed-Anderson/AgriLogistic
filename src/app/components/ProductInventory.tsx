@@ -18,7 +18,9 @@ import {
   Check,
   Minus,
   BarChart3,
+  Truck 
 } from "lucide-react";
+import { AgriLogisticLink } from "./AgriLogisticLink";
 import { toast } from "sonner";
 import { downloadTextFile, parseCsvToObjects, toCsv } from "../../shared/utils/csv";
 import {
@@ -347,7 +349,7 @@ export function ProductInventory() {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [currentTab, setCurrentTab] = useState<"all" | "low" | "analytics">("all");
+  const [currentTab, setCurrentTab] = useState<"all" | "low" | "analytics" | "logistics">("all");
   const [products, setProducts] = useState<Product[]>(mockProducts);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
   const [showEditProductModal, setShowEditProductModal] = useState(false);
@@ -687,6 +689,17 @@ export function ProductInventory() {
             }`}
           >
             Analytiques
+          </button>
+          <button
+            onClick={() => setCurrentTab("logistics")}
+            className={`pb-3 px-1 border-b-2 transition-colors flex items-center gap-2 ${
+              currentTab === "logistics"
+                ? "border-[#2563eb] text-[#2563eb] font-medium"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Truck className="h-4 w-4" />
+            AgriLogistic Link
           </button>
         </div>
       </div>

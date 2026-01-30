@@ -1,37 +1,37 @@
-# 🚀 Kong API Gateway - Guide de Démarrage Rapide
+# ðŸš€ Kong API Gateway - Guide de Démarrage Rapide
 
 ## AgroLogistic 2.0 - Phase 1 Finalisée
 
 ---
 
-## ⚡ Démarrage en 1 Commande
+## âš¡ Démarrage en 1 Commande
 
 ### Windows (PowerShell) - RECOMMANDÉ
 
 ```powershell
-cd c:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\infrastructure
+cd c:\Users\ander\Downloads\AgriLogisticwebapp-main\AgriLogistic\infrastructure
 .\scripts\kong-deploy.ps1
 ```
 
 ### Linux / macOS / WSL
 
 ```bash
-cd /path/to/AgroDeep/infrastructure
+cd /path/to/AgriLogistic/infrastructure
 chmod +x scripts/kong-deploy.sh
 ./scripts/kong-deploy.sh
 ```
 
 Le script va automatiquement :
-1. ✅ Vérifier les prérequis (Docker, Docker Compose)
-2. ✅ Démarrer la stack Kong
-3. ✅ Attendre que Kong soit prêt
-4. ✅ Initialiser la configuration (services, routes, JWT)
-5. ✅ (Optionnel) Exécuter les tests
-6. ✅ Afficher les informations de connexion
+1. âœ… Vérifier les prérequis (Docker, Docker Compose)
+2. âœ… Démarrer la stack Kong
+3. âœ… Attendre que Kong soit prêt
+4. âœ… Initialiser la configuration (services, routes, JWT)
+5. âœ… (Optionnel) Exécuter les tests
+6. âœ… Afficher les informations de connexion
 
 ---
 
-## 📦 Ce Qui Est Déployé
+## ðŸ“¦ Ce Qui Est Déployé
 
 Une fois le script terminé, vous aurez :
 
@@ -54,7 +54,7 @@ Une fois le script terminé, vous aurez :
 
 ---
 
-## 🔗 Accès aux Services
+## ðŸ”— Accès aux Services
 
 Après le déploiement, accédez à :
 
@@ -69,7 +69,7 @@ Après le déploiement, accédez à :
 
 ---
 
-## 🧪 Test Rapide
+## ðŸ§ª Test Rapide
 
 ### 1. Vérifier que Kong fonctionne
 
@@ -101,14 +101,14 @@ curl http://localhost:8000/api/v1/products -H "Authorization: Bearer $TOKEN"
 
 ---
 
-## 🧪 Suite de Tests Complète
+## ðŸ§ª Suite de Tests Complète
 
 Pour valider l'installation complète :
 
 ### Windows (WSL)
 
 ```powershell
-wsl bash -c "cd /mnt/c/Users/ander/Downloads/Agrodeepwebapp-main/AgroDeep/infrastructure && bash scripts/kong-test.sh"
+wsl bash -c "cd /mnt/c/Users/ander/Downloads/AgriLogisticwebapp-main/AgriLogistic/infrastructure && bash scripts/kong-test.sh"
 ```
 
 ### Linux / macOS
@@ -121,18 +121,18 @@ chmod +x scripts/kong-test.sh
 
 ### Ce qui est testé
 
-- ✅ **6 tests d'infrastructure** (Kong, Konga, Prometheus, Grafana, PostgreSQL)
-- ✅ **4 tests de configuration** (Services, Routes, Consumers, Plugins)
-- ✅ **3 tests de sécurité** (JWT, CORS, Rate Limiting)
-- ✅ **2 tests de services** (Auth, Products)
-- ✅ **2 tests de monitoring** (Métriques)
-- ✅ **1 test de performance** (Latence)
+- âœ… **6 tests d'infrastructure** (Kong, Konga, Prometheus, Grafana, PostgreSQL)
+- âœ… **4 tests de configuration** (Services, Routes, Consumers, Plugins)
+- âœ… **3 tests de sécurité** (JWT, CORS, Rate Limiting)
+- âœ… **2 tests de services** (Auth, Products)
+- âœ… **2 tests de monitoring** (Métriques)
+- âœ… **1 test de performance** (Latence)
 
 **Total : 18 tests automatisés**
 
 ---
 
-## 📊 Vérifier les Services
+## ðŸ“Š Vérifier les Services
 
 ```bash
 # Liste des conteneurs
@@ -156,7 +156,7 @@ curl http://localhost:8001/consumers | jq
 
 ---
 
-## 🛑 Arrêter Kong
+## ðŸ›‘ Arrêter Kong
 
 ```bash
 cd infrastructure
@@ -171,7 +171,7 @@ docker-compose -f docker-compose.kong.yml down -v
 
 ---
 
-## 🔄 Redémarrer Kong
+## ðŸ”„ Redémarrer Kong
 
 ```bash
 cd infrastructure
@@ -186,7 +186,7 @@ Ou relancer le script de déploiement :
 
 ---
 
-## 🐛 Dépannage
+## ðŸ› Dépannage
 
 ### Kong ne démarre pas
 
@@ -227,35 +227,35 @@ cat kong-tokens.txt
 
 ---
 
-## 📁 Fichiers Importants
+## ðŸ“ Fichiers Importants
 
 ```
 infrastructure/
-├── docker-compose.kong.yml     # Configuration Docker Compose
-├── .env.kong                   #  Variables d'environnement
-├── kong-tokens.txt             # JWT tokens générés (créé après init)
-│
-├── scripts/
-│   ├── kong-deploy.ps1         # Déploiement Windows
-│   ├── kong-deploy.sh          # Déploiement Linux
-│   ├── kong-init.sh            # Initialisation
-│   ├── kong-test.sh            # Tests
-│   └── kong-backup.sh          # Backup
-│
-├── kong/
-│   ├── kong.yml                # Config déclarative
-│   └── plugins/                # Plugins custom
-│
-└── docs/
-    ├── PHASE1_COMPLETE.md      # Documentation complète Phase 1
-    ├── README.md               # Guide principal
-    ├── kong-usage.md           # Guide d'utilisation
-    └── kong-architecture.md    # Architecture technique
+â”œâ”€â”€ docker-compose.kong.yml     # Configuration Docker Compose
+â”œâ”€â”€ .env.kong                   #  Variables d'environnement
+â”œâ”€â”€ kong-tokens.txt             # JWT tokens générés (créé après init)
+â”‚
+â”œâ”€â”€ scripts/
+â”‚   â”œâ”€â”€ kong-deploy.ps1         # Déploiement Windows
+â”‚   â”œâ”€â”€ kong-deploy.sh          # Déploiement Linux
+â”‚   â”œâ”€â”€ kong-init.sh            # Initialisation
+â”‚   â”œâ”€â”€ kong-test.sh            # Tests
+â”‚   â””â”€â”€ kong-backup.sh          # Backup
+â”‚
+â”œâ”€â”€ kong/
+â”‚   â”œâ”€â”€ kong.yml                # Config déclarative
+â”‚   â””â”€â”€ plugins/                # Plugins custom
+â”‚
+â””â”€â”€ docs/
+    â”œâ”€â”€ PHASE1_COMPLETE.md      # Documentation complète Phase 1
+    â”œâ”€â”€ README.md               # Guide principal
+    â”œâ”€â”€ kong-usage.md           # Guide d'utilisation
+    â””â”€â”€ kong-architecture.md    # Architecture technique
 ```
 
 ---
 
-## 🎯 Prochaines Étapes
+## ðŸŽ¯ Prochaines Étapes
 
 Maintenant que Kong est déployé, vous pouvez :
 
@@ -297,7 +297,7 @@ curl http://localhost:8000/api/v1/products \
 
 ---
 
-## 📚 Documentation Complète
+## ðŸ“š Documentation Complète
 
 Pour plus de détails, consultez :
 
@@ -308,7 +308,7 @@ Pour plus de détails, consultez :
 
 ---
 
-## ✅ Checklist de Validation
+## âœ… Checklist de Validation
 
 Avant de passer à la Phase 2, assurez-vous que :
 
@@ -323,7 +323,7 @@ Avant de passer à la Phase 2, assurez-vous que :
 
 ---
 
-## 🎉 Félicitations !
+## ðŸŽ‰ Félicitations !
 
 **Kong API Gateway pour AgroLogistic 2.0 est maintenant déployé et opérationnel !**
 
@@ -333,4 +333,6 @@ Vous êtes prêt pour la **Phase 2 : Déploiement des Microservices Backend**.
 
 **Version:** 1.0.0  
 **Date:** 2026-01-20  
-**Status:** ✅ Production Ready
+**Status:** âœ… Production Ready
+
+

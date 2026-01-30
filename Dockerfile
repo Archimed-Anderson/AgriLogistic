@@ -1,26 +1,85 @@
-# Development build for AgroDeep Platform with Vite proxy support
-FROM node:20-alpine
+# =============================================================================
+# Multi-stage Dockerfile for AgroLogistic Platform
+# Optimized for pnpm and Turborepo with minimal image size
+# =============================================================================
+
+FROM node:20-alpine AS base
+
+# Install pnpm globally
+RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
+
+# Install system dependencies
+RUN apk add --no-cache libc6-compat
+
+# =============================================================================
+# Phase 1: Pruner - Prune Turborepo workspace for specific service
+# =============================================================================
+FROM base AS pruner
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Install turbo globally for pruning
+RUN pnpm add -g turbo
 
-# Install dependencies
-RUN npm ci && npm cache clean --force
-
-# Copy source code and config files
+# Copy all files needed for pruning
 COPY . .
 
-# Expose port
-EXPOSE 3000
+ARG SERVICE_NAME
 
-# Set environment to development for Vite proxy
-ENV NODE_ENV=development
+# Prune the workspace for the specific service
+RUN turbo prune --scope=${SERVICE_NAME} --docker
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --spider -q http://localhost:3000 || exit 1
+# =============================================================================
+# Phase 2: Installer - Install dependencies with pnpm
+# =============================================================================
+FROM base AS installer
 
-# Start Vite dev server (supports proxy)
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3000"]
+WORKDIR /app
+
+# Copy package files from pruner
+COPY --from=pruner /app/out/json/ .
+COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+
+# Install dependencies with frozen lockfile for reproducible builds
+RUN pnpm install --frozen-lockfile
+
+# =============================================================================
+# Phase 3: Builder - Build the service
+# =============================================================================
+FROM base AS builder
+
+WORKDIR /app
+
+# Copy node_modules from installer
+COPY --from=installer /app/node_modules ./node_modules
+
+# Copy source code from pruner
+COPY --from=pruner /app/out/full/ .
+
+# Copy turbo.json for build configuration
+COPY turbo.json turbo.json
+
+ARG SERVICE_NAME
+
+# Build the service using turbo
+RUN pnpm turbo run build --filter=${SERVICE_NAME}
+
+# =============================================================================
+# Phase 4: Runner - Minimal runtime image
+# =============================================================================
+FROM base AS runner
+
+WORKDIR /app
+
+# Create non-root user for security
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 appuser
+
+# Switch to non-root user
+USER appuser
+
+# Copy built application from builder
+COPY --from=builder /app .
+
+# NOTE: You must overwrite CMD at runtime or in a specific child Dockerfile
+# Example: CMD ["node", "services/path/to/dist/index.js"]

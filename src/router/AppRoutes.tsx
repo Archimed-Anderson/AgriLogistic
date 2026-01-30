@@ -30,17 +30,14 @@ import { ModernAuthPage } from "@presentation/pages/ModernAuthPage";
 import { ForgotPasswordPage } from "@presentation/pages/ForgotPasswordPage";
 import { ResetPasswordPage } from "@presentation/pages/ResetPasswordPage";
 import { VerifyEmailPage } from "@presentation/pages/VerifyEmailPage";
-import { DemoPage } from "@/app/components/landing/pages/DemoPage";
-
 // Dashboard
 import { ModernDashboard } from "@/app/components/ModernDashboard";
-import { ModernizedDashboard } from "@/app/components/dashboard/ModernizedDashboard";
 
 // Core Features
 import { ChatInterface } from "@/app/components/ChatInterface";
 import { AnalyticsDashboard } from "@/app/components/AnalyticsDashboard";
 import { MarketplaceModern } from "@/app/components/MarketplaceModern";
-import { RentalMarketplace2 } from "@/app/components/RentalMarketplace2";
+import { RentalMarketplace } from "@/app/components/RentalMarketplace";
 import { Settings } from "@/app/components/Settings";
 import { ProfilePage } from "@/app/components/ProfilePage";
 import { NotificationsPage } from "@/app/components/NotificationsPage";
@@ -55,7 +52,6 @@ import { EventsManager } from "@/app/components/EventsManager";
 import { AcademyPortal } from "@/app/components/AcademyPortal";
 
 // Admin Features
-import { UserManagement } from "@/app/components/UserManagement";
 import { ProductInventory } from "@/app/components/ProductInventory";
 import { OrdersManagement } from "@/app/components/OrdersManagement";
 import { CategoryManagement } from "@/app/components/CategoryManagement";
@@ -86,18 +82,21 @@ import { CarrierDashboard } from "@/app/components/CarrierDashboard";
 import { AffiliateDashboard } from "@/app/components/AffiliateDashboard";
 import { SolutionsFarmersPage } from "@/app/components/landing/pages/SolutionsFarmersPage";
 import { TechBlogPage } from "@/app/components/landing/pages/TechBlogPage";
+import { DemoInteractivePage } from "@/app/components/landing/pages/DemoInteractivePage";
+import CaseStudiesPage from "@pages/marketing/CaseStudiesPage";
+import DigitalTransformationPage from "@pages/marketing/DigitalTransformationPage";
 
 import { Permission } from "@domain/value-objects/permissions.vo";
 import { UserRole } from "@domain/enums/user-role.enum";
 
 // New Admin Dashboard
-import AdminLayout from "@/app/(admin)/layout";
-import AdminDashboardPage from "@/app/(admin)/dashboard/page";
-import AdminUsersPage from "@/app/(admin)/users/page";
-import NewUserPage from "@/app/(admin)/users/new/page";
+import UnifiedAdminLayout from "@/app/admin/components/unified/UnifiedAdminLayout";
+import WarRoomPage from "@/app/admin/war-room/page";
+import AdminUsersPage from "@/app/admin/users/page";
 import AdminAnalyticsPage from "@/app/(admin)/analytics/page";
 import AdminSystemPage from "@/app/(admin)/system/page";
 import AdminSecurityPage from "@/app/(admin)/security/page";
+import CombinedTasksPage from "@/app/(admin)/tasks/page";
 
 // Farmer Dashboard Pages
 import FarmerDashboardPage from "@/app/(farmer)/dashboard/page";
@@ -144,7 +143,9 @@ export function AppRoutes() {
         <Route path="/forgot-password" element={<NavigateAdapter component={ForgotPasswordPage} />} />
         <Route path="/reset-password" element={<NavigateAdapter component={ResetPasswordPage} />} />
         <Route path="/verify-email" element={<NavigateAdapter component={VerifyEmailPage} />} />
-        <Route path="/demo" element={<NavigateAdapter component={DemoPage} />} />
+        <Route path="/verify-email" element={<NavigateAdapter component={VerifyEmailPage} />} />
+        {/* Old Demo Page route replaced/aliased if needed, keeping /demo for the new page */}
+        <Route path="/demo" element={<NavigateAdapter component={DemoInteractivePage} />} />
 
         {/* Marketing / landing detail pages */}
         <Route path="/contact/general" element={<NavigateAdapter component={ContactGeneralPage} />} />
@@ -160,12 +161,12 @@ export function AppRoutes() {
         <Route path="/projects/logistics" element={<NavigateAdapter component={ProjectLogisticsPage} />} />
         <Route path="/blog" element={<NavigateAdapter component={TechBlogPage} />} />
         <Route path="/solutions/farmers" element={<NavigateAdapter component={SolutionsFarmersPage} />} />
+        <Route path="/case-studies" element={<NavigateAdapter component={CaseStudiesPage} />} />
+        <Route path="/tag/digital-transformation" element={<NavigateAdapter component={DigitalTransformationPage} />} />
 
         {/* Protected (Admin / Customer) */}
         <Route element={<RequireAuth />}>
           {/* Dashboards */}
-          <Route path="/admin/overview" element={<NavigateAdapter component={ModernizedDashboard} />} />
-          <Route path="/admin/dashboard" element={<NavigateAdapter component={ModernizedDashboard} />} />
           <Route path="/customer/overview" element={<ModernDashboard />} />
           <Route path="/customer/dashboard" element={<ModernDashboard />} />
 
@@ -173,14 +174,14 @@ export function AppRoutes() {
           <Route path="/admin/chat" element={<ChatInterface />} />
           <Route path="/customer/chat" element={<ChatInterface />} />
 
-          <Route path="/admin/analytics" element={<AnalyticsDashboard />} />
+          {/* <Route path="/admin/analytics" element={<AnalyticsDashboard />} /> */}
           <Route path="/customer/analytics" element={<AnalyticsDashboard />} />
 
           <Route path="/admin/marketplace" element={<MarketplaceModern />} />
           <Route path="/customer/marketplace" element={<MarketplaceModern />} />
 
-          <Route path="/admin/rental" element={<RentalMarketplace2 />} />
-          <Route path="/customer/rental" element={<RentalMarketplace2 />} />
+          <Route path="/admin/rental" element={<RentalMarketplace />} />
+          <Route path="/customer/rental" element={<RentalMarketplace />} />
 
           <Route path="/admin/settings" element={<Settings />} />
           <Route path="/customer/settings" element={<Settings />} />
@@ -205,121 +206,104 @@ export function AppRoutes() {
           <Route path="/admin/academy" element={<NavigateAdapter component={AcademyPortal} />} />
           <Route path="/customer/academy" element={<NavigateAdapter component={AcademyPortal} />} />
 
-          {/* New Admin Dashboard */}
-          <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/admin" element={<UnifiedAdminLayout />}>
             <Route index element={<Navigate to="/admin/dashboard" replace />} />
-            <Route path="dashboard" element={<AdminDashboardPage />} />
-            <Route path="users" element={<AdminUsersPage />} />
-            <Route path="users/new" element={<NewUserPage />} />
+            <Route path="overview" element={<Navigate to="/admin/dashboard" replace />} />
+            <Route path="dashboard" element={<WarRoomPage />} />
+            <Route path="war-room" element={<Navigate to="/admin/dashboard" replace />} />
+            
+            {/* Admin-only modules moved inside layout */}
+            <Route
+              path="users"
+              element={
+                <RequirePermissions
+                  moduleLabel="Gestion Utilisateurs"
+                  anyOf={[Permission.VIEW_USERS, Permission.EDIT_USERS, Permission.DELETE_USERS]}
+                >
+                  <AdminUsersPage />
+                </RequirePermissions>
+              }
+            />
+            <Route
+              path="products"
+              element={
+                <RequirePermissions moduleLabel="Produits" anyOf={[Permission.VIEW_ALL_PRODUCTS]}>
+                  <ProductInventory />
+                </RequirePermissions>
+              }
+            />
+            <Route
+              path="orders"
+              element={
+                <RequirePermissions moduleLabel="Commandes" anyOf={[Permission.MANAGE_ORDERS, Permission.VIEW_ALL_ORDERS]}>
+                  <OrdersManagement />
+                </RequirePermissions>
+              }
+            />
+            <Route
+              path="categories"
+              element={
+                <RequirePermissions moduleLabel="Catégories" anyOf={[Permission.MANAGE_CATEGORIES]}>
+                  <CategoryManagement />
+                </RequirePermissions>
+              }
+            />
+            <Route
+              path="reports"
+              element={
+                <RequirePermissions moduleLabel="Rapports" anyOf={[Permission.VIEW_ANALYTICS, Permission.EXPORT_REPORTS]}>
+                  <ReportEngine />
+                </RequirePermissions>
+              }
+            />
+            
             <Route path="analytics" element={<AdminAnalyticsPage />} />
             <Route path="system" element={<AdminSystemPage />} />
             <Route path="security" element={<AdminSecurityPage />} />
+            <Route path="panel" element={<NavigateAdapter component={AdminPanelHome} />} />
+            <Route
+              path="labor"
+              element={
+                <RequireRole moduleLabel="Gestion Main-d'œuvre" anyOf={[UserRole.ADMIN]}>
+                  <LaborManagement />
+                </RequireRole>
+              }
+            />
+            <Route path="iot" element={<IoTDeviceHub />} />
+            <Route
+              path="automation"
+              element={
+                <RequireRole moduleLabel="Automation" anyOf={[UserRole.ADMIN]}>
+                  <AutomationWorkflows />
+                </RequireRole>
+              }
+            />
+            <Route path="ai-insights" element={<AIInsights />} />
+            <Route
+              path="finance"
+              element={
+                <RequirePermissions moduleLabel="Finance" anyOf={[Permission.VIEW_FINANCIAL_REPORTS]}>
+                  <FinancialSuite />
+                </RequirePermissions>
+              }
+            />
+            <Route
+              path="logistics"
+              element={
+                <RequirePermissions moduleLabel="Logistique" anyOf={[Permission.MANAGE_LOGISTICS, Permission.VIEW_DELIVERY_ORDERS]}>
+                  <LogisticsTracking />
+                </RequirePermissions>
+              }
+            />
+            <Route path="chat" element={<ChatInterface />} />
+            <Route path="blog" element={<NavigateAdapter component={BlogAdminDashboard} />} />
+            <Route path="blog/editor" element={<NavigateAdapter component={ArticleEditor} />} />
+            <Route path="blog/events" element={<NavigateAdapter component={EventsManager} />} />
+            <Route path="blog/manage" element={<NavigateAdapter component={BlogAdmin} />} />
+            <Route path="academy" element={<NavigateAdapter component={AcademyPortal} />} />
+            <Route path="help" element={<HelpSupport />} />
           </Route>
 
-          {/* Admin-only modules (permission/role gates aligned with legacy App.tsx) */}
-          <Route
-            path="/admin/users"
-            element={
-              <RequirePermissions
-                moduleLabel="Gestion Utilisateurs"
-                anyOf={[Permission.VIEW_USERS, Permission.EDIT_USERS, Permission.DELETE_USERS]}
-              >
-                <UserManagement />
-              </RequirePermissions>
-            }
-          />
-          <Route
-            path="/admin/products"
-            element={
-              <RequirePermissions moduleLabel="Produits" anyOf={[Permission.VIEW_ALL_PRODUCTS]}>
-                <ProductInventory />
-              </RequirePermissions>
-            }
-          />
-          <Route
-            path="/admin/orders"
-            element={
-              <RequirePermissions moduleLabel="Commandes" anyOf={[Permission.MANAGE_ORDERS, Permission.VIEW_ALL_ORDERS]}>
-                <OrdersManagement />
-              </RequirePermissions>
-            }
-          />
-          <Route
-            path="/admin/categories"
-            element={
-              <RequirePermissions moduleLabel="Catégories" anyOf={[Permission.MANAGE_CATEGORIES]}>
-                <CategoryManagement />
-              </RequirePermissions>
-            }
-          />
-          <Route
-            path="/admin/reports"
-            element={
-              <RequirePermissions moduleLabel="Rapports" anyOf={[Permission.VIEW_ANALYTICS, Permission.EXPORT_REPORTS]}>
-                <ReportEngine />
-              </RequirePermissions>
-            }
-          />
-
-          <Route path="/admin/panel" element={<NavigateAdapter component={AdminPanelHome} />} />
-          <Route
-            path="/admin/labor"
-            element={
-              <RequireRole moduleLabel="Gestion Main-d'œuvre" anyOf={[UserRole.ADMIN]}>
-                <LaborManagement />
-              </RequireRole>
-            }
-          />
-
-          {/* Advanced */}
-          <Route path="/admin/iot" element={<IoTDeviceHub />} />
-          <Route path="/customer/iot" element={<IoTDeviceHub />} />
-
-          <Route
-            path="/admin/automation"
-            element={
-              <RequireRole moduleLabel="Automation" anyOf={[UserRole.ADMIN]}>
-                <AutomationWorkflows />
-              </RequireRole>
-            }
-          />
-
-          <Route path="/admin/ai-insights" element={<AIInsights />} />
-          <Route path="/customer/ai-insights" element={<AIInsights />} />
-
-          <Route
-            path="/admin/finance"
-            element={
-              <RequirePermissions moduleLabel="Finance" anyOf={[Permission.VIEW_FINANCIAL_REPORTS]}>
-                <FinancialSuite />
-              </RequirePermissions>
-            }
-          />
-          <Route
-            path="/customer/finance"
-            element={
-              <RequirePermissions moduleLabel="Finance" anyOf={[Permission.VIEW_FINANCIAL_REPORTS]}>
-                <FinancialSuite />
-              </RequirePermissions>
-            }
-          />
-
-          <Route
-            path="/admin/logistics"
-            element={
-              <RequirePermissions moduleLabel="Logistique" anyOf={[Permission.MANAGE_LOGISTICS, Permission.VIEW_DELIVERY_ORDERS]}>
-                <LogisticsTracking />
-              </RequirePermissions>
-            }
-          />
-          <Route
-            path="/customer/logistics"
-            element={
-              <RequirePermissions moduleLabel="Logistique" anyOf={[Permission.MANAGE_LOGISTICS, Permission.VIEW_DELIVERY_ORDERS]}>
-                <LogisticsTracking />
-              </RequirePermissions>
-            }
-          />
 
           <Route
             path="/admin/crops"
@@ -389,14 +373,14 @@ export function AppRoutes() {
             }
           />
 
-          <Route
-            path="/admin/tasks"
-            element={
-              <RequireRole moduleLabel="Gestion Tâches" anyOf={[UserRole.ADMIN, UserRole.FARMER]}>
-                <TaskManagement />
-              </RequireRole>
-            }
-          />
+            <Route
+              path="/admin/tasks"
+              element={
+                <RequireRole moduleLabel="Gestion Tâches" anyOf={[UserRole.ADMIN, UserRole.FARMER]}>
+                  <CombinedTasksPage />
+                </RequireRole>
+              }
+            />
           <Route
             path="/customer/tasks"
             element={

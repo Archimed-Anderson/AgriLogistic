@@ -67,7 +67,7 @@ try {
 // 4. Build
 console.log('4️⃣  Build de production...');
 try {
-  execSync('npm run build', {
+  execSync('pnpm run build:all', {
     cwd: rootDir,
     stdio: 'pipe',
   });

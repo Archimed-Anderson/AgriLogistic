@@ -29,7 +29,7 @@ import { ChatInterface } from "./components/ChatInterface";
 import { AnalyticsDashboard } from "./components/AnalyticsDashboard";
 import { MarketplaceModern } from "./components/MarketplaceModern";
 
-import { RentalMarketplace2 } from "./components/RentalMarketplace2";
+import { RentalMarketplace } from "./components/RentalMarketplace";
 import { Settings } from "./components/Settings";
 import { ProfilePage } from "./components/ProfilePage";
 import { NotificationsPage } from "./components/NotificationsPage";
@@ -43,7 +43,6 @@ import { BlogAdmin } from "./components/BlogAdmin";
 import { AcademyPortal } from "./components/AcademyPortal";
 
 // Admin Features
-import { UserManagement } from "./components/UserManagement";
 import { ProductInventory } from "./components/ProductInventory";
 import { OrdersManagement } from "./components/OrdersManagement";
 import { CategoryManagement } from "./components/CategoryManagement";
@@ -80,6 +79,10 @@ import { SolutionsLogisticsPage } from "./components/landing/pages/SolutionsLogi
 import { PartnersEcosystemPage } from "./components/landing/pages/PartnersEcosystemPage";
 import { SustainableLogisticsPage } from "./components/landing/pages/SustainableLogisticsPage";
 import { TechBlogPage } from "./components/landing/pages/TechBlogPage";
+
+// AgriLogistic Link Hub
+import LinkHubPage from "./link-hub/page";
+import LinkMonitorPage from "./admin/link-monitor/page";
 
 
 import { Permission } from "@domain/value-objects/permissions.vo";
@@ -220,7 +223,7 @@ function AppShell() {
       
       case "/admin/rental":
       case "/customer/rental":
-        return <RentalMarketplace2 />;
+        return <RentalMarketplace />;
       
       case "/admin/settings":
       case "/customer/settings":
@@ -252,11 +255,7 @@ function AppShell() {
         return <AcademyPortal onNavigate={handleNavigate} />;
       
       // Admin Features
-      case "/admin/users":
-        if (!hasAnyPermission(Permission.VIEW_USERS, Permission.EDIT_USERS, Permission.DELETE_USERS)) {
-          return deny("Gestion Utilisateurs");
-        }
-        return <UserManagement />;
+
       
       case "/admin/products":
         if (!hasAnyPermission(Permission.VIEW_ALL_PRODUCTS)) {
@@ -377,6 +376,12 @@ function AppShell() {
       
       case "/admin/affiliate-dashboard":
         return <AffiliateDashboard />;
+      
+      case "/link-hub":
+        return <LinkHubPage />;
+      
+      case "/admin/link-monitor":
+        return <LinkMonitorPage />;
       
       // Projects Pages
       // Contact Pages

@@ -192,6 +192,10 @@ export function Navbar({
                   <button onClick={() => onNavigate('/solutions/logistics')} className="w-full text-left block px-4 py-3 text-sm text-[#505558] hover:bg-emerald-50 hover:text-[#0B7A4B] rounded-md transition-colors">
                     Pour les Coopératives
                   </button>
+                  <div className="h-px bg-slate-100 my-1"></div>
+                  <button onClick={() => onNavigate('/link-hub')} className="w-full text-left block px-4 py-3 text-sm font-bold text-[#0B7A4B] bg-emerald-50/50 hover:bg-emerald-100 rounded-md transition-colors flex items-center gap-2">
+                    <Sparkles className="h-3 w-3" /> AgriLogistic Link
+                  </button>
                 </div>
               </div>
 

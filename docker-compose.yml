@@ -1,19 +1,21 @@
-services:
+﻿services:
   # =============================================================================
   # CORE APPLICATION
   # =============================================================================
   
-  # AgroDeep Web Application (Frontend)
-  agrodeep-web:
+  # AgriLogistic Web Application (Frontend)
+  AgriLogistic-web:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: agrodeep-web
+      args:
+        SERVICE_NAME: agrologistic-platform
+    container_name: AgriLogistic-web
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - VITE_APP_NAME=AgroDeep
+      - VITE_APP_NAME=AgriLogistic
       - VITE_APP_VERSION=2.0.0
       # Primary (preferred) API gateway URL used by the frontend
       - VITE_API_GATEWAY_URL=http://localhost:8000/api/v1
@@ -22,7 +24,7 @@ services:
     volumes:
       - ./logs:/app/logs
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     restart: unless-stopped
     depends_on:
       - kong
@@ -37,9 +39,11 @@ services:
   # Auth Service (Backend)
   auth-service:
     build:
-      context: ./services/auth-service
+      context: .
       dockerfile: Dockerfile
-    container_name: agrodeep-auth-service
+      args:
+        SERVICE_NAME: "@agrologistic/auth-service"
+    container_name: AgriLogistic-auth-service
     ports:
       - "3001:3001"
     environment:
@@ -48,9 +52,9 @@ services:
       # PostgreSQL (auth database)
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_NAME: agrodeep_auth
-      DB_USER: agrodeep
-      DB_PASSWORD: ${DB_PASSWORD:-agrodeep_secure_2026}
+      DB_NAME: AgriLogistic_auth
+      DB_USER: AgriLogistic
+      DB_PASSWORD: ${DB_PASSWORD:-AgriLogistic_secure_2026}
       # Redis (sessions/refresh tokens/blacklist)
       REDIS_HOST: redis
       REDIS_PORT: 6379
@@ -75,7 +79,7 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:3001/health || exit 1"]
@@ -91,12 +95,12 @@ services:
   # PostgreSQL - Primary transactional database
   postgres:
     image: postgres:15-alpine
-    container_name: agrodeep-postgres
+    container_name: AgriLogistic-postgres
     environment:
-      POSTGRES_DB: agrodeep
-      POSTGRES_USER: agrodeep
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-agrodeep_secure_2026}
-      POSTGRES_MULTIPLE_DATABASES: agrodeep_auth,agrodeep_products,agrodeep_orders,agrodeep_payments
+      POSTGRES_DB: AgriLogistic
+      POSTGRES_USER: AgriLogistic
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-AgriLogistic_secure_2026}
+      POSTGRES_MULTIPLE_DATABASES: AgriLogistic_auth,AgriLogistic_products,AgriLogistic_orders,AgriLogistic_payments
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./scripts/init-multiple-dbs.sh:/docker-entrypoint-initdb.d/init-multiple-dbs.sh:ro
@@ -106,10 +110,10 @@ services:
     ports:
       - "${POSTGRES_PORT:-5433}:5432"
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U agrodeep"]
+      test: ["CMD-SHELL", "pg_isready -U AgriLogistic"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -117,14 +121,14 @@ services:
   # Redis - Caching and session storage
   redis:
     image: redis:7-alpine
-    container_name: agrodeep-redis
+    container_name: AgriLogistic-redis
     command: redis-server --requirepass ${REDIS_PASSWORD:-redis_secure_2026} --appendonly yes
     volumes:
       - redis-data:/data
     ports:
       - "6379:6379"
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "${REDIS_PASSWORD:-redis_secure_2026}", "ping"]
@@ -135,17 +139,17 @@ services:
   # MongoDB - Document store for flexible schemas
   mongodb:
     image: mongo:7.0
-    container_name: agrodeep-mongodb
+    container_name: AgriLogistic-mongodb
     environment:
-      MONGO_INITDB_ROOT_USERNAME: agrodeep
+      MONGO_INITDB_ROOT_USERNAME: AgriLogistic
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-mongo_secure_2026}
-      MONGO_INITDB_DATABASE: agrodeep
+      MONGO_INITDB_DATABASE: AgriLogistic
     volumes:
       - mongodb-data:/data/db
     ports:
       - "27017:27017"
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
@@ -153,22 +157,46 @@ services:
       timeout: 5s
       retries: 5
 
+  # MinIO - S3-compatible object storage
+  minio:
+    image: minio/minio:latest
+    container_name: AgriLogistic-minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-AgriLogistic}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minio_secure_2026}
+      MINIO_BROWSER_REDIRECT_URL: http://localhost:9001
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio-data:/data
+    ports:
+      - "9000:9000"   # API endpoint
+      - "9001:9001"   # Console web UI
+    networks:
+      - AgriLogistic-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
   # Elasticsearch - Search and analytics
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
-    container_name: agrodeep-elasticsearch
+    container_name: AgriLogistic-elasticsearch
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
       - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
-      - cluster.name=agrodeep-cluster
+      - cluster.name=AgriLogistic-cluster
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
       - "9300:9300"
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\"\\|\"status\":\"yellow\"'"]
@@ -179,10 +207,10 @@ services:
   # ClickHouse - Analytics database
   clickhouse:
     image: clickhouse/clickhouse-server:24.1
-    container_name: agrodeep-clickhouse
+    container_name: AgriLogistic-clickhouse
     environment:
-      CLICKHOUSE_DB: agrodeep_analytics
-      CLICKHOUSE_USER: agrodeep
+      CLICKHOUSE_DB: AgriLogistic_analytics
+      CLICKHOUSE_USER: AgriLogistic
       CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-clickhouse_secure_2026}
     volumes:
       - clickhouse-data:/var/lib/clickhouse
@@ -190,7 +218,7 @@ services:
       - "8123:8123"
       - "9000:9000"
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost:8123/ping"]
@@ -205,7 +233,7 @@ services:
   # Kong Gateway Database
   kong-database:
     image: postgres:15-alpine
-    container_name: agrodeep-kong-db
+    container_name: AgriLogistic-kong-db
     environment:
       POSTGRES_DB: kong
       POSTGRES_USER: kong
@@ -213,7 +241,7 @@ services:
     volumes:
       - kong-db-data:/var/lib/postgresql/data
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "kong"]
       interval: 10s
@@ -224,7 +252,7 @@ services:
   # Kong Migrations
   kong-migrations:
     image: kong/kong-gateway:3.5
-    container_name: agrodeep-kong-migrations
+    container_name: AgriLogistic-kong-migrations
     command: kong migrations bootstrap
     environment:
       KONG_DATABASE: postgres
@@ -235,13 +263,13 @@ services:
       kong-database:
         condition: service_healthy
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     restart: on-failure
 
   # Kong API Gateway
   kong:
     image: kong/kong-gateway:3.5
-    container_name: agrodeep-kong
+    container_name: AgriLogistic-kong
     environment:
       KONG_DATABASE: postgres
       KONG_PG_HOST: kong-database
@@ -263,9 +291,9 @@ services:
       kong-migrations:
         condition: service_completed_successfully
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     volumes:
-      - ./services/api-gateway/kong.yml:/etc/kong/kong.yml:ro
+      - ./infrastructure/api-gateway/kong.yml:/etc/kong/kong.yml:ro
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "kong", "health"]
@@ -276,7 +304,7 @@ services:
   # Konga - Kong Admin UI
   konga:
     image: pantsel/konga:latest
-    container_name: agrodeep-konga
+    container_name: AgriLogistic-konga
     environment:
       DB_ADAPTER: postgres
       DB_HOST: kong-database
@@ -291,7 +319,7 @@ services:
       - kong-database
       - kong
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     restart: unless-stopped
 
   # =============================================================================
@@ -301,7 +329,7 @@ services:
   # Prometheus - Metrics collection
   prometheus:
     image: prom/prometheus:v2.48.0
-    container_name: agrodeep-prometheus
+    container_name: AgriLogistic-prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -315,7 +343,7 @@ services:
     ports:
       - "9090:9090"
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090/-/healthy"]
@@ -326,7 +354,7 @@ services:
   # Grafana - Visualization and dashboards
   grafana:
     image: grafana/grafana:10.2.2
-    container_name: agrodeep-grafana
+    container_name: AgriLogistic-grafana
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-grafana_secure_2026}
@@ -340,7 +368,7 @@ services:
     ports:
       - "4001:3000"
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     depends_on:
       - prometheus
     restart: unless-stopped
@@ -353,7 +381,7 @@ services:
   # Jaeger - Distributed tracing
   jaeger:
     image: jaegertracing/all-in-one:1.51
-    container_name: agrodeep-jaeger
+    container_name: AgriLogistic-jaeger
     environment:
       COLLECTOR_OTLP_ENABLED: "true"
       SPAN_STORAGE_TYPE: elasticsearch
@@ -366,7 +394,7 @@ services:
       - "4317:4317"    # OTLP gRPC
       - "4318:4318"    # OTLP HTTP
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     depends_on:
       - elasticsearch
     restart: unless-stopped
@@ -379,7 +407,7 @@ services:
   # Logstash - Log processing
   logstash:
     image: docker.elastic.co/logstash/logstash:8.11.0
-    container_name: agrodeep-logstash
+    container_name: AgriLogistic-logstash
     volumes:
       - ./infrastructure/monitoring/elk/logstash/pipeline:/usr/share/logstash/pipeline:ro
       - ./infrastructure/monitoring/elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
@@ -387,7 +415,7 @@ services:
       - "5044:5044"    # Beats input
       - "9600:9600"    # Monitoring API
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     depends_on:
       - elasticsearch
     restart: unless-stopped
@@ -400,14 +428,14 @@ services:
   # Kibana - Log visualization
   kibana:
     image: docker.elastic.co/kibana/kibana:8.11.0
-    container_name: agrodeep-kibana
+    container_name: AgriLogistic-kibana
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-      SERVER_NAME: agrodeep-kibana
+      SERVER_NAME: AgriLogistic-kibana
     ports:
       - "5601:5601"
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     depends_on:
       - elasticsearch
     restart: unless-stopped
@@ -424,20 +452,20 @@ services:
   # Apache Superset - Business Intelligence
   superset:
     image: apache/superset:3.0.1
-    container_name: agrodeep-superset
+    container_name: AgriLogistic-superset
     environment:
       SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY:-superset_secret_key_2026}
       SUPERSET_LOAD_EXAMPLES: "false"
       DATABASE_DB: superset
       DATABASE_HOST: postgres
-      DATABASE_PASSWORD: ${DB_PASSWORD:-agrodeep_secure_2026}
-      DATABASE_USER: agrodeep
+      DATABASE_PASSWORD: ${DB_PASSWORD:-AgriLogistic_secure_2026}
+      DATABASE_USER: AgriLogistic
       DATABASE_PORT: 5432
       DATABASE_DIALECT: postgresql
     ports:
       - "8088:8088"
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     depends_on:
       - postgres
       - redis
@@ -455,7 +483,7 @@ services:
   # Apache Kafka - Event streaming
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
-    container_name: agrodeep-zookeeper
+    container_name: AgriLogistic-zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -463,12 +491,12 @@ services:
       - zookeeper-data:/var/lib/zookeeper/data
       - zookeeper-logs:/var/lib/zookeeper/log
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     restart: unless-stopped
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
-    container_name: agrodeep-kafka
+    container_name: AgriLogistic-kafka
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -480,7 +508,7 @@ services:
     ports:
       - "9092:9092"
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     depends_on:
       - zookeeper
     restart: unless-stopped
@@ -497,7 +525,7 @@ services:
   # Node Exporter - System metrics
   node-exporter:
     image: prom/node-exporter:v1.7.0
-    container_name: agrodeep-node-exporter
+    container_name: AgriLogistic-node-exporter
     command:
       - '--path.procfs=/host/proc'
       - '--path.sysfs=/host/sys'
@@ -508,19 +536,19 @@ services:
     ports:
       - "9100:9100"
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     restart: unless-stopped
 
   # Postgres Exporter - Database metrics
   postgres-exporter:
     image: prometheuscommunity/postgres-exporter:v0.15.0
-    container_name: agrodeep-postgres-exporter
+    container_name: AgriLogistic-postgres-exporter
     environment:
-      DATA_SOURCE_NAME: postgresql://agrodeep:${DB_PASSWORD:-agrodeep_secure_2026}@postgres:5432/agrodeep?sslmode=disable
+      DATA_SOURCE_NAME: postgresql://AgriLogistic:${DB_PASSWORD:-AgriLogistic_secure_2026}@postgres:5432/AgriLogistic?sslmode=disable
     ports:
       - "9187:9187"
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     depends_on:
       - postgres
     restart: unless-stopped
@@ -528,14 +556,14 @@ services:
   # Redis Exporter - Cache metrics
   redis-exporter:
     image: oliver006/redis_exporter:v1.55.0
-    container_name: agrodeep-redis-exporter
+    container_name: AgriLogistic-redis-exporter
     environment:
       REDIS_ADDR: redis://redis:6379
       REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_secure_2026}
     ports:
       - "9121:9121"
     networks:
-      - agrodeep-network
+      - AgriLogistic-network
     depends_on:
       - redis
     restart: unless-stopped
@@ -544,9 +572,9 @@ services:
 # NETWORKS
 # =============================================================================
 networks:
-  agrodeep-network:
+  AgriLogistic-network:
     driver: bridge
-    name: agrodeep-network
+    name: AgriLogistic-network
 
 # =============================================================================
 # VOLUMES
@@ -555,6 +583,7 @@ volumes:
   postgres-data:
   redis-data:
   mongodb-data:
+  minio-data:
   elasticsearch-data:
   clickhouse-data:
   kong-db-data:
@@ -563,3 +592,4 @@ volumes:
   zookeeper-data:
   zookeeper-logs:
   kafka-data:
+
