@@ -113,7 +113,7 @@ Réservés aux administrateurs pour la supervision globale.
 
 1.  **Cloner le projet**
     ```bash
-    git clone https://github.com/agrologistic/agrologistic-platform.git
+    git clone https://github.com/Archimed-Anderson/AgriLogistic.git
     cd AgroDeep
     ```
 
@@ -128,6 +128,12 @@ Réservés aux administrateurs pour la supervision globale.
     pnpm dev
     ```
     > L'application sera accessible sur `http://localhost:3000`
+
+### 🔄 Workflow de Mise à Jour (Nouveau)
+Pour faciliter vos prochains envois vers GitHub, utilisez le script inclus :
+```powershell
+./PUSH_CHANGES.ps1 -Message "Description de vos changements"
+```
 
 ### Commandes Utiles
 - `pnpm build` : Construire pour la production.
