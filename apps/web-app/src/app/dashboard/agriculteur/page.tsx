@@ -1,5 +1,5 @@
 import { FarmerDashboard } from "@/components/dashboard/FarmerDashboard"
 
-export default function FarmerDashboardPage() {
+export default function AgriculteurPage() {
   return <FarmerDashboard />
 }

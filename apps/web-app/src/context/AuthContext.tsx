@@ -39,7 +39,7 @@ function getDashboardPath(role: UserRole): string {
     case UserRole.ADMIN:
       return "/admin/dashboard"
     case UserRole.FARMER:
-      return "/dashboard/farmer"
+      return "/dashboard/agriculteur"
     case UserRole.BUYER:
       return "/dashboard/buyer"
     case UserRole.TRANSPORTER:
