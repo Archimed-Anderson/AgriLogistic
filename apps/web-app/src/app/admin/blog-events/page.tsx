@@ -1,5 +1,14 @@
-import { AdminModulePlaceholder } from "@/components/admin/AdminModulePlaceholder"
+import BlogEventsCMS from '@/components/admin/BlogEventsCMS';
+
+export const metadata = {
+  title: 'Blog & Events | CMS | AgroDeep',
+  description: 'Gérez vos articles, vos événements communautaires et votre médiathèque pour l\'écosystème AgroDeep.',
+};
 
 export default function BlogEventsPage() {
-  return <AdminModulePlaceholder title="Blog & Events" description="Gestion éditoriale, articles de blog et événements à venir." />
+  return (
+    <div className="h-full">
+      <BlogEventsCMS />
+    </div>
+  );
 }
