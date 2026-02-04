@@ -18,7 +18,13 @@ export interface Permission {
   description?: string;
 }
 
-export type AuditAction = 'IMPERSONATE_START' | 'IMPERSONATE_STOP' | 'ROLE_UPDATE' | 'PERMISSION_UPDATE' | 'USER_SUSPEND' | 'LOGIN';
+export type AuditAction =
+  | 'IMPERSONATE_START'
+  | 'IMPERSONATE_STOP'
+  | 'ROLE_UPDATE'
+  | 'PERMISSION_UPDATE'
+  | 'USER_SUSPEND'
+  | 'LOGIN';
 
 export interface AuditLog {
   id: string;

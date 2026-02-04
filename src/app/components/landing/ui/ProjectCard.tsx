@@ -8,7 +8,13 @@ interface ProjectCardProps {
   gradient: string;
 }
 
-export default function ProjectCard({ title, category, imageSrc, imageAlt, gradient }: ProjectCardProps) {
+export default function ProjectCard({
+  title,
+  category,
+  imageSrc,
+  imageAlt,
+  gradient,
+}: ProjectCardProps) {
   return (
     <div className="group relative rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 h-[300px]">
       {/* Background Image */}

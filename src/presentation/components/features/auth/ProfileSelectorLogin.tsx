@@ -119,12 +119,12 @@ export function ProfileSelectorLogin({
   const handleProfileSelect = (profile: ProfileConfig) => {
     setIsTransitioning(true);
     setSelectedProfile(profile);
-    
+
     // Pre-fill email for the selected profile
     if (!getCookie('rememberMe_email')) {
       setEmail(profile.testEmail);
     }
-    
+
     setTimeout(() => {
       setStep('login');
       setIsTransitioning(false);
@@ -158,7 +158,7 @@ export function ProfileSelectorLogin({
   };
 
   const clearFieldError = (fieldName: string) => {
-    setFieldErrors(prev => {
+    setFieldErrors((prev) => {
       const newErrors = { ...prev };
       delete newErrors[fieldName];
       return newErrors;
@@ -202,10 +202,10 @@ export function ProfileSelectorLogin({
   // Quick login with pre-filled credentials (mock mode)
   const handleQuickLogin = async () => {
     if (!selectedProfile) return;
-    
+
     setQuickLoginLoading(true);
     setFieldErrors({});
-    
+
     try {
       await performLogin(selectedProfile.testEmail, selectedProfile.testPassword);
     } finally {
@@ -220,7 +220,11 @@ export function ProfileSelectorLogin({
   // Step 1: Profile Selection
   if (step === 'select') {
     return (
-      <Card className={`w-full max-w-md shadow-xl border-0 bg-white/95 backdrop-blur-sm transition-all duration-300 ${isTransitioning ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+      <Card
+        className={`w-full max-w-md shadow-xl border-0 bg-white/95 backdrop-blur-sm transition-all duration-300 ${
+          isTransitioning ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
+        }`}
+      >
         <CardHeader className="space-y-1 text-center pb-4">
           <div className="flex justify-center mb-4">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-green-600 shadow-lg">
@@ -245,12 +249,16 @@ export function ProfileSelectorLogin({
                   className={`p-4 rounded-xl border-2 text-left transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg ${profile.bgColor}`}
                 >
                   <div className="flex flex-col items-center text-center gap-3">
-                    <div className={`p-3 rounded-xl bg-gradient-to-br ${profile.gradient} shadow-md`}>
+                    <div
+                      className={`p-3 rounded-xl bg-gradient-to-br ${profile.gradient} shadow-md`}
+                    >
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900 text-sm">{profile.label}</h3>
-                      <p className="text-xs text-gray-500 mt-1 leading-tight">{profile.description}</p>
+                      <p className="text-xs text-gray-500 mt-1 leading-tight">
+                        {profile.description}
+                      </p>
                     </div>
                   </div>
                 </button>
@@ -277,7 +285,11 @@ export function ProfileSelectorLogin({
   const ProfileIcon = selectedProfile?.icon || User;
 
   return (
-    <Card className={`w-full max-w-md shadow-xl border-0 bg-white/95 backdrop-blur-sm transition-all duration-300 ${isTransitioning ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+    <Card
+      className={`w-full max-w-md shadow-xl border-0 bg-white/95 backdrop-blur-sm transition-all duration-300 ${
+        isTransitioning ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
+      }`}
+    >
       <CardHeader className="space-y-1 pb-4">
         {/* Back button and profile indicator */}
         <div className="flex items-center gap-3 mb-2">
@@ -289,7 +301,7 @@ export function ProfileSelectorLogin({
           >
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
-          
+
           <div className="flex items-center gap-2 flex-1">
             <div className={`p-2 rounded-lg bg-gradient-to-br ${selectedProfile?.gradient}`}>
               <ProfileIcon className="w-4 h-4 text-white" />
@@ -299,9 +311,7 @@ export function ProfileSelectorLogin({
         </div>
 
         <CardTitle className="text-xl font-bold">Connexion {selectedProfile?.label}</CardTitle>
-        <CardDescription>
-          Entrez vos identifiants pour accéder à votre espace
-        </CardDescription>
+        <CardDescription>Entrez vos identifiants pour accéder à votre espace</CardDescription>
       </CardHeader>
 
       <CardContent>
@@ -336,7 +346,11 @@ export function ProfileSelectorLogin({
               autoComplete="email"
             />
             {emailError && (
-              <p id="login-email-error" className="text-xs text-red-600 dark:text-red-400" role="alert">
+              <p
+                id="login-email-error"
+                className="text-xs text-red-600 dark:text-red-400"
+                role="alert"
+              >
                 {emailError}
               </p>
             )}
@@ -359,7 +373,9 @@ export function ProfileSelectorLogin({
                 required
                 aria-invalid={!!passwordError}
                 aria-describedby={passwordError ? 'login-password-error' : undefined}
-                className={passwordError ? 'border-red-500 focus-visible:ring-red-500/20 pr-10' : 'pr-10'}
+                className={
+                  passwordError ? 'border-red-500 focus-visible:ring-red-500/20 pr-10' : 'pr-10'
+                }
                 autoComplete="current-password"
               />
               <button
@@ -377,7 +393,11 @@ export function ProfileSelectorLogin({
               </button>
             </div>
             {passwordError && (
-              <p id="login-password-error" className="text-xs text-red-600 dark:text-red-400" role="alert">
+              <p
+                id="login-password-error"
+                className="text-xs text-red-600 dark:text-red-400"
+                role="alert"
+              >
                 {passwordError}
               </p>
             )}
@@ -431,7 +451,10 @@ export function ProfileSelectorLogin({
             variant="outline"
             onClick={handleQuickLogin}
             disabled={isLoading || quickLoginLoading}
-            className={`w-full h-11 text-base font-medium border-2 transition-all ${selectedProfile?.bgColor.replace('hover:', '')}`}
+            className={`w-full h-11 text-base font-medium border-2 transition-all ${selectedProfile?.bgColor.replace(
+              'hover:',
+              ''
+            )}`}
           >
             {quickLoginLoading ? (
               <>

@@ -45,9 +45,9 @@ const mockLoads: Load[] = [
   {
     id: 'L-002',
     title: 'Livraison Engrais',
-    description: 'Distribution d\'engrais vers zone agricole',
+    description: "Distribution d'engrais vers zone agricole",
     pickupLocation: 'ICS Mboro',
-    pickupCoordinates: [-16.9000, 15.1500],
+    pickupCoordinates: [-16.9, 15.15],
     deliveryLocation: 'Touba, Sénégal',
     deliveryCoordinates: [-15.8833, 14.8667],
     distance: 180,
@@ -111,7 +111,7 @@ const mockLoads: Load[] = [
         currency: 'XOF',
         status: 'pending',
         createdAt: new Date('2024-01-22T10:00:00'),
-      }
+      },
     ],
     shipperId: 'S-003',
     shipperName: 'Coopérative Saloum',

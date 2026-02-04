@@ -4,7 +4,7 @@ import { User } from '../../domain/entities/user.entity';
 
 /**
  * Auth Provider Interface
- * 
+ *
  * This interface defines the contract that all authentication providers must implement.
  * It enables the application to switch between different authentication backends
  * (Supabase, Firebase, custom backend, etc.) without changing business logic.

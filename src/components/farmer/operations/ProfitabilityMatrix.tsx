@@ -5,7 +5,16 @@
 'use client';
 
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 import { TrendingUp } from 'lucide-react';
 import type { CropProfitability } from '@/types/farmer/operations';
 
@@ -41,9 +50,7 @@ export function ProfitabilityMatrix({ profitability, isLoading }: ProfitabilityM
                   <p className="text-sm text-gray-600">{crop.area} hectares</p>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-green-600">
-                    {crop.roi.toFixed(1)}%
-                  </div>
+                  <div className="text-2xl font-bold text-green-600">{crop.roi.toFixed(1)}%</div>
                   <p className="text-xs text-gray-500">ROI</p>
                 </div>
               </div>

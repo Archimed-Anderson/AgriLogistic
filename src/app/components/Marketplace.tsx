@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from 'react';
 import {
   Search,
   SlidersHorizontal,
@@ -42,13 +42,13 @@ import {
   ChevronDown,
   ChevronUp,
   XCircle,
-} from "lucide-react";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { Card, CardContent } from "./ui/card";
-import { Badge } from "./ui/badge";
-import { products as initialProductsData } from "../data/mockData";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
+import { Card, CardContent } from './ui/card';
+import { Badge } from './ui/badge';
+import { products as initialProductsData } from '../data/mockData';
+import { toast } from 'sonner';
 
 interface Product {
   id: number;
@@ -80,10 +80,10 @@ interface MarketplaceProps {
 }
 
 export function Marketplace({ onNavigate, adminMode = false }: MarketplaceProps) {
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [sortBy, setSortBy] = useState("relevance");
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState('relevance');
   const [showFilters, setShowFilters] = useState(true);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [compareList, setCompareList] = useState<number[]>([]);
@@ -91,32 +91,32 @@ export function Marketplace({ onNavigate, adminMode = false }: MarketplaceProps)
   const [showCompareModal, setShowCompareModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [wishlistItems, setWishlistItems] = useState<number[]>([]);
-  
+
   // Advanced Filters
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 100]);
   const [minRating, setMinRating] = useState(0);
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
-  const [stockFilter, setStockFilter] = useState<"all" | "in-stock" | "low-stock">("all");
+  const [stockFilter, setStockFilter] = useState<'all' | 'in-stock' | 'low-stock'>('all');
   const [fastDeliveryOnly, setFastDeliveryOnly] = useState(false);
-  
+
   // Admin Features
   const [isAdminMode, setIsAdminMode] = useState(adminMode);
   const [selectedForBulk, setSelectedForBulk] = useState<number[]>([]);
-  
+
   // Products state with extended data
   const [products] = useState<Product[]>(
     initialProductsData.map((p) => ({
       ...p,
       seller: {
-        name: "AgroLogistic Verified",
-        location: p.specifications.origin || "France",
+        name: 'AgroLogistic Verified',
+        location: p.specifications.origin || 'France',
         rating: 4.5 + Math.random() * 0.5,
         verified: true,
       },
       labels: [
-        p.specifications.certification?.includes("Organic") ? "Bio" : null,
-        Math.random() > 0.5 ? "Local" : null,
-        Math.random() > 0.7 ? "Fresh" : null,
+        p.specifications.certification?.includes('Organic') ? 'Bio' : null,
+        Math.random() > 0.5 ? 'Local' : null,
+        Math.random() > 0.7 ? 'Fresh' : null,
       ].filter(Boolean) as string[],
       fastDelivery: Math.random() > 0.5,
       trending: Math.random() > 0.7,
@@ -124,63 +124,61 @@ export function Marketplace({ onNavigate, adminMode = false }: MarketplaceProps)
       newArrival: Math.random() > 0.8,
     }))
   );
-  
+
   // Load favorites from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem("AgroLogistic-marketplace-favorites");
+    const saved = localStorage.getItem('AgroLogistic-marketplace-favorites');
     if (saved) setFavorites(JSON.parse(saved));
-    
-    const savedWishlist = localStorage.getItem("AgroLogistic-marketplace-wishlist");
+
+    const savedWishlist = localStorage.getItem('AgroLogistic-marketplace-wishlist');
     if (savedWishlist) setWishlistItems(JSON.parse(savedWishlist));
-    
-    const savedCart = localStorage.getItem("AgroLogistic-marketplace-cart-count");
+
+    const savedCart = localStorage.getItem('AgroLogistic-marketplace-cart-count');
     if (savedCart) setCartCount(parseInt(savedCart, 10));
   }, []);
-  
+
   // Save favorites
   useEffect(() => {
-    localStorage.setItem("AgroLogistic-marketplace-favorites", JSON.stringify(favorites));
+    localStorage.setItem('AgroLogistic-marketplace-favorites', JSON.stringify(favorites));
   }, [favorites]);
-  
+
   // Save wishlist
   useEffect(() => {
-    localStorage.setItem("AgroLogistic-marketplace-wishlist", JSON.stringify(wishlistItems));
+    localStorage.setItem('AgroLogistic-marketplace-wishlist', JSON.stringify(wishlistItems));
   }, [wishlistItems]);
-  
+
   // Save cart count
   useEffect(() => {
-    localStorage.setItem("AgroLogistic-marketplace-cart-count", cartCount.toString());
+    localStorage.setItem('AgroLogistic-marketplace-cart-count', cartCount.toString());
   }, [cartCount]);
 
   const categories = [
-    { id: "all", name: "All", icon: Package },
-    { id: "vegetables", name: "Vegetables", icon: Sparkles },
-    { id: "grains", name: "Grains", icon: Package },
-    { id: "fruits", name: "Fruits", icon: Award },
-    { id: "dairy", name: "Dairy", icon: ShoppingBag },
+    { id: 'all', name: 'All', icon: Package },
+    { id: 'vegetables', name: 'Vegetables', icon: Sparkles },
+    { id: 'grains', name: 'Grains', icon: Package },
+    { id: 'fruits', name: 'Fruits', icon: Award },
+    { id: 'dairy', name: 'Dairy', icon: ShoppingBag },
   ];
-  
-  const availableLabels = ["Bio", "Local", "Fresh", "Premium", "Organic"];
+
+  const availableLabels = ['Bio', 'Local', 'Fresh', 'Premium', 'Organic'];
 
   const filteredProducts = useMemo(() => {
     return products
       .filter((product) => {
-        const matchesCategory =
-          selectedCategory === "All" || product.category === selectedCategory;
+        const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
         const matchesSearch =
           product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
           product.seller?.name.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesPrice =
-          product.price >= priceRange[0] && product.price <= priceRange[1];
+        const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
         const matchesRating = product.rating >= minRating;
         const matchesLabels =
           selectedLabels.length === 0 ||
           selectedLabels.some((label) => product.labels?.includes(label));
         const matchesStock =
-          stockFilter === "all" ||
-          (stockFilter === "in-stock" && product.stock >= 100) ||
-          (stockFilter === "low-stock" && product.stock < 100);
+          stockFilter === 'all' ||
+          (stockFilter === 'in-stock' && product.stock >= 100) ||
+          (stockFilter === 'low-stock' && product.stock < 100);
         const matchesFastDelivery = !fastDeliveryOnly || product.fastDelivery;
 
         return (
@@ -195,15 +193,15 @@ export function Marketplace({ onNavigate, adminMode = false }: MarketplaceProps)
       })
       .sort((a, b) => {
         switch (sortBy) {
-          case "price-asc":
+          case 'price-asc':
             return a.price - b.price;
-          case "price-desc":
+          case 'price-desc':
             return b.price - a.price;
-          case "rating":
+          case 'rating':
             return b.rating - a.rating;
-          case "popular":
+          case 'popular':
             return b.reviews - a.reviews;
-          case "newest":
+          case 'newest':
             return (b.newArrival ? 1 : 0) - (a.newArrival ? 1 : 0);
           default:
             return 0;
@@ -223,39 +221,29 @@ export function Marketplace({ onNavigate, adminMode = false }: MarketplaceProps)
 
   const toggleFavorite = (productId: number) => {
     setFavorites((prev) =>
-      prev.includes(productId)
-        ? prev.filter((id) => id !== productId)
-        : [...prev, productId]
+      prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId]
     );
-    toast.success(
-      favorites.includes(productId)
-        ? "Removed from favorites"
-        : "Added to favorites"
-    );
+    toast.success(favorites.includes(productId) ? 'Removed from favorites' : 'Added to favorites');
   };
 
   const toggleCompare = (productId: number) => {
     if (compareList.includes(productId)) {
       setCompareList(compareList.filter((id) => id !== productId));
-      toast.success("Removed from comparison");
+      toast.success('Removed from comparison');
     } else if (compareList.length < 4) {
       setCompareList([...compareList, productId]);
-      toast.success("Added to comparison");
+      toast.success('Added to comparison');
     } else {
-      toast.error("Maximum 4 products for comparison");
+      toast.error('Maximum 4 products for comparison');
     }
   };
 
   const toggleWishlist = (productId: number) => {
     setWishlistItems((prev) =>
-      prev.includes(productId)
-        ? prev.filter((id) => id !== productId)
-        : [...prev, productId]
+      prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId]
     );
     toast.success(
-      wishlistItems.includes(productId)
-        ? "Removed from wishlist"
-        : "Added to wishlist"
+      wishlistItems.includes(productId) ? 'Removed from wishlist' : 'Added to wishlist'
     );
   };
 
@@ -263,24 +251,24 @@ export function Marketplace({ onNavigate, adminMode = false }: MarketplaceProps)
     setCartCount((prev) => prev + 1);
     toast.success(`${productName} added to cart!`);
   };
-  
+
   const clearFilters = () => {
-    setSelectedCategory("All");
-    setSearchQuery("");
+    setSelectedCategory('All');
+    setSearchQuery('');
     setPriceRange([0, 100]);
     setMinRating(0);
     setSelectedLabels([]);
-    setStockFilter("all");
+    setStockFilter('all');
     setFastDeliveryOnly(false);
-    toast.success("Filters cleared");
+    toast.success('Filters cleared');
   };
-  
+
   const activeFiltersCount = [
-    selectedCategory !== "All" ? 1 : 0,
+    selectedCategory !== 'All' ? 1 : 0,
     priceRange[0] !== 0 || priceRange[1] !== 100 ? 1 : 0,
     minRating > 0 ? 1 : 0,
     selectedLabels.length,
-    stockFilter !== "all" ? 1 : 0,
+    stockFilter !== 'all' ? 1 : 0,
     fastDeliveryOnly ? 1 : 0,
   ].reduce((a, b) => a + b, 0);
 
@@ -331,7 +319,7 @@ export function Marketplace({ onNavigate, adminMode = false }: MarketplaceProps)
               </button>
               <button className="relative p-3 bg-white/10 hover:bg-white/20 rounded-lg transition-colors">
                 <Heart
-                  className={`h-6 w-6 ${favorites.length > 0 ? "fill-red-400 text-red-400" : ""}`}
+                  className={`h-6 w-6 ${favorites.length > 0 ? 'fill-red-400 text-red-400' : ''}`}
                 />
                 {favorites.length > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
@@ -349,7 +337,7 @@ export function Marketplace({ onNavigate, adminMode = false }: MarketplaceProps)
               </button>
             </div>
           </div>
-          
+
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
@@ -364,9 +352,7 @@ export function Marketplace({ onNavigate, adminMode = false }: MarketplaceProps)
                 <TrendingUp className="h-4 w-4" />
                 <span className="text-white/80 text-sm">Trending</span>
               </div>
-              <div className="text-2xl font-bold">
-                {products.filter((p) => p.trending).length}
-              </div>
+              <div className="text-2xl font-bold">{products.filter((p) => p.trending).length}</div>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
               <div className="flex items-center gap-2 mb-1">
@@ -422,8 +408,8 @@ export function Marketplace({ onNavigate, adminMode = false }: MarketplaceProps)
                       onClick={() => setSelectedCategory(category.name)}
                       className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2 ${
                         selectedCategory === category.name
-                          ? "bg-[#2563eb] text-white"
-                          : "hover:bg-muted"
+                          ? 'bg-[#2563eb] text-white'
+                          : 'hover:bg-muted'
                       }`}
                     >
                       <IconComponent className="h-4 w-4" />
@@ -450,7 +436,7 @@ export function Marketplace({ onNavigate, adminMode = false }: MarketplaceProps)
                 className="group overflow-hidden transition-all hover:shadow-lg cursor-pointer"
               >
                 <div
-                  onClick={() => onNavigate("/market/product", product.id)}
+                  onClick={() => onNavigate('/market/product', product.id)}
                   className="relative aspect-square overflow-hidden bg-gray-100"
                 >
                   <img
@@ -459,15 +445,13 @@ export function Marketplace({ onNavigate, adminMode = false }: MarketplaceProps)
                     className="h-full w-full object-cover transition-transform group-hover:scale-105"
                   />
                   {product.stock < 100 && (
-                    <Badge className="absolute top-2 right-2 bg-red-500">
-                      Low Stock
-                    </Badge>
+                    <Badge className="absolute top-2 right-2 bg-red-500">Low Stock</Badge>
                   )}
                 </div>
                 <CardContent className="p-4 space-y-3">
                   <div>
                     <h3
-                      onClick={() => onNavigate("/market/product", product.id)}
+                      onClick={() => onNavigate('/market/product', product.id)}
                       className="font-semibold hover:text-[#2563eb] transition-colors"
                     >
                       {product.name}
@@ -479,14 +463,10 @@ export function Marketplace({ onNavigate, adminMode = false }: MarketplaceProps)
                   <div className="flex items-center gap-1">
                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                     <span className="text-sm font-medium">{product.rating}</span>
-                    <span className="text-sm text-muted-foreground">
-                      ({product.reviews})
-                    </span>
+                    <span className="text-sm text-muted-foreground">({product.reviews})</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-[#2563eb]">
-                      ${product.price}
-                    </span>
+                    <span className="text-2xl font-bold text-[#2563eb]">${product.price}</span>
                     <Button
                       size="sm"
                       onClick={(e) => {

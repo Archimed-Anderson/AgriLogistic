@@ -14,67 +14,73 @@ export const useSmartMatch = (loads: Load[], trucks: Truck[]) => {
     factors: Record<string, number>;
   } | null>(null);
 
-  const findBestMatchForTruck = useCallback((truck: Truck) => {
-    let bestLoad: Load | null = null;
-    let maxScore = -1;
+  const findBestMatchForTruck = useCallback(
+    (truck: Truck) => {
+      let bestLoad: Load | null = null;
+      let maxScore = -1;
 
-    loads.forEach(load => {
-      const score = calculateAIMatchScore(load, truck);
-      if (score > maxScore) {
-        maxScore = score;
-        bestLoad = load;
-      }
-    });
-
-    if (bestLoad) {
-      setMatchingResult({
-        bestLoad,
-        bestTruck: truck,
-        score: maxScore,
-        factors: {
-          capacity: 25,
-          proximity: 20,
-          time: 20,
-          requirements: 15,
-          price: 10,
-          rating: 10
+      loads.forEach((load) => {
+        const score = calculateAIMatchScore(load, truck);
+        if (score > maxScore) {
+          maxScore = score;
+          bestLoad = load;
         }
       });
-      return bestLoad;
-    }
-    return null;
-  }, [loads]);
 
-  const findBestMatchForLoad = useCallback((load: Load) => {
-    let bestTruck: Truck | null = null;
-    let maxScore = -1;
-
-    trucks.forEach(truck => {
-      const score = calculateAIMatchScore(load, truck);
-      if (score > maxScore) {
-        maxScore = score;
-        bestTruck = truck;
+      if (bestLoad) {
+        setMatchingResult({
+          bestLoad,
+          bestTruck: truck,
+          score: maxScore,
+          factors: {
+            capacity: 25,
+            proximity: 20,
+            time: 20,
+            requirements: 15,
+            price: 10,
+            rating: 10,
+          },
+        });
+        return bestLoad;
       }
-    });
+      return null;
+    },
+    [loads]
+  );
 
-    if (bestTruck) {
-      setMatchingResult({
-        bestLoad: load,
-        bestTruck,
-        score: maxScore,
-        factors: {
-          capacity: 25,
-          proximity: 20,
-          time: 20,
-          requirements: 15,
-          price: 10,
-          rating: 10
+  const findBestMatchForLoad = useCallback(
+    (load: Load) => {
+      let bestTruck: Truck | null = null;
+      let maxScore = -1;
+
+      trucks.forEach((truck) => {
+        const score = calculateAIMatchScore(load, truck);
+        if (score > maxScore) {
+          maxScore = score;
+          bestTruck = truck;
         }
       });
-      return bestTruck;
-    }
-    return null;
-  }, [trucks]);
+
+      if (bestTruck) {
+        setMatchingResult({
+          bestLoad: load,
+          bestTruck,
+          score: maxScore,
+          factors: {
+            capacity: 25,
+            proximity: 20,
+            time: 20,
+            requirements: 15,
+            price: 10,
+            rating: 10,
+          },
+        });
+        return bestTruck;
+      }
+      return null;
+    },
+    [trucks]
+  );
 
   const clearMatch = () => setMatchingResult(null);
 
@@ -82,6 +88,6 @@ export const useSmartMatch = (loads: Load[], trucks: Truck[]) => {
     matchingResult,
     findBestMatchForTruck,
     findBestMatchForLoad,
-    clearMatch
+    clearMatch,
   };
 };

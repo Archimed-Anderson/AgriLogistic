@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   ShoppingCart,
   BarChart3,
@@ -22,7 +22,7 @@ import {
   MapPin,
   ChevronLeft,
   Quote,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface LandingPageProps {
   onNavigate: (route: string) => void;
@@ -30,25 +30,25 @@ interface LandingPageProps {
 
 export function LandingPageModern({ onNavigate }: LandingPageProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [activeTab, setActiveTab] = useState("marketplace");
+  const [activeTab, setActiveTab] = useState('marketplace');
   const [emailSubmitted, setEmailSubmitted] = useState(false);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
 
   const heroSlides = [
     {
-      image: "🌾",
-      title: "La plateforme qui révolutionne",
+      image: '🌾',
+      title: 'La plateforme qui révolutionne',
       subtitle: "la chaîne d'approvisionnement agricole",
     },
     {
-      image: "🚜",
-      title: "Gérez votre exploitation",
-      subtitle: "avec intelligence et simplicité",
+      image: '🚜',
+      title: 'Gérez votre exploitation',
+      subtitle: 'avec intelligence et simplicité',
     },
     {
-      image: "📊",
-      title: "Optimisez vos performances",
-      subtitle: "grâce aux données en temps réel",
+      image: '📊',
+      title: 'Optimisez vos performances',
+      subtitle: 'grâce aux données en temps réel',
     },
   ];
 
@@ -65,7 +65,7 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
       setEmailSubmitted(true);
       setTimeout(() => {
         setEmailSubmitted(false);
-        setEmail("");
+        setEmail('');
       }, 3000);
     }
   };
@@ -90,7 +90,7 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
                 Accueil
               </button>
               <button
-                onClick={() => onNavigate("/market")}
+                onClick={() => onNavigate('/market')}
                 className="text-sm font-medium hover:text-[#2563eb] transition-colors"
               >
                 Marketplace
@@ -109,13 +109,13 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
             {/* CTA Buttons */}
             <div className="flex items-center gap-3">
               <button
-                onClick={() => onNavigate("/login")}
+                onClick={() => onNavigate('/login')}
                 className="px-4 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-colors"
               >
                 Se Connecter
               </button>
               <button
-                onClick={() => onNavigate("/register")}
+                onClick={() => onNavigate('/register')}
                 className="px-5 py-2 bg-[#2563eb] text-white text-sm font-medium rounded-lg hover:bg-[#1d4ed8] transition-colors"
               >
                 Démarrer Gratuitement
@@ -144,14 +144,14 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
               {heroSlides[currentSlide].subtitle}
             </h1>
             <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
-              Connectez-vous à un marché intelligent, gérez votre stock en temps réel, et
-              optimisez votre logistique. Tout-en-un.
+              Connectez-vous à un marché intelligent, gérez votre stock en temps réel, et optimisez
+              votre logistique. Tout-en-un.
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
               <button
-                onClick={() => onNavigate("/market")}
+                onClick={() => onNavigate('/market')}
                 className="px-8 py-4 bg-white text-[#2563eb] rounded-lg font-semibold text-lg hover:bg-gray-100 transition-all flex items-center gap-2 shadow-xl"
               >
                 Explorer le Marketplace
@@ -181,7 +181,7 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
               key={index}
               onClick={() => setCurrentSlide(index)}
               className={`h-2 rounded-full transition-all ${
-                index === currentSlide ? "w-12 bg-white" : "w-2 bg-white/50"
+                index === currentSlide ? 'w-12 bg-white' : 'w-2 bg-white/50'
               }`}
             />
           ))}
@@ -220,31 +220,31 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
             {[
               {
                 icon: ShoppingCart,
-                title: "Marketplace Intelligent",
+                title: 'Marketplace Intelligent',
                 description:
                   "Accédez à des milliers de produits et d'équipements. Transactions sécurisées, notations transparentes.",
-                color: "bg-blue-500",
+                color: 'bg-blue-500',
               },
               {
                 icon: BarChart3,
                 title: "Gestion d'Exploitation",
                 description:
-                  "Pilotez votre stock, vos finances et votre productivité depuis un tableau de bord centralisé.",
-                color: "bg-green-500",
+                  'Pilotez votre stock, vos finances et votre productivité depuis un tableau de bord centralisé.',
+                color: 'bg-green-500',
               },
               {
                 icon: Truck,
-                title: "Logistique Traçable",
+                title: 'Logistique Traçable',
                 description:
-                  "Suivez vos livraisons en temps réel sur une carte interactive et gérez vos flottes.",
-                color: "bg-orange-500",
+                  'Suivez vos livraisons en temps réel sur une carte interactive et gérez vos flottes.',
+                color: 'bg-orange-500',
               },
               {
                 icon: Wrench,
                 title: "Location d'Équipements",
                 description:
                   "Monétisez vos machines ou louez l'équipement dont vous avez besoin, en peer-to-peer.",
-                color: "bg-purple-500",
+                color: 'bg-purple-500',
               },
             ].map((feature, index) => {
               const Icon = feature.icon;
@@ -253,7 +253,9 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
                   key={index}
                   className="bg-card border rounded-xl p-8 hover:shadow-xl transition-all group"
                 >
-                  <div className={`${feature.color} w-14 h-14 rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
+                  <div
+                    className={`${feature.color} w-14 h-14 rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}
+                  >
                     <Icon className="h-7 w-7 text-white" />
                   </div>
                   <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
@@ -284,17 +286,17 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
           {/* Tabs */}
           <div className="flex flex-wrap justify-center gap-4 mb-12">
             {[
-              { id: "marketplace", label: "Marketplace Avancé" },
-              { id: "dashboard", label: "Tableau de Bord Analytics" },
-              { id: "logistics", label: "Suivi Logistique Live" },
+              { id: 'marketplace', label: 'Marketplace Avancé' },
+              { id: 'dashboard', label: 'Tableau de Bord Analytics' },
+              { id: 'logistics', label: 'Suivi Logistique Live' },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-6 py-3 rounded-lg font-semibold transition-all ${
                   activeTab === tab.id
-                    ? "bg-[#2563eb] text-white shadow-lg"
-                    : "bg-muted hover:bg-muted/80"
+                    ? 'bg-[#2563eb] text-white shadow-lg'
+                    : 'bg-muted hover:bg-muted/80'
                 }`}
               >
                 {tab.label}
@@ -306,21 +308,23 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             {/* Screenshot/Mockup */}
             <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-xl p-8 aspect-video flex items-center justify-center shadow-2xl border">
-              {activeTab === "marketplace" && (
+              {activeTab === 'marketplace' && (
                 <div className="text-center">
                   <div className="text-8xl mb-4">🛒</div>
                   <p className="text-2xl font-bold">Marketplace Moderne</p>
-                  <p className="text-muted-foreground">Filtres intelligents & transactions sécurisées</p>
+                  <p className="text-muted-foreground">
+                    Filtres intelligents & transactions sécurisées
+                  </p>
                 </div>
               )}
-              {activeTab === "dashboard" && (
+              {activeTab === 'dashboard' && (
                 <div className="text-center">
                   <div className="text-8xl mb-4">📊</div>
                   <p className="text-2xl font-bold">Analytics Avancés</p>
                   <p className="text-muted-foreground">KPIs en temps réel & rapports détaillés</p>
                 </div>
               )}
-              {activeTab === "logistics" && (
+              {activeTab === 'logistics' && (
                 <div className="text-center">
                   <div className="text-8xl mb-4">🗺️</div>
                   <p className="text-2xl font-bold">Suivi en Direct</p>
@@ -331,17 +335,17 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
 
             {/* Features List */}
             <div className="space-y-6">
-              {activeTab === "marketplace" && (
+              {activeTab === 'marketplace' && (
                 <>
                   <h3 className="text-3xl font-bold mb-6">
                     Un marketplace qui s'adapte à vos besoins
                   </h3>
                   {[
-                    "Filtres intelligents par catégorie, prix et localisation",
-                    "Système de notation et avis vérifiés",
-                    "Transactions sécurisées avec suivi",
-                    "Mode comparaison de produits",
-                    "Alertes de disponibilité en temps réel",
+                    'Filtres intelligents par catégorie, prix et localisation',
+                    'Système de notation et avis vérifiés',
+                    'Transactions sécurisées avec suivi',
+                    'Mode comparaison de produits',
+                    'Alertes de disponibilité en temps réel',
                   ].map((feature, i) => (
                     <div key={i} className="flex items-start gap-3">
                       <div className="bg-green-500 rounded-full p-1 mt-1">
@@ -352,17 +356,15 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
                   ))}
                 </>
               )}
-              {activeTab === "dashboard" && (
+              {activeTab === 'dashboard' && (
                 <>
-                  <h3 className="text-3xl font-bold mb-6">
-                    Pilotez votre activité avec précision
-                  </h3>
+                  <h3 className="text-3xl font-bold mb-6">Pilotez votre activité avec précision</h3>
                   {[
-                    "Tableaux de bord personnalisables",
-                    "Indicateurs clés de performance (KPIs)",
-                    "Graphiques interactifs et rapports exportables",
-                    "Alertes automatiques sur seuils critiques",
-                    "Historique complet et prévisions",
+                    'Tableaux de bord personnalisables',
+                    'Indicateurs clés de performance (KPIs)',
+                    'Graphiques interactifs et rapports exportables',
+                    'Alertes automatiques sur seuils critiques',
+                    'Historique complet et prévisions',
                   ].map((feature, i) => (
                     <div key={i} className="flex items-start gap-3">
                       <div className="bg-green-500 rounded-full p-1 mt-1">
@@ -373,17 +375,17 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
                   ))}
                 </>
               )}
-              {activeTab === "logistics" && (
+              {activeTab === 'logistics' && (
                 <>
                   <h3 className="text-3xl font-bold mb-6">
                     Optimisez votre logistique en temps réel
                   </h3>
                   {[
-                    "Carte interactive avec suivi GPS",
+                    'Carte interactive avec suivi GPS',
                     "Calcul d'itinéraires optimisés",
-                    "Gestion de flotte multi-véhicules",
-                    "Notifications de livraison automatiques",
-                    "Historique complet des trajets",
+                    'Gestion de flotte multi-véhicules',
+                    'Notifications de livraison automatiques',
+                    'Historique complet des trajets',
                   ].map((feature, i) => (
                     <div key={i} className="flex items-start gap-3">
                       <div className="bg-green-500 rounded-full p-1 mt-1">
@@ -414,36 +416,34 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                emoji: "👨‍🌾",
+                emoji: '👨‍🌾',
                 title: "L'Agriculteur/Producteur",
                 description:
-                  "Vendez vos récoltes directement et gérez votre exploitation avec simplicité.",
+                  'Vendez vos récoltes directement et gérez votre exploitation avec simplicité.',
                 features: [
-                  "Vente directe sans intermédiaire",
-                  "Gestion du stock et des cultures",
-                  "Prévisions météo intégrées",
+                  'Vente directe sans intermédiaire',
+                  'Gestion du stock et des cultures',
+                  'Prévisions météo intégrées',
                 ],
               },
               {
-                emoji: "🏢",
-                title: "Le Distributeur/Négociant",
-                description:
-                  "Approvisionnez-vous efficacement et gérez votre logistique de A à Z.",
+                emoji: '🏢',
+                title: 'Le Distributeur/Négociant',
+                description: 'Approvisionnez-vous efficacement et gérez votre logistique de A à Z.',
                 features: [
-                  "Commandes groupées",
-                  "Suivi des livraisons en temps réel",
-                  "Gestion de la relation fournisseurs",
+                  'Commandes groupées',
+                  'Suivi des livraisons en temps réel',
+                  'Gestion de la relation fournisseurs',
                 ],
               },
               {
-                emoji: "🚛",
-                title: "Le Prestataire de Services",
-                description:
-                  "Proposez vos services à une communauté active de professionnels.",
+                emoji: '🚛',
+                title: 'Le Prestataire de Services',
+                description: 'Proposez vos services à une communauté active de professionnels.',
                 features: [
-                  "Calendrier de disponibilité",
-                  "Tarification dynamique",
-                  "Paiements sécurisés",
+                  'Calendrier de disponibilité',
+                  'Tarification dynamique',
+                  'Paiements sécurisés',
                 ],
               },
             ].map((profile, index) => (
@@ -477,9 +477,9 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
           {/* Stats */}
           <div className="grid md:grid-cols-3 gap-8 mb-20">
             {[
-              { value: "10 000+", label: "Transactions", icon: TrendingUp },
-              { value: "95%", label: "Satisfaction Client", icon: Star },
-              { value: "100%", label: "Couverture Nationale", icon: MapPin },
+              { value: '10 000+', label: 'Transactions', icon: TrendingUp },
+              { value: '95%', label: 'Satisfaction Client', icon: Star },
+              { value: '100%', label: 'Couverture Nationale', icon: MapPin },
             ].map((stat, index) => {
               const Icon = stat.icon;
               return (
@@ -500,28 +500,28 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                name: "Jean Dupont",
-                role: "Agriculteur - Ferme Bio du Soleil",
-                avatar: "👨",
+                name: 'Jean Dupont',
+                role: 'Agriculteur - Ferme Bio du Soleil',
+                avatar: '👨',
                 rating: 5,
                 comment:
                   "AgroLogistic a transformé ma façon de vendre mes produits. Plus de transparence, moins d'intermédiaires, plus de profits.",
               },
               {
-                name: "Marie Martin",
-                role: "Distributrice - AgriDistrib Lyon",
-                avatar: "👩",
+                name: 'Marie Martin',
+                role: 'Distributrice - AgriDistrib Lyon',
+                avatar: '👩',
                 rating: 5,
                 comment:
                   "La gestion logistique est devenue un jeu d'enfant. Je peux suivre toutes mes livraisons en temps réel.",
               },
               {
-                name: "Pierre Lefebvre",
+                name: 'Pierre Lefebvre',
                 role: "Loueur d'Équipements",
-                avatar: "🧑",
+                avatar: '🧑',
                 rating: 5,
                 comment:
-                  "Je loue mes tracteurs pendant les périodes creuses. Un complément de revenu bienvenu !",
+                  'Je loue mes tracteurs pendant les périodes creuses. Un complément de revenu bienvenu !',
               },
             ].map((testimonial, index) => (
               <div
@@ -550,7 +550,7 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
           <div className="mt-20 text-center">
             <p className="text-sm text-muted-foreground mb-8">Ils nous font confiance</p>
             <div className="flex flex-wrap items-center justify-center gap-12 opacity-50">
-              {["🏛️", "📰", "🏆", "🌱", "🔒"].map((emoji, i) => (
+              {['🏛️', '📰', '🏆', '🌱', '🔒'].map((emoji, i) => (
                 <div key={i} className="text-6xl grayscale">
                   {emoji}
                 </div>
@@ -596,9 +596,7 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
                 <div className="bg-green-500 rounded-full p-2">
                   <Check className="h-6 w-6" />
                 </div>
-                <span className="text-lg font-semibold">
-                  Merci ! Vérifiez votre boîte mail 📧
-                </span>
+                <span className="text-lg font-semibold">Merci ! Vérifiez votre boîte mail 📧</span>
               </div>
             </div>
           )}
@@ -655,16 +653,14 @@ export function LandingPageModern({ onNavigate }: LandingPageProps) {
               <ul className="space-y-3 text-sm">
                 <li>
                   <button
-                    onClick={() => onNavigate("/market")}
+                    onClick={() => onNavigate('/market')}
                     className="hover:text-white transition-colors"
                   >
                     Marketplace
                   </button>
                 </li>
                 <li>
-                  <button className="hover:text-white transition-colors">
-                    Gestion de Stock
-                  </button>
+                  <button className="hover:text-white transition-colors">Gestion de Stock</button>
                 </li>
                 <li>
                   <button className="hover:text-white transition-colors">Logistique</button>

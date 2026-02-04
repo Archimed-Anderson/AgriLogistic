@@ -1,0 +1,61 @@
+# Database Migration - Manual run (staging / production)
+# Runs Prisma migrate for auth-service (and optional mission-service)
+name: Database Migration
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment"
+        required: true
+        default: "staging"
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  migrate:
+    name: Run DB migrations
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install dependencies (root)
+        run: pnpm install --frozen-lockfile
+
+      - name: Install dependencies (auth-service)
+        run: pnpm install --frozen-lockfile
+        working-directory: services/identity/auth-service
+
+      - name: Run Prisma Migrate (auth-service)
+        run: pnpm prisma migrate deploy
+        working-directory: services/identity/auth-service
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Run Prisma Migrate (mission-service, if migrations exist)
+        run: |
+          if [ -d "prisma/migrations" ] && [ "$(ls -A prisma/migrations 2>/dev/null)" ]; then
+            pnpm prisma migrate deploy
+          else
+            pnpm prisma generate
+            echo "No migrations folder; prisma generate done."
+          fi
+        working-directory: services/logistics/mission-service
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_MISSION || secrets.DATABASE_URL }}
+        continue-on-error: true

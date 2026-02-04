@@ -12,11 +12,11 @@ export function useInventory() {
   };
 
   const addItem = (item: any) => {
-    setInventory(prev => [...prev, item]);
+    setInventory((prev) => [...prev, item]);
   };
 
   const removeItem = (itemId: string) => {
-    setInventory(prev => prev.filter(i => i.id !== itemId));
+    setInventory((prev) => prev.filter((i) => i.id !== itemId));
   };
 
   const getLowStockItems = () => {

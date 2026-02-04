@@ -6,7 +6,7 @@ import { adminDashboardRepository } from '@/infrastructure/api/admin/admin-dashb
  */
 export const adminDashboardKeys = {
   all: ['admin', 'dashboard'] as const,
-  metrics: (dateRange?: { from: string; to: string }) => 
+  metrics: (dateRange?: { from: string; to: string }) =>
     [...adminDashboardKeys.all, 'metrics', dateRange] as const,
   alerts: () => [...adminDashboardKeys.all, 'alerts'] as const,
   activity: (limit: number) => [...adminDashboardKeys.all, 'activity', limit] as const,

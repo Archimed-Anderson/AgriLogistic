@@ -12,11 +12,7 @@ interface CookieOptions {
 /**
  * Définit un cookie sécurisé
  */
-export function setSecureCookie(
-  name: string,
-  value: string,
-  options: CookieOptions = {}
-): void {
+export function setSecureCookie(name: string, value: string, options: CookieOptions = {}): void {
   const {
     maxAge = 30, // 30 jours par défaut
     secure = true,

@@ -59,7 +59,7 @@ export function LoadCard({ load, onViewDetails, onBid }: LoadCardProps) {
         {/* Route Visualization */}
         <div className="flex items-center gap-3 mb-6 relative">
           <div className="absolute left-2.5 top-8 bottom-0 w-0.5 bg-gray-200 h-10 -z-10" />
-          
+
           <div className="flex-1 space-y-4">
             {/* Pickup */}
             <div className="flex items-start gap-3">
@@ -70,7 +70,7 @@ export function LoadCard({ load, onViewDetails, onBid }: LoadCardProps) {
                   <Calendar className="w-3 h-3" />
                   {new Date(load.pickupDate).toLocaleDateString('fr-FR', {
                     day: 'numeric',
-                    month: 'short'
+                    month: 'short',
                   })}
                 </div>
               </div>
@@ -85,7 +85,7 @@ export function LoadCard({ load, onViewDetails, onBid }: LoadCardProps) {
                   <Calendar className="w-3 h-3" />
                   {new Date(load.deliveryDate).toLocaleDateString('fr-FR', {
                     day: 'numeric',
-                    month: 'short'
+                    month: 'short',
                   })}
                 </div>
               </div>
@@ -138,7 +138,7 @@ export function LoadCard({ load, onViewDetails, onBid }: LoadCardProps) {
             onClick={() => onBid(load)}
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
-            {load.biddingEnabled ? 'Placer une offre' : 'Accepter l\'offre'}
+            {load.biddingEnabled ? 'Placer une offre' : "Accepter l'offre"}
           </button>
         </div>
       </div>

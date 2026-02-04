@@ -1,14 +1,15 @@
 import 'express-serve-static-core';
-import type { UserRole } from '../models/permission.model';
+
+/** User attached to request after authentication (middleware sets this). */
+export interface AuthUser {
+  id: string;
+  email: string;
+  role: 'admin' | 'buyer' | 'transporter';
+  permissions: string[];
+}
 
 declare module 'express-serve-static-core' {
   interface Request {
-    user?: {
-      id: string;
-      email: string;
-      role: UserRole;
-      permissions: string[];
-    };
+    user?: AuthUser;
   }
 }
-

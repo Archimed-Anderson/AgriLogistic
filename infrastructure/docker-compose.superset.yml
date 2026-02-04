@@ -1,0 +1,188 @@
+# =============================================================================
+# Monitoring Métier - Apache Superset (Cahier des charges)
+# =============================================================================
+# Stack : Superset 3.x, PostgreSQL (metadata), Redis, Celery worker/beat, Flower
+# Usage standalone (depuis la racine AgroDeep) :
+#   docker compose -f infrastructure/docker-compose.superset.yml --project-directory . up -d
+# Les volumes ./superset/ sont relatifs au répertoire du fichier compose ; lancer depuis infrastructure/ :
+#   cd infrastructure && docker compose -f docker-compose.superset.yml up -d
+# Ou depuis racine avec chemins explicites (voir volumes ci-dessous).
+# =============================================================================
+
+services:
+  superset-db:
+    image: postgres:15-alpine
+    container_name: superset-db
+    environment:
+      POSTGRES_DB: superset
+      POSTGRES_USER: superset
+      POSTGRES_PASSWORD: ${SUPERSET_DB_PASSWORD:-superset_secure_2026}
+    volumes:
+      - superset-db-data:/var/lib/postgresql/data
+    networks:
+      - superset-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U superset"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  superset-redis:
+    image: redis:7-alpine
+    container_name: superset-redis
+    networks:
+      - superset-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  superset-init:
+    image: apache/superset:3.0.1
+    container_name: superset-init
+    environment:
+      SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY:-superset_secret_key_change_in_prod_2026}
+      SUPERSET_LOAD_EXAMPLES: "false"
+      DATABASE_DB: superset
+      DATABASE_HOST: superset-db
+      DATABASE_PASSWORD: ${SUPERSET_DB_PASSWORD:-superset_secure_2026}
+      DATABASE_USER: superset
+      DATABASE_PORT: 5432
+      DATABASE_DIALECT: postgresql
+      REDIS_HOST: superset-redis
+      REDIS_PORT: 6379
+      CELERY_BROKER_URL: redis://superset-redis:6379/0
+      SUPERSET_ADMIN_USERNAME: admin
+      SUPERSET_ADMIN_EMAIL: admin@agrilogistic.local
+      SUPERSET_ADMIN_PASSWORD: ${SUPERSET_ADMIN_PASSWORD:-admin}
+    volumes:
+      - ./superset/superset_config.py:/app/pythonpath/superset_config.py:ro
+      - ./superset/init.sh:/app/init.sh:ro
+      - ./superset/datasources:/app/pythonpath/datasources:ro
+      - ./superset/datasets:/app/pythonpath/datasets:ro
+      - ./superset/charts:/app/pythonpath/charts:ro
+    networks:
+      - superset-network
+    depends_on:
+      superset-db:
+        condition: service_healthy
+      superset-redis:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        superset db upgrade
+        superset fab create-admin --username admin --firstname Admin --lastname Superset --email admin@agrilogistic.local --password "$${SUPERSET_ADMIN_PASSWORD:-admin}" 2>/dev/null || true
+        superset init
+        superset load_examples 2>/dev/null || true
+        /bin/sh /app/init.sh 2>/dev/null || true
+        echo "Superset init done"
+    restart: "no"
+
+  superset:
+    image: apache/superset:3.0.1
+    container_name: superset-app
+    environment:
+      SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY:-superset_secret_key_change_in_prod_2026}
+      SUPERSET_LOAD_EXAMPLES: "false"
+      DATABASE_DB: superset
+      DATABASE_HOST: superset-db
+      DATABASE_PASSWORD: ${SUPERSET_DB_PASSWORD:-superset_secure_2026}
+      DATABASE_USER: superset
+      DATABASE_PORT: 5432
+      DATABASE_DIALECT: postgresql
+      REDIS_HOST: superset-redis
+      REDIS_PORT: 6379
+      CELERY_BROKER_URL: redis://superset-redis:6379/0
+      CELERY_RESULT_BACKEND: redis://superset-redis:6379/1
+    volumes:
+      - ./superset/superset_config.py:/app/pythonpath/superset_config.py:ro
+      - ./superset/datasources:/app/pythonpath/datasources:ro
+      - ./superset/datasets:/app/pythonpath/datasets:ro
+      - ./superset/charts:/app/pythonpath/charts:ro
+    ports:
+      - "8088:8088"
+    networks:
+      - superset-network
+    depends_on:
+      superset-init:
+        condition: service_completed_successfully
+    command: ["/usr/bin/run-server.sh"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8088/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  superset-worker:
+    image: apache/superset:3.0.1
+    container_name: superset-worker
+    environment:
+      SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY:-superset_secret_key_change_in_prod_2026}
+      DATABASE_DB: superset
+      DATABASE_HOST: superset-db
+      DATABASE_PASSWORD: ${SUPERSET_DB_PASSWORD:-superset_secure_2026}
+      DATABASE_USER: superset
+      DATABASE_PORT: 5432
+      DATABASE_DIALECT: postgresql
+      CELERY_BROKER_URL: redis://superset-redis:6379/0
+      CELERY_RESULT_BACKEND: redis://superset-redis:6379/1
+    volumes:
+      - ./superset/superset_config.py:/app/pythonpath/superset_config.py:ro
+    networks:
+      - superset-network
+    depends_on:
+      superset-init:
+        condition: service_completed_successfully
+    command: ["celery", "--app=superset.tasks.celery_app:app", "worker", "--pool=prefork", "-O", "fair", "-c", "4"]
+    restart: unless-stopped
+
+  superset-worker-beat:
+    image: apache/superset:3.0.1
+    container_name: superset-worker-beat
+    environment:
+      SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY:-superset_secret_key_change_in_prod_2026}
+      DATABASE_DB: superset
+      DATABASE_HOST: superset-db
+      DATABASE_PASSWORD: ${SUPERSET_DB_PASSWORD:-superset_secure_2026}
+      DATABASE_USER: superset
+      DATABASE_PORT: 5432
+      DATABASE_DIALECT: postgresql
+      CELERY_BROKER_URL: redis://superset-redis:6379/0
+    volumes:
+      - ./superset/superset_config.py:/app/pythonpath/superset_config.py:ro
+    networks:
+      - superset-network
+    depends_on:
+      superset-init:
+        condition: service_completed_successfully
+    command: ["celery", "--app=superset.tasks.celery_app:app", "beat", "--loglevel=INFO"]
+    restart: unless-stopped
+
+  flower:
+    image: mher/flower:2.0
+    container_name: superset-flower
+    environment:
+      CELERY_BROKER_URL: redis://superset-redis:6379/0
+      CELERY_RESULT_BACKEND: redis://superset-redis:6379/1
+    ports:
+      - "5555:5555"
+    networks:
+      - superset-network
+    depends_on:
+      - superset-worker
+    restart: unless-stopped
+    command: ["celery", "--broker=redis://superset-redis:6379/0", "flower", "--port=5555", "--address=0.0.0.0"]
+
+networks:
+  superset-network:
+    driver: bridge
+    name: superset-network
+
+volumes:
+  superset-db-data:

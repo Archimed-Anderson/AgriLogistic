@@ -18,17 +18,17 @@ const mockKPIs: TransporterKPIs = {
   weeklyRevenue: 245890,
   monthlyRevenue: 892340,
   revenueGrowth: 15.3,
-  
+
   activeDeliveries: 8,
   completedToday: 12,
   completedWeek: 67,
   completedMonth: 289,
-  
+
   kmToday: 245,
   kmWeek: 1567,
   kmMonth: 6789,
   fuelEfficiency: 12.5,
-  
+
   onTimeRate: 94.5,
   customerSatisfaction: 4.7,
   averageRating: 4.7,
@@ -176,7 +176,7 @@ const mockOpportunityAlerts: OpportunityAlert[] = [
     message: 'Nouveau chargement disponible à 5 km de votre position actuelle',
     priority: 'high',
     actionUrl: '/transporter/marketplace',
-    actionLabel: 'Voir l\'offre',
+    actionLabel: "Voir l'offre",
     expiresAt: new Date(Date.now() + 3600000),
     createdAt: new Date(),
     read: false,
@@ -196,7 +196,7 @@ const mockOpportunityAlerts: OpportunityAlert[] = [
     id: '3',
     type: 'price_surge',
     title: 'Prix en hausse',
-    message: 'Les prix pour Dakar-Thiès ont augmenté de 20% aujourd\'hui',
+    message: "Les prix pour Dakar-Thiès ont augmenté de 20% aujourd'hui",
     priority: 'high',
     actionUrl: '/transporter/marketplace',
     actionLabel: 'Voir les offres',
@@ -307,11 +307,6 @@ export function useTransporterData() {
     activeShipments,
     opportunityAlerts,
     trafficAlerts,
-    isLoading:
-      kpisLoading ||
-      revenueLoading ||
-      shipmentsLoading ||
-      alertsLoading ||
-      trafficLoading,
+    isLoading: kpisLoading || revenueLoading || shipmentsLoading || alertsLoading || trafficLoading,
   };
 }

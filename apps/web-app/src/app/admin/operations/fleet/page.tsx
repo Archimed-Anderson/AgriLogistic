@@ -1,4 +1,13 @@
-import FleetCommander from '@/components/admin/FleetCommander';
+import dynamic from 'next/dynamic';
+
+const FleetCommander = dynamic(() => import('@/components/admin/FleetCommander'), {
+  ssr: false,
+  loading: () => (
+    <div className="min-h-[400px] flex items-center justify-center text-slate-500 text-sm">
+      Chargement Fleet Commander...
+    </div>
+  ),
+});
 
 export const metadata = {
   title: 'Fleet Commander | Mission Control | AgroDeep',

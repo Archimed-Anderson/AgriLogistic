@@ -18,7 +18,7 @@ import {
   Camera,
   Save,
   Check,
-  Toggle,
+  ToggleLeft,
 } from 'lucide-react';
 
 interface NotificationSetting {
@@ -31,15 +31,52 @@ interface NotificationSetting {
 }
 
 const defaultNotifications: NotificationSetting[] = [
-  { id: 'orders', label: 'Commandes', description: 'Mises à jour sur vos commandes', email: true, push: true, sms: false },
-  { id: 'deliveries', label: 'Livraisons', description: 'Alertes de livraison et tracking', email: true, push: true, sms: true },
-  { id: 'prices', label: 'Prix', description: 'Alertes de baisse de prix', email: true, push: true, sms: false },
-  { id: 'quality', label: 'Qualité', description: 'Rapports d\'inspection', email: true, push: false, sms: false },
-  { id: 'community', label: 'Communauté', description: 'Nouvelles discussions et réponses', email: false, push: true, sms: false },
+  {
+    id: 'orders',
+    label: 'Commandes',
+    description: 'Mises à jour sur vos commandes',
+    email: true,
+    push: true,
+    sms: false,
+  },
+  {
+    id: 'deliveries',
+    label: 'Livraisons',
+    description: 'Alertes de livraison et tracking',
+    email: true,
+    push: true,
+    sms: true,
+  },
+  {
+    id: 'prices',
+    label: 'Prix',
+    description: 'Alertes de baisse de prix',
+    email: true,
+    push: true,
+    sms: false,
+  },
+  {
+    id: 'quality',
+    label: 'Qualité',
+    description: "Rapports d'inspection",
+    email: true,
+    push: false,
+    sms: false,
+  },
+  {
+    id: 'community',
+    label: 'Communauté',
+    description: 'Nouvelles discussions et réponses',
+    email: false,
+    push: true,
+    sms: false,
+  },
 ];
 
 export default function BuyerSettingsPage() {
-  const [activeSection, setActiveSection] = useState<'profile' | 'notifications' | 'security' | 'preferences'>('profile');
+  const [activeSection, setActiveSection] = useState<
+    'profile' | 'notifications' | 'security' | 'preferences'
+  >('profile');
   const [notifications, setNotifications] = useState(defaultNotifications);
   const [saved, setSaved] = useState(false);
 
@@ -49,10 +86,8 @@ export default function BuyerSettingsPage() {
   };
 
   const toggleNotification = (id: string, channel: 'email' | 'push' | 'sms') => {
-    setNotifications(prev =>
-      prev.map(n =>
-        n.id === id ? { ...n, [channel]: !n[channel] } : n
-      )
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, [channel]: !n[channel] } : n))
     );
   };
 
@@ -74,9 +109,7 @@ export default function BuyerSettingsPage() {
         <button
           onClick={handleSave}
           className={`px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-colors ${
-            saved
-              ? 'bg-emerald-500 text-white'
-              : 'bg-amber-500 text-white hover:bg-amber-600'
+            saved ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-white hover:bg-amber-600'
           }`}
         >
           {saved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
@@ -116,7 +149,9 @@ export default function BuyerSettingsPage() {
           {activeSection === 'profile' && (
             <>
               <div className="bg-white rounded-2xl border border-slate-200 p-6">
-                <h3 className="text-lg font-semibold text-slate-900 mb-6">Informations personnelles</h3>
+                <h3 className="text-lg font-semibold text-slate-900 mb-6">
+                  Informations personnelles
+                </h3>
                 <div className="flex items-center gap-6 mb-6">
                   <div className="relative">
                     <div className="w-24 h-24 bg-amber-100 rounded-full flex items-center justify-center text-3xl font-bold text-amber-700">
@@ -133,7 +168,9 @@ export default function BuyerSettingsPage() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Nom complet</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                      Nom complet
+                    </label>
                     <input
                       type="text"
                       defaultValue="Amadou Diallo"
@@ -149,7 +186,9 @@ export default function BuyerSettingsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Téléphone</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                      Téléphone
+                    </label>
                     <input
                       type="tel"
                       defaultValue="+221 77 123 45 67"
@@ -174,7 +213,9 @@ export default function BuyerSettingsPage() {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Nom de l'entreprise</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                      Nom de l'entreprise
+                    </label>
                     <input
                       type="text"
                       defaultValue="Restaurant Le Teranga"
@@ -205,12 +246,16 @@ export default function BuyerSettingsPage() {
           {/* Notifications Section */}
           {activeSection === 'notifications' && (
             <div className="bg-white rounded-2xl border border-slate-200 p-6">
-              <h3 className="text-lg font-semibold text-slate-900 mb-6">Préférences de notifications</h3>
+              <h3 className="text-lg font-semibold text-slate-900 mb-6">
+                Préférences de notifications
+              </h3>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-slate-200">
-                      <th className="text-left py-3 px-4 text-sm font-medium text-slate-600">Type</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-slate-600">
+                        Type
+                      </th>
                       <th className="text-center py-3 px-4 text-sm font-medium text-slate-600">
                         <Mail className="w-4 h-4 inline" /> Email
                       </th>
@@ -286,16 +331,31 @@ export default function BuyerSettingsPage() {
                 <h3 className="text-lg font-semibold text-slate-900 mb-6">Mot de passe</h3>
                 <div className="space-y-4 max-w-md">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Mot de passe actuel</label>
-                    <input type="password" className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm" />
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                      Mot de passe actuel
+                    </label>
+                    <input
+                      type="password"
+                      className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm"
+                    />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Nouveau mot de passe</label>
-                    <input type="password" className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm" />
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                      Nouveau mot de passe
+                    </label>
+                    <input
+                      type="password"
+                      className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm"
+                    />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Confirmer le mot de passe</label>
-                    <input type="password" className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm" />
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                      Confirmer le mot de passe
+                    </label>
+                    <input
+                      type="password"
+                      className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm"
+                    />
                   </div>
                   <button className="px-4 py-2 bg-amber-500 text-white rounded-xl text-sm font-medium hover:bg-amber-600">
                     Mettre à jour
@@ -304,8 +364,12 @@ export default function BuyerSettingsPage() {
               </div>
 
               <div className="bg-white rounded-2xl border border-slate-200 p-6">
-                <h3 className="text-lg font-semibold text-slate-900 mb-4">Authentification à deux facteurs</h3>
-                <p className="text-slate-600 mb-4">Ajoutez une couche de sécurité supplémentaire à votre compte.</p>
+                <h3 className="text-lg font-semibold text-slate-900 mb-4">
+                  Authentification à deux facteurs
+                </h3>
+                <p className="text-slate-600 mb-4">
+                  Ajoutez une couche de sécurité supplémentaire à votre compte.
+                </p>
                 <button className="px-4 py-2 bg-emerald-500 text-white rounded-xl text-sm font-medium hover:bg-emerald-600">
                   Activer 2FA
                 </button>
@@ -330,7 +394,9 @@ export default function BuyerSettingsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium text-slate-900">Devise par défaut</p>
-                    <p className="text-sm text-slate-500">Devise utilisée pour l'affichage des prix</p>
+                    <p className="text-sm text-slate-500">
+                      Devise utilisée pour l'affichage des prix
+                    </p>
                   </div>
                   <select className="px-4 py-2 border border-slate-200 rounded-xl text-sm">
                     <option>FCFA (XOF)</option>

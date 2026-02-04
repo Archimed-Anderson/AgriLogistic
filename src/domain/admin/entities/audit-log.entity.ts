@@ -62,10 +62,8 @@ export class AuditLog {
       'backup_create',
       'backup_restore',
     ];
-    
-    return criticalActions.some(action => 
-      this.action.toLowerCase().includes(action)
-    );
+
+    return criticalActions.some((action) => this.action.toLowerCase().includes(action));
   }
 
   /**

@@ -1,71 +1,33 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 /**
  * Middleware de sécurité et routage intelligent
  */
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
-  
-  const token = request.cookies.get('accessToken')?.value
-  const userRoleCookie = request.cookies.get('userRole')?.value
+  const { pathname } = request.nextUrl;
+
+  const sessionToken = request.cookies.get('better-auth.session_token')?.value;
 
   // 1. Redirection des utilisateurs déjà connectés
-  if (token && (pathname === '/login' || pathname === '/register')) {
-    const dashboardPath = getDashboardPath(userRoleCookie || 'farmer')
-    return NextResponse.redirect(new URL(dashboardPath, request.url))
+  if (sessionToken && (pathname === '/login' || pathname === '/register' || pathname === '/auth/signin')) {
+     // Default redirection - can be improved if we can read role from cookie or specific user preference
+    return NextResponse.redirect(new URL('/dashboard/farmer', request.url));
   }
 
   // 2. Protection des routes Dashboard
-  if (pathname.startsWith('/dashboard/')) {
-    const roleSlug = pathname.split('/')[2] // agriculteur, transporter, buyer
-    if (!token) {
-      return NextResponse.redirect(new URL('/login', request.url))
-    }
-
-    try {
-      const payloadBase64 = token.split('.')[1]
-      if (!payloadBase64) throw new Error('Invalid Token')
-      const base64 = payloadBase64.replace(/-/g, '+').replace(/_/g, '/')
-      const payload = JSON.parse(atob(base64))
-      const role = payload.role?.toLowerCase()
-      const userId = payload.sub || payload.id || payload.userId
-
-      // Mapping slug -> role attendu
-      const roleMapping: Record<string, string> = {
-        'agriculteur': 'farmer',
-        'transporter': 'transporter',
-        'buyer': 'buyer'
-      }
-
-      const expectedRole = roleMapping[roleSlug]
-      if (expectedRole && role !== expectedRole) {
-         return NextResponse.redirect(new URL('/unauthorized', request.url))
-      }
-
-      // Injection des headers métier
-      const requestHeaders = new Headers(request.headers)
-      if (role === 'farmer') requestHeaders.set('x-farmer-id', userId)
-      if (role === 'transporter') requestHeaders.set('x-transporter-id', userId)
-      if (role === 'buyer') requestHeaders.set('x-buyer-id', userId)
-
-      return NextResponse.next({
-        request: {
-          headers: requestHeaders,
-        },
-      })
-    } catch (e) {
-      return NextResponse.redirect(new URL('/login', request.url))
+  if (pathname.startsWith('/dashboard/') || pathname.startsWith('/admin/')) {
+    if (!sessionToken) {
+      return NextResponse.redirect(new URL('/login', request.url));
     }
   }
 
-  // 3. Reductions génériques /dashboard -> vers rôle spécifique
-  if (token && pathname === '/dashboard') {
-    const dashboardPath = getDashboardPath(userRoleCookie || 'farmer')
-    return NextResponse.redirect(new URL(dashboardPath, request.url))
+  // 3. Reductions génériques /dashboard
+  if (sessionToken && pathname === '/dashboard') {
+    return NextResponse.redirect(new URL('/dashboard/farmer', request.url));
   }
 
-  return NextResponse.next()
+  return NextResponse.next();
 }
 
 function getDashboardPath(role: string): string {
@@ -74,15 +36,10 @@ function getDashboardPath(role: string): string {
     farmer: '/dashboard/agriculteur',
     buyer: '/dashboard/buyer',
     transporter: '/dashboard/transporter',
-  }
-  return roleMap[role.toLowerCase()] || '/dashboard/agriculteur'
+  };
+  return roleMap[role.toLowerCase()] || '/dashboard/agriculteur';
 }
 
 export const config = {
-  matcher: [
-    '/dashboard/:path*',
-    '/admin/:path*',
-    '/login',
-    '/register',
-  ],
-}
+  matcher: ['/dashboard/:path*', '/admin/:path*', '/login', '/register'],
+};

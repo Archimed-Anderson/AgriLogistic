@@ -18,15 +18,12 @@ interface ModernRegisterFormProps {
   onSwitchToLogin: () => void;
 }
 
-export function ModernRegisterForm({
-  onSuccess,
-  onSwitchToLogin,
-}: ModernRegisterFormProps) {
+export function ModernRegisterForm({ onSuccess, onSwitchToLogin }: ModernRegisterFormProps) {
   const { register: authRegister, isLoading: authLoading } = useAuth();
   const { validateField, validateAll, errors, clearErrors } = useFormValidation(true);
   // CSRF token est automatiquement ajouté par api-client
   useCSRFToken();
-  
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -39,14 +36,10 @@ export function ModernRegisterForm({
 
   const isLoading = authLoading;
 
-  const handleFieldChange = (
-    fieldName: string,
-    value: string,
-    setter: (value: string) => void
-  ) => {
+  const handleFieldChange = (fieldName: string, value: string, setter: (value: string) => void) => {
     setter(value);
     clearFieldError(fieldName);
-    
+
     // Validation en temps réel
     if (fieldName === 'confirmPassword') {
       // Pour confirmPassword, on doit aussi vérifier password
@@ -56,15 +49,15 @@ export function ModernRegisterForm({
     } else {
       validateField(fieldName, value);
     }
-    
+
     // Marquer le champ comme validé après la première interaction
     if (value.trim() !== '') {
-      setFieldValidated(prev => ({ ...prev, [fieldName]: true }));
+      setFieldValidated((prev) => ({ ...prev, [fieldName]: true }));
     }
   };
 
   const clearFieldError = (fieldName: string) => {
-    setFieldErrors(prev => {
+    setFieldErrors((prev) => {
       const newErrors = { ...prev };
       delete newErrors[fieldName];
       return newErrors;
@@ -76,13 +69,19 @@ export function ModernRegisterForm({
   };
 
   const isFieldValid = (fieldName: string): boolean => {
-    const value = 
-      fieldName === 'firstName' ? firstName :
-      fieldName === 'lastName' ? lastName :
-      fieldName === 'email' ? email :
-      fieldName === 'password' ? password :
-      fieldName === 'confirmPassword' ? confirmPassword : '';
-    
+    const value =
+      fieldName === 'firstName'
+        ? firstName
+        : fieldName === 'lastName'
+        ? lastName
+        : fieldName === 'email'
+        ? email
+        : fieldName === 'password'
+        ? password
+        : fieldName === 'confirmPassword'
+        ? confirmPassword
+        : '';
+
     return !getFieldError(fieldName) && value.trim() !== '';
   };
 
@@ -133,7 +132,8 @@ export function ModernRegisterForm({
       sessionStorage.setItem('pending_verification_email', response.email);
 
       toast.success('Compte créé. Vérifiez votre email.', {
-        description: "Un lien de vérification a été envoyé. En dev, utilisez le token pour vérifier.",
+        description:
+          'Un lien de vérification a été envoyé. En dev, utilisez le token pour vérifier.',
       });
       onSuccess();
     } catch (error) {
@@ -143,7 +143,7 @@ export function ModernRegisterForm({
   };
 
   const displayError = fieldErrors.submit || '';
-  const isFormValid = 
+  const isFormValid =
     firstName.trim() !== '' &&
     lastName.trim() !== '' &&
     email.trim() !== '' &&
@@ -165,7 +165,7 @@ export function ModernRegisterForm({
           Rejoignez la communauté AgroLogistic
         </CardDescription>
       </CardHeader>
-      
+
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           {/* Message d'erreur général */}
@@ -197,8 +197,14 @@ export function ModernRegisterForm({
                   disabled={isLoading}
                   required
                   aria-invalid={!!getFieldError('firstName')}
-                  aria-describedby={getFieldError('firstName') ? 'register-firstname-error' : undefined}
-                  className={getFieldError('firstName') ? 'border-red-500 focus-visible:ring-red-500/20 pr-8' : 'pr-8'}
+                  aria-describedby={
+                    getFieldError('firstName') ? 'register-firstname-error' : undefined
+                  }
+                  className={
+                    getFieldError('firstName')
+                      ? 'border-red-500 focus-visible:ring-red-500/20 pr-8'
+                      : 'pr-8'
+                  }
                   autoComplete="given-name"
                 />
                 {fieldValidated.firstName && (
@@ -238,8 +244,14 @@ export function ModernRegisterForm({
                   disabled={isLoading}
                   required
                   aria-invalid={!!getFieldError('lastName')}
-                  aria-describedby={getFieldError('lastName') ? 'register-lastname-error' : undefined}
-                  className={getFieldError('lastName') ? 'border-red-500 focus-visible:ring-red-500/20 pr-8' : 'pr-8'}
+                  aria-describedby={
+                    getFieldError('lastName') ? 'register-lastname-error' : undefined
+                  }
+                  className={
+                    getFieldError('lastName')
+                      ? 'border-red-500 focus-visible:ring-red-500/20 pr-8'
+                      : 'pr-8'
+                  }
                   autoComplete="family-name"
                 />
                 {fieldValidated.lastName && (
@@ -282,7 +294,11 @@ export function ModernRegisterForm({
                 required
                 aria-invalid={!!getFieldError('email')}
                 aria-describedby={getFieldError('email') ? 'register-email-error' : undefined}
-                className={getFieldError('email') ? 'border-red-500 focus-visible:ring-red-500/20 pr-8' : 'pr-8'}
+                className={
+                  getFieldError('email')
+                    ? 'border-red-500 focus-visible:ring-red-500/20 pr-8'
+                    : 'pr-8'
+                }
                 autoComplete="email"
               />
               {fieldValidated.email && (
@@ -324,7 +340,11 @@ export function ModernRegisterForm({
                 required
                 aria-invalid={!!getFieldError('password')}
                 aria-describedby={getFieldError('password') ? 'register-password-error' : undefined}
-                className={getFieldError('password') ? 'border-red-500 focus-visible:ring-red-500/20 pr-10' : 'pr-10'}
+                className={
+                  getFieldError('password')
+                    ? 'border-red-500 focus-visible:ring-red-500/20 pr-10'
+                    : 'pr-10'
+                }
                 autoComplete="new-password"
               />
               <button
@@ -365,20 +385,30 @@ export function ModernRegisterForm({
                 type={showConfirmPassword ? 'text' : 'password'}
                 placeholder="••••••••"
                 value={confirmPassword}
-                onChange={(e) => handleFieldChange('confirmPassword', e.target.value, setConfirmPassword)}
+                onChange={(e) =>
+                  handleFieldChange('confirmPassword', e.target.value, setConfirmPassword)
+                }
                 onBlur={() => validateField('confirmPassword', confirmPassword)}
                 disabled={isLoading}
                 required
                 aria-invalid={!!getFieldError('confirmPassword')}
-                aria-describedby={getFieldError('confirmPassword') ? 'register-confirm-password-error' : undefined}
-                className={getFieldError('confirmPassword') ? 'border-red-500 focus-visible:ring-red-500/20 pr-10' : 'pr-10'}
+                aria-describedby={
+                  getFieldError('confirmPassword') ? 'register-confirm-password-error' : undefined
+                }
+                className={
+                  getFieldError('confirmPassword')
+                    ? 'border-red-500 focus-visible:ring-red-500/20 pr-10'
+                    : 'pr-10'
+                }
                 autoComplete="new-password"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                aria-label={showConfirmPassword ? 'Masquer la confirmation' : 'Afficher la confirmation'}
+                aria-label={
+                  showConfirmPassword ? 'Masquer la confirmation' : 'Afficher la confirmation'
+                }
                 tabIndex={-1}
               >
                 {showConfirmPassword ? (

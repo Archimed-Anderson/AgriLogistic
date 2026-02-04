@@ -26,7 +26,7 @@ export function BackendStatus({ onClose }: BackendStatusProps) {
         healthy: false,
         gateway: { available: false, message: 'Erreur lors de la vérification' },
         authService: { available: false, message: 'Erreur lors de la vérification' },
-        recommendations: ['Impossible de vérifier l\'état du backend.'],
+        recommendations: ["Impossible de vérifier l'état du backend."],
       });
     } finally {
       setChecking(false);
@@ -53,11 +53,11 @@ export function BackendStatus({ onClose }: BackendStatusProps) {
               <AlertCircle className="h-8 w-8 text-orange-600" />
             )}
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">
-                État des services backend
-              </h2>
+              <h2 className="text-2xl font-bold text-gray-900">État des services backend</h2>
               <p className="text-sm text-gray-600">
-                {healthStatus.healthy ? 'Tous les services sont opérationnels' : 'Certains services ne sont pas accessibles'}
+                {healthStatus.healthy
+                  ? 'Tous les services sont opérationnels'
+                  : 'Certains services ne sont pas accessibles'}
               </p>
             </div>
           </div>
@@ -73,7 +73,13 @@ export function BackendStatus({ onClose }: BackendStatusProps) {
 
         {/* Services Status */}
         <div className="mb-6 space-y-3">
-          <div className={`flex items-center justify-between rounded-lg border p-4 ${healthStatus.gateway.available ? 'border-green-200 bg-green-50' : 'border-orange-200 bg-orange-50'}`}>
+          <div
+            className={`flex items-center justify-between rounded-lg border p-4 ${
+              healthStatus.gateway.available
+                ? 'border-green-200 bg-green-50'
+                : 'border-orange-200 bg-orange-50'
+            }`}
+          >
             <div className="flex items-center gap-3">
               {healthStatus.gateway.available ? (
                 <CheckCircle2 className="h-5 w-5 text-green-600" />
@@ -84,13 +90,21 @@ export function BackendStatus({ onClose }: BackendStatusProps) {
                 <div className="font-semibold text-gray-900">Kong API Gateway</div>
                 <div className="text-sm text-gray-600">{healthStatus.gateway.message}</div>
                 {healthStatus.gateway.endpoint && (
-                  <div className="text-xs text-gray-500 font-mono">{healthStatus.gateway.endpoint}</div>
+                  <div className="text-xs text-gray-500 font-mono">
+                    {healthStatus.gateway.endpoint}
+                  </div>
                 )}
               </div>
             </div>
           </div>
 
-          <div className={`flex items-center justify-between rounded-lg border p-4 ${healthStatus.authService.available ? 'border-green-200 bg-green-50' : 'border-orange-200 bg-orange-50'}`}>
+          <div
+            className={`flex items-center justify-between rounded-lg border p-4 ${
+              healthStatus.authService.available
+                ? 'border-green-200 bg-green-50'
+                : 'border-orange-200 bg-orange-50'
+            }`}
+          >
             <div className="flex items-center gap-3">
               {healthStatus.authService.available ? (
                 <CheckCircle2 className="h-5 w-5 text-green-600" />
@@ -108,12 +122,15 @@ export function BackendStatus({ onClose }: BackendStatusProps) {
         {/* Recommendations */}
         {healthStatus.recommendations.length > 0 && (
           <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
-            <div className="mb-2 font-semibold text-blue-900">
-              Recommandations:
-            </div>
+            <div className="mb-2 font-semibold text-blue-900">Recommandations:</div>
             <ul className="space-y-2 text-sm text-blue-800">
               {healthStatus.recommendations.map((rec, index) => (
-                <li key={index} className={rec.startsWith('  •') || rec.startsWith('  ') ? 'ml-4 font-mono text-xs' : ''}>
+                <li
+                  key={index}
+                  className={
+                    rec.startsWith('  •') || rec.startsWith('  ') ? 'ml-4 font-mono text-xs' : ''
+                  }
+                >
                   {rec}
                 </li>
               ))}

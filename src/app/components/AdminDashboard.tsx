@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   Search,
   Sun,
@@ -46,13 +46,13 @@ import {
   ChevronDown,
   Play,
   Mic,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 export function AdminDashboard() {
   const [editMode, setEditMode] = useState(false);
   const [presentationMode, setPresentationMode] = useState(false);
-  const [selectedLayout, setSelectedLayout] = useState("morning");
+  const [selectedLayout, setSelectedLayout] = useState('morning');
   const [expandedWidget, setExpandedWidget] = useState<string | null>(null);
   const [selectedParcels, setSelectedParcels] = useState<string[]>([]);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -78,10 +78,10 @@ export function AdminDashboard() {
   const globalHealth = {
     score: 92,
     factors: [
-      { name: "Santé cultures", value: 94, weight: 40 },
-      { name: "Finances", value: 88, weight: 30 },
-      { name: "Équipement", value: 95, weight: 20 },
-      { name: "Météo", value: 90, weight: 10 },
+      { name: 'Santé cultures', value: 94, weight: 40 },
+      { name: 'Finances', value: 88, weight: 30 },
+      { name: 'Équipement', value: 95, weight: 20 },
+      { name: 'Météo', value: 90, weight: 10 },
     ],
     trend: 2.3,
   };
@@ -109,59 +109,66 @@ export function AdminDashboard() {
 
   // Parcels data
   const parcels = [
-    { id: "P1", name: "Parcelle Nord", crop: "Blé", area: 45, ndvi: 0.82, status: "healthy" },
-    { id: "P2", name: "Parcelle Sud", crop: "Maïs", area: 35, ndvi: 0.75, status: "warning" },
-    { id: "P3", name: "Parcelle Est", crop: "Tournesol", area: 20, ndvi: 0.68, status: "attention" },
+    { id: 'P1', name: 'Parcelle Nord', crop: 'Blé', area: 45, ndvi: 0.82, status: 'healthy' },
+    { id: 'P2', name: 'Parcelle Sud', crop: 'Maïs', area: 35, ndvi: 0.75, status: 'warning' },
+    {
+      id: 'P3',
+      name: 'Parcelle Est',
+      crop: 'Tournesol',
+      area: 20,
+      ndvi: 0.68,
+      status: 'attention',
+    },
   ];
 
   // Alerts data
   const alerts = [
     {
-      id: "1",
-      type: "critical",
-      title: "Irrigation urgente requise",
-      message: "Parcelle Est - Stress hydrique détecté",
-      time: "Il y a 15 min",
-      action: "Programmer irrigation",
+      id: '1',
+      type: 'critical',
+      title: 'Irrigation urgente requise',
+      message: 'Parcelle Est - Stress hydrique détecté',
+      time: 'Il y a 15 min',
+      action: 'Programmer irrigation',
     },
     {
-      id: "2",
-      type: "warning",
-      title: "Maintenance tracteur A",
-      message: "85h restantes avant révision",
-      time: "Il y a 2h",
-      action: "Planifier",
+      id: '2',
+      type: 'warning',
+      title: 'Maintenance tracteur A',
+      message: '85h restantes avant révision',
+      time: 'Il y a 2h',
+      action: 'Planifier',
     },
     {
-      id: "3",
-      type: "info",
-      title: "Fenêtre traitement optimale",
-      message: "Conditions idéales demain 6h-10h",
-      time: "Il y a 3h",
-      action: "Ajouter au calendrier",
+      id: '3',
+      type: 'info',
+      title: 'Fenêtre traitement optimale',
+      message: 'Conditions idéales demain 6h-10h',
+      time: 'Il y a 3h',
+      action: 'Ajouter au calendrier',
     },
   ];
 
   // AI Recommendations
   const aiRecommendations = [
     {
-      id: "1",
-      title: "Optimiser fertilisation Parcelle Nord",
-      impact: "Économie estimée: 340€",
+      id: '1',
+      title: 'Optimiser fertilisation Parcelle Nord',
+      impact: 'Économie estimée: 340€',
       confidence: 87,
       icon: Sprout,
     },
     {
-      id: "2",
-      title: "Anticiper traitement fongicide",
-      impact: "Prévenir perte de 8% rendement",
+      id: '2',
+      title: 'Anticiper traitement fongicide',
+      impact: 'Prévenir perte de 8% rendement',
       confidence: 92,
       icon: Shield,
     },
     {
-      id: "3",
-      title: "Ajuster calendrier irrigation",
-      impact: "Réduction consommation eau de 15%",
+      id: '3',
+      title: 'Ajuster calendrier irrigation',
+      impact: 'Réduction consommation eau de 15%',
       confidence: 78,
       icon: Droplet,
     },
@@ -169,9 +176,30 @@ export function AdminDashboard() {
 
   // Equipment status
   const equipment = [
-    { id: "1", name: "Tracteur A", type: "tractor", status: "active", battery: 85, lastUpdate: "2 min" },
-    { id: "2", name: "Tracteur B", type: "tractor", status: "idle", battery: 92, lastUpdate: "5 min" },
-    { id: "3", name: "Drone C", type: "drone", status: "charging", battery: 45, lastUpdate: "10 min" },
+    {
+      id: '1',
+      name: 'Tracteur A',
+      type: 'tractor',
+      status: 'active',
+      battery: 85,
+      lastUpdate: '2 min',
+    },
+    {
+      id: '2',
+      name: 'Tracteur B',
+      type: 'tractor',
+      status: 'idle',
+      battery: 92,
+      lastUpdate: '5 min',
+    },
+    {
+      id: '3',
+      name: 'Drone C',
+      type: 'drone',
+      status: 'charging',
+      battery: 45,
+      lastUpdate: '10 min',
+    },
   ];
 
   // IoT Sensors
@@ -184,25 +212,37 @@ export function AdminDashboard() {
 
   // Tasks
   const todayTasks = [
-    { id: "1", title: "Inspection Parcelle Nord", priority: "high", completed: false, duration: "2h" },
-    { id: "2", title: "Irrigation Parcelle Est", priority: "high", completed: true, duration: "1h" },
-    { id: "3", title: "Maintenance Drone", priority: "medium", completed: false, duration: "3h" },
-    { id: "4", title: "Analyse sols", priority: "low", completed: false, duration: "1.5h" },
+    {
+      id: '1',
+      title: 'Inspection Parcelle Nord',
+      priority: 'high',
+      completed: false,
+      duration: '2h',
+    },
+    {
+      id: '2',
+      title: 'Irrigation Parcelle Est',
+      priority: 'high',
+      completed: true,
+      duration: '1h',
+    },
+    { id: '3', title: 'Maintenance Drone', priority: 'medium', completed: false, duration: '3h' },
+    { id: '4', title: 'Analyse sols', priority: 'low', completed: false, duration: '1.5h' },
   ];
 
   // Phenology stages
   const phenologyStages = [
-    { stage: "Semis", date: "15 Mars", status: "completed" },
-    { stage: "Levée", date: "28 Mars", status: "completed" },
-    { stage: "Tallage", date: "12 Avril", status: "completed" },
-    { stage: "Floraison", date: "25 Mai", status: "current" },
-    { stage: "Maturation", date: "15 Juillet", status: "upcoming" },
-    { stage: "Récolte", date: "12 Août", status: "upcoming" },
+    { stage: 'Semis', date: '15 Mars', status: 'completed' },
+    { stage: 'Levée', date: '28 Mars', status: 'completed' },
+    { stage: 'Tallage', date: '12 Avril', status: 'completed' },
+    { stage: 'Floraison', date: '25 Mai', status: 'current' },
+    { stage: 'Maturation', date: '15 Juillet', status: 'upcoming' },
+    { stage: 'Récolte', date: '12 Août', status: 'upcoming' },
   ];
 
   const handleToggleEditMode = () => {
     setEditMode(!editMode);
-    toast.info(editMode ? "Mode édition désactivé" : "Mode édition activé");
+    toast.info(editMode ? 'Mode édition désactivé' : 'Mode édition activé');
   };
 
   const handleTogglePresentationMode = () => {
@@ -214,22 +254,22 @@ export function AdminDashboard() {
   };
 
   const getHealthColor = (score: number) => {
-    if (score >= 90) return "text-green-600";
-    if (score >= 70) return "text-yellow-600";
-    return "text-red-600";
+    if (score >= 90) return 'text-green-600';
+    if (score >= 70) return 'text-yellow-600';
+    return 'text-red-600';
   };
 
   const getHealthBgColor = (score: number) => {
-    if (score >= 90) return "from-green-500 to-emerald-600";
-    if (score >= 70) return "from-yellow-500 to-orange-600";
-    return "from-red-500 to-rose-600";
+    if (score >= 90) return 'from-green-500 to-emerald-600';
+    if (score >= 70) return 'from-yellow-500 to-orange-600';
+    return 'from-red-500 to-rose-600';
   };
 
   const getAlertIcon = (type: string) => {
     switch (type) {
-      case "critical":
+      case 'critical':
         return <AlertTriangle className="h-5 w-5 text-red-600" />;
-      case "warning":
+      case 'warning':
         return <AlertTriangle className="h-5 w-5 text-orange-600" />;
       default:
         return <Info className="h-5 w-5 text-blue-600" />;
@@ -251,9 +291,7 @@ export function AdminDashboard() {
           <div className="bg-card border rounded-xl p-8 flex items-center justify-center">
             <div className="text-center">
               <h1 className="text-6xl font-bold mb-4">Mode Présentation</h1>
-              <p className="text-2xl text-muted-foreground">
-                Les widgets défilent automatiquement
-              </p>
+              <p className="text-2xl text-muted-foreground">Les widgets défilent automatiquement</p>
             </div>
           </div>
           <div className="bg-card border rounded-xl p-8 flex items-center justify-center">
@@ -280,7 +318,13 @@ export function AdminDashboard() {
             Tableau de Bord
           </h1>
           <p className="text-muted-foreground mt-2">
-            Ferme des Vallons • {currentTime.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })} • {currentTime.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+            Ferme des Vallons •{' '}
+            {currentTime.toLocaleDateString('fr-FR', {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'long',
+            })}{' '}
+            • {currentTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
           </p>
         </div>
 
@@ -293,32 +337,30 @@ export function AdminDashboard() {
             <Mic className="h-5 w-5" />
           </button>
           <div className="flex gap-2">
-            {["morning", "financial", "production"].map((layout) => (
+            {['morning', 'financial', 'production'].map((layout) => (
               <button
                 key={layout}
                 onClick={() => setSelectedLayout(layout)}
                 className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
                   selectedLayout === layout
-                    ? "bg-[#1ABC9C] text-white"
-                    : "bg-muted hover:bg-muted/80"
+                    ? 'bg-[#1ABC9C] text-white'
+                    : 'bg-muted hover:bg-muted/80'
                 }`}
               >
-                {layout === "morning" && "Vue Matin"}
-                {layout === "financial" && "Vue Financière"}
-                {layout === "production" && "Vue Production"}
+                {layout === 'morning' && 'Vue Matin'}
+                {layout === 'financial' && 'Vue Financière'}
+                {layout === 'production' && 'Vue Production'}
               </button>
             ))}
           </div>
           <button
             onClick={handleToggleEditMode}
             className={`px-4 py-2 rounded-lg transition-colors flex items-center gap-2 ${
-              editMode
-                ? "bg-[#1ABC9C] text-white"
-                : "border hover:bg-muted"
+              editMode ? 'bg-[#1ABC9C] text-white' : 'border hover:bg-muted'
             }`}
           >
             <Edit3 className="h-4 w-4" />
-            {editMode ? "Terminer" : "Personnaliser"}
+            {editMode ? 'Terminer' : 'Personnaliser'}
           </button>
           <button
             onClick={handleTogglePresentationMode}
@@ -335,9 +377,12 @@ export function AdminDashboard() {
           <div className="flex items-start gap-3">
             <Info className="h-5 w-5 text-blue-600 mt-0.5" />
             <div>
-              <h3 className="font-semibold text-blue-900 dark:text-blue-100">Mode Édition Activé</h3>
+              <h3 className="font-semibold text-blue-900 dark:text-blue-100">
+                Mode Édition Activé
+              </h3>
               <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                Glissez-déposez les widgets pour les réorganiser. Cliquez sur <Plus className="h-3 w-3 inline" /> pour ajouter de nouveaux widgets.
+                Glissez-déposez les widgets pour les réorganiser. Cliquez sur{' '}
+                <Plus className="h-3 w-3 inline" /> pour ajouter de nouveaux widgets.
               </p>
             </div>
           </div>
@@ -389,12 +434,12 @@ export function AdminDashboard() {
             ) : (
               <TrendingDown className="h-4 w-4 text-red-600" />
             )}
-            <span className={globalHealth.trend > 0 ? "text-green-600" : "text-red-600"}>
+            <span className={globalHealth.trend > 0 ? 'text-green-600' : 'text-red-600'}>
               {Math.abs(globalHealth.trend)}% vs semaine dernière
             </span>
           </div>
           <button
-            onClick={() => setExpandedWidget("health")}
+            onClick={() => setExpandedWidget('health')}
             className="mt-3 text-xs text-[#1ABC9C] opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1"
           >
             Voir détails
@@ -422,7 +467,9 @@ export function AdminDashboard() {
           <div className="mb-3">
             <div className="flex justify-between text-xs mb-1">
               <span className="text-muted-foreground">Objectif: {totalYield.target}t</span>
-              <span className="font-medium">{Math.round((totalYield.current / totalYield.target) * 100)}%</span>
+              <span className="font-medium">
+                {Math.round((totalYield.current / totalYield.target) * 100)}%
+              </span>
             </div>
             <div className="h-2 bg-muted rounded-full overflow-hidden">
               <div
@@ -434,7 +481,9 @@ export function AdminDashboard() {
           {/* Sparkline */}
           <svg className="w-full h-8" viewBox="0 0 100 30">
             <polyline
-              points={totalYield.sparkline.map((v, i) => `${i * 16.67},${30 - (v / 2000) * 30}`).join(" ")}
+              points={totalYield.sparkline
+                .map((v, i) => `${i * 16.67},${30 - (v / 2000) * 30}`)
+                .join(' ')}
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -548,10 +597,12 @@ export function AdminDashboard() {
                   <div className="grid grid-cols-3 gap-4">
                     {parcels.map((parcel) => {
                       const ndviColor =
-                        parcel.ndvi > 0.75 ? "from-green-500 to-emerald-600" :
-                        parcel.ndvi > 0.65 ? "from-yellow-500 to-orange-600" :
-                        "from-red-500 to-rose-600";
-                      
+                        parcel.ndvi > 0.75
+                          ? 'from-green-500 to-emerald-600'
+                          : parcel.ndvi > 0.65
+                          ? 'from-yellow-500 to-orange-600'
+                          : 'from-red-500 to-rose-600';
+
                       return (
                         <button
                           key={parcel.id}
@@ -563,7 +614,9 @@ export function AdminDashboard() {
                             }
                           }}
                           className={`p-6 rounded-xl bg-gradient-to-br ${ndviColor} text-white hover:scale-105 transition-all ${
-                            selectedParcels.includes(parcel.id) ? "ring-4 ring-white shadow-2xl" : ""
+                            selectedParcels.includes(parcel.id)
+                              ? 'ring-4 ring-white shadow-2xl'
+                              : ''
                           }`}
                         >
                           <div className="text-left">
@@ -663,9 +716,9 @@ export function AdminDashboard() {
                 <div className="text-sm space-y-2">
                   <div className="font-medium mb-2">Facteurs influents:</div>
                   {[
-                    { name: "Météo", value: 60, color: "blue" },
-                    { name: "Irrigation", value: 25, color: "cyan" },
-                    { name: "Fertilisation", value: 15, color: "green" },
+                    { name: 'Météo', value: 60, color: 'blue' },
+                    { name: 'Irrigation', value: 25, color: 'cyan' },
+                    { name: 'Fertilisation', value: 15, color: 'green' },
                   ].map((factor) => (
                     <div key={factor.name}>
                       <div className="flex justify-between text-xs mb-1">
@@ -708,19 +761,23 @@ export function AdminDashboard() {
                       <div className="flex flex-col items-center">
                         <div
                           className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                            stage.status === "completed"
-                              ? "bg-green-600 text-white"
-                              : stage.status === "current"
-                              ? "bg-blue-600 text-white animate-pulse"
-                              : "bg-muted text-muted-foreground"
+                            stage.status === 'completed'
+                              ? 'bg-green-600 text-white'
+                              : stage.status === 'current'
+                              ? 'bg-blue-600 text-white animate-pulse'
+                              : 'bg-muted text-muted-foreground'
                           }`}
                         >
-                          {stage.status === "completed" && <CheckCircle className="h-4 w-4" />}
-                          {stage.status === "current" && <Activity className="h-4 w-4" />}
-                          {stage.status === "upcoming" && <Clock className="h-4 w-4" />}
+                          {stage.status === 'completed' && <CheckCircle className="h-4 w-4" />}
+                          {stage.status === 'current' && <Activity className="h-4 w-4" />}
+                          {stage.status === 'upcoming' && <Clock className="h-4 w-4" />}
                         </div>
                         {!isLast && (
-                          <div className={`h-full w-0.5 mt-1 ${stage.status === "completed" ? "bg-green-600" : "bg-muted"}`} />
+                          <div
+                            className={`h-full w-0.5 mt-1 ${
+                              stage.status === 'completed' ? 'bg-green-600' : 'bg-muted'
+                            }`}
+                          />
                         )}
                       </div>
                       <div className="flex-1 pb-4">
@@ -763,7 +820,7 @@ export function AdminDashboard() {
                 <div
                   key={task.id}
                   className={`flex items-center gap-4 p-3 border rounded-lg hover:bg-muted/50 transition-colors ${
-                    task.completed ? "opacity-60" : ""
+                    task.completed ? 'opacity-60' : ''
                   }`}
                 >
                   <input
@@ -773,18 +830,24 @@ export function AdminDashboard() {
                     className="h-5 w-5 rounded border-gray-300 text-[#1ABC9C] focus:ring-[#1ABC9C]"
                   />
                   <div className="flex-1">
-                    <div className={`font-medium ${task.completed ? "line-through" : ""}`}>
+                    <div className={`font-medium ${task.completed ? 'line-through' : ''}`}>
                       {task.title}
                     </div>
                     <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
-                      <span className={`px-2 py-0.5 rounded ${
-                        task.priority === "high"
-                          ? "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"
-                          : task.priority === "medium"
-                          ? "bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400"
-                          : "bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400"
-                      }`}>
-                        {task.priority === "high" ? "Haute" : task.priority === "medium" ? "Moyenne" : "Basse"}
+                      <span
+                        className={`px-2 py-0.5 rounded ${
+                          task.priority === 'high'
+                            ? 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'
+                            : task.priority === 'medium'
+                            ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400'
+                            : 'bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400'
+                        }`}
+                      >
+                        {task.priority === 'high'
+                          ? 'Haute'
+                          : task.priority === 'medium'
+                          ? 'Moyenne'
+                          : 'Basse'}
                       </span>
                       <span className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
@@ -807,7 +870,9 @@ export function AdminDashboard() {
                 <div
                   className="h-full bg-[#1ABC9C]"
                   style={{
-                    width: `${(todayTasks.filter((t) => t.completed).length / todayTasks.length) * 100}%`,
+                    width: `${
+                      (todayTasks.filter((t) => t.completed).length / todayTasks.length) * 100
+                    }%`,
                   }}
                 />
               </div>
@@ -830,7 +895,7 @@ export function AdminDashboard() {
                 Alertes Actives
               </h2>
               <span className="px-2 py-1 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 text-xs rounded">
-                {alerts.filter((a) => a.type === "critical").length} critiques
+                {alerts.filter((a) => a.type === 'critical').length} critiques
               </span>
             </div>
 
@@ -839,11 +904,11 @@ export function AdminDashboard() {
                 <div
                   key={alert.id}
                   className={`p-3 border rounded-lg ${
-                    alert.type === "critical"
-                      ? "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
-                      : alert.type === "warning"
-                      ? "bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800"
-                      : "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
+                    alert.type === 'critical'
+                      ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+                      : alert.type === 'warning'
+                      ? 'bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800'
+                      : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -926,11 +991,11 @@ export function AdminDashboard() {
                 <div key={item.id} className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
                   <div
                     className={`p-2 rounded ${
-                      item.status === "active"
-                        ? "bg-green-100 dark:bg-green-900/20"
-                        : item.status === "idle"
-                        ? "bg-gray-100 dark:bg-gray-900/20"
-                        : "bg-blue-100 dark:bg-blue-900/20"
+                      item.status === 'active'
+                        ? 'bg-green-100 dark:bg-green-900/20'
+                        : item.status === 'idle'
+                        ? 'bg-gray-100 dark:bg-gray-900/20'
+                        : 'bg-blue-100 dark:bg-blue-900/20'
                     }`}
                   >
                     <Tractor className="h-4 w-4" />
@@ -940,14 +1005,18 @@ export function AdminDashboard() {
                     <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
                       <span
                         className={`px-1.5 py-0.5 rounded ${
-                          item.status === "active"
-                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                            : item.status === "idle"
-                            ? "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400"
-                            : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                          item.status === 'active'
+                            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                            : item.status === 'idle'
+                            ? 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400'
+                            : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
                         }`}
                       >
-                        {item.status === "active" ? "Actif" : item.status === "idle" ? "Repos" : "Charge"}
+                        {item.status === 'active'
+                          ? 'Actif'
+                          : item.status === 'idle'
+                          ? 'Repos'
+                          : 'Charge'}
                       </span>
                       <span className="flex items-center gap-1">
                         <Battery className="h-3 w-3" />

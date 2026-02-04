@@ -111,7 +111,11 @@ export default function BuyerLayout() {
                   : 'text-amber-100 hover:bg-white/10'
               }`}
             >
-              <Icon className={`w-5 h-5 ${active ? 'text-amber-600' : 'text-amber-300 group-hover:text-white'}`} />
+              <Icon
+                className={`w-5 h-5 ${
+                  active ? 'text-amber-600' : 'text-amber-300 group-hover:text-white'
+                }`}
+              />
               <span>{item.name}</span>
               {active && <ChevronRight className="w-4 h-4 ml-auto text-amber-400" />}
             </Link>
@@ -150,7 +154,10 @@ export default function BuyerLayout() {
     <div className="min-h-screen bg-slate-100">
       {/* Mobile Sidebar Overlay */}
       <div className={`fixed inset-0 z-50 lg:hidden ${sidebarOpen ? 'block' : 'hidden'}`}>
-        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
+        <div
+          className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm"
+          onClick={() => setSidebarOpen(false)}
+        />
         <div className="fixed inset-y-0 left-0 w-80 bg-gradient-to-b from-amber-600 via-amber-700 to-amber-900 shadow-2xl flex flex-col">
           <button
             onClick={() => setSidebarOpen(false)}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Map,
   TrendingUp,
@@ -40,8 +40,8 @@ import {
   Brain,
   FileImage,
   RefreshCw,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 interface Field {
   id: string;
@@ -51,7 +51,7 @@ interface Field {
   healthIndex: number;
   moistureLevel: number;
   temperatureAvg: number;
-  diseaseRisk: "low" | "medium" | "high";
+  diseaseRisk: 'low' | 'medium' | 'high';
   irrigationNeeded: boolean;
   lastUpdated: string;
 }
@@ -60,9 +60,9 @@ interface DiseaseDetection {
   id: string;
   name: string;
   confidence: number;
-  severity: "low" | "medium" | "high" | "critical";
+  severity: 'low' | 'medium' | 'high' | 'critical';
   affectedArea: number;
-  detectionMethod: "visual" | "ai_image" | "sensor" | "manual";
+  detectionMethod: 'visual' | 'ai_image' | 'sensor' | 'manual';
   symptoms: string[];
   treatments: Array<{
     type: string;
@@ -71,7 +71,7 @@ interface DiseaseDetection {
     timing: string;
     cost: number;
   }>;
-  spread: "contained" | "spreading" | "widespread";
+  spread: 'contained' | 'spreading' | 'widespread';
   imageUrl?: string;
   detectedAt: string;
   fieldId: string;
@@ -79,11 +79,15 @@ interface DiseaseDetection {
 }
 
 export function CropIntelligence() {
-  const [activeView, setActiveView] = useState<"overview" | "mapping" | "growth" | "disease" | "irrigation" | "weather">("overview");
+  const [activeView, setActiveView] = useState<
+    'overview' | 'mapping' | 'growth' | 'disease' | 'irrigation' | 'weather'
+  >('overview');
   const [selectedField, setSelectedField] = useState<string | null>(null);
-  const [selectedPeriod, setSelectedPeriod] = useState("7days");
-  const [mapLayer, setMapLayer] = useState<"satellite" | "ndvi" | "moisture" | "temperature">("ndvi");
-  
+  const [selectedPeriod, setSelectedPeriod] = useState('7days');
+  const [mapLayer, setMapLayer] = useState<'satellite' | 'ndvi' | 'moisture' | 'temperature'>(
+    'ndvi'
+  );
+
   // AI Disease Detection State
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [analyzingImage, setAnalyzingImage] = useState(false);
@@ -94,204 +98,204 @@ export function CropIntelligence() {
   // KPIs Data
   const kpis = [
     {
-      id: "health",
-      label: "Indice de Santé Moyen",
-      value: "84/100",
+      id: 'health',
+      label: 'Indice de Santé Moyen',
+      value: '84/100',
       change: 3,
       icon: Sprout,
-      color: "green",
-      trend: "up",
+      color: 'green',
+      trend: 'up',
     },
     {
-      id: "optimal",
-      label: "Conditions Optimales",
-      value: "78%",
-      subtitle: "des parcelles",
+      id: 'optimal',
+      label: 'Conditions Optimales',
+      value: '78%',
+      subtitle: 'des parcelles',
       change: 5,
       icon: Target,
-      color: "blue",
-      trend: "up",
+      color: 'blue',
+      trend: 'up',
     },
     {
-      id: "irrigation",
-      label: "Besoins Irrigation",
-      value: "12",
-      subtitle: "parcelles",
+      id: 'irrigation',
+      label: 'Besoins Irrigation',
+      value: '12',
+      subtitle: 'parcelles',
       change: -2,
       icon: Droplet,
-      color: "cyan",
-      trend: "down",
+      color: 'cyan',
+      trend: 'down',
     },
     {
-      id: "disease",
-      label: "Risques Maladies",
-      value: "3",
-      subtitle: "alertes actives",
+      id: 'disease',
+      label: 'Risques Maladies',
+      value: '3',
+      subtitle: 'alertes actives',
       change: 1,
       icon: AlertTriangle,
-      color: "orange",
-      trend: "up",
+      color: 'orange',
+      trend: 'up',
     },
   ];
 
   // Fields Data
   const fields: Field[] = [
     {
-      id: "F001",
-      name: "Parcelle Nord A",
-      crop: "Maïs",
+      id: 'F001',
+      name: 'Parcelle Nord A',
+      crop: 'Maïs',
       area: 12.5,
       healthIndex: 92,
       moistureLevel: 68,
       temperatureAvg: 24,
-      diseaseRisk: "low",
+      diseaseRisk: 'low',
       irrigationNeeded: false,
-      lastUpdated: "Il y a 15 min",
+      lastUpdated: 'Il y a 15 min',
     },
     {
-      id: "F002",
-      name: "Parcelle Nord B",
-      crop: "Blé",
+      id: 'F002',
+      name: 'Parcelle Nord B',
+      crop: 'Blé',
       area: 18.3,
       healthIndex: 78,
       moistureLevel: 42,
       temperatureAvg: 26,
-      diseaseRisk: "medium",
+      diseaseRisk: 'medium',
       irrigationNeeded: true,
-      lastUpdated: "Il y a 20 min",
+      lastUpdated: 'Il y a 20 min',
     },
     {
-      id: "F003",
-      name: "Parcelle Sud",
-      crop: "Soja",
+      id: 'F003',
+      name: 'Parcelle Sud',
+      crop: 'Soja',
       area: 15.7,
       healthIndex: 88,
       moistureLevel: 55,
       temperatureAvg: 23,
-      diseaseRisk: "low",
+      diseaseRisk: 'low',
       irrigationNeeded: false,
-      lastUpdated: "Il y a 10 min",
+      lastUpdated: 'Il y a 10 min',
     },
     {
-      id: "F004",
-      name: "Parcelle Est",
-      crop: "Tournesol",
+      id: 'F004',
+      name: 'Parcelle Est',
+      crop: 'Tournesol',
       area: 9.2,
       healthIndex: 65,
       moistureLevel: 38,
       temperatureAvg: 28,
-      diseaseRisk: "high",
+      diseaseRisk: 'high',
       irrigationNeeded: true,
-      lastUpdated: "Il y a 5 min",
+      lastUpdated: 'Il y a 5 min',
     },
   ];
 
   // Growth stages
   const growthStages = [
-    { stage: "Germination", progress: 100, status: "completed" },
-    { stage: "Croissance végétative", progress: 100, status: "completed" },
-    { stage: "Floraison", progress: 75, status: "active" },
-    { stage: "Fructification", progress: 20, status: "upcoming" },
-    { stage: "Maturité", progress: 0, status: "upcoming" },
+    { stage: 'Germination', progress: 100, status: 'completed' },
+    { stage: 'Croissance végétative', progress: 100, status: 'completed' },
+    { stage: 'Floraison', progress: 75, status: 'active' },
+    { stage: 'Fructification', progress: 20, status: 'upcoming' },
+    { stage: 'Maturité', progress: 0, status: 'upcoming' },
   ];
 
   // Diseases database
   const diseases = [
     {
-      id: "D001",
-      name: "Mildiou",
-      severity: "high",
+      id: 'D001',
+      name: 'Mildiou',
+      severity: 'high',
       affectedFields: 1,
-      symptoms: "Taches jaunes sur feuilles",
-      treatment: "Cuivre + Soufre",
-      image: "🦠",
+      symptoms: 'Taches jaunes sur feuilles',
+      treatment: 'Cuivre + Soufre',
+      image: '🦠',
     },
     {
-      id: "D002",
-      name: "Rouille",
-      severity: "medium",
+      id: 'D002',
+      name: 'Rouille',
+      severity: 'medium',
       affectedFields: 2,
-      symptoms: "Pustules orangées",
-      treatment: "Fongicide triazole",
-      image: "🔴",
+      symptoms: 'Pustules orangées',
+      treatment: 'Fongicide triazole',
+      image: '🔴',
     },
     {
-      id: "D003",
-      name: "Fusariose",
-      severity: "low",
+      id: 'D003',
+      name: 'Fusariose',
+      severity: 'low',
       affectedFields: 0,
-      symptoms: "Pourriture des racines",
-      treatment: "Rotation cultures",
-      image: "🟤",
+      symptoms: 'Pourriture des racines',
+      treatment: 'Rotation cultures',
+      image: '🟤',
     },
   ];
 
   // AI Disease Detection Sample Data
   const sampleDetections: DiseaseDetection[] = [
     {
-      id: "DET-001",
-      name: "Mildiou du Maïs",
+      id: 'DET-001',
+      name: 'Mildiou du Maïs',
       confidence: 94.5,
-      severity: "high",
+      severity: 'high',
       affectedArea: 12.3,
-      detectionMethod: "ai_image",
+      detectionMethod: 'ai_image',
       symptoms: [
-        "Taches irrégulières jaune-brun sur feuilles",
-        "Moisissure blanche au revers des feuilles",
-        "Flétrissement des zones affectées",
+        'Taches irrégulières jaune-brun sur feuilles',
+        'Moisissure blanche au revers des feuilles',
+        'Flétrissement des zones affectées',
       ],
       treatments: [
         {
-          type: "Fongicide préventif",
-          product: "Métalaxyl + Mancozèbe",
-          dosage: "2.5 kg/ha",
-          timing: "Immédiat + rappel 10j",
+          type: 'Fongicide préventif',
+          product: 'Métalaxyl + Mancozèbe',
+          dosage: '2.5 kg/ha',
+          timing: 'Immédiat + rappel 10j',
           cost: 145,
         },
         {
-          type: "Fongicide curatif",
-          product: "Cymoxanil",
-          dosage: "0.5 L/ha",
-          timing: "Dans les 48h",
+          type: 'Fongicide curatif',
+          product: 'Cymoxanil',
+          dosage: '0.5 L/ha',
+          timing: 'Dans les 48h',
           cost: 95,
         },
       ],
-      spread: "spreading",
-      detectedAt: "Il y a 2 heures",
-      fieldId: "F001",
+      spread: 'spreading',
+      detectedAt: 'Il y a 2 heures',
+      fieldId: 'F001',
       preventionTips: [
-        "Améliorer drainage parcelle",
-        "Réduire humidité feuillage",
-        "Appliquer rotation avec légumineuses",
+        'Améliorer drainage parcelle',
+        'Réduire humidité feuillage',
+        'Appliquer rotation avec légumineuses',
       ],
     },
     {
-      id: "DET-002",
-      name: "Rouille du Blé",
+      id: 'DET-002',
+      name: 'Rouille du Blé',
       confidence: 87.2,
-      severity: "medium",
+      severity: 'medium',
       affectedArea: 5.8,
-      detectionMethod: "ai_image",
+      detectionMethod: 'ai_image',
       symptoms: [
-        "Pustules orangées circulaires",
-        "Poudre rouille au toucher",
-        "Jaunissement précoce feuilles",
+        'Pustules orangées circulaires',
+        'Poudre rouille au toucher',
+        'Jaunissement précoce feuilles',
       ],
       treatments: [
         {
-          type: "Fongicide systémique",
-          product: "Triazole (Tébuconazole)",
-          dosage: "1.0 L/ha",
-          timing: "Stade épiaison",
+          type: 'Fongicide systémique',
+          product: 'Triazole (Tébuconazole)',
+          dosage: '1.0 L/ha',
+          timing: 'Stade épiaison',
           cost: 68,
         },
       ],
-      spread: "contained",
-      detectedAt: "Il y a 5 heures",
-      fieldId: "F002",
+      spread: 'contained',
+      detectedAt: 'Il y a 5 heures',
+      fieldId: 'F002',
       preventionTips: [
-        "Variétés résistantes pour prochaine saison",
-        "Surveiller conditions météo favorables",
+        'Variétés résistantes pour prochaine saison',
+        'Surveiller conditions météo favorables',
       ],
     },
   ];
@@ -303,24 +307,32 @@ export function CropIntelligence() {
       humidity: 65,
       wind: 12,
       pressure: 1013,
-      condition: "Ensoleillé",
+      condition: 'Ensoleillé',
     },
     forecast: [
-      { day: "Lun", temp: 26, condition: "sunny", rain: 0 },
-      { day: "Mar", temp: 24, condition: "cloudy", rain: 20 },
-      { day: "Mer", temp: 22, condition: "rainy", rain: 80 },
-      { day: "Jeu", temp: 23, condition: "cloudy", rain: 40 },
-      { day: "Ven", temp: 25, condition: "sunny", rain: 0 },
-      { day: "Sam", temp: 27, condition: "sunny", rain: 0 },
-      { day: "Dim", temp: 28, condition: "sunny", rain: 5 },
+      { day: 'Lun', temp: 26, condition: 'sunny', rain: 0 },
+      { day: 'Mar', temp: 24, condition: 'cloudy', rain: 20 },
+      { day: 'Mer', temp: 22, condition: 'rainy', rain: 80 },
+      { day: 'Jeu', temp: 23, condition: 'cloudy', rain: 40 },
+      { day: 'Ven', temp: 25, condition: 'sunny', rain: 0 },
+      { day: 'Sam', temp: 27, condition: 'sunny', rain: 0 },
+      { day: 'Dim', temp: 28, condition: 'sunny', rain: 5 },
     ],
   };
 
   const getRiskColor = (risk: string) => {
     const colors: { [key: string]: { bg: string; text: string; border: string } } = {
-      low: { bg: "bg-green-100 dark:bg-green-900/20", text: "text-green-700", border: "border-green-300" },
-      medium: { bg: "bg-orange-100 dark:bg-orange-900/20", text: "text-orange-700", border: "border-orange-300" },
-      high: { bg: "bg-red-100 dark:bg-red-900/20", text: "text-red-700", border: "border-red-300" },
+      low: {
+        bg: 'bg-green-100 dark:bg-green-900/20',
+        text: 'text-green-700',
+        border: 'border-green-300',
+      },
+      medium: {
+        bg: 'bg-orange-100 dark:bg-orange-900/20',
+        text: 'text-orange-700',
+        border: 'border-orange-300',
+      },
+      high: { bg: 'bg-red-100 dark:bg-red-900/20', text: 'text-red-700', border: 'border-red-300' },
     };
     return colors[risk] || colors.low;
   };
@@ -345,57 +357,77 @@ export function CropIntelligence() {
     // Simulate AI detection results
     const newDetection: DiseaseDetection = {
       id: `DET-${Date.now()}`,
-      name: Math.random() > 0.5 ? "Mildiou" : "Rouille",
+      name: Math.random() > 0.5 ? 'Mildiou' : 'Rouille',
       confidence: Math.round(85 + Math.random() * 12),
-      severity: ["low", "medium", "high"][Math.floor(Math.random() * 3)] as any,
+      severity: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)] as any,
       affectedArea: Math.round(Math.random() * 20 * 10) / 10,
-      detectionMethod: "ai_image",
+      detectionMethod: 'ai_image',
       symptoms: [
-        "Taches anormales détectées",
-        "Décoloration du feuillage",
-        "Pattern caractéristique identifié",
+        'Taches anormales détectées',
+        'Décoloration du feuillage',
+        'Pattern caractéristique identifié',
       ],
       treatments: [
         {
-          type: "Fongicide",
-          product: "Traitement adapté",
-          dosage: "Selon analyse",
-          timing: "Sous 48h",
+          type: 'Fongicide',
+          product: 'Traitement adapté',
+          dosage: 'Selon analyse',
+          timing: 'Sous 48h',
           cost: Math.round(80 + Math.random() * 100),
         },
       ],
-      spread: ["contained", "spreading"][Math.floor(Math.random() * 2)] as any,
+      spread: ['contained', 'spreading'][Math.floor(Math.random() * 2)] as any,
       detectedAt: "A l'instant",
-      fieldId: selectedField || "F001",
-      preventionTips: [
-        "Surveiller évolution quotidiennement",
-        "Isoler zone affectée si possible",
-      ],
+      fieldId: selectedField || 'F001',
+      preventionTips: ['Surveiller évolution quotidiennement', 'Isoler zone affectée si possible'],
     };
 
     setDetections((prev) => [newDetection, ...prev]);
     setAnalyzingImage(false);
-    toast.success(`Maladie détectée: ${newDetection.name} (confiance ${newDetection.confidence}%)`, {
-      description: "Consultez les détails pour le traitement recommandé",
-    });
+    toast.success(
+      `Maladie détectée: ${newDetection.name} (confiance ${newDetection.confidence}%)`,
+      {
+        description: 'Consultez les détails pour le traitement recommandé',
+      }
+    );
     setShowImageUpload(false);
   };
 
   const getSeverityConfig = (severity: string) => {
     const configs: { [key: string]: { bg: string; text: string; border: string; icon: any } } = {
-      low: { bg: "bg-green-100 dark:bg-green-900/20", text: "text-green-700", border: "border-green-300", icon: CheckCircle },
-      medium: { bg: "bg-orange-100 dark:bg-orange-900/20", text: "text-orange-700", border: "border-orange-300", icon: AlertTriangle },
-      high: { bg: "bg-red-100 dark:bg-red-900/20", text: "text-red-700", border: "border-red-300", icon: XCircle },
-      critical: { bg: "bg-red-200 dark:bg-red-900/40", text: "text-red-900", border: "border-red-500", icon: XCircle },
+      low: {
+        bg: 'bg-green-100 dark:bg-green-900/20',
+        text: 'text-green-700',
+        border: 'border-green-300',
+        icon: CheckCircle,
+      },
+      medium: {
+        bg: 'bg-orange-100 dark:bg-orange-900/20',
+        text: 'text-orange-700',
+        border: 'border-orange-300',
+        icon: AlertTriangle,
+      },
+      high: {
+        bg: 'bg-red-100 dark:bg-red-900/20',
+        text: 'text-red-700',
+        border: 'border-red-300',
+        icon: XCircle,
+      },
+      critical: {
+        bg: 'bg-red-200 dark:bg-red-900/40',
+        text: 'text-red-900',
+        border: 'border-red-500',
+        icon: XCircle,
+      },
     };
     return configs[severity] || configs.low;
   };
 
   const getSpreadLabel = (spread: string) => {
     const labels: { [key: string]: string } = {
-      contained: "Contenue",
-      spreading: "En propagation",
-      widespread: "Généralisée",
+      contained: 'Contenue',
+      spreading: 'En propagation',
+      widespread: 'Généralisée',
     };
     return labels[spread] || spread;
   };
@@ -427,10 +459,10 @@ export function CropIntelligence() {
                 </div>
                 <div
                   className={`flex items-center gap-1 text-xs font-semibold ${
-                    kpi.trend === "up" ? "text-green-600" : "text-red-600"
+                    kpi.trend === 'up' ? 'text-green-600' : 'text-red-600'
                   }`}
                 >
-                  {kpi.trend === "up" ? (
+                  {kpi.trend === 'up' ? (
                     <TrendingUp className="h-3 w-3" />
                   ) : (
                     <TrendingUp className="h-3 w-3 rotate-180" />
@@ -457,7 +489,9 @@ export function CropIntelligence() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold">Carte Interactive des Parcelles</h3>
-              <p className="text-sm text-muted-foreground">Vue {mapLayer.toUpperCase()} en temps réel</p>
+              <p className="text-sm text-muted-foreground">
+                Vue {mapLayer.toUpperCase()} en temps réel
+              </p>
             </div>
             <div className="flex items-center gap-2">
               <select
@@ -493,19 +527,29 @@ export function CropIntelligence() {
                   onClick={() => setSelectedField(field.id)}
                   className={`border-2 rounded-xl p-4 cursor-pointer transition-all ${
                     selectedField === field.id
-                      ? "border-[#2E8B57] bg-white dark:bg-gray-800 shadow-xl scale-105"
-                      : "border-gray-300 bg-white/80 dark:bg-gray-800/80 hover:border-[#3CB371]"
+                      ? 'border-[#2E8B57] bg-white dark:bg-gray-800 shadow-xl scale-105'
+                      : 'border-gray-300 bg-white/80 dark:bg-gray-800/80 hover:border-[#3CB371]'
                   }`}
                   style={{
-                    opacity: mapLayer === "ndvi" ? field.healthIndex / 100 : 1,
+                    opacity: mapLayer === 'ndvi' ? field.healthIndex / 100 : 1,
                   }}
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div>
                       <div className="font-semibold text-sm">{field.name}</div>
-                      <div className="text-xs text-muted-foreground">{field.crop} • {field.area} ha</div>
+                      <div className="text-xs text-muted-foreground">
+                        {field.crop} • {field.area} ha
+                      </div>
                     </div>
-                    <div className={`w-3 h-3 rounded-full ${field.healthIndex > 80 ? "bg-green-500" : field.healthIndex > 60 ? "bg-orange-500" : "bg-red-500"}`} />
+                    <div
+                      className={`w-3 h-3 rounded-full ${
+                        field.healthIndex > 80
+                          ? 'bg-green-500'
+                          : field.healthIndex > 60
+                          ? 'bg-orange-500'
+                          : 'bg-red-500'
+                      }`}
+                    />
                   </div>
 
                   <div className="space-y-2 text-xs">
@@ -590,7 +634,13 @@ export function CropIntelligence() {
                       <div className="flex items-center gap-2">
                         <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden max-w-[80px]">
                           <div
-                            className={`h-full ${field.healthIndex > 80 ? "bg-green-500" : field.healthIndex > 60 ? "bg-orange-500" : "bg-red-500"}`}
+                            className={`h-full ${
+                              field.healthIndex > 80
+                                ? 'bg-green-500'
+                                : field.healthIndex > 60
+                                ? 'bg-orange-500'
+                                : 'bg-red-500'
+                            }`}
                             style={{ width: `${field.healthIndex}%` }}
                           />
                         </div>
@@ -613,9 +663,9 @@ export function CropIntelligence() {
                       <span
                         className={`inline-flex items-center px-2 py-1 rounded text-xs font-semibold ${riskColors.text} ${riskColors.bg}`}
                       >
-                        {field.diseaseRisk === "low" && "Faible"}
-                        {field.diseaseRisk === "medium" && "Moyen"}
-                        {field.diseaseRisk === "high" && "Élevé"}
+                        {field.diseaseRisk === 'low' && 'Faible'}
+                        {field.diseaseRisk === 'medium' && 'Moyen'}
+                        {field.diseaseRisk === 'high' && 'Élevé'}
                       </span>
                     </td>
                     <td className="px-4 py-3">
@@ -656,9 +706,13 @@ export function CropIntelligence() {
             <div key={index}>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-3">
-                  {stage.status === "completed" && <CheckCircle className="h-5 w-5 text-green-600" />}
-                  {stage.status === "active" && <Activity className="h-5 w-5 text-blue-600 animate-pulse" />}
-                  {stage.status === "upcoming" && <Clock className="h-5 w-5 text-gray-400" />}
+                  {stage.status === 'completed' && (
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                  )}
+                  {stage.status === 'active' && (
+                    <Activity className="h-5 w-5 text-blue-600 animate-pulse" />
+                  )}
+                  {stage.status === 'upcoming' && <Clock className="h-5 w-5 text-gray-400" />}
                   <span className="font-medium">{stage.stage}</span>
                 </div>
                 <span className="text-sm font-semibold">{stage.progress}%</span>
@@ -666,11 +720,11 @@ export function CropIntelligence() {
               <div className="h-3 bg-muted rounded-full overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all ${
-                    stage.status === "completed"
-                      ? "bg-green-500"
-                      : stage.status === "active"
-                      ? "bg-blue-500"
-                      : "bg-gray-300"
+                    stage.status === 'completed'
+                      ? 'bg-green-500'
+                      : stage.status === 'active'
+                      ? 'bg-blue-500'
+                      : 'bg-gray-300'
                   }`}
                   style={{ width: `${stage.progress}%` }}
                 />
@@ -685,13 +739,13 @@ export function CropIntelligence() {
         <h3 className="text-lg font-semibold mb-6">Courbe de Croissance Comparative</h3>
         <div className="h-64 flex items-end justify-around gap-2">
           {[
-            { week: "S1", current: 15, previous: 12, predicted: 18 },
-            { week: "S2", current: 28, previous: 24, predicted: 32 },
-            { week: "S3", current: 45, previous: 38, predicted: 48 },
-            { week: "S4", current: 62, previous: 55, predicted: 65 },
-            { week: "S5", current: 78, previous: 70, predicted: 82 },
-            { week: "S6", current: 88, previous: 82, predicted: 92 },
-            { week: "S7", current: 0, previous: 90, predicted: 98 },
+            { week: 'S1', current: 15, previous: 12, predicted: 18 },
+            { week: 'S2', current: 28, previous: 24, predicted: 32 },
+            { week: 'S3', current: 45, previous: 38, predicted: 48 },
+            { week: 'S4', current: 62, previous: 55, predicted: 65 },
+            { week: 'S5', current: 78, previous: 70, predicted: 82 },
+            { week: 'S6', current: 88, previous: 82, predicted: 92 },
+            { week: 'S7', current: 0, previous: 90, predicted: 98 },
           ].map((data, index) => (
             <div key={index} className="flex-1 flex flex-col items-center gap-1">
               {data.current > 0 && (
@@ -765,11 +819,11 @@ export function CropIntelligence() {
             onClick={() => setAiDetectionEnabled(!aiDetectionEnabled)}
             className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
               aiDetectionEnabled
-                ? "bg-green-100 text-green-700 dark:bg-green-900/30"
-                : "bg-gray-100 text-gray-700 dark:bg-gray-800"
+                ? 'bg-green-100 text-green-700 dark:bg-green-900/30'
+                : 'bg-gray-100 text-gray-700 dark:bg-gray-800'
             }`}
           >
-            {aiDetectionEnabled ? "IA Active" : "IA Inactive"}
+            {aiDetectionEnabled ? 'IA Active' : 'IA Inactive'}
           </button>
         </div>
       </div>
@@ -783,13 +837,19 @@ export function CropIntelligence() {
           <div className="flex-1">
             <h3 className="font-bold text-lg mb-1">Moteur de Détection IA</h3>
             <p className="text-sm text-muted-foreground">
-              {[...sampleDetections, ...detections].length} détections total | {detections.length} détections récentes
+              {[...sampleDetections, ...detections].length} détections total | {detections.length}{' '}
+              détections récentes
             </p>
           </div>
           <div className="flex items-center gap-2">
             <Sparkles className="h-6 w-6 text-purple-600 animate-pulse" />
             <span className="text-sm font-semibold text-purple-700 dark:text-purple-300">
-              Confiance moyenne: {Math.round([...sampleDetections, ...detections].reduce((acc, d) => acc + d.confidence, 0) / ([...sampleDetections, ...detections].length || 1))}%
+              Confiance moyenne:{' '}
+              {Math.round(
+                [...sampleDetections, ...detections].reduce((acc, d) => acc + d.confidence, 0) /
+                  ([...sampleDetections, ...detections].length || 1)
+              )}
+              %
             </span>
           </div>
         </div>
@@ -816,10 +876,12 @@ export function CropIntelligence() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2 flex-wrap">
                         <h3 className="font-semibold text-lg">{detection.name}</h3>
-                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${severityConfig.text} ${severityConfig.bg}`}>
+                        <span
+                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${severityConfig.text} ${severityConfig.bg}`}
+                        >
                           Sévérité: {detection.severity.toUpperCase()}
                         </span>
-                        {detection.detectionMethod === "ai_image" && (
+                        {detection.detectionMethod === 'ai_image' && (
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/40 dark:to-blue-900/40 text-purple-700 dark:text-purple-300">
                             <Sparkles className="h-3 w-3 mr-1" />
                             Détection IA
@@ -841,20 +903,28 @@ export function CropIntelligence() {
                                 style={{ width: `${detection.confidence}%` }}
                               />
                             </div>
-                            <span className="text-sm font-bold text-blue-700 dark:text-blue-400">{detection.confidence}%</span>
+                            <span className="text-sm font-bold text-blue-700 dark:text-blue-400">
+                              {detection.confidence}%
+                            </span>
                           </div>
                         </div>
                         <div className="p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
                           <div className="text-xs text-muted-foreground">Surface Affectée</div>
-                          <div className="font-bold text-orange-700 dark:text-orange-400">{detection.affectedArea} ha</div>
+                          <div className="font-bold text-orange-700 dark:text-orange-400">
+                            {detection.affectedArea} ha
+                          </div>
                         </div>
                         <div className="p-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
                           <div className="text-xs text-muted-foreground">Propagation</div>
-                          <div className="font-bold text-red-700 dark:text-red-400">{getSpreadLabel(detection.spread)}</div>
+                          <div className="font-bold text-red-700 dark:text-red-400">
+                            {getSpreadLabel(detection.spread)}
+                          </div>
                         </div>
                         <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
                           <div className="text-xs text-muted-foreground">Parcelle</div>
-                          <div className="font-bold text-green-700 dark:text-green-400">{detection.fieldId}</div>
+                          <div className="font-bold text-green-700 dark:text-green-400">
+                            {detection.fieldId}
+                          </div>
                         </div>
                       </div>
 
@@ -878,10 +948,15 @@ export function CropIntelligence() {
 
                       {/* Treatments */}
                       <div className="mb-3">
-                        <div className="text-xs font-semibold text-muted-foreground mb-2">Traitements recommandés:</div>
+                        <div className="text-xs font-semibold text-muted-foreground mb-2">
+                          Traitements recommandés:
+                        </div>
                         <div className="space-y-2">
                           {detection.treatments.map((treatment, idx) => (
-                            <div key={idx} className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                            <div
+                              key={idx}
+                              className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg"
+                            >
                               <div className="flex items-start justify-between mb-2">
                                 <div className="flex-1">
                                   <div className="font-semibold text-sm text-green-900 dark:text-green-100">
@@ -893,7 +968,9 @@ export function CropIntelligence() {
                                 </div>
                                 <div className="text-right">
                                   <div className="text-xs text-muted-foreground">Coût</div>
-                                  <div className="font-bold text-green-700 dark:text-green-400">{treatment.cost}€</div>
+                                  <div className="font-bold text-green-700 dark:text-green-400">
+                                    {treatment.cost}€
+                                  </div>
                                 </div>
                               </div>
                               <button
@@ -914,7 +991,9 @@ export function CropIntelligence() {
                           <div className="flex items-start gap-2">
                             <Sparkles className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
                             <div>
-                              <div className="text-xs font-semibold text-blue-900 dark:text-blue-200 mb-1">Conseils de prévention:</div>
+                              <div className="text-xs font-semibold text-blue-900 dark:text-blue-200 mb-1">
+                                Conseils de prévention:
+                              </div>
                               <div className="text-xs text-blue-800 dark:text-blue-300 space-y-1">
                                 {detection.preventionTips.map((tip, idx) => (
                                   <div key={idx}>• {tip}</div>
@@ -940,7 +1019,9 @@ export function CropIntelligence() {
             <div className="p-6 border-b flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-xl">Analyse IA d'Image</h3>
-                <p className="text-sm text-muted-foreground">Téléchargez une photo de feuilles malades</p>
+                <p className="text-sm text-muted-foreground">
+                  Téléchargez une photo de feuilles malades
+                </p>
               </div>
               <button
                 onClick={() => setShowImageUpload(false)}
@@ -954,7 +1035,9 @@ export function CropIntelligence() {
               <div className="border-2 border-dashed border-purple-300 dark:border-purple-700 rounded-xl p-12 text-center hover:border-purple-500 transition-colors cursor-pointer">
                 <Upload className="h-16 w-16 text-purple-600 mx-auto mb-4" />
                 <h4 className="font-semibold text-lg mb-2">Glissez-déposez votre image ici</h4>
-                <p className="text-sm text-muted-foreground mb-4">ou cliquez pour parcourir (JPG, PNG max 10MB)</p>
+                <p className="text-sm text-muted-foreground mb-4">
+                  ou cliquez pour parcourir (JPG, PNG max 10MB)
+                </p>
                 <button
                   onClick={analyzeImage}
                   disabled={analyzingImage}
@@ -1029,11 +1112,24 @@ export function CropIntelligence() {
         <h3 className="text-lg font-semibold mb-6">Calendrier d'Irrigation - 7 Jours</h3>
         <div className="space-y-3">
           {[
-            { day: "Lundi 13", fields: ["Parcelle Nord B", "Parcelle Est"], volume: 450, duration: "2h 30min" },
-            { day: "Mercredi 15", fields: ["Parcelle Sud"], volume: 320, duration: "1h 45min" },
-            { day: "Vendredi 17", fields: ["Parcelle Nord B", "Parcelle Est"], volume: 470, duration: "2h 40min" },
+            {
+              day: 'Lundi 13',
+              fields: ['Parcelle Nord B', 'Parcelle Est'],
+              volume: 450,
+              duration: '2h 30min',
+            },
+            { day: 'Mercredi 15', fields: ['Parcelle Sud'], volume: 320, duration: '1h 45min' },
+            {
+              day: 'Vendredi 17',
+              fields: ['Parcelle Nord B', 'Parcelle Est'],
+              volume: 470,
+              duration: '2h 40min',
+            },
           ].map((schedule, index) => (
-            <div key={index} className="p-4 border-2 border-dashed rounded-lg hover:border-[#2E8B57] transition-colors">
+            <div
+              key={index}
+              className="p-4 border-2 border-dashed rounded-lg hover:border-[#2E8B57] transition-colors"
+            >
               <div className="flex items-center justify-between mb-2">
                 <div className="font-semibold">{schedule.day}</div>
                 <div className="flex items-center gap-2">
@@ -1178,16 +1274,15 @@ export function CropIntelligence() {
           </button>
         </div>
       </div>
-
       {/* Navigation Tabs */}
       <div className="bg-card border rounded-xl p-2 flex gap-2 overflow-x-auto">
         {[
-          { id: "overview", label: "Vue d'ensemble", icon: Map },
-          { id: "mapping", label: "Field Mapping", icon: Layers },
-          { id: "growth", label: "Croissance", icon: TrendingUp },
-          { id: "disease", label: "Maladies", icon: Bug },
-          { id: "irrigation", label: "Irrigation", icon: Droplet },
-          { id: "weather", label: "Météo", icon: Cloud },
+          { id: 'overview', label: "Vue d'ensemble", icon: Map },
+          { id: 'mapping', label: 'Field Mapping', icon: Layers },
+          { id: 'growth', label: 'Croissance', icon: TrendingUp },
+          { id: 'disease', label: 'Maladies', icon: Bug },
+          { id: 'irrigation', label: 'Irrigation', icon: Droplet },
+          { id: 'weather', label: 'Météo', icon: Cloud },
         ].map((tab) => {
           const Icon = tab.icon;
           return (
@@ -1195,9 +1290,7 @@ export function CropIntelligence() {
               key={tab.id}
               onClick={() => setActiveView(tab.id as any)}
               className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all whitespace-nowrap ${
-                activeView === tab.id
-                  ? "bg-[#2E8B57] text-white"
-                  : "hover:bg-muted"
+                activeView === tab.id ? 'bg-[#2E8B57] text-white' : 'hover:bg-muted'
               }`}
             >
               <Icon className="h-4 w-4" />
@@ -1206,14 +1299,13 @@ export function CropIntelligence() {
           );
         })}
       </div>
-
       {/* Content */}
-      {activeView === "overview" && renderOverview()}
-      {activeView === "mapping" && renderOverview()} {/* Using overview for mapping demo */}
-      {activeView === "growth" && renderGrowth()}
-      {activeView === "disease" && renderDisease()}
-      {activeView === "irrigation" && renderIrrigation()}
-      {activeView === "weather" && renderWeather()}
+      {activeView === 'overview' && renderOverview()}
+      {activeView === 'mapping' && renderOverview()} {/* Using overview for mapping demo */}
+      {activeView === 'growth' && renderGrowth()}
+      {activeView === 'disease' && renderDisease()}
+      {activeView === 'irrigation' && renderIrrigation()}
+      {activeView === 'weather' && renderWeather()}
     </div>
   );
 }

@@ -58,7 +58,8 @@ const mockInspections: QualityInspection[] = [
       { name: 'Documentation', score: 10, maxScore: 10 },
     ],
     photos: ['/inspections/tomatoes-1.jpg'],
-    comments: 'Excellent lot, produits conformes aux spécifications. Légère variation de calibre acceptable.',
+    comments:
+      'Excellent lot, produits conformes aux spécifications. Légère variation de calibre acceptable.',
   },
   {
     id: 'insp-002',
@@ -78,7 +79,8 @@ const mockInspections: QualityInspection[] = [
       { name: 'Documentation', score: 9, maxScore: 10 },
     ],
     photos: ['/inspections/carrots-1.jpg', '/inspections/carrots-2.jpg'],
-    comments: 'Lot acceptable avec réserves. Feedback envoyé au fournisseur concernant le calibrage.',
+    comments:
+      'Lot acceptable avec réserves. Feedback envoyé au fournisseur concernant le calibrage.',
     actionRequired: 'Demander amélioration du tri pour prochaine commande',
   },
   {
@@ -92,14 +94,20 @@ const mockInspections: QualityInspection[] = [
     overallScore: 65,
     status: 'failed',
     criteria: [
-      { name: 'Apparence visuelle', score: 5, maxScore: 10, comment: 'Traces de moisissure détectées' },
+      {
+        name: 'Apparence visuelle',
+        score: 5,
+        maxScore: 10,
+        comment: 'Traces de moisissure détectées',
+      },
       { name: 'Fraîcheur', score: 6, maxScore: 10, comment: 'Signes de vieillissement' },
       { name: 'Calibrage', score: 8, maxScore: 10 },
       { name: 'Emballage', score: 7, maxScore: 10 },
       { name: 'Documentation', score: 7, maxScore: 10 },
     ],
     photos: ['/inspections/onions-1.jpg'],
-    comments: 'Lot rejeté partiellement. 15% des oignons présentent des défauts. Réclamation en cours.',
+    comments:
+      'Lot rejeté partiellement. 15% des oignons présentent des défauts. Réclamation en cours.',
     actionRequired: 'Retour partiel - Crédit fournisseur à demander',
   },
 ];
@@ -110,7 +118,7 @@ const mockNonConformities: NonConformity[] = [
     inspectionId: 'insp-003',
     type: 'quality',
     severity: 'major',
-    description: 'Présence de moisissure sur 15% du lot d\'oignons',
+    description: "Présence de moisissure sur 15% du lot d'oignons",
     reportedAt: new Date('2026-01-23T09:30:00'),
     status: 'in_progress',
   },
@@ -131,7 +139,7 @@ export function useQualityControl() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['buyer', 'quality'],
     queryFn: async () => {
-      await new Promise(resolve => setTimeout(resolve, 600));
+      await new Promise((resolve) => setTimeout(resolve, 600));
       return {
         inspections: mockInspections,
         nonConformities: mockNonConformities,
@@ -139,9 +147,10 @@ export function useQualityControl() {
     },
   });
 
-  const passedInspections = data?.inspections.filter(i => i.status === 'passed') || [];
-  const failedInspections = data?.inspections.filter(i => i.status === 'failed') || [];
-  const openNonConformities = data?.nonConformities.filter(nc => nc.status === 'open' || nc.status === 'in_progress') || [];
+  const passedInspections = data?.inspections.filter((i) => i.status === 'passed') || [];
+  const failedInspections = data?.inspections.filter((i) => i.status === 'failed') || [];
+  const openNonConformities =
+    data?.nonConformities.filter((nc) => nc.status === 'open' || nc.status === 'in_progress') || [];
 
   return {
     inspections: data?.inspections || [],

@@ -1,28 +1,35 @@
-import { AffiliateProduct } from '@/types/affiliate'
-import { Star, ShieldCheck, Award, Zap, ExternalLink, ShoppingBag } from 'lucide-react'
-import { AffiliateRedirectButton } from './AffiliateRedirectButton'
-import { cn } from '@/lib/utils'
-import Image from 'next/image'
+import { AffiliateProduct } from '@/types/affiliate';
+import { Star, ShieldCheck, Award, Zap, ExternalLink, ShoppingBag } from 'lucide-react';
+import { AffiliateRedirectButton } from './AffiliateRedirectButton';
+import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 interface AffiliateProductCardProps {
-  product: AffiliateProduct
-  className?: string
+  product: AffiliateProduct;
+  className?: string;
 }
 
 export function AffiliateProductCard({ product, className }: AffiliateProductCardProps) {
-  const isFlash = product.discount && product.discount > 15
-  
+  const isFlash = product.discount && product.discount > 15;
+
   return (
-    <div className={cn(
-      "group relative flex flex-col bg-[#242424] backdrop-blur-md border-2 border-white/5 rounded-2xl overflow-hidden transition-all duration-500 hover:border-yellow-500/50 hover:shadow-2xl hover:shadow-yellow-500/10 hover:scale-105",
-      className
-    )}>
+    <div
+      className={cn(
+        'group relative flex flex-col bg-[#242424] backdrop-blur-md border-2 border-white/5 rounded-2xl overflow-hidden transition-all duration-500 hover:border-yellow-500/50 hover:shadow-2xl hover:shadow-yellow-500/10 hover:scale-105',
+        className
+      )}
+    >
       {/* Platform Badge */}
-      <div className={cn(
-        "absolute top-4 left-4 z-10 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-lg shadow-black/50",
-        product.platform === 'AMAZON' ? "bg-orange-500 text-black font-black" : 
-        product.platform === 'ALIBABA' ? "bg-yellow-500 text-black font-black" : "bg-emerald-500 text-white"
-      )}>
+      <div
+        className={cn(
+          'absolute top-4 left-4 z-10 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-lg shadow-black/50',
+          product.platform === 'AMAZON'
+            ? 'bg-orange-500 text-black font-black'
+            : product.platform === 'ALIBABA'
+              ? 'bg-yellow-500 text-black font-black'
+              : 'bg-emerald-500 text-white'
+        )}
+      >
         <ShoppingBag className="h-3 w-3" />
         {product.platform}
       </div>
@@ -59,17 +66,19 @@ export function AffiliateProductCard({ product, className }: AffiliateProductCar
         <div className="flex items-center gap-2 mb-3">
           <div className="flex items-center text-yellow-500">
             {[...Array(5)].map((_, i) => (
-              <Star 
-                key={i} 
+              <Star
+                key={i}
                 className={cn(
-                  "h-3 w-3", 
-                  i < Math.floor(product.rating) ? "fill-current" : "opacity-30"
-                )} 
+                  'h-3 w-3',
+                  i < Math.floor(product.rating) ? 'fill-current' : 'opacity-30'
+                )}
               />
             ))}
             <span className="ml-2 text-xs font-black">{product.rating}</span>
           </div>
-          <span className="text-slate-500 text-[10px] font-black uppercase tracking-widest">({product.reviewCount} avis)</span>
+          <span className="text-slate-500 text-[10px] font-black uppercase tracking-widest">
+            ({product.reviewCount} avis)
+          </span>
         </div>
 
         <h3 className="text-xl font-black text-white mb-2 line-clamp-2 uppercase tracking-tighter leading-tight italic group-hover:text-yellow-500 transition-colors">
@@ -98,13 +107,13 @@ export function AffiliateProductCard({ product, className }: AffiliateProductCar
         </div>
 
         {/* CTA */}
-        <AffiliateRedirectButton 
-          url={product.affiliateUrl} 
-          platform={product.platform} 
+        <AffiliateRedirectButton
+          url={product.affiliateUrl}
+          platform={product.platform}
           productId={product.id}
           className="hover:scale-105 active:scale-95 transition-transform"
         />
       </div>
     </div>
-  )
+  );
 }

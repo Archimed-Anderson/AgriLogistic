@@ -28,7 +28,10 @@ export const marketplaceAPI = {
    * Update product
    */
   updateProduct: async (productId: string, updates: Partial<Product>): Promise<Product> => {
-    const response = await apiClient.patch(`/api/farmer/marketplace/products/${productId}`, updates);
+    const response = await apiClient.patch(
+      `/api/farmer/marketplace/products/${productId}`,
+      updates
+    );
     return response.data;
   },
 

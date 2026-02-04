@@ -82,18 +82,18 @@ describe('useLogin', () => {
     };
 
     await expect(result.current.login(credentials)).rejects.toThrow('Invalid credentials');
-    
+
     await waitFor(() => {
       expect(result.current.error).toBeTruthy();
     });
-    
+
     // Le format des toasts a changé avec ErrorHandler
     expect(toast.error).toHaveBeenCalled();
   });
 
   it('should set loading state during login', async () => {
     let resolveLogin: (value: any) => void;
-    const loginPromise = new Promise(resolve => {
+    const loginPromise = new Promise((resolve) => {
       resolveLogin = resolve;
     });
 

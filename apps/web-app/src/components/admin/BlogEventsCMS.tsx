@@ -191,7 +191,7 @@ function ArticleRow({ article }: { article: Article }) {
       <td className="px-8 py-6 min-w-[300px]">
         <div className="flex items-center gap-4">
           <div className="w-16 h-12 rounded-xl bg-slate-800 border border-white/5 overflow-hidden shrink-0">
-            <img src={article.featuredImage} className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
+            <img src={article.featuredImage} alt="" className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
           </div>
           <div>
             <h5 className="text-[12px] font-black text-white tracking-tight leading-tight uppercase italic">{article.title}</h5>
@@ -328,7 +328,7 @@ function EventCard({ event }: { event: AgroEvent }) {
   return (
     <div className="bg-slate-950/40 border border-white/5 rounded-[2.5rem] p-6 hover:border-emerald-500/30 transition-all group">
       <div className="w-full h-40 rounded-[1.5rem] overflow-hidden mb-6 relative">
-        <img src={event.image} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
+        <img src={event.image} alt="" className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
         <div className="absolute top-4 left-4 px-3 py-1 bg-black/60 backdrop-blur-md rounded-lg text-[9px] font-black uppercase tracking-widest text-emerald-500 border border-emerald-500/20">
           {event.type}
         </div>
@@ -398,7 +398,7 @@ function MediaLibrary() {
         ].map((item, i) => (
           <div key={i} className="aspect-square bg-slate-950/40 border border-white/5 rounded-3xl p-4 flex flex-col items-center justify-center gap-4 group cursor-pointer hover:border-white/20 transition-all text-center">
             {item.type === 'img' ? (
-              <img src={item.src} className="w-full h-full object-cover rounded-xl" />
+              <img src={item.src} alt="" className="w-full h-full object-cover rounded-xl" />
             ) : item.type === 'pdf' ? (
               <FileText className="w-12 h-12 text-blue-500 opacity-50" />
             ) : (

@@ -52,7 +52,9 @@ export function CropRotationPlanner({ plans, isLoading }: CropRotationPlannerPro
         <div className="text-center py-12 text-gray-500">
           <Leaf className="w-12 h-12 mx-auto mb-3 opacity-50" />
           <p className="font-medium">Aucun plan de rotation</p>
-          <p className="text-sm mt-1">L'IA analysera vos champs pour proposer des rotations optimales</p>
+          <p className="text-sm mt-1">
+            L'IA analysera vos champs pour proposer des rotations optimales
+          </p>
           <button className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
             Générer un plan IA
           </button>
@@ -127,9 +129,7 @@ export function CropRotationPlanner({ plans, isLoading }: CropRotationPlannerPro
               {/* Recommendations */}
               {plan.recommendations.length > 0 && (
                 <div className="bg-blue-50 rounded-lg p-3">
-                  <p className="text-sm font-medium text-blue-900 mb-2">
-                    💡 Recommandations IA:
-                  </p>
+                  <p className="text-sm font-medium text-blue-900 mb-2">💡 Recommandations IA:</p>
                   <ul className="space-y-1">
                     {plan.recommendations.map((rec, i) => (
                       <li key={i} className="text-sm text-blue-800 flex items-start gap-2">

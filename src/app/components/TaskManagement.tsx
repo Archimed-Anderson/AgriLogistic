@@ -1,45 +1,56 @@
-import { ClipboardList, Plus, Search, Filter, MoreHorizontal, User, UserCheck, Calendar, CheckSquare, Clock } from 'lucide-react';
+import {
+  ClipboardList,
+  Plus,
+  Search,
+  Filter,
+  MoreHorizontal,
+  User,
+  UserCheck,
+  Calendar,
+  CheckSquare,
+  Clock,
+} from 'lucide-react';
 
 const tasks = [
-  { 
-    id: 1, 
-    title: 'Fertilisation Maïs (Parcelle Nord)', 
-    assignee: 'Jean Dupont', 
-    dueDate: '20 Jan 2024', 
+  {
+    id: 1,
+    title: 'Fertilisation Maïs (Parcelle Nord)',
+    assignee: 'Jean Dupont',
+    dueDate: '20 Jan 2024',
     priority: 'high',
     status: 'pending',
     type: 'fieldwork',
-    description: 'Application engrais NPK 15-15-15 sur la totalité de la parcelle.'
+    description: 'Application engrais NPK 15-15-15 sur la totalité de la parcelle.',
   },
-  { 
-    id: 2, 
-    title: 'Révision Tracteur JD-6250R', 
-    assignee: 'Pierre Martin', 
-    dueDate: '22 Jan 2024', 
+  {
+    id: 2,
+    title: 'Révision Tracteur JD-6250R',
+    assignee: 'Pierre Martin',
+    dueDate: '22 Jan 2024',
     priority: 'medium',
     status: 'in-progress',
     type: 'maintenance',
-    description: 'Maintenance 500h : vidange moteur et remplacement filtres.'
+    description: 'Maintenance 500h : vidange moteur et remplacement filtres.',
   },
-  { 
-    id: 3, 
-    title: 'Inspection Irrigation (Zone Sud)', 
-    assignee: 'Sophie Dubois', 
-    dueDate: '19 Jan 2024', 
+  {
+    id: 3,
+    title: 'Inspection Irrigation (Zone Sud)',
+    assignee: 'Sophie Dubois',
+    dueDate: '19 Jan 2024',
     priority: 'high',
     status: 'completed',
     type: 'monitoring',
-    description: 'Vérification des fuites et de la pression sur le secteur Sud.'
+    description: 'Vérification des fuites et de la pression sur le secteur Sud.',
   },
-  { 
-    id: 4, 
-    title: 'Inventaire Semences', 
-    assignee: 'Lucas Bernard', 
-    dueDate: '25 Jan 2024', 
+  {
+    id: 4,
+    title: 'Inventaire Semences',
+    assignee: 'Lucas Bernard',
+    dueDate: '25 Jan 2024',
     priority: 'low',
     status: 'pending',
     type: 'inventory',
-    description: 'Comptage stocks blé et orge avant commande saisonnière.'
+    description: 'Comptage stocks blé et orge avant commande saisonnière.',
   },
 ];
 
@@ -90,20 +101,33 @@ export function TaskManagement() {
           {/* Kanban Board / List */}
           <div className="space-y-3">
             {tasks.map((task) => (
-              <div key={task.id} className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow group">
+              <div
+                key={task.id}
+                className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow group"
+              >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4">
-                    <button className={`mt-1 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      task.status === 'completed' ? 'bg-green-500 border-green-500' : 'border-gray-300 hover:border-green-500'
-                    }`}>
-                      {task.status === 'completed' && <CheckSquare className="w-3 h-3 text-white" />}
+                    <button
+                      className={`mt-1 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                        task.status === 'completed'
+                          ? 'bg-green-500 border-green-500'
+                          : 'border-gray-300 hover:border-green-500'
+                      }`}
+                    >
+                      {task.status === 'completed' && (
+                        <CheckSquare className="w-3 h-3 text-white" />
+                      )}
                     </button>
                     <div>
-                      <h3 className={`font-medium text-gray-900 ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
+                      <h3
+                        className={`font-medium text-gray-900 ${
+                          task.status === 'completed' ? 'line-through text-gray-500' : ''
+                        }`}
+                      >
                         {task.title}
                       </h3>
                       <p className="text-sm text-gray-500 mt-1">{task.description}</p>
-                      
+
                       <div className="flex items-center gap-4 mt-3">
                         <div className="flex items-center gap-1.5 text-xs text-gray-500">
                           <Calendar className="w-3.5 h-3.5" />
@@ -113,16 +137,25 @@ export function TaskManagement() {
                           <UserCheck className="w-3.5 h-3.5" />
                           {task.assignee}
                         </div>
-                        <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${
-                          task.priority === 'high' ? 'bg-red-100 text-red-700' :
-                          task.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700'
-                        }`}>
-                          {task.priority === 'high' ? 'Urgent' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
+                        <span
+                          className={`px-2 py-0.5 text-xs font-medium rounded-full ${
+                            task.priority === 'high'
+                              ? 'bg-red-100 text-red-700'
+                              : task.priority === 'medium'
+                              ? 'bg-yellow-100 text-yellow-700'
+                              : 'bg-blue-100 text-blue-700'
+                          }`}
+                        >
+                          {task.priority === 'high'
+                            ? 'Urgent'
+                            : task.priority === 'medium'
+                            ? 'Moyenne'
+                            : 'Faible'}
                         </span>
                       </div>
                     </div>
                   </div>
-                  
+
                   <button className="text-gray-400 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity">
                     <MoreHorizontal className="w-5 h-5" />
                   </button>
@@ -145,9 +178,11 @@ export function TaskManagement() {
                       <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-medium text-sm">
                         {member.avatar}
                       </div>
-                      <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white ${
-                        member.status === 'active' ? 'bg-green-500' : 'bg-yellow-500'
-                      }`}></div>
+                      <div
+                        className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white ${
+                          member.status === 'active' ? 'bg-green-500' : 'bg-yellow-500'
+                        }`}
+                      ></div>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-900">{member.name}</p>

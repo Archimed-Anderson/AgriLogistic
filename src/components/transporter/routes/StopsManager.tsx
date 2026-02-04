@@ -164,9 +164,7 @@ function DraggableWaypoint({
             )}
           </div>
 
-          {waypoint.notes && (
-            <p className="text-xs text-gray-500 mt-2 italic">{waypoint.notes}</p>
-          )}
+          {waypoint.notes && <p className="text-xs text-gray-500 mt-2 italic">{waypoint.notes}</p>}
         </div>
       </div>
     </div>

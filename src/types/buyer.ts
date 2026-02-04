@@ -48,7 +48,7 @@ export interface Product {
   traceabilityId?: string;
 }
 
-export type ProductCategory = 
+export type ProductCategory =
   | 'fruits'
   | 'vegetables'
   | 'cereals'
@@ -75,7 +75,7 @@ export interface Certificate {
   verified: boolean;
 }
 
-export type CertificationType = 
+export type CertificationType =
   | 'organic'
   | 'aop'
   | 'igp'
@@ -117,7 +117,7 @@ export interface Order {
   timeline: OrderEvent[];
 }
 
-export type OrderStatus = 
+export type OrderStatus =
   | 'pending'
   | 'confirmed'
   | 'preparing'
@@ -146,7 +146,7 @@ export interface OrderEvent {
   actor?: string;
 }
 
-export type OrderEventType = 
+export type OrderEventType =
   | 'created'
   | 'confirmed'
   | 'payment_received'
@@ -275,7 +275,7 @@ export interface TraceabilityStep {
   verified: boolean;
 }
 
-export type TraceabilityStepType = 
+export type TraceabilityStepType =
   | 'planting'
   | 'growing'
   | 'treatment'

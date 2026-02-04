@@ -1,5 +1,5 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAuth } from "@presentation/contexts/AuthContext";
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from '@presentation/contexts/AuthContext';
 
 /**
  * Route guard: ensures the user is authenticated.
@@ -25,4 +25,3 @@ export function RequireAuth() {
 
   return <Outlet />;
 }
-

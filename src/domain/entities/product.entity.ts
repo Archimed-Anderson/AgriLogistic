@@ -57,7 +57,7 @@ export class Product extends Entity<ProductProps> {
   get price(): Price {
     return this.props.price;
   }
-  
+
   get isActive(): boolean {
     return this.props.isActive;
   }

@@ -20,7 +20,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useAuth } from '@/hooks/useAuth';
-import { hasPermission, AdminPermission } from '@/domain/admin/permissions';
+import { hasPermission, AdminPermission, AdminRole } from '@/domain/admin/permissions';
 import { formatDate } from '@/shared/utils/format';
 
 interface User {
@@ -29,7 +29,7 @@ interface User {
   email: string;
   role: string;
   isActive: boolean;
-  createdAt: Date;
+  createdAt: Date | string;
   avatar?: string;
 }
 
@@ -43,20 +43,26 @@ interface UsersTableProps {
 export function UsersTable({ users, pagination, onPaginationChange, totalCount }: UsersTableProps) {
   const { user: currentUser } = useAuth();
   const navigate = useNavigate();
-  
-  const canEdit = currentUser?.adminRole && hasPermission(currentUser.adminRole, AdminPermission.USERS_EDIT);
-  const canDelete = currentUser?.adminRole && hasPermission(currentUser.adminRole, AdminPermission.USERS_DELETE);
-  const canSuspend = currentUser?.adminRole && hasPermission(currentUser.adminRole, AdminPermission.USERS_SUSPEND);
-  
+
+  const canEdit =
+    currentUser?.adminRole &&
+    hasPermission(currentUser.adminRole as AdminRole, AdminPermission.USERS_EDIT);
+  const canDelete =
+    currentUser?.adminRole &&
+    hasPermission(currentUser.adminRole as AdminRole, AdminPermission.USERS_DELETE);
+  const canSuspend =
+    currentUser?.adminRole &&
+    hasPermission(currentUser.adminRole as AdminRole, AdminPermission.USERS_SUSPEND);
+
   const getInitials = (name: string) => {
     return name
       .split(' ')
-      .map(n => n[0])
+      .map((n) => n[0])
       .join('')
       .toUpperCase()
       .slice(0, 2);
   };
-  
+
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
       case 'SUPER_ADMIN':
@@ -71,9 +77,9 @@ export function UsersTable({ users, pagination, onPaginationChange, totalCount }
         return 'secondary';
     }
   };
-  
+
   const totalPages = Math.ceil(totalCount / pagination.limit);
-  
+
   return (
     <div className="space-y-4">
       <div className="rounded-md border">
@@ -108,18 +114,12 @@ export function UsersTable({ users, pagination, onPaginationChange, totalCount }
                   </TableCell>
                   <TableCell>
                     <div>
-                      <p className="font-medium text-gray-900 dark:text-white">
-                        {user.name}
-                      </p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {user.email}
-                      </p>
+                      <p className="font-medium text-gray-900 dark:text-white">{user.name}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={getRoleBadgeVariant(user.role)}>
-                      {user.role}
-                    </Badge>
+                    <Badge variant={getRoleBadgeVariant(user.role)}>{user.role}</Badge>
                   </TableCell>
                   <TableCell>
                     <Badge variant={user.isActive ? 'default' : 'secondary'}>
@@ -140,7 +140,9 @@ export function UsersTable({ users, pagination, onPaginationChange, totalCount }
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         {canEdit && (
-                          <DropdownMenuItem onClick={() => navigate(`/admin/users/${user.id}/edit`)}>
+                          <DropdownMenuItem
+                            onClick={() => navigate(`/admin/users/${user.id}/edit`)}
+                          >
                             <Edit className="w-4 h-4 mr-2" />
                             Modifier
                           </DropdownMenuItem>
@@ -178,7 +180,7 @@ export function UsersTable({ users, pagination, onPaginationChange, totalCount }
           </TableBody>
         </Table>
       </div>
-      
+
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between">

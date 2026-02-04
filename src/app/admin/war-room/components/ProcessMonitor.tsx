@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Search, 
-  ArrowUpDown, 
-  MoreVertical, 
-  Power, 
-  Activity,
-  Cpu,
-  History
-} from 'lucide-react';
+import { Search, ArrowUpDown, MoreVertical, Power, Activity, Cpu, History } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { Button } from '@/app/components/ui/button';
 import { toast } from 'sonner';
@@ -40,24 +32,25 @@ export function ProcessMonitor() {
   // Simulate dynamic resource shifts
   useEffect(() => {
     const interval = setInterval(() => {
-      setProcesses(prev => prev.map(p => ({
-        ...p,
-        cpu: p.status === 'running' 
-          ? Math.max(0.1, Number((p.cpu + (Math.random() * 2 - 1)).toFixed(1)))
-          : 0
-      })));
+      setProcesses((prev) =>
+        prev.map((p) => ({
+          ...p,
+          cpu:
+            p.status === 'running'
+              ? Math.max(0.1, Number((p.cpu + (Math.random() * 2 - 1)).toFixed(1)))
+              : 0,
+        }))
+      );
     }, 3000);
     return () => clearInterval(interval);
   }, []);
 
   const sortedProcesses = [...processes]
-    .filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
+    .filter((p) => p.name.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => {
       const aVal = a[sortField];
       const bVal = b[sortField];
-      return sortOrder === 'asc' 
-        ? (aVal > bVal ? 1 : -1)
-        : (aVal < bVal ? 1 : -1);
+      return sortOrder === 'asc' ? (aVal > bVal ? 1 : -1) : aVal < bVal ? 1 : -1;
     });
 
   const toggleSort = (field: keyof Process) => {
@@ -70,22 +63,22 @@ export function ProcessMonitor() {
   };
 
   const handleKill = (pid: number, name: string) => {
-    setProcesses(prev => prev.map(p => 
-      p.pid === pid ? { ...p, status: 'stopped', cpu: 0 } : p
-    ));
+    setProcesses((prev) =>
+      prev.map((p) => (p.pid === pid ? { ...p, status: 'stopped', cpu: 0 } : p))
+    );
     toast.error(`Processus arrêté : ${name} (PID: ${pid})`, {
-      description: "Le signal SIGTERM a été envoyé avec succès.",
-      icon: <Power className="w-4 h-4" />
+      description: 'Le signal SIGTERM a été envoyé avec succès.',
+      icon: <Power className="w-4 h-4" />,
     });
   };
 
   const handleRestart = (pid: number, name: string) => {
-    setProcesses(prev => prev.map(p => 
-      p.pid === pid ? { ...p, status: 'running', cpu: 0.1 } : p
-    ));
+    setProcesses((prev) =>
+      prev.map((p) => (p.pid === pid ? { ...p, status: 'running', cpu: 0.1 } : p))
+    );
     toast.success(`Redémarrage : ${name}`, {
-      description: "Initialisation du processus en cours...",
-      icon: <History className="w-4 h-4" />
+      description: 'Initialisation du processus en cours...',
+      icon: <History className="w-4 h-4" />,
     });
   };
 
@@ -99,19 +92,25 @@ export function ProcessMonitor() {
               <Cpu className="w-4 h-4 text-primary" />
             </div>
             <div>
-              <h3 className="text-[10px] font-black text-foreground uppercase tracking-tighter">Moniteur de Processus</h3>
-              <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest">{processes.length} Actifs</p>
+              <h3 className="text-[10px] font-black text-foreground uppercase tracking-tighter">
+                Moniteur de Processus
+              </h3>
+              <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest">
+                {processes.length} Actifs
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">Temps Réel</span>
+            <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">
+              Temps Réel
+            </span>
           </div>
         </div>
 
         <div className="relative group">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-          <input 
+          <input
             type="text"
             placeholder="Rechercher un processus..."
             className="w-full bg-background/50 border border-border rounded-xl py-2 pl-10 pr-4 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all"
@@ -124,57 +123,79 @@ export function ProcessMonitor() {
       {/* Process List */}
       <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-foreground/10 p-2 space-y-1">
         <div className="flex items-center px-4 py-2 text-[8px] font-black text-muted-foreground uppercase tracking-widest border-b border-border/5 mb-2">
-          <button onClick={() => toggleSort('name')} className="flex-1 flex items-center gap-1 hover:text-foreground transition-colors uppercase">
+          <button
+            onClick={() => toggleSort('name')}
+            className="flex-1 flex items-center gap-1 hover:text-foreground transition-colors uppercase"
+          >
             Nom <ArrowUpDown className="w-2.5 h-2.5" />
           </button>
-          <button onClick={() => toggleSort('cpu')} className="w-16 flex items-center gap-1 hover:text-foreground transition-colors justify-center uppercase">
+          <button
+            onClick={() => toggleSort('cpu')}
+            className="w-16 flex items-center gap-1 hover:text-foreground transition-colors justify-center uppercase"
+          >
             CPU <ArrowUpDown className="w-2.5 h-2.5" />
           </button>
-          <button onClick={() => toggleSort('memory')} className="w-20 flex items-center gap-1 hover:text-foreground transition-colors justify-center uppercase">
+          <button
+            onClick={() => toggleSort('memory')}
+            className="w-20 flex items-center gap-1 hover:text-foreground transition-colors justify-center uppercase"
+          >
             RAM <ArrowUpDown className="w-2.5 h-2.5" />
           </button>
           <div className="w-12" />
         </div>
 
         {sortedProcesses.map((proc) => (
-          <div key={proc.pid} className="group flex items-center gap-4 p-3 rounded-2xl hover:bg-foreground/5 transition-all animate-in fade-in slide-in-from-left-2 duration-300">
+          <div
+            key={proc.pid}
+            className="group flex items-center gap-4 p-3 rounded-2xl hover:bg-foreground/5 transition-all animate-in fade-in slide-in-from-left-2 duration-300"
+          >
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className="text-[11px] font-bold text-foreground truncate">{proc.name}</span>
                 <span className="text-[8px] text-muted-foreground font-mono">PID: {proc.pid}</span>
               </div>
-              <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">Utilisateur: {proc.user}</p>
+              <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">
+                Utilisateur: {proc.user}
+              </p>
             </div>
 
             <div className="w-16 text-center">
-              <span className={cn(
-                "text-[10px] font-black tabular-nums",
-                proc.cpu > 40 ? 'text-rose-500' : proc.cpu > 10 ? 'text-amber-500' : 'text-emerald-500'
-              )}>
+              <span
+                className={cn(
+                  'text-[10px] font-black tabular-nums',
+                  proc.cpu > 40
+                    ? 'text-rose-500'
+                    : proc.cpu > 10
+                    ? 'text-amber-500'
+                    : 'text-emerald-500'
+                )}
+              >
                 {proc.cpu}%
               </span>
             </div>
 
             <div className="w-20 text-center">
               <span className="text-[10px] text-muted-foreground font-bold tabular-nums">
-                {proc.memory >= 1000 ? `${(proc.memory/1000).toFixed(1)} GB` : `${proc.memory} MB`}
+                {proc.memory >= 1000
+                  ? `${(proc.memory / 1000).toFixed(1)} GB`
+                  : `${proc.memory} MB`}
               </span>
             </div>
 
             <div className="w-12 flex justify-end">
               {proc.status === 'stopped' ? (
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
+                <Button
+                  variant="ghost"
+                  size="icon"
                   className="w-7 h-7 rounded-lg text-emerald-500 hover:bg-emerald-500/10"
                   onClick={() => handleRestart(proc.pid, proc.name)}
                 >
                   <History className="w-3.5 h-3.5" />
                 </Button>
               ) : (
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
+                <Button
+                  variant="ghost"
+                  size="icon"
                   className="w-7 h-7 rounded-lg text-rose-500 hover:bg-rose-500/10 group-hover:opacity-100 opacity-40 transition-opacity"
                   onClick={() => handleKill(proc.pid, proc.name)}
                 >
@@ -195,14 +216,16 @@ export function ProcessMonitor() {
 
       {/* Footer / Summary */}
       <div className="p-4 bg-foreground/5 border-t border-border flex items-center justify-between">
-         <div className="flex items-center gap-2">
-           <div className="w-1 h-1 rounded-full bg-emerald-500 shadow-[0_0_8px_var(--success-glow)]" />
-           <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">System Load: Stable</span>
-         </div>
-         <span className="text-[8px] font-mono text-muted-foreground">KERNEL_VER: 5.15.0-generic</span>
+        <div className="flex items-center gap-2">
+          <div className="w-1 h-1 rounded-full bg-emerald-500 shadow-[0_0_8px_var(--success-glow)]" />
+          <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">
+            System Load: Stable
+          </span>
+        </div>
+        <span className="text-[8px] font-mono text-muted-foreground">
+          KERNEL_VER: 5.15.0-generic
+        </span>
       </div>
     </div>
   );
 }
-
-

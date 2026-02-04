@@ -48,7 +48,8 @@ class EnhancedAPIClient {
   private retryConfig: RetryConfig;
 
   constructor(config?: Partial<APIClientConfig>) {
-    this.baseURL = config?.baseURL || import.meta.env.VITE_API_GATEWAY_URL || 'http://localhost:8000/api/v1';
+    this.baseURL =
+      config?.baseURL || import.meta.env.VITE_API_GATEWAY_URL || 'http://localhost:8000/api/v1';
     this.timeout = config?.timeout || 15000;
     this.maxRetries = config?.maxRetries || 3;
     this.retryDelay = config?.retryDelay || 1000;
@@ -74,7 +75,7 @@ class EnhancedAPIClient {
     // Normalize relative endpoints (e.g. "/api/v1") to an absolute URL for diagnostics/UI.
     if (endpoint.startsWith('/')) {
       const origin =
-        (typeof window !== 'undefined' && window.location?.origin)
+        typeof window !== 'undefined' && window.location?.origin
           ? window.location.origin
           : 'http://localhost';
       return `${origin}${endpoint}`;
@@ -86,7 +87,7 @@ class EnhancedAPIClient {
     if (!this.enableLogs) return;
     const timestamp = new Date().toISOString();
     const prefix = `[${timestamp}] [API Client]`;
-    
+
     switch (level) {
       case 'info':
         console.log(`${prefix} ℹ️ ${message}`, data || '');
@@ -103,7 +104,7 @@ class EnhancedAPIClient {
   private getDefaultHeaders(): Record<string, string> {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
+      Accept: 'application/json',
     };
 
     const token = localStorage.getItem('accessToken');
@@ -125,7 +126,7 @@ class EnhancedAPIClient {
 
   private async handleUnauthorized(): Promise<boolean> {
     const refreshToken = localStorage.getItem('refreshToken');
-    
+
     if (!refreshToken) {
       this.log('warn', 'No refresh token available');
       return false;
@@ -164,7 +165,7 @@ class EnhancedAPIClient {
 
   private buildURL(url: string, params?: Record<string, string>): string {
     const fullURL = url.startsWith('http') ? url : `${this.baseURL}${url}`;
-    
+
     if (!params) return fullURL;
 
     const queryString = new URLSearchParams(params).toString();
@@ -174,7 +175,7 @@ class EnhancedAPIClient {
   private async wait(attempt: number): Promise<void> {
     const delay = this.retryDelay * Math.pow(2, attempt - 1);
     this.log('info', `Waiting ${delay}ms before retry attempt ${attempt}...`);
-    return new Promise(resolve => setTimeout(resolve, delay));
+    return new Promise((resolve) => setTimeout(resolve, delay));
   }
 
   private async parseError(error: any, response?: Response): Promise<APIError> {
@@ -182,21 +183,25 @@ class EnhancedAPIClient {
       if (error.name === 'AbortError') {
         return new APIError(
           'La requête a pris trop de temps. Le serveur ne répond pas assez rapidement.',
-          0, error, false, true, false
+          0,
+          error,
+          false,
+          true,
+          false
         );
       }
-      
+
       if (error instanceof TypeError && error.message.includes('fetch')) {
         this.log('warn', 'Network error detected, running diagnostics...');
         const diagnostic = await this.diagnoseConnection();
-        
-        const detailedMessage = diagnostic.suggestion 
+
+        const detailedMessage = diagnostic.suggestion
           ? diagnostic.suggestion
           : `Impossible de se connecter au serveur (${this.baseURL}).`;
-        
+
         return new APIError(detailedMessage, 0, error, true, false, false);
       }
-      
+
       return new APIError('Une erreur réseau est survenue.', 0, error, true, false, false);
     }
 
@@ -254,17 +259,24 @@ class EnhancedAPIClient {
         if (refreshed) {
           return this.request<T>(method, url, data, options, attempt);
         }
-        throw new APIError('Session expirée. Veuillez vous reconnecter.', 401, null, false, false, false);
+        throw new APIError(
+          'Session expirée. Veuillez vous reconnecter.',
+          401,
+          null,
+          false,
+          false,
+          false
+        );
       }
 
       if (!response.ok) {
         const apiError = await this.parseError(null, response);
-        
+
         if (!options?.skipRetry && this.retryConfig.shouldRetry(apiError, attempt)) {
           await this.wait(attempt);
           return this.request<T>(method, url, data, options, attempt + 1);
         }
-        
+
         throw apiError;
       }
 
@@ -275,22 +287,23 @@ class EnhancedAPIClient {
       const result = await response.json();
       this.log('info', `${method} ${fullURL} - Success`);
       return result;
-
     } catch (error: any) {
       clearTimeout(timeoutId);
-      
+
       if (error instanceof APIError) {
-        this.log('error', `${method} ${fullURL} - ${error.message}`, { statusCode: error.statusCode });
+        this.log('error', `${method} ${fullURL} - ${error.message}`, {
+          statusCode: error.statusCode,
+        });
         throw error;
       }
 
       const apiError = await this.parseError(error);
-      
+
       if (!options?.skipRetry && this.retryConfig.shouldRetry(apiError, attempt)) {
         await this.wait(attempt);
         return this.request<T>(method, url, data, options, attempt + 1);
       }
-      
+
       this.log('error', `${method} ${fullURL} - ${apiError.message}`, apiError);
       throw apiError;
     }
@@ -334,23 +347,24 @@ class EnhancedAPIClient {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000);
-      
+
       const response = await fetch(`${this.baseURL}/health`, {
         method: 'GET',
         signal: controller.signal,
       });
-      
+
       clearTimeout(timeoutId);
-      
+
       if (response.ok) {
         return { isReachable: true, endpoint: this.resolveEndpoint(this.baseURL) };
       }
-      
+
       return {
         isReachable: false,
         endpoint: this.resolveEndpoint(this.baseURL),
         error: `HTTP ${response.status}`,
-        suggestion: 'Le serveur est accessible mais les services backend ne répondent pas correctement.',
+        suggestion:
+          'Le serveur est accessible mais les services backend ne répondent pas correctement.',
       };
     } catch (error: any) {
       if (error.name === 'AbortError' || error.name === 'TimeoutError') {
@@ -361,12 +375,14 @@ class EnhancedAPIClient {
           suggestion: 'Le serveur met trop de temps à répondre.',
         };
       }
-      
+
       return {
         isReachable: false,
         endpoint: this.resolveEndpoint(this.baseURL),
         error: 'Connection failed',
-        suggestion: `Impossible de joindre le serveur à ${this.resolveEndpoint(this.baseURL)}. Vérifiez que le backend est démarré et que votre configuration \`.env\` (VITE_API_GATEWAY_URL) est correcte.`,
+        suggestion: `Impossible de joindre le serveur à ${this.resolveEndpoint(
+          this.baseURL
+        )}. Vérifiez que le backend est démarré et que votre configuration \`.env\` (VITE_API_GATEWAY_URL) est correcte.`,
       };
     }
   }

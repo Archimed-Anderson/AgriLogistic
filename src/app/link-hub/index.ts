@@ -3,6 +3,20 @@
  * Point d'entrée centralisé pour tous les exports du module
  */
 
+import { VALIDATION, PRICING, LINK_CONFIG } from '../data/logistics-config';
+import {
+  mockLoads,
+  mockTrucks,
+  mockMatches,
+  mockAnalytics,
+  calculateAIMatchScore,
+  calculateDistance,
+  type Load,
+  type Truck,
+  type LoadStatus,
+  type TruckStatus,
+} from '../data/logistics-operations';
+
 // ==================== DATA & TYPES ====================
 export {
   mockLoads,
@@ -18,8 +32,9 @@ export {
   type LoadStatus,
   type TruckStatus,
   type ProductType,
+  type Coordinates,
   type GeoCoordinates,
-} from './data/logistics-operations';
+} from '../data/logistics-operations';
 
 // ==================== CONFIGURATION ====================
 export {
@@ -46,11 +61,11 @@ export {
   VALIDATION,
   TRUCK_FEATURES,
   SPECIAL_REQUIREMENTS,
-} from './data/logistics-config';
+} from '../data/logistics-config';
 
 // ==================== COMPONENTS ====================
-export { default as LinkHubPage } from './link-hub/page';
-export { default as LinkMonitorPage } from './admin/link-monitor/page';
+export { default as LinkHubPage } from './page';
+export { default as LinkMonitorPage } from '../admin/link-monitor/page';
 
 // ==================== VERSION ====================
 export const LINK_VERSION = '1.0.0';
@@ -59,7 +74,7 @@ export const LINK_BUILD_DATE = '2026-01-30';
 // ==================== METADATA ====================
 export const LINK_METADATA = {
   name: 'AgriLogistic Link',
-  description: 'Hub de mise en relation 360° - Le Uber de l\'agriculture',
+  description: "Hub de mise en relation 360° - Le Uber de l'agriculture",
   version: LINK_VERSION,
   buildDate: LINK_BUILD_DATE,
   author: 'AgriLogistic Team',
@@ -128,7 +143,7 @@ export const formatRelativeTime = (date: string | Date): string => {
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
 
-  if (diffMins < 1) return 'À l\'instant';
+  if (diffMins < 1) return "À l'instant";
   if (diffMins < 60) return `Il y a ${diffMins} min`;
   if (diffHours < 24) return `Il y a ${diffHours}h`;
   if (diffDays < 7) return `Il y a ${diffDays}j`;
@@ -167,20 +182,14 @@ export const validatePhone = (phone: string): boolean => {
  * Valide une quantité
  */
 export const validateQuantity = (quantity: number): boolean => {
-  return (
-    quantity >= VALIDATION.MIN_QUANTITY_TONNES &&
-    quantity <= VALIDATION.MAX_QUANTITY_TONNES
-  );
+  return quantity >= VALIDATION.MIN_QUANTITY_TONNES && quantity <= VALIDATION.MAX_QUANTITY_TONNES;
 };
 
 /**
  * Valide un prix
  */
 export const validatePrice = (price: number): boolean => {
-  return (
-    price >= VALIDATION.MIN_PRICE_FCFA &&
-    price <= VALIDATION.MAX_PRICE_FCFA
-  );
+  return price >= VALIDATION.MIN_PRICE_FCFA && price <= VALIDATION.MAX_PRICE_FCFA;
 };
 
 /**
@@ -193,23 +202,23 @@ export const calculateEstimatedCost = (
   isExpress: boolean = false
 ): number => {
   let cost = distance * PRICING.BASE_RATE_PER_KM * quantity;
-  
+
   // Surcharge carburant
-  cost *= (1 + PRICING.FUEL_SURCHARGE);
-  
+  cost *= 1 + PRICING.FUEL_SURCHARGE;
+
   // Surcharge réfrigération
   if (hasRefrigeration) {
-    cost *= (1 + PRICING.REFRIGERATION_SURCHARGE);
+    cost *= 1 + PRICING.REFRIGERATION_SURCHARGE;
   }
-  
+
   // Surcharge express
   if (isExpress) {
-    cost *= (1 + PRICING.EXPRESS_SURCHARGE);
+    cost *= 1 + PRICING.EXPRESS_SURCHARGE;
   }
-  
+
   // Assurance
-  cost *= (1 + PRICING.INSURANCE_RATE);
-  
+  cost *= 1 + PRICING.INSURANCE_RATE;
+
   return Math.round(cost);
 };
 
@@ -218,7 +227,7 @@ export const calculateEstimatedCost = (
  */
 export const filterLoadsByStatus = (loads: Load[], status: LoadStatus | 'all'): Load[] => {
   if (status === 'all') return loads;
-  return loads.filter(load => load.status === status);
+  return loads.filter((load) => load.status === status);
 };
 
 /**
@@ -226,7 +235,7 @@ export const filterLoadsByStatus = (loads: Load[], status: LoadStatus | 'all'): 
  */
 export const filterTrucksByStatus = (trucks: Truck[], status: TruckStatus | 'all'): Truck[] => {
   if (status === 'all') return trucks;
-  return trucks.filter(truck => truck.status === status);
+  return trucks.filter((truck) => truck.status === status);
 };
 
 /**
@@ -234,11 +243,12 @@ export const filterTrucksByStatus = (trucks: Truck[], status: TruckStatus | 'all
  */
 export const searchLoads = (loads: Load[], query: string): Load[] => {
   const lowerQuery = query.toLowerCase();
-  return loads.filter(load =>
-    load.productType.toLowerCase().includes(lowerQuery) ||
-    load.origin.city.toLowerCase().includes(lowerQuery) ||
-    load.destination.city.toLowerCase().includes(lowerQuery) ||
-    load.producerName.toLowerCase().includes(lowerQuery)
+  return loads.filter(
+    (load) =>
+      load.productType.toLowerCase().includes(lowerQuery) ||
+      load.originCity?.toLowerCase().includes(lowerQuery) ||
+      load.destinationCity?.toLowerCase().includes(lowerQuery) ||
+      load.producerName.toLowerCase().includes(lowerQuery)
   );
 };
 
@@ -247,11 +257,12 @@ export const searchLoads = (loads: Load[], query: string): Load[] => {
  */
 export const searchTrucks = (trucks: Truck[], query: string): Truck[] => {
   const lowerQuery = query.toLowerCase();
-  return trucks.filter(truck =>
-    truck.driverName.toLowerCase().includes(lowerQuery) ||
-    truck.currentPosition.city.toLowerCase().includes(lowerQuery) ||
-    truck.truckType.toLowerCase().includes(lowerQuery) ||
-    truck.licensePlate.toLowerCase().includes(lowerQuery)
+  return trucks.filter(
+    (truck) =>
+      truck.driverName.toLowerCase().includes(lowerQuery) ||
+      truck.currentLocationCity?.toLowerCase().includes(lowerQuery) ||
+      truck.truckType.toLowerCase().includes(lowerQuery) ||
+      truck.licensePlate.toLowerCase().includes(lowerQuery)
   );
 };
 
@@ -275,10 +286,10 @@ export const sortTrucksByScore = (trucks: Truck[]): Truck[] => {
 export const getLoadStats = (loads: Load[]) => {
   return {
     total: loads.length,
-    pending: loads.filter(l => l.status === 'Pending').length,
-    matched: loads.filter(l => l.status === 'Matched').length,
-    inTransit: loads.filter(l => l.status === 'In Transit').length,
-    delivered: loads.filter(l => l.status === 'Delivered').length,
+    pending: loads.filter((l) => l.status === 'Pending').length,
+    matched: loads.filter((l) => l.status === 'Matched').length,
+    inTransit: loads.filter((l) => l.status === 'In Transit').length,
+    delivered: loads.filter((l) => l.status === 'Delivered').length,
     totalValue: loads.reduce((sum, l) => sum + l.priceOffer, 0),
     avgScore: loads.reduce((sum, l) => sum + (l.aiMatchScore || 0), 0) / loads.length,
   };
@@ -290,10 +301,10 @@ export const getLoadStats = (loads: Load[]) => {
 export const getTruckStats = (trucks: Truck[]) => {
   return {
     total: trucks.length,
-    available: trucks.filter(t => t.status === 'Available').length,
-    assigned: trucks.filter(t => t.status === 'Assigned').length,
-    inTransit: trucks.filter(t => t.status === 'In Transit').length,
-    maintenance: trucks.filter(t => t.status === 'Maintenance').length,
+    available: trucks.filter((t) => t.status === 'Available').length,
+    assigned: trucks.filter((t) => t.status === 'Assigned').length,
+    inTransit: trucks.filter((t) => t.status === 'In Transit').length,
+    maintenance: trucks.filter((t) => t.status === 'Maintenance').length,
     totalCapacity: trucks.reduce((sum, t) => sum + t.capacity, 0),
     avgRating: trucks.reduce((sum, t) => sum + t.driverRating, 0) / trucks.length,
   };

@@ -1,5 +1,14 @@
-import { Truck, Warehouse, MapPin, BarChart3, Clock, ShieldCheck, ArrowRight, CheckCircle2 } from "lucide-react";
-import FooterSection from "../sections/FooterSection";
+import {
+  Truck,
+  Warehouse,
+  MapPin,
+  BarChart3,
+  Clock,
+  ShieldCheck,
+  ArrowRight,
+  CheckCircle2,
+} from 'lucide-react';
+import FooterSection from '../sections/FooterSection';
 
 export function SolutionsLogisticsPage({ onNavigate }: { onNavigate: (route: string) => void }) {
   return (
@@ -22,10 +31,12 @@ export function SolutionsLogisticsPage({ onNavigate }: { onNavigate: (route: str
               Pour Coopératives & Grands Groupes
             </div>
             <h1 className="text-4xl font-light tracking-tight text-white sm:text-6xl mb-6">
-              Optimisez vos <span className="font-bold text-green-500">Flottes</span> et <span className="font-bold text-green-500">Entrepôts</span>
+              Optimisez vos <span className="font-bold text-green-500">Flottes</span> et{' '}
+              <span className="font-bold text-green-500">Entrepôts</span>
             </h1>
             <p className="mt-6 text-lg leading-8 text-slate-300">
-              Une suite logicielle unifiée pour piloter l'ensemble de votre chaîne logistique agroalimentaire. De la collecte à la livraison, gagnez en visibilité et en efficacité.
+              Une suite logicielle unifiée pour piloter l'ensemble de votre chaîne logistique
+              agroalimentaire. De la collecte à la livraison, gagnez en visibilité et en efficacité.
             </p>
             <div className="mt-10 flex items-center gap-x-6">
               <button
@@ -54,7 +65,8 @@ export function SolutionsLogisticsPage({ onNavigate }: { onNavigate: (route: str
               Tout ce dont vous avez besoin pour piloter vos opérations
             </p>
             <p className="mt-6 text-lg leading-8 text-slate-600">
-              Remplacez vos outils dispersés par une solution intégrée. Fini les fichiers Excel et les pertes d'informations.
+              Remplacez vos outils dispersés par une solution intégrée. Fini les fichiers Excel et
+              les pertes d'informations.
             </p>
           </div>
 
@@ -70,12 +82,19 @@ export function SolutionsLogisticsPage({ onNavigate }: { onNavigate: (route: str
                 </dt>
                 <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
                   <p className="flex-auto">
-                    Suivez vos véhicules en temps réel. Optimisez les tournées de collecte et de livraison pour réduire les kilomètres à vide et l'empreinte carbone.
+                    Suivez vos véhicules en temps réel. Optimisez les tournées de collecte et de
+                    livraison pour réduire les kilomètres à vide et l'empreinte carbone.
                   </p>
                   <ul className="mt-6 space-y-2 text-sm text-slate-500">
-                    <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-500" /> Maintenance prédictive</li>
-                    <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-500" /> Géolocalisation Live</li>
-                    <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-500" /> Optimisation de trajets</li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" /> Maintenance prédictive
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" /> Géolocalisation Live
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" /> Optimisation de trajets
+                    </li>
                   </ul>
                 </dd>
               </div>
@@ -90,12 +109,19 @@ export function SolutionsLogisticsPage({ onNavigate }: { onNavigate: (route: str
                 </dt>
                 <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
                   <p className="flex-auto">
-                    Digitalisez vos stocks. De la réception à l'expédition, gardez le contrôle total sur vos inventaires avec une traçabilité précise par lot.
+                    Digitalisez vos stocks. De la réception à l'expédition, gardez le contrôle total
+                    sur vos inventaires avec une traçabilité précise par lot.
                   </p>
                   <ul className="mt-6 space-y-2 text-sm text-slate-500">
-                    <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-500" /> Inventaire temps réel</li>
-                    <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-500" /> Traçabilité QR Code</li>
-                    <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-500" /> Alertes de péremption</li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" /> Inventaire temps réel
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" /> Traçabilité QR Code
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" /> Alertes de péremption
+                    </li>
                   </ul>
                 </dd>
               </div>
@@ -110,12 +136,20 @@ export function SolutionsLogisticsPage({ onNavigate }: { onNavigate: (route: str
                 </dt>
                 <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
                   <p className="flex-auto">
-                    Transformez vos données en décisions. Nos tableaux de bord vous donnent une vision claire sur la performance de votre chaîne logistique.
+                    Transformez vos données en décisions. Nos tableaux de bord vous donnent une
+                    vision claire sur la performance de votre chaîne logistique.
                   </p>
                   <ul className="mt-6 space-y-2 text-sm text-slate-500">
-                    <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-500" /> KPIs personnalisables</li>
-                    <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-500" /> Rapports automatisés</li>
-                    <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-500" /> Prévisions assistées par IA</li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" /> KPIs personnalisables
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" /> Rapports automatisés
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" /> Prévisions assistées par
+                      IA
+                    </li>
                   </ul>
                 </dd>
               </div>
@@ -136,9 +170,11 @@ export function SolutionsLogisticsPage({ onNavigate }: { onNavigate: (route: str
                 Visibilité en Temps Réel sur toute la chaîne
               </h2>
               <p className="text-lg text-slate-300 mb-8">
-                Ne perdez plus jamais la trace de vos marchandises. Notre technologie IoT vous permet de suivre la position, la température et l'état de vos produits à chaque instant.
+                Ne perdez plus jamais la trace de vos marchandises. Notre technologie IoT vous
+                permet de suivre la position, la température et l'état de vos produits à chaque
+                instant.
               </p>
-              
+
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-slate-800 flex items-center justify-center border border-slate-700">
@@ -146,7 +182,9 @@ export function SolutionsLogisticsPage({ onNavigate }: { onNavigate: (route: str
                   </div>
                   <div>
                     <h3 className="text-white font-semibold">Mises à jour instantanées</h3>
-                    <p className="text-slate-400 text-sm mt-1">Données rafraîchies toutes les 30 secondes pour une précision maximale.</p>
+                    <p className="text-slate-400 text-sm mt-1">
+                      Données rafraîchies toutes les 30 secondes pour une précision maximale.
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -155,13 +193,15 @@ export function SolutionsLogisticsPage({ onNavigate }: { onNavigate: (route: str
                   </div>
                   <div>
                     <h3 className="text-white font-semibold">Conformité garantie</h3>
-                    <p className="text-slate-400 text-sm mt-1">Historique immuable des données pour vos audits et certifications.</p>
+                    <p className="text-slate-400 text-sm mt-1">
+                      Historique immuable des données pour vos audits et certifications.
+                    </p>
                   </div>
                 </div>
               </div>
 
-               <div className="mt-10">
-                <button 
+              <div className="mt-10">
+                <button
                   onClick={() => onNavigate('/contact/general')}
                   className="text-white border border-slate-700 hover:bg-slate-800 px-6 py-3 rounded-lg font-medium transition-colors"
                 >
@@ -169,36 +209,42 @@ export function SolutionsLogisticsPage({ onNavigate }: { onNavigate: (route: str
                 </button>
               </div>
             </div>
-            
+
             <div className="relative">
               {/* Abstract representation of a map/tracking interface */}
               <div className="relative rounded-2xl bg-slate-800/50 border border-slate-700 p-4 aspect-[4/3] shadow-2xl backdrop-blur-sm">
-                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-green-500/20 rounded-full animate-ping"></div>
-                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-green-500 rounded-full shadow-[0_0_20px_rgba(34,197,94,0.5)]"></div>
-                 
-                 {/* Floating Cards simulating UI elements */}
-                 <div className="absolute top-10 right-10 bg-slate-800 border border-slate-600 p-4 rounded-xl shadow-lg w-48 animate-fade-in-down" style={{animationDelay: '0.1s'}}>
-                    <div className="flex items-center gap-2 mb-2">
-                       <Truck className="h-4 w-4 text-blue-400" />
-                       <span className="text-xs font-semibold text-white">Camion #42</span>
-                    </div>
-                    <div className="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                       <div className="bg-blue-500 h-full w-3/4"></div>
-                    </div>
-                    <div className="flex justify-between mt-2 text-[10px] text-slate-400">
-                       <span>En route</span>
-                       <span>Arr. 14:30</span>
-                    </div>
-                 </div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-green-500/20 rounded-full animate-ping"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-green-500 rounded-full shadow-[0_0_20px_rgba(34,197,94,0.5)]"></div>
 
-                 <div className="absolute bottom-10 left-10 bg-slate-800 border border-slate-600 p-4 rounded-xl shadow-lg w-48 animate-fade-in-down" style={{animationDelay: '0.3s'}}>
-                    <div className="flex items-center gap-2 mb-2">
-                       <Warehouse className="h-4 w-4 text-orange-400" />
-                       <span className="text-xs font-semibold text-white">Entrepôt Nord</span>
-                    </div>
-                    <div className="text-2xl font-bold text-white">85%</div>
-                    <div className="text-[10px] text-slate-400">Capacité utilisée</div>
-                 </div>
+                {/* Floating Cards simulating UI elements */}
+                <div
+                  className="absolute top-10 right-10 bg-slate-800 border border-slate-600 p-4 rounded-xl shadow-lg w-48 animate-fade-in-down"
+                  style={{ animationDelay: '0.1s' }}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <Truck className="h-4 w-4 text-blue-400" />
+                    <span className="text-xs font-semibold text-white">Camion #42</span>
+                  </div>
+                  <div className="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                    <div className="bg-blue-500 h-full w-3/4"></div>
+                  </div>
+                  <div className="flex justify-between mt-2 text-[10px] text-slate-400">
+                    <span>En route</span>
+                    <span>Arr. 14:30</span>
+                  </div>
+                </div>
+
+                <div
+                  className="absolute bottom-10 left-10 bg-slate-800 border border-slate-600 p-4 rounded-xl shadow-lg w-48 animate-fade-in-down"
+                  style={{ animationDelay: '0.3s' }}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <Warehouse className="h-4 w-4 text-orange-400" />
+                    <span className="text-xs font-semibold text-white">Entrepôt Nord</span>
+                  </div>
+                  <div className="text-2xl font-bold text-white">85%</div>
+                  <div className="text-[10px] text-slate-400">Capacité utilisée</div>
+                </div>
               </div>
             </div>
           </div>
@@ -213,7 +259,8 @@ export function SolutionsLogisticsPage({ onNavigate }: { onNavigate: (route: str
               Prêt à moderniser votre logistique ?
             </h2>
             <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-green-100">
-              Rejoignez les leaders de l'agroalimentaire qui font confiance à AgroLogistic pour sécuriser et optimiser leurs opérations.
+              Rejoignez les leaders de l'agroalimentaire qui font confiance à AgroLogistic pour
+              sécuriser et optimiser leurs opérations.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <button
@@ -222,7 +269,7 @@ export function SolutionsLogisticsPage({ onNavigate }: { onNavigate: (route: str
               >
                 Commencer maintenant
               </button>
-              <button 
+              <button
                 onClick={() => onNavigate('/contact/general')}
                 className="text-sm font-semibold leading-6 text-white flex items-center gap-1"
               >

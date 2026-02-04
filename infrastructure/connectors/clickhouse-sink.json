@@ -1,0 +1,17 @@
+{
+  "name": "clickhouse-sink-analytics",
+  "config": {
+    "connector.class": "com.clickhouse.kafka.connect.ClickHouseSinkConnector",
+    "tasks.max": "3",
+    "topics": "analytics.events",
+    "hostname": "clickhouse",
+    "port": "8123",
+    "database": "default",
+    "username": "default",
+    "password": "${CLICKHOUSE_PASSWORD:-clickhouse_secure_2026}",
+    "table.name.format": "analytics_events",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false"
+  }
+}

@@ -75,7 +75,9 @@ describe('RealAuthAdapter', () => {
     it('should handle API errors', async () => {
       vi.mocked(apiClient.post).mockRejectedValue(new Error('Network error'));
 
-      await expect(adapter.login('john@example.com', 'password123')).rejects.toThrow('Network error');
+      await expect(adapter.login('john@example.com', 'password123')).rejects.toThrow(
+        'Network error'
+      );
     });
   });
 

@@ -1,29 +1,32 @@
-'use client'
+'use client';
 
-import { RentalEquipment } from '@/data/rental-equipment'
-import { RatingStars } from './RatingStars'
-import { ShoppingCart, Wrench, Zap, Tag, TrendingUp, Award, AlertCircle } from 'lucide-react'
-import Link from 'next/link'
+import { RentalEquipment } from '@/data/rental-equipment';
+import { RatingStars } from './RatingStars';
+import { ShoppingCart, Wrench, Zap, Tag, TrendingUp, Award, AlertCircle } from 'lucide-react';
+import Link from 'next/link';
 
 interface IndustrialEquipmentCardProps {
-  equipment: RentalEquipment
+  equipment: RentalEquipment;
 }
 
 export function IndustrialEquipmentCard({ equipment }: IndustrialEquipmentCardProps) {
   // Determine card styling based on type
-  const isRental = equipment.type === 'LOCATION' || equipment.type === 'LOCATION_VENTE'
-  const isSale = equipment.type === 'VENTE' || equipment.type === 'LOCATION_VENTE'
-  const isBoth = equipment.type === 'LOCATION_VENTE'
-  
+  const isRental = equipment.type === 'LOCATION' || equipment.type === 'LOCATION_VENTE';
+  const isSale = equipment.type === 'VENTE' || equipment.type === 'LOCATION_VENTE';
+  const isBoth = equipment.type === 'LOCATION_VENTE';
+
   // Primary action color
-  const primaryColor = equipment.type === 'LOCATION' ? 'emerald' : equipment.type === 'VENTE' ? 'blue' : 'purple'
-  
+  const primaryColor =
+    equipment.type === 'LOCATION' ? 'emerald' : equipment.type === 'VENTE' ? 'blue' : 'purple';
+
   // Get badges
-  const badges = []
-  if (equipment.featured) badges.push({ label: 'VEDETTE', color: 'yellow', icon: Award })
-  if (equipment.discount && equipment.discount > 0) badges.push({ label: `PROMO -${equipment.discount}%`, color: 'red', icon: Tag })
-  if (equipment.timesRented && equipment.timesRented > 50) badges.push({ label: 'INDISPENSABLE', color: 'orange', icon: TrendingUp })
-  
+  const badges = [];
+  if (equipment.featured) badges.push({ label: 'VEDETTE', color: 'yellow', icon: Award });
+  if (equipment.discount && equipment.discount > 0)
+    badges.push({ label: `PROMO -${equipment.discount}%`, color: 'red', icon: Tag });
+  if (equipment.timesRented && equipment.timesRented > 50)
+    badges.push({ label: 'INDISPENSABLE', color: 'orange', icon: TrendingUp });
+
   return (
     <Link href={`/loueur/${equipment.id}`}>
       <div className="group bg-slate-800 rounded-2xl overflow-hidden border-4 border-slate-700 hover:border-yellow-500 hover:shadow-2xl transition-all duration-300 cursor-pointer">
@@ -35,11 +38,11 @@ export function IndustrialEquipmentCard({ equipment }: IndustrialEquipmentCardPr
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-          
+
           {/* Badges overlay */}
           <div className="absolute top-3 left-3 right-3 flex flex-wrap gap-2">
             {badges.map((badge, idx) => {
-              const BadgeIcon = badge.icon
+              const BadgeIcon = badge.icon;
               return (
                 <div
                   key={idx}
@@ -53,10 +56,10 @@ export function IndustrialEquipmentCard({ equipment }: IndustrialEquipmentCardPr
                   <BadgeIcon className="h-3 w-3" />
                   {badge.label}
                 </div>
-              )
+              );
             })}
           </div>
-          
+
           {/* Availability badge */}
           <div className="absolute bottom-3 right-3">
             {equipment.availability === 'DISPONIBLE' ? (
@@ -75,7 +78,7 @@ export function IndustrialEquipmentCard({ equipment }: IndustrialEquipmentCardPr
               </div>
             )}
           </div>
-          
+
           {/* Equipment name overlay */}
           <div className="absolute bottom-3 left-3 right-3">
             <h3 className="text-xl font-black text-white uppercase tracking-wide line-clamp-2">
@@ -83,7 +86,7 @@ export function IndustrialEquipmentCard({ equipment }: IndustrialEquipmentCardPr
             </h3>
           </div>
         </div>
-        
+
         {/* Card Body */}
         <div className="p-5">
           {/* Brand + Power */}
@@ -99,12 +102,12 @@ export function IndustrialEquipmentCard({ equipment }: IndustrialEquipmentCardPr
               </span>
             )}
           </div>
-          
+
           {/* Description */}
           <p className="text-sm text-slate-400 mb-4 line-clamp-2 leading-relaxed">
             {equipment.description}
           </p>
-          
+
           {/* Rating */}
           {equipment.rating && (
             <div className="mb-4 pb-4 border-b border-slate-700">
@@ -112,63 +115,83 @@ export function IndustrialEquipmentCard({ equipment }: IndustrialEquipmentCardPr
               <span className="text-xs text-slate-500 ml-2">({equipment.reviews} avis)</span>
             </div>
           )}
-          
+
           {/* Pricing Section */}
           <div className="space-y-3">
             {/* RENTAL Pricing (GREEN) */}
             {isRental && equipment.dailyRate && (
-              <div className={`
+              <div
+                className={`
                 p-4 rounded-xl border-2
-                ${equipment.type === 'LOCATION' 
-                  ? 'bg-gradient-to-r from-emerald-500 to-green-600 border-emerald-400' 
-                  : 'bg-slate-700 border-emerald-500'
+                ${
+                  equipment.type === 'LOCATION'
+                    ? 'bg-gradient-to-r from-emerald-500 to-green-600 border-emerald-400'
+                    : 'bg-slate-700 border-emerald-500'
                 }
-              `}>
+              `}
+              >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <Wrench className={`h-5 w-5 ${equipment.type === 'LOCATION' ? 'text-white' : 'text-emerald-400'}`} />
-                    <span className={`text-xs font-black uppercase ${equipment.type === 'LOCATION' ? 'text-white' : 'text-emerald-400'}`}>
+                    <Wrench
+                      className={`h-5 w-5 ${equipment.type === 'LOCATION' ? 'text-white' : 'text-emerald-400'}`}
+                    />
+                    <span
+                      className={`text-xs font-black uppercase ${equipment.type === 'LOCATION' ? 'text-white' : 'text-emerald-400'}`}
+                    >
                       Location
                     </span>
                   </div>
                 </div>
                 <div className="flex items-baseline gap-1">
-                  <span className={`text-3xl font-black ${equipment.type === 'LOCATION' ? 'text-white' : 'text-emerald-400'}`}>
+                  <span
+                    className={`text-3xl font-black ${equipment.type === 'LOCATION' ? 'text-white' : 'text-emerald-400'}`}
+                  >
                     {equipment.dailyRate}€
                   </span>
-                  <span className={`text-sm ${equipment.type === 'LOCATION' ? 'text-white/80' : 'text-slate-400'}`}>
+                  <span
+                    className={`text-sm ${equipment.type === 'LOCATION' ? 'text-white/80' : 'text-slate-400'}`}
+                  >
                     /jour
                   </span>
                 </div>
               </div>
             )}
-            
+
             {/* SALE Pricing (BLUE) */}
             {isSale && equipment.price && (
-              <div className={`
+              <div
+                className={`
                 p-4 rounded-xl border-2
-                ${equipment.type === 'VENTE' 
-                  ? 'bg-gradient-to-r from-blue-500 to-cyan-600 border-blue-400' 
-                  : 'bg-slate-700 border-blue-500'
+                ${
+                  equipment.type === 'VENTE'
+                    ? 'bg-gradient-to-r from-blue-500 to-cyan-600 border-blue-400'
+                    : 'bg-slate-700 border-blue-500'
                 }
-              `}>
+              `}
+              >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <ShoppingCart className={`h-5 w-5 ${equipment.type === 'VENTE' ? 'text-white' : 'text-blue-400'}`} />
-                    <span className={`text-xs font-black uppercase ${equipment.type === 'VENTE' ? 'text-white' : 'text-blue-400'}`}>
+                    <ShoppingCart
+                      className={`h-5 w-5 ${equipment.type === 'VENTE' ? 'text-white' : 'text-blue-400'}`}
+                    />
+                    <span
+                      className={`text-xs font-black uppercase ${equipment.type === 'VENTE' ? 'text-white' : 'text-blue-400'}`}
+                    >
                       Vente
                     </span>
                   </div>
                 </div>
                 <div className="flex items-baseline gap-1">
-                  <span className={`text-3xl font-black ${equipment.type === 'VENTE' ? 'text-white' : 'text-blue-400'}`}>
+                  <span
+                    className={`text-3xl font-black ${equipment.type === 'VENTE' ? 'text-white' : 'text-blue-400'}`}
+                  >
                     {equipment.price.toLocaleString()}€
                   </span>
                 </div>
               </div>
             )}
           </div>
-          
+
           {/* CTA Button */}
           <div className="mt-4">
             {equipment.type === 'LOCATION' && (
@@ -192,5 +215,5 @@ export function IndustrialEquipmentCard({ equipment }: IndustrialEquipmentCardPr
         </div>
       </div>
     </Link>
-  )
+  );
 }

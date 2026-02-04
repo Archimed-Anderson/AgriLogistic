@@ -20,7 +20,7 @@ describe('useCSRFToken', () => {
   it('should retrieve existing token from sessionStorage', () => {
     const existingToken = 'existing-csrf-token';
     const expiry = Date.now() + 24 * 60 * 60 * 1000;
-    
+
     sessionStorage.setItem('csrf_token', existingToken);
     sessionStorage.setItem('csrf_token_expiry', expiry.toString());
 
@@ -32,7 +32,7 @@ describe('useCSRFToken', () => {
   it('should generate new token if existing one is expired', () => {
     const expiredToken = 'expired-token';
     const expiredExpiry = Date.now() - 1000; // Expired 1 second ago
-    
+
     sessionStorage.setItem('csrf_token', expiredToken);
     sessionStorage.setItem('csrf_token_expiry', expiredExpiry.toString());
 

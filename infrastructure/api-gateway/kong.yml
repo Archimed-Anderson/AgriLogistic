@@ -315,6 +315,48 @@ services:
           credentials: true
 
   # =========================================================================
+  # Admin Service - Quick Actions, Audit, Workflows
+  # =========================================================================
+  - name: admin-service
+    url: http://admin-service:5005/api/v1/admin
+    routes:
+      - name: admin-routes
+        paths:
+          - /api/v1/admin
+        strip_path: true
+        methods:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+          - OPTIONS
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 2000
+          policy: local
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - PATCH
+            - DELETE
+            - OPTIONS
+          headers:
+            - Authorization
+            - Content-Type
+            - Accept
+            - X-Request-ID
+          credentials: true
+          max_age: 3600
+
+  # =========================================================================
   # AI Service (Phase 2)
   # =========================================================================
   - name: ai-service
@@ -380,6 +422,81 @@ services:
         config:
           minute: 500
           hour: 10000
+          policy: local
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - OPTIONS
+          headers:
+            - Authorization
+            - Content-Type
+          credentials: true
+
+  # =========================================================================
+  # Production Service - Suivi Récoltes, Télémétrie, Irrigation
+  # =========================================================================
+  - name: production-service
+    url: http://production-service:3018
+    routes:
+      - name: productions-routes
+        paths:
+          - /api/v1/productions
+        strip_path: false
+        methods:
+          - GET
+          - POST
+          - PATCH
+          - OPTIONS
+      - name: irrigation-routes
+        paths:
+          - /api/v1/irrigation
+        strip_path: true
+        methods:
+          - POST
+          - OPTIONS
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 2000
+          policy: local
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - PATCH
+            - OPTIONS
+          headers:
+            - Authorization
+            - Content-Type
+          credentials: true
+
+  # =========================================================================
+  # Yield Prediction Service (Python) - IA prédictions rendement
+  # =========================================================================
+  - name: yield-prediction-service
+    url: http://yield-prediction-service:5020
+    routes:
+      - name: yield-prediction-routes
+        paths:
+          - /api/v1/yield-prediction
+        strip_path: true
+        methods:
+          - GET
+          - POST
+          - OPTIONS
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 60
+          hour: 500
           policy: local
       - name: cors
         config:

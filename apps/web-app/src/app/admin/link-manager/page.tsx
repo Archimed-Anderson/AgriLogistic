@@ -1,4 +1,4 @@
-import { AgriLogisticLink } from "@/components/admin/logistics/AgriLogisticLink";
+import { AgriLogisticLink } from '@/components/admin/logistics/AgriLogisticLink';
 
 export default function LinkManagerPage() {
   return (
@@ -11,8 +11,8 @@ export default function LinkManagerPage() {
           Centre de contrôle des opérations logistiques et du matching IA.
         </p>
       </div>
-      
+
       <AgriLogisticLink />
     </div>
-  )
+  );
 }

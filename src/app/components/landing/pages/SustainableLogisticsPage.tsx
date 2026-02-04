@@ -1,5 +1,5 @@
-import { Leaf, Wind, Sun, Award, ArrowRight, BarChart, RefreshCw } from "lucide-react";
-import FooterSection from "../sections/FooterSection";
+import { Leaf, Wind, Sun, Award, ArrowRight, BarChart, RefreshCw } from 'lucide-react';
+import FooterSection from '../sections/FooterSection';
 
 export function SustainableLogisticsPage({ onNavigate }: { onNavigate: (route: string) => void }) {
   return (
@@ -14,7 +14,7 @@ export function SustainableLogisticsPage({ onNavigate }: { onNavigate: (route: s
           />
           <div className="absolute inset-0 bg-gradient-to-t from-emerald-900 via-emerald-900/50 to-transparent" />
         </div>
-        
+
         <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <div className="inline-flex items-center rounded-full bg-green-400/10 px-3 py-1 text-sm font-medium text-green-300 mb-6 border border-green-400/20">
@@ -24,7 +24,8 @@ export function SustainableLogisticsPage({ onNavigate }: { onNavigate: (route: s
               Une Logistique <span className="text-green-400">Responsable</span>
             </h1>
             <p className="mt-6 text-lg leading-8 text-emerald-100">
-              Réduire l'empreinte carbone de la chaîne alimentaire n'est pas une option, c'est notre mission. Découvrez comment nous transformons chaque kilomètre en impact positif.
+              Réduire l'empreinte carbone de la chaîne alimentaire n'est pas une option, c'est notre
+              mission. Découvrez comment nous transformons chaque kilomètre en impact positif.
             </p>
           </div>
         </div>
@@ -65,7 +66,8 @@ export function SustainableLogisticsPage({ onNavigate }: { onNavigate: (route: s
               L'algorithme au service de la planète
             </p>
             <p className="mt-6 text-lg leading-8 text-slate-600">
-              Notre moteur d'optimisation ne se contente pas de trouver le chemin le plus court. Il calcule l'itinéraire le plus efficient énergétiquement.
+              Notre moteur d'optimisation ne se contente pas de trouver le chemin le plus court. Il
+              calcule l'itinéraire le plus efficient énergétiquement.
             </p>
           </div>
 
@@ -76,21 +78,30 @@ export function SustainableLogisticsPage({ onNavigate }: { onNavigate: (route: s
                   <BarChart className="h-6 w-6 text-orange-600" />
                 </div>
                 <h3 className="text-xl font-bold text-slate-900">Mutualisation des Flux</h3>
-                <p className="text-slate-600">AgroLogistic regroupe les petits envois de producteurs voisins pour remplir les camions, divisant par 4 les émissions par palette.</p>
+                <p className="text-slate-600">
+                  AgroLogistic regroupe les petits envois de producteurs voisins pour remplir les
+                  camions, divisant par 4 les émissions par palette.
+                </p>
               </div>
               <div className="flex flex-col gap-4">
-                 <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
                   <Wind className="h-6 w-6 text-blue-600" />
                 </div>
                 <h3 className="text-xl font-bold text-slate-900">Transition Énergétique</h3>
-                <p className="text-slate-600">Nous privilégions automatique les transporteurs disposant de flottes GNV, Électriques ou Hybrides dans l'attribution des marchés.</p>
+                <p className="text-slate-600">
+                  Nous privilégions automatique les transporteurs disposant de flottes GNV,
+                  Électriques ou Hybrides dans l'attribution des marchés.
+                </p>
               </div>
               <div className="flex flex-col gap-4">
-                 <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
                   <RefreshCw className="h-6 w-6 text-green-600" />
                 </div>
                 <h3 className="text-xl font-bold text-slate-900">Économie Circulaire</h3>
-                <p className="text-slate-600">Gestion des retours d'emballages consignés et valorisation des déchets organiques via nos partenaires méthaniseurs.</p>
+                <p className="text-slate-600">
+                  Gestion des retours d'emballages consignés et valorisation des déchets organiques
+                  via nos partenaires méthaniseurs.
+                </p>
               </div>
             </div>
           </div>
@@ -100,41 +111,44 @@ export function SustainableLogisticsPage({ onNavigate }: { onNavigate: (route: s
       {/* Certifications & Badges */}
       <section className="bg-slate-50 py-24">
         <div className="mx-auto max-w-7xl px-6 lg:px-8 text-center">
-          <h2 className="text-2xl font-bold text-slate-900 mb-12">Nos Certifications & Engagements</h2>
+          <h2 className="text-2xl font-bold text-slate-900 mb-12">
+            Nos Certifications & Engagements
+          </h2>
           <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
-             {/* Placeholder badges - using generic text representation or icon driven badges for now */}
-             <div className="flex flex-col items-center gap-2">
-                <Award className="h-16 w-16 text-yellow-500" />
-                <span className="font-bold text-slate-700">EcoVadis Gold</span>
-             </div>
-             <div className="flex flex-col items-center gap-2">
-                <Leaf className="h-16 w-16 text-green-600" />
-                <span className="font-bold text-slate-700">Carbon Neutral</span>
-             </div>
-              <div className="flex flex-col items-center gap-2">
-                <Sun className="h-16 w-16 text-orange-500" />
-                <span className="font-bold text-slate-700">Solar Powered HQ</span>
-             </div>
+            {/* Placeholder badges - using generic text representation or icon driven badges for now */}
+            <div className="flex flex-col items-center gap-2">
+              <Award className="h-16 w-16 text-yellow-500" />
+              <span className="font-bold text-slate-700">EcoVadis Gold</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Leaf className="h-16 w-16 text-green-600" />
+              <span className="font-bold text-slate-700">Carbon Neutral</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Sun className="h-16 w-16 text-orange-500" />
+              <span className="font-bold text-slate-700">Solar Powered HQ</span>
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA */}
       <section className="py-24">
-         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="bg-slate-900 rounded-3xl p-8 md:p-16 text-center">
-               <h2 className="text-3xl font-bold text-white mb-6">Calculez votre impact potentiel</h2>
-               <p className="text-slate-300 max-w-2xl mx-auto mb-10">
-                  Découvrez combien de tonnes de CO2 votre entreprise pourrait économiser en passant à AgroLogistic dès le premier mois.
-               </p>
-               <button 
-                  onClick={() => onNavigate('/customer/transport-calculator')}
-                  className="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-xl transition-all inline-flex items-center gap-2"
-               >
-                  Simuler mon Bilan Carbone <ArrowRight className="h-5 w-5" />
-               </button>
-            </div>
-         </div>
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="bg-slate-900 rounded-3xl p-8 md:p-16 text-center">
+            <h2 className="text-3xl font-bold text-white mb-6">Calculez votre impact potentiel</h2>
+            <p className="text-slate-300 max-w-2xl mx-auto mb-10">
+              Découvrez combien de tonnes de CO2 votre entreprise pourrait économiser en passant à
+              AgroLogistic dès le premier mois.
+            </p>
+            <button
+              onClick={() => onNavigate('/customer/transport-calculator')}
+              className="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-xl transition-all inline-flex items-center gap-2"
+            >
+              Simuler mon Bilan Carbone <ArrowRight className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
       </section>
 
       <FooterSection />

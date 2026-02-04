@@ -3,7 +3,13 @@
  * Handles route optimization logic using VRP algorithm
  */
 import { useState, useCallback } from 'react';
-import type { Route, Waypoint, RouteOptimizationParams, RouteCost, VehicleConstraints } from '@/types/transporter';
+import type {
+  Route,
+  Waypoint,
+  RouteOptimizationParams,
+  RouteCost,
+  VehicleConstraints,
+} from '@/types/transporter';
 
 // Simple greedy nearest neighbor algorithm for route optimization
 // In production, this should call a backend service with VROOM or OR-Tools
@@ -12,7 +18,7 @@ function optimizeRouteGreedy(waypoints: Waypoint[]): Waypoint[] {
 
   const optimized: Waypoint[] = [];
   const remaining = [...waypoints];
-  
+
   // Start with first waypoint
   optimized.push(remaining.shift()!);
 
@@ -23,10 +29,7 @@ function optimizeRouteGreedy(waypoints: Waypoint[]): Waypoint[] {
     let nearestDistance = Infinity;
 
     remaining.forEach((point, index) => {
-      const distance = calculateDistance(
-        current.coordinates,
-        point.coordinates
-      );
+      const distance = calculateDistance(current.coordinates, point.coordinates);
       if (distance < nearestDistance) {
         nearestDistance = distance;
         nearestIndex = index;
@@ -40,10 +43,7 @@ function optimizeRouteGreedy(waypoints: Waypoint[]): Waypoint[] {
 }
 
 // Haversine formula for distance calculation
-function calculateDistance(
-  coord1: [number, number],
-  coord2: [number, number]
-): number {
+function calculateDistance(coord1: [number, number], coord2: [number, number]): number {
   const R = 6371; // Earth's radius in km
   const dLat = toRad(coord2[1] - coord1[1]);
   const dLon = toRad(coord2[0] - coord1[0]);
@@ -110,71 +110,73 @@ export function useRouteOptimization() {
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [optimizationError, setOptimizationError] = useState<string | null>(null);
 
-  const optimizeRoute = useCallback(
-    async (params: RouteOptimizationParams): Promise<Route> => {
-      setIsOptimizing(true);
-      setOptimizationError(null);
+  const optimizeRoute = useCallback(async (params: RouteOptimizationParams): Promise<Route> => {
+    setIsOptimizing(true);
+    setOptimizationError(null);
 
-      try {
-        // In production, call backend API
-        // const response = await apiClient.post('/api/routes/optimize', params);
-        // return response.data;
+    try {
+      // In production, call backend API
+      // const response = await apiClient.post('/api/routes/optimize', params);
+      // return response.data;
 
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        let optimizedWaypoints = params.waypoints;
+      let optimizedWaypoints = params.waypoints;
 
-        // Apply optimization if allowed
-        if (params.allowReordering) {
-          optimizedWaypoints = optimizeRouteGreedy(params.waypoints);
-        }
-
-        // Calculate metrics
-        const totalDistance = calculateTotalDistance(optimizedWaypoints);
-        const totalDuration = calculateTotalDuration(optimizedWaypoints);
-        const estimatedCost = calculateRouteCost(
-          totalDistance,
-          totalDuration,
-          params.vehicleConstraints
-        );
-
-        const route: Route = {
-          id: `route-${Date.now()}`,
-          name: `Route ${new Date().toLocaleDateString('fr-FR')}`,
-          waypoints: optimizedWaypoints,
-          optimized: params.allowReordering,
-          totalDistance,
-          totalDuration,
-          estimatedCost,
-          status: 'planned',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-
-        return route;
-      } catch (error) {
-        const message = error instanceof Error ? error.message : 'Erreur d\'optimisation';
-        setOptimizationError(message);
-        throw error;
-      } finally {
-        setIsOptimizing(false);
+      // Apply optimization if allowed
+      if (params.allowReordering) {
+        optimizedWaypoints = optimizeRouteGreedy(params.waypoints);
       }
+
+      // Calculate metrics
+      const totalDistance = calculateTotalDistance(optimizedWaypoints);
+      const totalDuration = calculateTotalDuration(optimizedWaypoints);
+      const estimatedCost = calculateRouteCost(
+        totalDistance,
+        totalDuration,
+        params.vehicleConstraints
+      );
+
+      const route: Route = {
+        id: `route-${Date.now()}`,
+        name: `Route ${new Date().toLocaleDateString('fr-FR')}`,
+        waypoints: optimizedWaypoints,
+        optimized: params.allowReordering,
+        totalDistance,
+        totalDuration,
+        estimatedCost,
+        status: 'planned',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      return route;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Erreur d'optimisation";
+      setOptimizationError(message);
+      throw error;
+    } finally {
+      setIsOptimizing(false);
+    }
+  }, []);
+
+  const recalculateRoute = useCallback(
+    (
+      waypoints: Waypoint[]
+    ): {
+      distance: number;
+      duration: number;
+      cost: RouteCost;
+    } => {
+      const distance = calculateTotalDistance(waypoints);
+      const duration = calculateTotalDuration(waypoints);
+      const cost = calculateRouteCost(distance, duration);
+
+      return { distance, duration, cost };
     },
     []
   );
-
-  const recalculateRoute = useCallback((waypoints: Waypoint[]): {
-    distance: number;
-    duration: number;
-    cost: RouteCost;
-  } => {
-    const distance = calculateTotalDistance(waypoints);
-    const duration = calculateTotalDuration(waypoints);
-    const cost = calculateRouteCost(distance, duration);
-
-    return { distance, duration, cost };
-  }, []);
 
   const exportToGPX = useCallback((route: Route): string => {
     const gpx = `<?xml version="1.0" encoding="UTF-8"?>
@@ -204,7 +206,7 @@ export function useRouteOptimization() {
     const waypoints = route.waypoints
       .map((wp) => `${wp.coordinates[1]},${wp.coordinates[0]}`)
       .join('/');
-    
+
     return `https://www.google.com/maps/dir/${waypoints}`;
   }, []);
 

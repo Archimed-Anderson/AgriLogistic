@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Package,
   Truck,
@@ -15,8 +15,8 @@ import {
   Download,
   Share2,
   Map,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 interface ShippingTrackerProps {
   trackingNumber?: string;
@@ -43,112 +43,114 @@ interface CarrierInfo {
 }
 
 export function ShippingTracker({
-  trackingNumber = "AGR-2024-001234",
+  trackingNumber = 'AGR-2024-001234',
   onContactCarrier,
-  className = "",
+  className = '',
 }: ShippingTrackerProps) {
   const [showMap, setShowMap] = useState(false);
-  const [activeTab, setActiveTab] = useState<"progress" | "history" | "details">("progress");
+  const [activeTab, setActiveTab] = useState<'progress' | 'history' | 'details'>('progress');
 
   // Données de démonstration
-  const currentStatus = "in-transit";
-  const estimatedDelivery = "Demain, 15 Janvier 2026";
+  const currentStatus = 'in-transit';
+  const estimatedDelivery = 'Demain, 15 Janvier 2026';
   const progress = 60; // Pourcentage de progression
 
   const trackingStages = [
     {
-      id: "1",
-      status: "Commande confirmée",
+      id: '1',
+      status: 'Commande confirmée',
       icon: CheckCircle,
       completed: true,
-      timestamp: "11 Jan, 14:30",
+      timestamp: '11 Jan, 14:30',
     },
     {
-      id: "2",
-      status: "Préparation",
+      id: '2',
+      status: 'Préparation',
       icon: Package,
       completed: true,
-      timestamp: "11 Jan, 16:45",
+      timestamp: '11 Jan, 16:45',
     },
     {
-      id: "3",
-      status: "En route",
+      id: '3',
+      status: 'En route',
       icon: Truck,
       completed: true,
-      timestamp: "12 Jan, 08:20",
+      timestamp: '12 Jan, 08:20',
       current: true,
     },
     {
-      id: "4",
-      status: "Livraison",
+      id: '4',
+      status: 'Livraison',
       icon: CheckCircle,
       completed: false,
-      timestamp: "Estimé: 15 Jan",
+      timestamp: 'Estimé: 15 Jan',
     },
   ];
 
   const trackingHistory: TrackingEvent[] = [
     {
-      id: "1",
-      status: "En route vers destination",
-      location: "Lyon, France",
-      timestamp: "14 Jan 2026, 10:30",
-      description: "Le colis est actuellement en transit",
+      id: '1',
+      status: 'En route vers destination',
+      location: 'Lyon, France',
+      timestamp: '14 Jan 2026, 10:30',
+      description: 'Le colis est actuellement en transit',
       icon: Truck,
       completed: false,
     },
     {
-      id: "2",
-      status: "Arrivé au centre de tri",
-      location: "Paris, France",
-      timestamp: "13 Jan 2026, 18:45",
-      description: "Tri et préparation pour livraison",
+      id: '2',
+      status: 'Arrivé au centre de tri',
+      location: 'Paris, France',
+      timestamp: '13 Jan 2026, 18:45',
+      description: 'Tri et préparation pour livraison',
       icon: Package,
       completed: true,
     },
     {
-      id: "3",
-      status: "Colis collecté",
-      location: "Toulouse, France",
-      timestamp: "12 Jan 2026, 08:20",
-      description: "Récupéré par le transporteur",
+      id: '3',
+      status: 'Colis collecté',
+      location: 'Toulouse, France',
+      timestamp: '12 Jan 2026, 08:20',
+      description: 'Récupéré par le transporteur',
       icon: CheckCircle,
       completed: true,
     },
     {
-      id: "4",
-      status: "Commande préparée",
-      location: "Toulouse, France",
-      timestamp: "11 Jan 2026, 16:45",
-      description: "Emballage et étiquetage terminés",
+      id: '4',
+      status: 'Commande préparée',
+      location: 'Toulouse, France',
+      timestamp: '11 Jan 2026, 16:45',
+      description: 'Emballage et étiquetage terminés',
       icon: Package,
       completed: true,
     },
   ];
 
   const carrierInfo: CarrierInfo = {
-    name: "AgriGator Express",
-    phone: "+33 1 23 45 67 89",
-    email: "contact@agrigator.com",
-    driver: "Jean Dupont",
-    vehicleNumber: "FR-1234-AB",
+    name: 'AgriGator Express',
+    phone: '+33 1 23 45 67 89',
+    email: 'contact@agrigator.com',
+    driver: 'Jean Dupont',
+    vehicleNumber: 'FR-1234-AB',
   };
 
   const handleContactCarrier = () => {
     onContactCarrier?.();
-    toast.success("Demande de contact envoyée au transporteur");
+    toast.success('Demande de contact envoyée au transporteur');
   };
 
   const handleDownloadReceipt = () => {
-    toast.success("Reçu de livraison téléchargé");
+    toast.success('Reçu de livraison téléchargé');
   };
 
   const handleShareTracking = () => {
-    toast.success("Lien de suivi copié dans le presse-papiers");
+    toast.success('Lien de suivi copié dans le presse-papiers');
   };
 
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 ${className}`}>
+    <div
+      className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 ${className}`}
+    >
       {/* Header */}
       <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
@@ -157,7 +159,9 @@ export function ShippingTracker({
               <Package className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Suivi de Livraison</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                Suivi de Livraison
+              </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">Numéro: {trackingNumber}</p>
             </div>
           </div>
@@ -203,9 +207,9 @@ export function ShippingTracker({
       <div className="px-6 border-b border-gray-200 dark:border-gray-700">
         <div className="flex gap-4">
           {[
-            { id: "progress", label: "Progression", icon: Navigation },
-            { id: "history", label: "Historique", icon: Clock },
-            { id: "details", label: "Détails", icon: Package },
+            { id: 'progress', label: 'Progression', icon: Navigation },
+            { id: 'history', label: 'Historique', icon: Clock },
+            { id: 'details', label: 'Détails', icon: Package },
           ].map((tab) => {
             const Icon = tab.icon;
             return (
@@ -214,8 +218,8 @@ export function ShippingTracker({
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors ${
                   activeTab === tab.id
-                    ? "border-blue-600 text-blue-600 dark:text-blue-400"
-                    : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                    ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -229,13 +233,17 @@ export function ShippingTracker({
       {/* Content */}
       <div className="p-6">
         {/* Progress Tab */}
-        {activeTab === "progress" && (
+        {activeTab === 'progress' && (
           <div className="space-y-6">
             {/* Progress Bar */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Progression</span>
-                <span className="text-sm font-bold text-blue-600 dark:text-blue-400">{progress}%</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Progression
+                </span>
+                <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                  {progress}%
+                </span>
               </div>
               <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                 <div
@@ -256,26 +264,26 @@ export function ShippingTracker({
                       <div
                         className={`w-12 h-12 rounded-full flex items-center justify-center ${
                           stage.completed
-                            ? "bg-green-100 dark:bg-green-900/30"
+                            ? 'bg-green-100 dark:bg-green-900/30'
                             : stage.current
-                            ? "bg-blue-100 dark:bg-blue-900/30 ring-4 ring-blue-500/20"
-                            : "bg-gray-100 dark:bg-gray-700"
+                            ? 'bg-blue-100 dark:bg-blue-900/30 ring-4 ring-blue-500/20'
+                            : 'bg-gray-100 dark:bg-gray-700'
                         }`}
                       >
                         <Icon
                           className={`h-6 w-6 ${
                             stage.completed
-                              ? "text-green-600 dark:text-green-400"
+                              ? 'text-green-600 dark:text-green-400'
                               : stage.current
-                              ? "text-blue-600 dark:text-blue-400"
-                              : "text-gray-400"
+                              ? 'text-blue-600 dark:text-blue-400'
+                              : 'text-gray-400'
                           }`}
                         />
                       </div>
                       {!isLast && (
                         <div
                           className={`absolute left-6 top-12 w-0.5 h-12 ${
-                            stage.completed ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600"
+                            stage.completed ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
                           }`}
                         />
                       )}
@@ -285,8 +293,8 @@ export function ShippingTracker({
                         <h3
                           className={`font-semibold ${
                             stage.current
-                              ? "text-blue-600 dark:text-blue-400"
-                              : "text-gray-900 dark:text-white"
+                              ? 'text-blue-600 dark:text-blue-400'
+                              : 'text-gray-900 dark:text-white'
                           }`}
                         >
                           {stage.status}
@@ -297,7 +305,9 @@ export function ShippingTracker({
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{stage.timestamp}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        {stage.timestamp}
+                      </p>
                     </div>
                   </div>
                 );
@@ -310,13 +320,15 @@ export function ShippingTracker({
               className="w-full py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors"
             >
               <Map className="h-5 w-5" />
-              {showMap ? "Masquer" : "Voir"} la carte GPS
+              {showMap ? 'Masquer' : 'Voir'} la carte GPS
             </button>
 
             {showMap && (
               <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-8 text-center">
                 <Map className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 dark:text-gray-400 font-semibold">Carte GPS en temps réel</p>
+                <p className="text-gray-600 dark:text-gray-400 font-semibold">
+                  Carte GPS en temps réel
+                </p>
                 <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
                   Position actuelle: Lyon, France
                 </p>
@@ -326,7 +338,7 @@ export function ShippingTracker({
         )}
 
         {/* History Tab */}
-        {activeTab === "history" && (
+        {activeTab === 'history' && (
           <div className="space-y-4">
             {trackingHistory.map((event) => {
               const Icon = event.icon;
@@ -338,21 +350,23 @@ export function ShippingTracker({
                   <div
                     className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
                       event.completed
-                        ? "bg-green-100 dark:bg-green-900/30"
-                        : "bg-blue-100 dark:bg-blue-900/30"
+                        ? 'bg-green-100 dark:bg-green-900/30'
+                        : 'bg-blue-100 dark:bg-blue-900/30'
                     }`}
                   >
                     <Icon
                       className={`h-5 w-5 ${
                         event.completed
-                          ? "text-green-600 dark:text-green-400"
-                          : "text-blue-600 dark:text-blue-400"
+                          ? 'text-green-600 dark:text-green-400'
+                          : 'text-blue-600 dark:text-blue-400'
                       }`}
                     />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-start justify-between mb-1">
-                      <h3 className="font-semibold text-gray-900 dark:text-white">{event.status}</h3>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">
+                        {event.status}
+                      </h3>
                       {!event.completed && (
                         <span className="text-xs font-semibold text-blue-600 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded">
                           Actuel
@@ -376,7 +390,7 @@ export function ShippingTracker({
         )}
 
         {/* Details Tab */}
-        {activeTab === "details" && (
+        {activeTab === 'details' && (
           <div className="space-y-6">
             {/* Carrier Information */}
             <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-6">
@@ -387,15 +401,21 @@ export function ShippingTracker({
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600 dark:text-gray-400">Société</span>
-                  <span className="font-semibold text-gray-900 dark:text-white">{carrierInfo.name}</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">
+                    {carrierInfo.name}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600 dark:text-gray-400">Chauffeur</span>
-                  <span className="font-semibold text-gray-900 dark:text-white">{carrierInfo.driver}</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">
+                    {carrierInfo.driver}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600 dark:text-gray-400">Véhicule</span>
-                  <span className="font-semibold text-gray-900 dark:text-white">{carrierInfo.vehicleNumber}</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">
+                    {carrierInfo.vehicleNumber}
+                  </span>
                 </div>
               </div>
             </div>
@@ -439,7 +459,9 @@ export function ShippingTracker({
               <div className="flex items-start gap-3">
                 <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Instructions de livraison</h4>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    Instructions de livraison
+                  </h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Veuillez livrer au dépôt principal. Signature requise à la réception.
                   </p>

@@ -3,6 +3,7 @@ import { UserRepository } from '../repositories/user.repository';
 import { PasswordService } from '../services/password.service';
 import { logAdminAction } from '../services/logger.service';
 import { UserRole } from '../models/permission.model';
+import type { AuthenticatedRequest } from '../middleware/auth.middleware';
 export class AdminController {
   private userRepository: UserRepository;
   private passwordService: PasswordService;
@@ -20,10 +21,10 @@ export class AdminController {
       const limit = parseInt(req.query.limit as string) || 20;
       const { users, total } = await this.userRepository.list(page, limit);
       // Don't send password hashes to client
-      const sanitizedUsers = users.map(user => ({
+      const sanitizedUsers = users.map((user) => ({
         id: user.id,
         email: user.email,
-       firstName: user.firstName,
+        firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
         emailVerified: user.emailVerified,
@@ -75,7 +76,11 @@ export class AdminController {
         return;
       }
       // Validate role
-      const validRoles: UserRole[] = [UserRole.ADMIN, UserRole.BUYER, UserRole.TRANSPORTER];
+      const validRoles: UserRole[] = [
+        UserRole.ADMIN,
+        UserRole.BUYER,
+        UserRole.TRANSPORTER,
+      ];
       if (role && !validRoles.includes(role)) {
         res.status(400).json({
           success: false,
@@ -95,7 +100,10 @@ export class AdminController {
         passwordHash,
       });
       // Log admin action
-      logAdminAction(req.user!.id, 'create_user', { userId: user.id, role: user.role });
+      logAdminAction((req as AuthenticatedRequest).user!.id, 'create_user', {
+        userId: user.id,
+        role: user.role,
+      });
       res.status(201).json({
         success: true,
         data: {
@@ -112,7 +120,7 @@ export class AdminController {
       console.error('Error creating user:', error);
       res.status(500).json({
         success: false,
-        error: 'Erreur lors de la création de l\'utilisateur',
+        error: "Erreur lors de la création de l'utilisateur",
       });
     }
   };
@@ -122,7 +130,8 @@ export class AdminController {
    */
   deleteUser = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { id } = req.params;
+      const rawId = req.params.id;
+      const id = typeof rawId === 'string' ? rawId : (rawId?.[0] ?? '');
       const user = await this.userRepository.findById(id);
       if (!user) {
         res.status(404).json({
@@ -132,7 +141,7 @@ export class AdminController {
         return;
       }
       // Prevent self-deletion
-      if (user.id === req.user!.id) {
+      if (user.id === (req as AuthenticatedRequest).user!.id) {
         res.status(400).json({
           success: false,
           error: 'Vous ne pouvez pas supprimer votre propre compte',
@@ -141,7 +150,7 @@ export class AdminController {
       }
       await this.userRepository.softDelete(id);
       // Log admin action
-      logAdminAction(req.user!.id, 'delete_user', { userId: id });
+      logAdminAction((req as AuthenticatedRequest).user!.id, 'delete_user', { userId: id });
       res.status(200).json({
         success: true,
         message: 'Utilisateur supprimé avec succès',
@@ -150,7 +159,7 @@ export class AdminController {
       console.error('Error deleting user:', error);
       res.status(500).json({
         success: false,
-        error: 'Erreur lors de la suppression de l\'utilisateur',
+        error: "Erreur lors de la suppression de l'utilisateur",
       });
     }
   };

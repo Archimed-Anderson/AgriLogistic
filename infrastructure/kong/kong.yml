@@ -52,11 +52,12 @@ plugins:
       max_age: 3600
       preflight_continue: false
 
-  # Global Rate Limiting
+  # Global Rate Limiting - Anonyme (par IP) : 100 req/min (cahier des charges)
+  # Les routes protégées JWT ont un rate limit par consumer à 1000/min (voir plugins par service)
   - name: rate-limiting
     config:
-      minute: 1000
-      hour: 10000
+      minute: 100
+      hour: 1000
       policy: local
       limit_by: ip
       fault_tolerant: true
@@ -345,6 +346,7 @@ services:
           minute: 100
           hour: 1000
           policy: local
+          limit_by: ip
 
   # -------------------- Auth Service Health (maps /api/v1/auth/health -> /health) --------------------
   # Rationale:
@@ -409,11 +411,11 @@ services:
           claims_to_verify:
             - exp
 
-      # Rate limiting per consumer (in addition to global IP rate limiting)
+      # Rate limiting authentifié : 1000 req/min par consumer (cahier des charges)
       - name: rate-limiting
         config:
-          minute: 300
-          hour: 5000
+          minute: 1000
+          hour: 10000
           policy: local
           limit_by: consumer
       
@@ -456,8 +458,8 @@ services:
       
       - name: rate-limiting
         config:
-          minute: 200
-          hour: 5000
+          minute: 1000
+          hour: 10000
           policy: local
           limit_by: consumer
 
@@ -504,6 +506,12 @@ services:
       - name: jwt
         config:
           key_claim_name: kid
+      - name: rate-limiting
+        config:
+          minute: 1000
+          hour: 10000
+          policy: local
+          limit_by: consumer
 
   # Public health (no JWT) for Logistics Service
   - name: logistics-health
@@ -552,8 +560,8 @@ services:
       
       - name: rate-limiting
         config:
-          minute: 50
-          hour: 500
+          minute: 1000
+          hour: 10000
           policy: local
           limit_by: consumer
       
@@ -627,6 +635,12 @@ services:
       - name: jwt
         config:
           key_claim_name: kid
+      - name: rate-limiting
+        config:
+          minute: 1000
+          hour: 10000
+          policy: local
+          limit_by: consumer
 
   # Contact (no JWT)
   - name: notification-contact
@@ -686,8 +700,8 @@ services:
 
       - name: rate-limiting
         config:
-          minute: 100
-          hour: 2000
+          minute: 1000
+          hour: 10000
           policy: local
           limit_by: consumer
       
@@ -762,8 +776,8 @@ services:
       
       - name: rate-limiting
         config:
-          minute: 30
-          hour: 500
+          minute: 1000
+          hour: 10000
           policy: local
           limit_by: consumer
       
@@ -811,7 +825,12 @@ services:
       - name: jwt
         config:
           key_claim_name: kid
-      
+      - name: rate-limiting
+        config:
+          minute: 1000
+          hour: 10000
+          policy: local
+          limit_by: consumer
       - name: request-size-limiting
         config:
           allowed_payload_size: 5
@@ -858,6 +877,12 @@ services:
       - name: jwt
         config:
           key_claim_name: kid
+      - name: rate-limiting
+        config:
+          minute: 1000
+          hour: 10000
+          policy: local
+          limit_by: consumer
 
   # Public health (no JWT) for Inventory Service
   - name: inventory-health
@@ -901,7 +926,12 @@ services:
       - name: jwt
         config:
           key_claim_name: kid
-      
+      - name: rate-limiting
+        config:
+          minute: 1000
+          hour: 10000
+          policy: local
+          limit_by: consumer
       - name: acl
         config:
           allow:
@@ -987,6 +1017,47 @@ consumers:
           -----END PUBLIC KEY-----
     acls:
       - group: admin
+
+  # Consumers pour services internes (API Key - cahier des charges)
+  - username: user-service
+    custom_id: internal-user-service
+    tags:
+      - internal
+      - service
+    keyauth_credentials:
+      - key: internal-user-service-key-CHANGEME
+
+  - username: product-service
+    custom_id: internal-product-service
+    tags:
+      - internal
+      - service
+    keyauth_credentials:
+      - key: internal-product-service-key-CHANGEME
+
+  - username: logistics-service
+    custom_id: internal-logistics-service
+    tags:
+      - internal
+      - service
+    keyauth_credentials:
+      - key: internal-logistics-service-key-CHANGEME
+
+  - username: payment-service
+    custom_id: internal-payment-service
+    tags:
+      - internal
+      - service
+    keyauth_credentials:
+      - key: internal-payment-service-key-CHANGEME
+
+  - username: ai-service
+    custom_id: internal-ai-service
+    tags:
+      - internal
+      - service
+    keyauth_credentials:
+      - key: internal-ai-service-key-CHANGEME
 
 # ============================================================
 # Upstreams (Health Checks Configuration)

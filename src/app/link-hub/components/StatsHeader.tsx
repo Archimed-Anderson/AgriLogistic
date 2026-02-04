@@ -15,7 +15,9 @@ const StatsHeader: React.FC<StatsHeaderProps> = ({ analytics }) => {
     <header className="command-header">
       <div className="header-brand">
         <div className="pulse-indicator"></div>
-        <h1>AGRILOGISTIC LINK <span>COMMAND CENTER</span></h1>
+        <h1>
+          AGRILOGISTIC LINK <span>COMMAND CENTER</span>
+        </h1>
       </div>
 
       <div className="header-stats">
@@ -24,19 +26,19 @@ const StatsHeader: React.FC<StatsHeaderProps> = ({ analytics }) => {
           <span className="stat-value">{analytics.activeLoads}</span>
           <span className="stat-trend positive">↑ 12%</span>
         </div>
-        
+
         <div className="stat-card">
           <span className="stat-label">CAMIONS</span>
           <span className="stat-value">{analytics.availableTrucks}</span>
           <span className="stat-trend neutral">→ 0%</span>
         </div>
-        
+
         <div className="stat-card">
           <span className="stat-label">TAUX DE MATCH</span>
           <span className="stat-value">{(analytics.matchRate * 100).toFixed(1)}%</span>
           <span className="stat-trend positive">↑ 5%</span>
         </div>
-        
+
         <div className="stat-card">
           <span className="stat-label">TEMPS MOYEN</span>
           <span className="stat-value">{analytics.averageMatchTime} min</span>
@@ -47,7 +49,10 @@ const StatsHeader: React.FC<StatsHeaderProps> = ({ analytics }) => {
         <button className="icon-button">🔔</button>
         <button className="icon-button">⚙️</button>
         <div className="user-profile">
-          <img src="https://ui-avatars.com/api/?name=Admin+Logistique&background=667eea&color=fff" alt="Profile" />
+          <img
+            src="https://ui-avatars.com/api/?name=Admin+Logistique&background=667eea&color=fff"
+            alt="Profile"
+          />
         </div>
       </div>
     </header>

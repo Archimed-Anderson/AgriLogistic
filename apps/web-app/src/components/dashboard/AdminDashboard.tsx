@@ -1,7 +1,7 @@
-"use client"
+'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Shield, Users, BarChart3, Settings } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Shield, Users, BarChart3, Settings } from 'lucide-react';
 
 export function AdminDashboard() {
   return (
@@ -9,9 +9,7 @@ export function AdminDashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Tableau de Bord Administrateur</h1>
-          <p className="text-muted-foreground">
-            Gestion complète de la plateforme AgroLogistic
-          </p>
+          <p className="text-muted-foreground">Gestion complète de la plateforme AgroLogistic</p>
         </div>
       </div>
 
@@ -23,9 +21,7 @@ export function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">1,234</div>
-            <p className="text-xs text-muted-foreground">
-              +12% depuis le mois dernier
-            </p>
+            <p className="text-xs text-muted-foreground">+12% depuis le mois dernier</p>
           </CardContent>
         </Card>
 
@@ -36,9 +32,7 @@ export function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">98.5%</div>
-            <p className="text-xs text-muted-foreground">
-              Taux de disponibilité
-            </p>
+            <p className="text-xs text-muted-foreground">Taux de disponibilité</p>
           </CardContent>
         </Card>
 
@@ -49,9 +43,7 @@ export function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">100%</div>
-            <p className="text-xs text-muted-foreground">
-              Système sécurisé
-            </p>
+            <p className="text-xs text-muted-foreground">Système sécurisé</p>
           </CardContent>
         </Card>
 
@@ -62,9 +54,7 @@ export function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">Active</div>
-            <p className="text-xs text-muted-foreground">
-              Tous les services opérationnels
-            </p>
+            <p className="text-xs text-muted-foreground">Tous les services opérationnels</p>
           </CardContent>
         </Card>
       </div>
@@ -99,5 +89,5 @@ export function AdminDashboard() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

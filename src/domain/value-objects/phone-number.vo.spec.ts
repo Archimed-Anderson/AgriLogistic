@@ -21,7 +21,7 @@ describe('PhoneNumber Value Object', () => {
     it('should accept different country codes', () => {
       const usPhone = new PhoneNumber('+15551234567');
       const ukPhone = new PhoneNumber('+447911123456');
-      
+
       expect(usPhone.value).toBe('+15551234567');
       expect(ukPhone.value).toBe('+447911123456');
     });
@@ -64,14 +64,14 @@ describe('PhoneNumber Value Object', () => {
     it('should correctly compare equal phone numbers', () => {
       const phone1 = new PhoneNumber('+33612345678');
       const phone2 = new PhoneNumber('+33612345678');
-      
+
       expect(phone1.equals(phone2)).toBe(true);
     });
 
     it('should correctly compare different phone numbers', () => {
       const phone1 = new PhoneNumber('+33612345678');
       const phone2 = new PhoneNumber('+33612345679');
-      
+
       expect(phone1.equals(phone2)).toBe(false);
     });
   });

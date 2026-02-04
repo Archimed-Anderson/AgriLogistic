@@ -54,7 +54,7 @@ const mockDeliveries: Delivery[] = [
       ],
     },
     tracking: {
-      currentLocation: [2.3400, 48.8620],
+      currentLocation: [2.34, 48.862],
       lastUpdate: new Date(),
       eta: new Date('2024-01-22T09:55:00'),
       progress: 65,
@@ -93,7 +93,7 @@ const mockDeliveries: Delivery[] = [
     },
     dropoff: {
       address: '45 Avenue des Champs, Lyon',
-      coordinates: [4.8357, 45.7640],
+      coordinates: [4.8357, 45.764],
       contactName: 'Pierre Martin',
       contactPhone: '+33 6 55 44 33 22',
       scheduledTime: new Date('2024-01-22T18:00:00'),

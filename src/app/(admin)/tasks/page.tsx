@@ -13,14 +13,14 @@ export default function CombinedTasksPage() {
 
       <Tabs defaultValue="tasks" className="w-full">
         <TabsList className="bg-white dark:bg-gray-800 p-1 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 w-auto inline-flex">
-          <TabsTrigger 
-            value="tasks" 
+          <TabsTrigger
+            value="tasks"
             className="px-6 py-2 rounded-lg data-[state=active]:bg-[#0B7A4B] data-[state=active]:text-white transition-all"
           >
             Tâches
           </TabsTrigger>
-          <TabsTrigger 
-            value="labor" 
+          <TabsTrigger
+            value="labor"
             className="px-6 py-2 rounded-lg data-[state=active]:bg-[#0B7A4B] data-[state=active]:text-white transition-all"
           >
             Main d'œuvre
@@ -30,7 +30,7 @@ export default function CombinedTasksPage() {
         <TabsContent value="tasks" className="mt-6">
           <TaskManagement />
         </TabsContent>
-        
+
         <TabsContent value="labor" className="mt-6">
           <LaborManagement />
         </TabsContent>

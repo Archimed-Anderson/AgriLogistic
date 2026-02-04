@@ -1,14 +1,23 @@
 'use client';
 
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { LogOut, ChevronDown, Terminal, Activity } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/use-auth';
 import { adminRoutes } from '@/config/admin-routes';
 import { useState } from 'react';
-import { QuickCommand } from './QuickCommand';
 import { useNotificationStore } from '@/store/notificationStore';
+
+const QuickCommand = dynamic(() => import('./QuickCommand').then((m) => ({ default: m.QuickCommand })), {
+  ssr: false,
+  loading: () => (
+    <div className="group relative flex h-12 w-full items-center justify-center rounded-2xl bg-emerald-500/5 border border-emerald-500/10 mb-2">
+      <Activity className="h-5 w-5 text-emerald-500/50 animate-pulse" />
+    </div>
+  ),
+});
 
 export function AdminSidebar() {
   const pathname = usePathname();
@@ -105,11 +114,14 @@ export function AdminSidebar() {
                 const isWarRoom = item.label === 'War Room' || item.priority === true;
                 const hasSubItems = item.subItems && item.subItems.length > 0;
                 const isItemSubOpen = openSubMenus.includes(item.label);
+                const isFrequentRoute =
+                  item.label === 'Dashboard' || item.label === 'War Room' || item.label === 'Support & Litiges';
 
                 return (
                   <div key={item.path} className="space-y-1">
                     <Link
                       href={item.path}
+                      prefetch={isFrequentRoute}
                       onClick={(e) => {
                         if (hasSubItems) {
                           e.preventDefault();
@@ -188,6 +200,7 @@ export function AdminSidebar() {
                           <Link
                             key={sub.path}
                             href={sub.path}
+                            prefetch={false}
                             className={cn(
                               'flex items-center gap-3 rounded-lg px-3 py-2 text-[11px] font-bold transition-all duration-200 uppercase tracking-wider',
                               pathname === sub.path

@@ -1,14 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Globe, 
-  Users, 
-  Database, 
-  ShieldCheck, 
-  Settings,
-  Cpu
-} from 'lucide-react';
+import { LayoutDashboard, Globe, Users, Database, ShieldCheck, Settings, Cpu } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 
 const navItems = [
@@ -31,10 +23,10 @@ export function Sidebar() {
             title={item.label}
             className={({ isActive }) =>
               cn(
-                "flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-200 hover:bg-white/5",
-                isActive 
-                  ? "bg-white/5 text-primary shadow-[0_0_15px_rgba(0,102,255,0.4)]" 
-                  : "text-muted-foreground hover:text-primary"
+                'flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-200 hover:bg-white/5',
+                isActive
+                  ? 'bg-white/5 text-primary shadow-[0_0_15px_rgba(0,102,255,0.4)]'
+                  : 'text-muted-foreground hover:text-primary'
               )
             }
           >
@@ -49,8 +41,8 @@ export function Sidebar() {
           title="Settings"
           className={({ isActive }) =>
             cn(
-              "flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-200 hover:bg-white/5 text-muted-foreground hover:text-primary",
-              isActive && "bg-white/5 text-primary shadow-[0_0_15px_rgba(0,102,255,0.4)]"
+              'flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-200 hover:bg-white/5 text-muted-foreground hover:text-primary',
+              isActive && 'bg-white/5 text-primary shadow-[0_0_15px_rgba(0,102,255,0.4)]'
             )
           }
         >

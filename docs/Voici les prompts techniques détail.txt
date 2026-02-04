@@ -1,0 +1,2067 @@
+ Voici les **prompts techniques détaillés** pour chaque module marqué "Nouveau" dans votre architecture Admin, structurés selon votre stack (Next.js 14 + NestJS + Python) et la logique métier AgriLogistic.
+
+---
+
+## 🎯 COMMAND CENTER
+
+### 1. War Room (Centre de Crise Temps Réel)
+```markdown
+Développe le module "War Room" pour le dashboard admin AgriLogistic - une interface critique de monitoring temps réel des incidents agricoles et logistiques.
+
+CONTEXTE MÉTIER :
+- Problème : 40% de pertes post-récolte, fraude, pannes IoT dans la chaîne logistique africaine
+- Objectif : Vue "God Mode" permettant à un admin de détecter et résoudre les problèmes en < 5 minutes
+- Utilisateurs : Super Admin, Ops Manager, Support Niveau 3
+
+FONCTIONNALITÉS REQUISES :
+1. Cartographie temps réel (Leaflet/MapLibre) avec :
+   - Markers animés pour incidents critiques (rouge = fraude, orange = retard, jaune = IoT offline)
+   - Clusters par région (Côte d'Ivoire, Sénégal, etc.)
+   - Heatmap des zones à risque (calculée via ML Anomaly Detection)
+
+2. Tableau de bord incident avec prioritisation algorithmique :
+   - Score de criticité (0-100) basé sur : valeur marchandise, temps écoulé, impact chaîne du froid
+   - Filtrage dynamique : type (iot_failure, fraud_detected, delay_risk, quality_alert)
+   - Actions 1-click : "Suspendre compte", "Réassigner transport", "Contacter agriculteur", "Escalader litige"
+
+3. Métriques live (WebSocket/Socket.io) :
+   - Transactions actives / Camions en route / Escrow en attente / Santé système
+   - Bandeau d'alertes défilantes (ticker style) pour incidents P0
+
+STACK TECHNIQUE :
+- Frontend : Next.js 14 (Server Components), React-Leaflet, Framer Motion (animations d'alerte), Zustand (état global)
+- Backend : NestJS + Redis Pub/Sub pour le temps réel, Kafka consumers pour les events d'incident
+- Data : PostgreSQL (incidents), ClickHouse (métriques temps réel), Qdrant (similarité pour regroupement d'incidents)
+- Carto : MapLibre GL JS + tuiles OpenStreetMap + overlay satellite Sentinel
+
+UI/UX :
+- Mode "Crisis" : fond rouge pulsant si incident critique > 15 min non résolu
+- Layout type "Mission Control" NASA : 3 colonnes (Carte | Liste incidents | Détails/Actions)
+- Responsive : Mode "Field Ops" pour mobile avec notifications push
+
+INTÉGRATIONS :
+- Connexion au service AI Anomaly Detection (Python/FastAPI)
+- Webhook vers WhatsApp Business API pour alertes SMS aux ops sur le terrain
+- Blockchain Explorer pour vérifier l'état des smart contracts en litige
+
+CRITÈRES D'ACCEPTATION :
+- Latence < 2s entre détection incident et affichage
+- Capacité à gérer 1000+ incidents simultanés (filtering côté serveur)
+- Export PDF rapport d'incident pour autorités (OHADA compliance)
+```
+
+### 2. Quick Actions (Hub d'Actions Rapides)
+```markdown
+Implémente le "Quick Actions Hub" - un centre de commande rapide style "Spotlight/Command K" intégré à la sidebar admin.
+
+FONCTIONNALITÉS :
+1. Palette de commandes (Ctrl+K) avec :
+   - Recherche floue : "Bloquer agriculteur Kofi", "Camion TR-89", "Litige #4521"
+   - Raccourcis clavier mnémoniques (K = KYC, T = Transport, F = Finance)
+   
+2. Actions fréquentes en tuiles (8 actions max) :
+   - Validation KYC rapide (file d'attente)
+   - Génération rapport journalier
+   - Activation mode maintenance
+   - Broadcast notification push à tous les transporteurs d'une zone
+   - Forçage synchronisation blockchain
+
+3. Workflows automatisés one-click :
+   - "Emergency Stop" : Suspension temporaire d'un corridor logistique
+   - "Reroute Fleet" : Recalcul VRP pour éviter zone météo dangereuse
+
+TECHNIQUE :
+- Hook React useHotkeys pour raccourcis
+- Command palette avec headlessui/cmdk
+- Intégration API NestJS pour actions immédiates (bypass cache)
+- Audit trail systématique (qui a fait quoi, quand)
+
+DESIGN :
+- Bouton flottant "⚡" en bas de sidebar
+- Micro-interactions : feedback haptique sur mobile, sonore sur desktop (optionnel)
+- Dark mode obligatoire (utilisé de nuit par ops)
+```
+
+---
+
+## 👥 GOUVERNANCE & UTILISATEURS
+
+### 3. Validation KYC Center
+```markdown
+Crée le centre de validation KYC pour la conformité réglementaire (AML/CFT) des acteurs agricoles africains.
+
+WORKFLOW MÉTIER :
+Upload documents → OCR automatique (Tesseract/AWS Textract) → Vérification API gouvernementale (ex: API identité CI) → Validation humaine finale → Notarisation blockchain
+
+FONCTIONNALITÉS :
+1. File d'attente visuelle (Kanban board) :
+   - Colonnes : Documents reçus → En vérification → Validation auto → Validation manuelle → Approuvé/Rejeté
+   - Badges par type : Agriculteur (15 en attente), Transporteur (5), Acheteur (3), Cooperatives (2)
+
+2. Vue détaillée de dossier :
+   - Split-screen : Document scanné (PDF) | Données extraites (JSON éditable)
+   - Vérification croisée : Photo selfie vs Photo ID (FaceMatch via AWS Rekognition)
+   - Score de confiance OCR (0-100%)
+   - Historique des vérifications précédentes
+
+3. Automatisations :
+   - Rejet auto si document expiré > 6 mois
+   - Rappel automatique WhatsApp/SMS après 48h sans réponse
+   - Batch validation pour coopératives (valider 50 agriculteurs d'un coup)
+
+STACK :
+- Frontend : React-PDF pour preview, React-Leaflet pour vérification adresse géocodée
+- Backend : NestJS + Queue BullMQ pour traitement asynchrone
+- IA : Python service avec OpenCV (préprocessing images), TensorFlow (détection fraudes documents)
+- Blockchain : Hyperledger Fabric pour timestamp validation
+
+SPÉCIFICITÉS RÉGIONALES :
+- Support documents OHADA : RCCM, Attestation d'Identification Fiscale, Carte transporteur CEMAC
+- Vérification numéros Mobile Money (Orange Money, Wave, M-Pesa) via APIs opérateurs
+- Gestion multi-langue : Français, Anglais, Portugais selon pays d'expansion
+
+SÉCURITÉ :
+- Chiffrement AES-256 des documents au repos (MinIO)
+- Logs immutables des accès (qui a vu quel document)
+- Droit à l'oubli RGPD-compliant (anonymisation après 5 ans)
+```
+
+### 4. Gestion des Rôles & Permissions (RBAC Avancé)
+```markdown
+Développe le module RBAC (Role-Based Access Control) avec granularité fine pour AgriLogistic.
+
+MODÈLE DE PERMISSIONS :
+- Ressources : Parcels, Offers, Contracts, Trucks, Users, Financial_Transactions, System_Config
+- Actions : create, read, update, delete, approve, export, assign
+- Scopes : Own (ses données), Team (son équipe), Region (sa région), Global (tout)
+
+FONCTIONNALITÉS :
+1. Matrix de permissions visuelle (tableau Excel-like) :
+   - Lignes : Rôles (Admin, Ops, Support, Auditor, Country_Manager)
+   - Colonnes : Ressources + Actions
+   - Cases à cocher avec héritage (Admin hérite de tout, Support lecture seule)
+
+2. Gestion des rôles personnalisés :
+   - Création rôle "Support Logistique Côte d'Ivoire" : accès uniquement missions CI, lecture seule finances
+   - Simulation mode "Voir comme..." (impersonate user pour tester permissions)
+
+3. Audit des accès :
+   - Qui a eu accès à quelle ressource et quand
+   - Détection d'accès anormaux (ex: Support qui consulte données financières sensibles)
+
+TECHNIQUE :
+- CASL.js pour définition permissions côté client
+- Middleware NestJS @Permissions() avec decorators
+- PostgreSQL : table RolePermission avec JSONB pour scopes dynamiques
+- Cache Redis des permissions utilisateur (TTL 1h)
+
+UI :
+- Arbre de navigation montrant les pages accessibles par rôle sélectionné
+- Avertissement rouge si modification risquée ("Retirer permission delete à Admin nécessite 2FA")
+```
+
+### 5. Audit & Traçabilité (Blockchain Explorer)
+```markdown
+Implémente l'explorateur blockchain pour la traçabilité immuable des actions critiques.
+
+CONTEXTE :
+- Stockage sur Hyperledger Fabric des actions sensibles (paiements, validations, modifs contrats)
+- Besoin : Interface intuitive pour auditeurs externes (banques, régulateurs)
+
+FONCTIONNALITÉS :
+1. Vue type "Etherscan interne" :
+   - Recherche par hash transaction, adresse wallet, ou ID utilisateur
+   - Timeline visuelle des transactions (blocs successifs)
+   - Détails : Timestamp, Gas/Coût, From/To, Data (JSON structuré)
+
+2. Filtres avancés :
+   - Par type : Paiement, Validation KYC, Modification Offre, Smart Contract execution
+   - Par période : Date range picker avec presets (Aujourd'hui, Mois en cours, Campagne agricole 2024)
+   - Par acteur : Vue "Mon historique" pour un agriculteur spécifique
+
+3. Vérification d'intégrité :
+   - Icône "Vérifié" (vert) si hash correspond au précédent
+   - Alerte "Chaîne rompue" si anomalie détectée (rouge critique)
+
+4. Export compliance :
+   - Génération rapport PDF pour audits (format régulateur bancaire UEMOA)
+   - Export CSV brut des events pour analysis externe
+
+STACK :
+- Web3.js ou ethers.js pour interaction node Hyperledger
+- Frontend : Data table virtuelisé (react-window) pour 100k+ lignes
+- Visualisation : Graph D3.js des relations entre wallets (détection réseaux frauduleux)
+
+INTÉGRATION :
+- Connexion au service Smart Contract pour décoder les payloads
+- Webhook vers système SIEM pour alertes sécurité en temps réel
+```
+
+### 6. Support Client & Gestion des Litiges
+```markdown
+Crée le centre de support client intégré avec gestion des litiges entre acteurs (agriculteur vs acheteur, etc.).
+
+FONCTIONNALITÉS :
+1. Ticketing system type Zendesk :
+   - File d'attente par priorité : P0 (bloquant business), P1 (retard), P2 (question)
+   - Assignation automatique selon langue et spécialité (Tech, Finance, Logistique)
+   - Vue conversationnelle (chat + email + WhatsApp Business centralisés)
+
+2. Module Litiges spécifique :
+   - Types : Non-paiement, Qualité non conforme, Retard livraison, Fraude documentaire
+   - Workflow : Ouverture → Médiation → Arbitrage Admin → Résolution → Clôture
+   - Gestion preuves : Upload photos, signatures numériques, données IoT (température durant transport)
+   - Calcul automatique compensation basé sur Smart Contract terms
+
+3. Outils agent :
+   - "Voir la transaction" : Vue consolidée de tout ce qui s'est passé (offre, paiement, tracking)
+   - "Simulation résolution" : Calcul impact financier avant décision finale
+   - Notes internes (non visibles par clients)
+
+4. SLA Monitoring :
+   - Compteur temps de réponse affiché (objectif : < 2h pour P0)
+   - Alertes si ticket non assigné depuis 30 min
+
+TECHNIQUE :
+- Frontend : React avec composants chat (stream-like interface)
+- Backend : NestJS + MongoDB (flexibilité schéma tickets), intégration Twilio (SMS/WhatsApp)
+- IA : Classification automatique priorité ticket (NLP), suggestion réponse basée sur historique
+- Blockchain : Archivage décisions finales de litige pour transparence
+
+RAPPORTS :
+- Taux de satisfaction (CSAT) par catégorie de problème
+- Temps moyen de résolution (MTTR)
+- Agriculteurs à risque (trop de litiges ouverts)
+```
+
+---
+
+## 🌾 ÉCOSYSTÈME AGRICOLE
+
+### 7. Digital Twin Global (Vue Satellite)
+```markdown
+Développe le "Digital Twin Global" - vue satellite composite de l'ensemble des parcelles agricoles sur le territoire couvert.
+
+CONTEXTE :
+- Agrégation données Sentinel-2/Landsat (NDVI), IoT capteurs sol, et prédictions ML
+- Objectif : Vue macro de la santé des cultures pour anticipation récoltes et crises alimentaires
+
+FONCTIONNALITÉS :
+1. Cartographie multi-couches :
+   - Couche NDVI (indice végétation) avec légende colorée (rouge = stress, vert = sain)
+   - Couche Prédictions : Heatmap rendements attendus (tonnes/ha) par région
+   - Couche Alertes : Zones avec maladies détectées par IA (Computer Vision)
+   - Couche Météo : Overlay précipitations temps réel (API météo)
+
+2. Interaction avancée :
+   - Zoom niveau parcelle individuelle (jusqu'à 10m résolution)
+   - Sélection zone géographique : Stats agrégées (surface totale, rendement moyen, nb agriculteurs)
+   - Comparaison temporelle : Split slider "Avant/Après" ou "2023 vs 2024"
+
+3. Analyses prédictives :
+   - Date optimale récolte groupée par zone (calcul ML)
+   - Identification zones déficitaires (rendement < moyenne -20%)
+   - Suggestion irrigation par bassin versant
+
+STACK :
+- Frontend : MapLibre GL JS, deck.gl pour grands volumes données, React-Three-Fiber pour overlay 3D optionnel
+- Backend : Tile server personnalisé (caching tuiles satellite), Python FastAPI pour processing images
+- Data : PostGIS (stockage géométries), COG (Cloud Optimized GeoTIFF) stockés MinIO, TimeScaleDB pour séries temporelles capteurs
+- IA : Modèle CNN segmentation images satellite (PyTorch) pour détection anomalies
+
+PERFORMANCE :
+- Lazy loading des tuiles satellite (LOD - Level of Detail)
+- Clustering agriculteurs à faible zoom (affichage 10k+ points)
+- Mode offline : Cache 24h des dernières images pour zones à faible connectivité
+
+EXPORTS :
+- Génération rapport PDF campagne agricole par préfecture/région
+- Export GeoJSON des parcelles pour partenaires gouvernementaux
+```
+
+### 8. Gestion des Productions (Suivi Récoltes Actives)
+```markdown
+Crée le module de supervision des productions actives - suivi temps réel de l'état des cultures avant récolte.
+
+FONCTIONNALITÉS :
+1. Tableau de bord productions :
+   - Cards statuts : "Semis" → "Croissance" → "Floraison" → "Maturité" → "Récolte"
+   - Filtres : Culture (Maïs, Café, Cacao), Région, Calendrier (cette semaine, ce mois)
+   - Alertes : "Parcelle X nécessite irrigation" (basé capteurs humidité)
+
+2. Vue détaillée par parcelle :
+   - Timeline photos (historique croissance avec images drone/satellite)
+   - Données IoT : Graphiques température sol, humidité, luminosité (7 derniers jours)
+   - Actions recommandées par IA : "Fertiliser dans 3 jours", "Risque mildiou - traiter"
+
+3. Gestion calendrier agricole collectif :
+   - Vue calendrier partagée : Quelles récoltes prévues cette semaine dans la région Y
+   - Optimisation logistique anticipée : "15 tonnes de maïs mûres dans 5 jours dans zone Z - prévoir camions"
+
+4. Suivi qualité :
+   - Prédictions qualité récolte (Score A/B/C) basé sur conditions météo fin de cycle
+   - Certifications en cours (Bio, Équitable) avec checklist validation
+
+TECHNIQUE :
+- Frontend : React-Big-Calendar (custom styling), Recharts (graphs capteurs)
+- Backend : NestJS + TimescaleDB (hypertables pour données temporelles IoT)
+- IA : Integration service Python Yield Prediction (met à jour tous les jours les estimations)
+- Mobile : Sync avec app Agriculteur (notifications push quand changement statut)
+
+INTÉGRATIONS :
+- API météo pour forecasting (OpenWeatherMap ou WeatherAPI)
+- Système irrigation connecté (commande à distance vannes)
+- Marketplace : Auto-publication offre quand statut passe "Prêt à récolter"
+```
+
+### 9. Marketplace Agricole (Supervision Offres)
+```markdown
+Implémente le centre de contrôle du marketplace - supervision et modération des offres d'achat/vente.
+
+FONCTIONNALITÉS :
+1. Vue d'ensemble marché temps réel :
+   - Compteur offres actives par catégorie (céréales, fruits, légumes)
+   - Prix moyen par produit et par région (vs semaine précédente : 🔺 +5%)
+   - Anomalies détection : "Prix anormalement bas pour du cacao qualité A" (possible fraude)
+
+2. Modération offres :
+   - File validation nouvelles offres (vérification photos, descriptions, certifications)
+   - Détection contenu inapproprié (IA Computer Vision sur photos produits)
+   - Gestion signalements : Bouton "Signaler" par utilisateurs → Investigation
+
+3. Matching supervision :
+   - Vue des algorithmes de matching en action : "Pourquoi cette offre suggérée à cet acheteur ?"
+   - Override manuel : Forcer match si IA a manqué opportunité évidente
+   - Statistiques matching : Taux succès, temps moyen entre offre et vente
+
+4. Régulation économique :
+   - Limitation prix (plafonnement si spéculation détectée)
+   - Activation "Mode crise" (ex: pénurie) : Priorisation offres alimentaires locales vs export
+
+STACK :
+- Frontend : React Data Grid (AG Grid) pour gestion massive offres, D3.js pour visualisation flux prix
+- Backend : NestJS + MongoDB (catalogue flexible), Redis pour top produits temps réel
+- IA : Modèle NLP pour analyse sentiment descriptions, CV pour qualité photos
+- Blockchain : Vérification authenticité offres certifiées
+
+RAPPORTS :
+- Volume transactions par produit (journalier, hebdomadaire)
+- Satisfaction utilisateurs marketplace (NPS)
+- Identification acteurs "Super Producteurs" (volume + qualité + fiabilité)
+```
+
+### 10. Certifications & Traçabilité Blockchain
+```markdown
+Crée le gestionnaire de certifications agricoles et traçabilité sur blockchain.
+
+FONCTIONNALITÉS :
+1. Gestion des certifications :
+   - Catalogues : Bio, Équitable, Rainforest Alliance, Label Rouge équivalent local
+   - Workflow validation : Upload certificat → Vérification organisme certificateur → Approbation → Mint NFT certification
+   - Renouvellement auto : Alertes 3 mois avant expiration
+
+2. Traçabilité lot par lot :
+   - QR Code génération pour chaque lot produit
+   - Parcours complet : Parcelle origine → Récolte (date, agriculteur) → Transport (conditions température) → Transformation (si applicable) → Vente
+   - Preuves immuables : Hash documents stockés sur IPFS, pointeur sur blockchain Hyperledger
+
+3. ESG Dashboard :
+   - Empreinte carbone calculée par transport (km parcourus × mode transport)
+   - Score éthique : Conditions travail, revenu agriculteur vs prix vente final
+   - Export rapports RSE pour acheteurs industriels (conformité EU Deforestation Regulation)
+
+4. Vérification publique :
+   - Page publique de vérification (scan QR code) montrant l'historique complet
+   - API tierce : Permettre supermarchés d'intégrer notre traçabilité dans leurs apps
+
+TECHNIQUE :
+- Blockchain : Hyperledger Fabric (channel dédié traçabilité), Chaincode Go pour logique métier
+- Stockage : IPFS pour documents lourds, blockchain pour hashes
+- Frontend : React QR scanner intégration, génération PDF certificats
+- IA : Vérification automatique cohérence documents (OCR + NLP)
+```
+
+### 11. Agri-Scores (Scoring Crédit Agriculteurs)
+```markdown
+Développe le système de scoring crédit "Agri-Score" pour l'inclusion financière des agriculteurs sans historique bancaire.
+
+ALGORITHME DE SCORING (0-1000 points) :
+- Historique production : Régularité volumes, qualité constante (30%)
+- Comportement plateforme : Respect délais livraison, taux acceptation offres, réactivité (25%)
+- Données externes : Météo historique parcelle, prix marché local, stabilité coopérative (20%)
+- Réseau social : Garanties pairs (autres agriculteurs), recommandations acheteurs (15%)
+- KYC/Compliance : Qualité documents, absence litiges (10%)
+
+FONCTIONNALITÉS :
+1. Vue scoring individuel :
+   - Score global avec jauge visuelle (rouge <500, orange 500-700, vert >700)
+   - Décomposition radar chart des 5 critères
+   - Historique évolution score (6 derniers mois)
+   - Recommandations amélioration : "Augmentez votre score de 50 points en complétant votre profil météo"
+
+2. Gestion crédits :
+   - Eligibilité automatique : Montant max prêt autorisé basé sur score
+   - Simulation : "Si j'emprunte 500€, remboursement sur 3 mois, intérêt X%"
+   - Suivi remboursements : Intégration avec partenaires micro-finance
+
+3. Analyse portefeuille :
+   - Répartition scores agriculteurs par région
+   - Identification "Safe bets" (score élevé) vs "High risk" (nécessite accompagnement)
+   - Prédiction défauts de paiement (ML classification)
+
+TECHNIQUE :
+- IA : Modèle XGBoost entraîné sur historique plateforme, features engineering automatisé
+- Backend : Python FastAPI (service dédié scoring), cache Redis résultats (recalcul mensuel)
+- Frontend : Recharts (radar chart), tableaux progression
+- Sécurité : Données scoring chiffrées (sensibles), accès restreint Admin + Agriculteur concerné uniquement
+
+INTÉGRATIONS :
+- API partenaires financiers (microfinance locales, banques agricoles)
+- Blockchain : Historique transactions comme preuve crédit pour banques traditionnelles
+```
+
+---
+
+## 🚚 LOGISTIQUE & TRANSPORT
+
+### 12. Command Center Logistique
+```markdown
+Implémente le centre de commande logistique temps réel pour optimiser la flotte de transport agricole.
+
+CONTEXTE PROBLÈME : 30% des trajets à vide mentionnés dans README → Objectif réduction à <10%
+
+FONCTIONNALITÉS :
+1. Vue carte temps réel (style Uber Fleet) :
+   - Position GPS tous camions (refresh 30s)
+   - Code couleur statut : 🟢 En charge | 🟡 En route vide | 🔴 Arrêté | ⚫ Hors ligne
+   - Overlay température : Camions réfrigérés avec alerte si T° > seuil
+
+2. Tableau missions actives :
+   - Liste temps réel avec : ID mission, Chauffeur, Produit, Quantité, Départ, Arrivée, ETA
+   - Filtres : Par produit (périssable/non), Par région, Par statut
+   - Actions rapide : "Contacter chauffeur", "Modifier destination", "Annulation urgence"
+
+3. Intelligence dispatch :
+   - Suggestion auto assignation : "Camion disponible à 5km du pickup → Assigner ?"
+   - Détection anomalies : "Camion immobile depuis 2h hors pause prévue"
+   - Calcul efficacité globale : Taux remplissage moyen, KM à vide évités grâce à optimisation
+
+4. Communication intégrée :
+   - Chat direct avec chauffeurs (texte + voix)
+   - Broadcast groupe : "Alerte route National 1 barrée à Yamoussoukro - Déviation obligatoire"
+
+STACK :
+- Frontend : React-Leaflet (clustering 100+ camions), Socket.io client (temps réel)
+- Backend : NestJS + Redis (positions GPS), Kafka (events missions)
+- IoT : Intégration trackers GPS (API constructeurs ou protocole MQTT générique)
+- Optimisation : Appel service Python OR-Tools pour recalcul routes si incident
+
+PERFORMANCE :
+- Batching mises à jour GPS (pas de render React à chaque position, mais toutes les 5s ou 500m)
+- Mode "Light" : Vue simplifiée texte pour connexions lentes (2G rural)
+```
+
+### 13. Transport Missions (Assignation & Suivi)
+```markdown
+Crée le système complet de gestion des missions de transport (CRUD avancé + workflow).
+
+WORKFLOW MISSION :
+Création → Assignation chauffeur/camion → Pickup confirmation → En route → Livraison → Proof of Delivery → Facturation
+
+FONCTIONNALITÉS :
+1. Création mission intelligente :
+   - Formulaire avec autocomplétion agriculteurs/acheteurs existants
+   - Calcul auto distance/prix basé sur grille tarifaire dynamique
+   - Vérification disponibilité : "Camion X disponible ? Capacité suffisante ?"
+   - Multi-drop : Support livraisons multiples (optimisation tournée)
+
+2. Gestion assignation :
+   - Algorithme suggestion : Meilleur camion disponible (distance, capacité, historique qualité)
+   - Manuel : Override avec drag & drop sur carte
+   - Confirmation chauffeur : Acceptation/refus via mobile app avec raison
+
+3. Suivi exécution :
+   - Checkpoints obligatoires : Départ, Pickup (photo), Points intermédiaires, Delivery (photo + signature)
+   - Géofencing : Alertes entrée/sortie zones définies (ex: frontière)
+   - Conditions transport : Graph température/humidité en temps réel pour chaîne du froid
+
+4. Documentation électronique :
+   - Lettre de voiture digitale (e-CMR conforme transport international)
+   - Proof of Delivery (POD) : Photos marchandise, signature numérique, scan QR code
+   - Archivage automatique (7 ans légalement)
+
+STACK :
+- Mobile : Flutter app pour chauffeurs (mode offline capable)
+- Backend : NestJS + PostgreSQL (relations complexes missions), MongoDB (logs GPS)
+- Géolocalisation : Google Maps API ou OSRM (Open Source Routing Machine) pour offline
+- Stockage : MinIO pour photos POD
+```
+
+### 14. Route Optimization (Algorithmes VRP)
+```markdown
+Développe l'interface de configuration et monitoring des algorithmes d'optimisation de routes (Vehicle Routing Problem).
+
+FONCTIONNALITÉS :
+1. Configuration algorithmes :
+   - Choix stratégie : Temps minimum | Coût minimum | Équilibre charge | Écologique (CO2 min)
+   - Contraintes paramétrables : Fenêtres horaires livraison, Capacités véhicules, Temps pause chauffeur, Zones interdites (nuit)
+   - Simulation : "Si j'ajoute un 3ème camion à cette tournée, gain estimé : 20% temps"
+
+2. Vue optimisations en cours :
+   - Carte comparaison : Route initiale (rouge) vs Route optimisée (vert)
+   - Métriques : KM économisés, Carburant épargné, CO2 évité, Temps gagné
+   - Validation humaine : Admin approuve/refuse suggestion IA avant envoi chauffeur
+
+3. Historique performance :
+   - Comparaison mensuelle : Optimisation vs réalité (respect de la route suggérée ?)
+   - Learning : Algorithme s'adapte aux habitudes routes locales (pistes non cartographiées)
+
+4. Gestion imprévus :
+   - Recalcul dynamique si : Accident, Client absent, Panne camion, Condition météo
+   - Ripple effect : "Retard camion A impacte missions B, C, D → Nouvelles propositions"
+
+TECHNIQUE :
+- Moteur : Google OR-Tools (Python) ou OptaPlanner (Java) exposé via FastAPI
+- Frontend : React avec canvas pour dessin routes, comparaison side-by-side
+- Data : PostGIS pour stockage réseau routier custom (pistes agricoles non sur Google Maps)
+- Temps réel : WebSocket pour propagation recalcul aux chauffeurs concernés
+
+CONTRAINTES SPÉCIFIQUES AFRIQUE :
+- Routes non asphaltées (ajustement vitesse moyenne)
+- Saisons (routes impraticables en saison des pluies)
+- Sécurité : Évitement zones à risque (historique incidents)
+```
+
+### 15. IoT Fleet Tracking (Capteurs Avancés)
+```markdown
+Crée le centre de supervision IoT dédié aux capteurs embarqués dans les camions et entrepôts.
+
+TYPES DE CAPTEURS :
+- GPS haute précision
+- Température/Humidité (chaîne du froid)
+- Ouverture portes (sécurité)
+- Niveau carburant
+- Vibrations (chocs marchandise)
+- Sonore (détection moteur allumé/éteint)
+
+FONCTIONNALITÉS :
+1. Dashboard temps réel par véhicule :
+   - Jauges : Température cargo (alerte si hors range), Niveau carburant %
+   - Timeline événements : "Porte ouverte 14:32", "Arrêt moteur 15:45"
+   - Mode historique : Replay trajet avec conditions (heatmap température sur carte)
+
+2. Alertes configurables :
+   - Seuils personnalisés par type marchandise : "Bananes = 12-14°C", "Tomates = 10-12°C"
+   - Détection anomalies : "Refroidissement éteint pendant 30min" → Alerte critique
+   - Géofencing avancé : Entrée zone sécurisée, Sortie corridor autorisé
+
+3. Maintenance prédictive :
+   - Analyse vibrations moteur → Prédiction pannes
+   - Alertes entretien : "Prochaine vidange dans 500km"
+   - Suivi batterie capteurs : Remplacement préventif avant panne
+
+4. Intégration qualité :
+   - Corrélation données IoT avec réclamation client : "Température montée à 18°C pendant 2h → Explication avocats pourries"
+
+STACK :
+- IoT Gateway : MQTT broker (Mosquitto ou HiveMQ) ou Kafka IoT
+- Backend : Telegraf (collecte) + InfluxDB (séries temporelles) + NestJS (logique métier)
+- Frontend : Grafana embeddable ou Recharts custom pour graphes température
+- Hardware : Partenariat trackers (Geotab, Samsara, ou solutions locales)
+
+ALERTING :
+- PagerDuty/OpsGenie intégration pour alertes P0
+- WhatsApp Business API pour notifications chauffeurs
+```
+
+---
+
+## 💰 FINANCE & TRANSACTIONS
+
+### 16. Supervision Financière (Cashflow Temps Réel)
+```markdown
+Implémente le tableau de bord financier temps réel avec monitoring des flux de trésorerie plateforme.
+
+FONCTIONNALITÉS :
+1. Vue cashflow globale :
+   - Entrées : Commissions plateforme, Frais transport, Abonnements premium
+   - Sorties : Reversements agriculteurs, Paiements transporteurs, Coûts infrastructure
+   - Solde temps réel : Wallet global plateforme + Trésorerie par pays (CI, Sénégal, etc.)
+
+2. Monitoring transactions :
+   - Liste live dernières transactions (WebSocket) : "Agriculteur X vient de recevoir 450€"
+   - Statuts : Pending → Processing → Completed | Failed
+   - Retry automatique : Échec paiement Mobile Money → 3 tentatives espacées
+
+3. Anomalies financières :
+   - Détection : Transaction anormalement élevée, Volume sortie > entrée (découvert), Concentration soudaine sur un wallet
+   - Blocage auto : Gel des fonds suspects en attendant validation humaine
+
+4. Prévisions :
+   - Projection trésorerie 30 jours basée sur paiements attendus (contrats en cours)
+   - Alertes seuil : "Alerte : Solde < 100k€ dans 5 jours si pas nouvelles entrées"
+
+STACK :
+- Frontend : Recharts (graphs flux), React-Financial-Charts (candlestick si marché de prix)
+- Backend : NestJS + PostgreSQL (transactions), Redis (cache temps réel)
+- Data : ETL vers ClickHouse pour analytics historiques
+- Sécurité : 2FA obligatoire pour transferts > 10k€, Segregation duties (validation double)
+
+RAPPORTS :
+- P&L quotidien automatique exporté (PDF/Excel)
+- Reconciliation bancaire automatique (matching entrées/sorties)
+```
+
+### 17. Escrow & Smart Contracts Governance
+```markdown
+Crée l'interface de gouvernance des smart contracts et gestion des fonds en escrow.
+
+CONCEPT : Fonds bloqués jusqu'à confirmation livraison (confiance sans intermédiaire humain)
+
+FONCTIONNALITÉS :
+1. Monitoring escrow actifs :
+   - Liste contrats en cours : Montant bloqué, Parties, Conditions libération, Date expiration
+   - Total fonds verrouillés : "2.4M€ en sécurisation actuellement"
+   - Répartition : Par statut (En attente pickup, En transit, Livré non confirmé)
+
+2. Gestion manuelle (override) :
+   - Libération forcée : Cas force majeure (catastrophe naturelle) ou accord parties
+   - Remboursement : Litige résolu en faveur acheteur → Retour fonds
+   - Gel prolongé : Investigation fraude prolongée
+
+3. Déploiement smart contracts :
+   - Templates : Contrat standard céréales, Contrat périssable (conditions température), Contrat export international
+   - Configuration : Durée max, Pénalités retard, Médiations arbitrage
+   - Audit code : Vérification automatique vulnérabilités avant déploiement
+
+4. Historique blockchain :
+   - Vue exhaustive : Création → Fonds versés → Événements livraison → Libération
+   - Preuve : Hash transaction, Gas utilisé, Timestamp immuable
+
+STACK :
+- Blockchain : Hyperledger Fabric (Chaincode Go) pour exécution, IPFS pour stockage documents contrat
+- Backend : NestJS + Web3.js interaction chain, PostgreSQL (indexation rapide)
+- Frontend : React, ethers.js pour affichage données on-chain
+- Sécurité : Multisig pour actions critiques (2 admin nécessaires)
+
+COMPLIANCE :
+- Traçabilité complète pour audits financiers (Banque Centrale UEMOA)
+- Respect réglementation escrow local par pays
+```
+
+### 18. Gestion des Paiements (Mobile Money & Wallets)
+```markdown
+Développe le hub de gestion des paiements multi-canaux adapté à l'Afrique.
+
+MOYENS DE PAIEMENT INTÉGRÉS :
+- Mobile Money : Orange Money, Wave, M-Pesa, MTN Mobile Money
+- Cartes bancaires : Visa/Mastercard (stripe-like)
+- Virement bancaire
+- Crypto stablecoins (USDC) pour international
+- Cash (via agents partenaires)
+
+FONCTIONNALITÉS :
+1. Configuration opérateurs :
+   - Paramétrage API par pays : Clés Orange Money CI, Wave Sénégal, etc.
+   - Monitoring santé connexions : "API Wave indisponible → Fallback Orange Money"
+   - Limites : Plafonds transactionnels par niveau KYC utilisateur
+
+2. Gestion wallets utilisateurs :
+   - Vue solde agrégée : Total fonds utilisateurs sur plateforme
+   - Historique détaillé par wallet : Recharges, Retraits, Transferts internes
+   - Reconciliation : Matching transactions internes vs confirmations opérateurs externes
+
+3. Retraits et liquidité :
+   - File d'attente retraits : Validation manuelle si > seuil
+   - Gestion agents cash : Carte des points de retrait cash disponibles
+   - Forecasting besoins liquidité : "Demain 50k€ de retraits prévus en zone Abidjan"
+
+4. Frais et commissions :
+   - Grille tarifaire configurable par corridor, par montant, par moyen paiement
+   - Simulation pour utilisateur : "Frais pour envoi 100€ : 2€"
+
+STACK :
+- APIs : Intégration directe opérateurs Mobile Money (REST/SOAP) ou aggregators (Paydunya, Flutterwave)
+- Backend : NestJS + Queue (Bull) pour retries asynchrones, PostgreSQL (ACID strict)
+- Sécurité : Chiffrement clés API (Vault), Webhook signature vérification
+- Frontend : Interface admin avec possibilité remboursement manuel, annulation transaction en attente
+
+ALERTING :
+- Alerte solde faible opérateur (prévenir rupture service)
+- Détection fraude pattern : "Même compte rechargé 10x en 1h"
+```
+
+### 19. Tarification Dynamique (Algorithmes Prix)
+```markdown
+Crée le moteur et l'interface de tarification dynamique pour les transporteurs et commissions plateforme.
+
+ALGORITHMES :
+- Transport : Basé distance, difficulté route (piste vs goudron), saisonnalité (saison pluie +30%), demande (urgence), offre (nb camions dispo)
+- Commission plateforme : Grille progressive selon volume utilisateur
+
+FONCTIONNALITÉS :
+1. Configuration règles :
+   - Éditeur règles visuel : "Si distance > 200km ET poids > 5t ALORS prix = base × 1.5"
+   - Zones géographiques : Polygones sur carte avec coefficients (ex: Zone difficile accès × 1.3)
+   - Surcharges : Nuit +20%, Week-end +15%, Urgence < 2h +50%
+
+2. Simulation et A/B testing :
+   - Calculateur : "Trajet Abidjan → Bouaké, 10 tonnes, demain" → Prix estimé avec détail calcul
+   - Impact business : "Si je baisse commission de 1%, impact revenus mensuels : -X€ mais +Y transactions"
+
+3. Monitoring acceptation :
+   - Taux conversion offres prix par algorithme vs manuel
+   - Rétroaction : Transporteur refuse mission trop basse payée → Ajustement algo
+
+4. Historique évolutions :
+   - Log modifications tarifaires (qui a changé quoi quand)
+   - Comparaison périodes : Revenus T1 (algo v1) vs T2 (algo v2)
+
+STACK :
+- Moteur pricing : Python (Pandas pour calculs complexes) ou Node-RED (règles métier visuelles)
+- Backend : Redis pour cache tarifs courants (calculés toutes les heures)
+- Frontend : React avec canvas carte interactive (dessin zones tarifaires)
+- Data : TimeScaleDB pour historique prix (séries temporelles)
+
+CONTRAINTES :
+- Transparence obligatoire : Afficher détail calcul à utilisateur (éviter sentiment arnaque)
+- Plafonnement : Prix max réglementé pour denrées essentielles (crise alimentaire)
+```
+
+### 20. Commissions & Revenus (Monétisation)
+```markdown
+Implémente le système de tracking et optimisation des revenus plateforme (SaaS + Commission).
+
+MODÈLES DE REVENUS :
+- Commission sur transactions (%, dégressif selon volume)
+- Abonnements premium (feature freemium)
+- Commission transport
+- Data monetization (rapports marché anonymisés)
+- Services value-added (KYC payant, Assurance intégrée)
+
+FONCTIONNALITÉS :
+1. Dashboard revenus :
+   - MRR (Monthly Recurring Revenue) pour abonnements
+   - Breakdown : "Cette semaine : 60% commissions vente, 30% transport, 10% abonnements"
+   - LTV (Lifetime Value) par segment : Agriculteur vs Acheteur vs Transporteur
+
+2. Gestion abonnements :
+   - Plans : Free, Pro (analytics avancés), Enterprise (API accès)
+   - Upgrade/Downgrade automatique avec prorata
+   - Churn analysis : Qui résilie et pourquoi (exit survey)
+
+3. Facturation et taxes :
+   - Génération factures mensuelles automatiques (PDF)
+   - Gestion TVA/multi-taxes selon pays (CI, Sénégal, Ghana différents)
+   - Export comptable : FEC (Fichier des Écritures Comptables) format français
+
+4. Partage revenus :
+   - Split payments automatiques : "Vente 1000€ → Agriculteur 900€, Plateforme 80€, Transporteur 20€"
+   - Gestion reversements partenaires (coopératives qui apportent clients)
+
+STACK :
+- Billing : Stripe (international) + Paydunya (local) + Custom pour Mobile Money
+- Backend : NestJS + PostgreSQL (facturation), event sourcing pour audit complet
+- Frontend : Graphiques revenus (Recharts), tableaux factures
+- Comptabilité : Export vers Cegid, Sage, ou format Excel standard
+
+ANALYTICS :
+- CAC (Customer Acquisition Cost) par canal (Facebook, Terrain, Partenariats)
+- Payback period par utilisateur
+- Prévisions revenus (Machine Learning sur croissance historique)
+```
+
+---
+
+## 🤖 INTELLIGENCE ARTIFICIELLE
+
+### 21. ML Model Management (MLOps)
+```markdown
+Crée l'interface de gestion des modèles Machine Learning en production (MLOps).
+
+MODÈLES GÉRÉS :
+- Yield Predictor (Prédiction rendement)
+- Price Prediction (Prédiction prix marché)
+- Quality Computer Vision (Qualité visuelle produits)
+- Route Optimizer (OR-Tools)
+- Fraud Detection (Détection anomalies)
+
+FONCTIONNALITÉS :
+1. Registry modèles :
+   - Liste versions : v2.4.1 (Prod), v2.5.0 (Staging), v3.0.0 (Dev)
+   - Métadonnées : Date entraînement, Dataset utilisé (hash), Accuracy, F1-score, Temps inférence
+   - Artefacts : Stockage modèles (pickle/h5) versionnés (MinIO/DVC)
+
+2. Monitoring performance :
+   - Drift detection : "Accuracy passée de 94% à 87% en 7 jours → Alerte"
+   - Data quality : Distribution entrées vs training set (si shift, retraining nécessaire)
+   - Latence : Temps moyen prédiction (objectif < 200ms)
+
+3. Cycle de vie :
+   - Déclenchement retraining : Manuel (bouton) ou Auto (si drift détecté)
+   - Pipeline entraînement : Data extraction → Preprocessing → Training → Validation → Déploiement
+   - A/B testing : Route 10% trafic vers nouveau modèle, comparaison performance
+
+4. Explicabilité (XAI) :
+   - SHAP values : Pourquoi le modèle a prédit 45 tonnes pour cette parcelle ?
+   - Feature importance : Quels facteurs pèsent le plus dans la décision
+
+STACK :
+- MLOps : MLflow ou Weights & Biases pour tracking expériences
+- Backend : Python FastAPI (serving modèles avec FastText/TensorFlow Serving)
+- Frontend : React, graphiques performance (TensorBoard embed ou custom)
+- Infrastructure : Kubernetes (pods GPU pour training), Scaling to zero pour inférence (Knative)
+
+COLLABORATION :
+- Notebooks intégrés (JupyterHub) pour data scientists
+- Validation humaine avant mise prod : Workflow approbation Data Lead
+```
+
+### 22. Data Quality (Intégrité Données)
+```markdown
+Implémente le centre de qualité des données agricoles et logistiques.
+
+RÈGLES DE QUALITÉ :
+- Complétude : Champs obligatoires renseignés (ex: GPS parcelle obligatoire)
+- Cohérence : Date récolte > Date semis, Poids livré ≤ Poids chargé + marge
+- Fraîcheur : Données IoT < 1h sinon alerte capteur mort
+- Unicité : Pas de doublons agriculteurs (même téléphone = fusion)
+- Précision : Coordonnées GPS valides (dans pays concerné)
+
+FONCTIONNALITÉS :
+1. Dashboard qualité :
+   - Score global qualité données (0-100%)
+   - Répartition par type : Utilisateurs 95%, Parcelles 78%, Transactions 99%
+   - Trend : Évolution qualité sur temps (objectif : amélioration continue)
+
+2. Profilage automatique :
+   - Analyse distribution valeurs : "Champ 'Surface' : 90% entre 1-10ha, mais 5 valeurs > 1000ha (erreurs saisie)"
+   - Détection outliers : "Agriculteur produit 50 tonnes de maïs sur 0.5ha (impossible)"
+   - Suggestions correction : "Remplacer 'Abidjan' par 'Abidjan, Côte d\'Ivoire' pour standardisation"
+
+3. Data cleaning workflows :
+   - Interface validation humaine : Liste anomalies détectées → Accepter/Rejeter/Corriger
+   - Merge suggestions : "Ces 2 comptes semblent être la même personne (nom similaire, téléphone identique) → Fusionner ?"
+   - Normalisation : Conversion unités (sac de 50kg vs 100kg), Harmonisation noms produits
+
+4. Lignage (Lineage) :
+   - Origine données : "Cette prédiction rendement utilise données capteur X, satellite Y, météo Z"
+   - Impact analysis : "Si je corrige cette donnée historique, quelles prédictions sont affectées ?"
+
+STACK :
+- Data quality : Great Expectations (framework Python) ou Soda Core
+- Backend : PostgreSQL pour stockage règles, Airflow pour scheduling checks
+- Frontend : Interface revue anomalies type "Inbox" (priorisées)
+- Data catalog : Amundsen ou DataHub pour découverte datasets
+
+MÉTRIQUES :
+- % données conformes aux règles métier
+- Temps moyen résolution anomalies
+- Coût données incorrectes (litiges, erreurs livraison évitées)
+```
+
+### 23. Prédictions & Forecasting
+```markdown
+Crée l'interface de visualisation des prédictions ML pour le business planning.
+
+CATÉGORIES DE PRÉDICTIONS :
+- Yield : Tonnes attendues par région/culture (horizon 1-3 mois)
+- Price : Évolution prix marché (court terme 1 semaine, long terme 1 an)
+- Demand : Volume achat anticipé par les industriels
+- Weather : Impact météo sur production (sécheresse, excès pluie)
+- Logistics : Pic activité transport (saisonnalité)
+
+FONCTIONNALITÉS :
+1. Vue forecasting :
+   - Graphiques multi-courbes : Réel (historique) vs Prévu vs Intervalle confiance
+   - Sélecteur horizon : J+7, J+30, M+3, M+12
+   - Granularité : Global, Par pays, Par région, Par coopérative
+
+2. Scénarios what-if :
+   - Simulation : "Si sécheresse niveau 3 frappe région Nord dans 2 semaines, impact production ?"
+   - Ajustement paramètres : "Supposer croissance demande +15% → Besoin combien camions supplémentaires ?"
+
+3. Alertes prédictives :
+   - "Risque pénurie tomates dans 3 semaines (prédiction) → Suggérer importation anticipation"
+   - "Pic demande transport prévu semaine prochaine → Activer recrutement temporaire"
+
+4. Accuracy tracking :
+   - Comparaison prédictions vs réalité passée : "Il y a 3 mois, on prédisait 500T, réalisé 480T (erreur 4%)"
+   - Amélioration modèles : Graphique précision over time
+
+STACK :
+- Frontend : Recharts, vis.js pour timeline, React-datepicker range
+- Backend : Python Prophet (Facebook) ou ARIMA pour séries temporelles, API FastAPI
+- Data : TimescaleDB pour stockage prédictions historiques
+- Calculs : Parallélisation prédictions régionales (Celery workers)
+
+EXPORTS :
+- Rapports prévisionnels pour banques (planification crédit agricole)
+- Intégration calendrier planning interne
+```
+
+### 24. Anomalies Detection (Fraude & Comportements)
+```markdown
+Développe le centre de détection des anomalies et fraude basé sur l'IA.
+
+TYPES D'ANOMALIES DÉTECTÉES :
+- Fraude financière : Wash trading (auto-vente pour gonfler volume), Money laundering (fractionnement paiements)
+- Fraude documentaire : Fausses certifications, Documents falsifiés (OCR analysis)
+- Fraude logistique : Vol marchandise (détournement camion), Ghost trips (trajets fictifs)
+- Comportement atypique : Connexion impossible (localisation), Volume soudain anormal, Changement pattern habituel
+
+FONCTIONNALITÉS :
+1. Vue anomalies temps réel :
+   - Score risque utilisateur (0-100) : Vert (normal), Orange (surveillance), Rouge (investigation)
+   - Carte chaleur anomalies géographiques : "Zone Yamoussoukro : pic fraudes cette semaine"
+   - Timeline incidents : Chronologie détections avec sévérité
+
+2. Investigation :
+   - Profil comportemental : "Utilisateur X : habituellement connecté d'Abidjan, aujourd'hui Lagos + transactions x10"
+   - Réseau relations : Graph connexions (même IP, même téléphone, transactions entre suspects)
+   - Preuves gathering : Agrégation données techniques (logs, IP, device fingerprint)
+
+3. Actions :
+   - Blocage automatique : Si score > 90, suspension temporaire compte + notification admin
+   - Challenge : 2FA supplémentaire si comportement suspect mais pas confirmé fraude
+   - Liste blanche : Marquer comportement légitime exceptionnel (ex: agriculteur qui voyage)
+
+4. Apprentissage :
+   - Feedback loop : Admin indique "Vrai positif" ou "Faux positif" → Réentraînement modèle
+   - Nouveaux patterns : Détection automatique types fraude émergents (unsupervised learning)
+
+STACK :
+- IA : Isolation Forest (anomalies), XGBoost (classification fraude), Graph Neural Networks (réseaux)
+- Backend : Python scikit-learn/TensorFlow, streaming Kafka pour detection temps réel
+- Frontend : React, D3.js pour graph réseau relations, tableaux détaillés transactions suspects
+- Data : Feature store (Feast) pour stockage caractéristiques utilisateurs historiques
+
+CONFIDENTIALITÉ :
+- Accès limité Fraud Officer (pas tous admins)
+- Anonymisation données dans logs investigation
+- Droit explication : Pourquoi compte bloqué (GDPR)
+```
+
+---
+
+## 📡 INFRASTRUCTURE & IOT
+
+### 25. Device Management (Gestion Capteurs)
+```markdown
+Crée le système de gestion complète des devices IoT (capteurs, drones, stations météo).
+
+FONCTIONNALITÉS :
+1. Inventaire devices :
+   - Registre complet : ID unique, Type (capteur sol, drone, station météo), Localisation, Propriétaire
+   - Statuts : Online, Offline, Maintenance, Décommissionné
+   - Lifecycle : Date achat, Garantie, Historique pannes, Coût maintenance total
+
+2. Onboarding :
+   - QR Code pairing : Scan pour enregistrer nouveau capteur
+   - Configuration à distance : Fréquence envoi données (5min, 1h, 1jour), Seuils alertes
+   - Calibration : Procédures étalonnage capteurs (dernière date, prochaine due)
+
+3. Monitoring santé :
+   - Battery level tracking : Prédiction date batterie vide
+   - Signal strength : Qualité connexion réseau (2G/3G/LoRa)
+   - Firmware : Versions installées, OTA updates (Over The Air) push
+
+4. Gestion groupée :
+   - Actions massives : "Mettre à jour firmware tous capteurs zone Abidjan", "Changer fréquence rapport zone pluvieuse"
+   - Géofencing maintenance : "Tous devices dans rayon 50km technicien X"
+
+STACK :
+- IoT Protocol : MQTT (HiveMQ/EMQX) ou CoAP selon devices
+- Backend : ThingsBoard ou Node-RED pour logique IoT, NestJS pour métier
+- Frontend : React, carte devices, formulaires configuration
+- Base : InfluxDB (métriques temporelles devices)
+
+INTÉGRATIONS :
+- Fournisseurs hardware : Partenariats API constructeurs (Adeunis, Dragino, etc.)
+- Réseaux : Sigfox, LoRaWAN, NB-IoT selon couverture pays
+```
+
+### 26. Network Health (Connectivité Rurale)
+```markdown
+Implémente le monitoring de la connectivité réseau dans les zones rurales (critique pour adoption).
+
+FONCTIONNALITÉS :
+1. Carte couverture :
+   - Layer réseau : Zones 4G/3G/2G/Offline basé données devices et app utilisateurs
+   - Heatmap qualité connexion : Latence moyenne, Taux packet loss par zone
+   - Identification "Dead zones" : Zones sans couverture nécessitant solutions alternatives (satellite, radio)
+
+2. Monitoring performance :
+   - Métriques temps réel : Bande passante disponible, Latence API, Taux erreur réseau
+   - Impact business : "Zone X offline depuis 2h → 15 agriculteurs incapables de publier offres"
+   - SLA par opérateur : MTTR (Mean Time To Repair) engagement vs réel Orange, MTN, etc.
+
+3. Optimisation :
+   - Cache intelligent : Quelles données précharger quand connexion revient
+   - Sync différenciée : Priorité données critiques (prix) vs analytics (différable)
+   - Compression : Optimisation payloads pour faible bande passante
+
+4. Planification expansion :
+   - Identification zones prioritaires : "Zone Y a 200 agriculteurs actifs mais mauvaise connexion → Négociation partenariat opérateur"
+   - ROI connexion : Coût amélioration infrastructure vs revenus additionnels générés
+
+STACK :
+- Monitoring : Prometheus (réseau), Nagios, ou outils spécifiques télécoms
+- Data : Ping tests réguliers depuis devices, logs connexion apps
+- Frontend : Carte choroplèthe qualité réseau, graphes uptime
+
+SOLUTIONS BACKUP :
+- Store & Forward : Queue locale sur devices si offline
+- SMS fallback : Notifications critiques par SMS si data unavailable
+- Satellite : Intégration Iridium/Inmarsat pour zones très isolées (coûteux, données minimales)
+```
+
+### 27. Data Pipeline (Streaming Architecture)
+```markdown
+Crée l'interface de monitoring et gestion du pipeline de données temps réel (Kafka).
+
+ARCHITECTURE DATA FLOW :
+Devices IoT → MQTT → Kafka → Consumers → TimescaleDB/ClickHouse → API → Frontend
+
+FONCTIONNALITÉS :
+1. Vue topologie pipeline :
+   - Schéma architecture : Producteurs (sources) → Topics Kafka → Consumers (services) → Sinks (BDD)
+   - Débit temps réel : Messages/sec par topic, Lag consumers (retard traitement)
+   - Visualisation type "River flow" : Épaisseur flux = volume données
+
+2. Monitoring santé :
+   - Kafka brokers status : Leaders, Replicas, Disk usage
+   - Consumer groups : Offset position, Rebalancing events
+   - Dead letter queues : Messages en erreur à réintégrer ou jeter
+
+3. Gestion données :
+   - Replay : "Rejouer événements des dernières 24h après correction bug"
+   - Routing : "Rediriger données capteurs zone X vers nouveau microservice"
+   - Retention policy : Configuration durée vie données par criticité (7j opérationnel, 1an analytics, 5 ans légal)
+
+4. Qualité pipeline :
+   - Schema validation : Evolution schémas (Avro/Protobuf) avec compatibilité
+   - Data lineage : D'où vient cette valeur en base (trace complete source → transformations)
+   - Latence end-to-end : Capteur sol → Dashboard (objectif < 5s)
+
+STACK :
+- Kafka UI : Kafdrop, AKHQ, ou Confluent Control Center (self-hosted)
+- Backend : Kafka Connect pour intégrations, Kafka Streams pour processing
+- Monitoring : Prometheus exporters (Kafka), Grafana dashboards
+- Frontend : Custom React ou intégration outils existants
+
+SCALABILITY :
+- Auto-scaling consumers selon lag
+- Partitioning stratégique (par région géographique)
+- Compression données (Snappy/LZ4) pour économie bande passante
+```
+
+### 28. Satellite Imagery Management
+```markdown
+Crée le système de gestion des images satellites (Sentinel-2, Landsat, éventuellement très haute résolution).
+
+FONCTIONNALITÉS :
+1. Catalogue images :
+   - Recherche spatiale : Sélection zone carte → Liste images disponibles
+   - Filtres temporels : Date acquisition, Couverture nuageuse %, Type capteur
+   - Métadonnées : Résolution (10m, 30m), Bandes spectrales disponibles (RGB, NIR, SWIR)
+
+2. Traitement à la demande :
+   - Calcul indices : NDVI, NDWI, EVI automatiques sur sélection
+   - Compositing : "Image sans nuages" = mosaic meilleures acquisitions sur période
+   - Téléchargement : Export GeoTIFF, PNG, ou integration directe Digital Twin
+
+3. Analyse changement :
+   - Détection déforestation : Comparaison 2 dates → Alertes nouvelles clairières
+   - Suivi urbanisation : Expansion zones bâties sur terres agricoles
+   - Estimation biomasse : Production matière sèche totale région
+
+4. Gestion coûts :
+   - Usage tracking : Volume données téléchargées (certains providers facturent au Go)
+   - Cache local : Stockage images fréquemment accédées (MinIO) vs re-fetch
+   - Sélection source : Sentinel (gratuit) vs Planet Labs (payant haute résolution) selon besoin
+
+STACK :
+- Données : Google Earth Engine (API Python), Copernicus Open Access Hub, AWS Earth
+- Processing : Python Rasterio/GDAL, xarray pour manipulation données multidimensionnelles
+- Stockage : COG (Cloud Optimized GeoTIFF) sur S3/MinIO, tuilage pour web (XYZ tiles)
+- Frontend : Leaflet/MapLibre pour affichage couches satellite
+
+AUTOMATISATION :
+- Acquisition automatique : Tâches planifiées récupération nouvelles images zone couverte
+- Alertes : "Nouvelle image disponible parcelle X depuis hier → Lancer analyse NDVI"
+```
+
+---
+
+## 📊 ANALYTICS & RAPPORTING
+
+### 29. Analytics Avancés (BigQuery/ClickHouse)
+```markdown
+Implémente l'interface analytics avancée pour l'analyse exploratoire des données (OLAP).
+
+FONCTIONNALITÉS :
+1. Query builder visuel :
+   - Interface drag & drop : Sélection tables → Jointures → Filtres → Agrégations
+   - SQL mode : Édition directe avec autocomplétion schéma et syntax highlighting
+   - Sauvegarde requêtes : Bibliothèque queries réutilisables (ex: "Marge par produit mensuelle")
+
+2. Dashboards custom :
+   - Création widgets : Graphes (ligne, bar, camembert, carte), Tableaux, KPIs simples
+   - Filtres globaux : Période, Région, Produit (s'appliquent à tous widgets)
+   - Partage : Liens publics (lecture seule) ou export PDF
+
+3. Exploration données :
+   - Drill-down : "Clic sur barre 'Janvier' → Détail jour par jour"
+   - Pivot tables : Croisement variables (Agriculteurs vs Produits vs Mois)
+   - Anomalies : Détection automatique points aberrants dans séries temporelles
+
+4. Performance :
+   - Cache requêtes : Résultats mis en cache 1h si données inchangées
+   - Limites : Max 1M lignes retournées, Timeout 30s (forcer filtres)
+   - Explications plan exécution : "Cette query scanne 50M lignes → Optimiser index"
+
+STACK :
+- Backend : ClickHouse (colonne, rapide) ou BigQuery (serverless), API Node.js façade
+- Frontend : Apache Superset (embeddable) ou custom React avec react-grid-layout
+- Visualisation : Recharts, Deck.gl pour cartes, AgGrid pour tableaux données
+
+SÉCURITÉ :
+- Row-level security : Utilisateur ne voit que données de sa région assignée
+- Audit queries : Log qui a interrogé quelles données (RGDP sensitive)
+```
+
+### 30. Cartographie de Chaleur (Flux Agricoles)
+```markdown
+Crée les visualisations cartographiques avancées des flux agricoles et logistiques.
+
+TYPES DE CARTES :
+- Flux (Flow map) : Origine → Destination avec épaisseur flèche = volume
+- Chord diagram : Connexions entre régions (qui vend à qui)
+- Heatmap densité : Concentration production, problèmes qualité, densité transporteurs
+- 3D extrusion : Volumes par région en hauteur (deck.gl)
+
+FONCTIONNALITÉS :
+1. Analyse flux :
+   - Filtres temporels : Flux saisonniers (hier vs campagne 2024)
+   - Typologie : Flux par produit, par acteur (coopérative vs individuel)
+   - Bilan zones : "Région X produit 1000T, exporte 800T, consomme 200T"
+
+2. Optimisation visuelle :
+   - Identification goulots étranglement : Routes saturées, points passage frontière lents
+   - Suggestion nouveaux corridors : "Si route A saturée, alternative B sous-utilisée mais 20% plus longue"
+
+3. Simulation :
+   - Impact fermeture : "Si pont Y fermé, détournement impacte 30% livraisons zone Z"
+   - Scénario nouvelle infrastructure : "Si nouvelle route construite, gain temps estimé : X%"
+
+4. Temps réel vs Historique :
+   - Toggle : Vue animée 24h dernières (camions en mouvement) vs cumul annuel
+
+STACK :
+- Frontend : MapLibre GL + deck.gl (grands volumes données), D3.js pour overlays SVG
+- Data : PostGIS (calculs géospatiaux), GeoJSON flux générés backend
+- Backend : Python GeoPandas pour traitement spatial, tippecanoe pour tuilage vectoriel
+
+EXPORT :
+- Cartes statiques PNG pour rapports institutionnels (Banque Mondiale, État)
+- Données brutes GeoJSON pour autres outils SIG (QGIS, ArcGIS)
+```
+
+### 31. Performance KPIs (SLA & Système)
+```markdown
+Développe le dashboard de performance technique et business SLA.
+
+KPIs MÉTIERS (SaaS) :
+- Uptime plateforme : Objectif 99.9% (hors maintenance planifiée)
+- Latence API : p95 < 200ms, p99 < 500ms
+- Taux erreur : < 0.1% requêtes 5xx
+- Satisfaction : NPS utilisateurs mensuel
+
+KPIs MÉTIERS (Agricole) :
+- Temps moyen entre offre et vente (liquidity)
+- Taux réussite livraison (on-time, in-full)
+- Réduction pertes post-récolte (% vs baseline 40%)
+- Inclusion financière : Nb agriculteurs bancarisés via Agri-Score
+
+FONCTIONNALITÉS :
+1. Vue système temps réel :
+   - Métriques infra : CPU/RAM/Disque par service, Queue depth Kafka, Connections DB
+   - Health checks : Status page publique (inspiré GitHub status)
+   - Alertes : PagerDuty intégration si dégradation
+
+2. SLA monitoring :
+   - Contrats internes : "API Search doit répondre < 100ms"
+   - Historique disponibilité : Uptime mensuel par service
+   - Pénalités calcul : "Si SLA < 99%, crédit client automatique X€"
+
+3. Business performance :
+   - Funnel conversion : Inscription → KYC validé → Première vente → Récurrent
+   - Cohort analysis : Rétention utilisateurs par mois inscription
+   - LTV vs CAC par canal acquisition
+
+4. Benchmarking :
+   - Comparaison pays : "CI vs Sénégal : Taux adoption mobile app"
+   - Objectifs vs Réalité : Jauge progression vers OKRs trimestriels
+
+STACK :
+- Monitoring : Prometheus (métriques), Grafana (dashboards techniques), intégration iframe ou API
+- APM : Jaeger (distributed tracing), Sentry (erreurs)
+- Frontend : React, Recharts pour tendances, tableaux données
+- Data : Métriques système → Prometheus → API custom pour enrichissement métier
+
+RAPPORTS :
+- Rapport automatique hebdomadaire email à direction (PDF généré)
+- Export données brutes pour analyse externe
+```
+
+### 32. Export & Compliance (Régulateurs)
+```markdown
+Crée le système d'export de données pour conformité réglementaire et audits externes.
+
+BESOINS RÉGULATEURS :
+- Banques Centrales UEMOA : Flux transfrontaliers, Preuve solvabilité partenaires
+- Douanes : Traçabilité origine produits exportés
+- Impôts : Déclarations revenus plateforme, TVA collectée
+- Normes internationales : EUDR (EU Deforestation Regulation), FairTrade
+
+FONCTIONNALITÉS :
+1. Génération rapports standards :
+   - Templates prédéfinis : "Rapport mensuel transactions", "Certification origine lot X", "Audit KYC annuel"
+   - Formats : PDF (tampon qualité), Excel (analyse), XML (soumission automatique autorités), JSON (API tierces)
+
+2. Programmation :
+   - Envoi automatique : "Tout 1er du mois, envoyer rapport transactions à Banque Centrale CI"
+   - Archivage sécurisé : Stockage 10 ans avec chiffrement (oblégation légale)
+
+3. Pseudonymisation :
+   - Export public : Données agrégées, anonymisées (pas nom individuel)
+   - Export confidentiel : Données brutes avec justification accès (audit financier)
+
+4. Traçabilité exports :
+   - Log : Qui a généré quel rapport quand, destinataire
+   - Validation : Workflow approbation avant envoi externe (juridique valide)
+
+STACK :
+- Reporting : Jasper Reports ou Puppeteer (génération PDF depuis HTML)
+- Data : Requêtes SQL paramétrées, export CSV/Excel (SheetJS)
+- Sécurité : Signature électronique rapports, Watermark "Confidentiel"
+- Workflow : Temporal.io ou cadence pour orchestration génération lourde
+
+INTÉGRATIONS :
+- APIs gouvernementales : Soumission directe certains formulaires (si disponible)
+- Partenaires : Export automatique vers systèmes ERP des grands acheteurs (SAP, Oracle)
+```
+
+---
+
+## 🌍 EXPANSION & MARKETPLACE
+
+### 33. Partenariats (Banques, Assurances, Coopératives)
+```markdown
+Crée le CRM et tableau de bord de gestion des partenariats stratégiques.
+
+TYPES PARTENAIRES :
+- Financiers : Microfinance, Banques agricoles, Assureurs (récolte, transport)
+- Logistiques : Compagnies maritime (export), Entreposage froid, Stations essence
+- Agricoles : Coopératives, Instituts recherche agronomique, Fournisseurs intrants (engrais)
+- Tech : Fournisseurs IoT, Opérateurs télécom, Cloud providers
+
+FONCTIONNALITÉS :
+1. Pipeline partenariats :
+   - Kanban : Prospection → Négociation → Signé → Actif → Renouvellement
+   - Valeur estimée : CA potentiel par partenaire, Taux conversion étape → étape
+   - Assignation : Account manager responsable, date prochaine action
+
+2. Suivi performance :
+   - KPIs par partenaire : Volume transactions générées, Commission versée, Satisfaction (NPS interne)
+   - Alertes renouvellement : "Contrat Orange Money expire dans 60 jours"
+
+3. Portail partenaires :
+   - Dashboard self-service : Stats transactions via leur canal, Rapports commission
+   - Intégration API : Tokens API génération, Documentation technique, Monitoring usage
+
+4. Gestion contractuelle :
+   - Stockage contrats : Dates clés, Clauses spéciales, Pénalités
+   - Workflow validation : Juridique, Finance, Direction avant signature
+
+STACK :
+- CRM : HubSpot/Salesforce embeddable ou custom (PostgreSQL + React)
+- Documents : DocuSign/HelloSign intégration signature électronique
+- Portail : Next.js séparé ou section admin isolée (authentification JWT partenaire)
+
+RAPPORTS :
+- Matrice partenariats : Type vs Pays vs Statut
+- Impact business : % CA généré par canal partenaire vs direct
+```
+
+### 34. Expansion Géo (Multi-pays UEMOA)
+```markdown
+Développe le module de gestion de l'expansion géographique et multi-pays.
+
+FONCTIONNALITÉS :
+1. Configuration pays :
+   - Paramètres par pays : Devise (CFA, Cedi, Naira), Langue, Fuseau horaire, Réglementation spécifique (TVA, Transport)
+   - Activation fonctionnalités : "Activer paiement Wave en Côte d'Ivoire seulement"
+   - Équipes locales : Assignation admins par pays (data residency)
+
+2. Monitoring expansion :
+   - Tableau croisé : Pays × Métriques (Utilisateurs, Transactions, Revenus, NPS)
+   - Comparaisons : "Sénégal en mois 6 vs Côte d'Ivoire en mois 6"
+   - Objectifs : Jauges progression vers cibles (ex: 10k utilisateurs Ghana)
+
+3. Localisation opérationnelle :
+   - Traductions : Interface gestion clés i18n, validation traducteurs locaux
+   - Adaptation produit : "En Éthiopie, ajouter champ 'Certification café spécifique'"
+   - Support : Routing tickets vers équipe parlant langue locale
+
+4. Conformité multi-juridictions :
+   - Data residency : Stockage données utilisateurs CI en CI, Sénégal au Sénégal (souveraineté)
+   - Protection données : RGPD (export EU), lois locales protection données
+
+STACK :
+- Backend : NestJS avec decorator @Country() pour routing logique, PostgreSQL (partitionnement par pays)
+- Frontend : React-intl pour i18n, drapeaux et contexte local dans UI
+- Legal : Checklist conformité interactive par pays
+
+OUTILS EXPANSION :
+- Simulation lancement : Coût acquisition client estimé par pays, Break-even analysis
+- Benchmark marché : Données externes (surface agricole, nb tracteurs, concurrence) intégrées
+```
+
+### 35. White Label & API Tierces
+```markdown
+Crée le système de gestion des solutions White Label et API pour tiers.
+
+FONCTIONNALITÉS :
+1. Gestion marques blanches :
+   - Instances dédiées : "Coopérative Y veut sa propre app avec son logo"
+   - Configuration : Logo, Couleurs, Domaine custom (agri.coop-y.com), Features activées (on/off)
+   - Isolation données : Séparation complète base données ou row-level security
+
+2. API Management :
+   - Developer portal : Documentation OpenAPI/Swagger, SDKs (JS, Python, PHP)
+   - Clés API : Génération, Rotation automatique, Révocation
+   - Rate limiting : Tiers gratuit (100 req/jour), Enterprise (10k req/heure)
+   - Monitoring usage : Quels endpoints utilisés par quel partenaire, Alertes si quota dépassé
+
+3. Webhooks :
+   - Configuration endpoints : URLs callback, Types événements (Nouvelle offre, Livraison effectuée), Retry policy
+   - Logs delivery : Statut livraison webhook (200 OK vs Timeout), Possibilité replay
+
+4. Monetization API :
+   - Facturation usage : "0.01€ par appel API au-delà package inclus"
+   - Packages : Starter, Business, Enterprise avec grilles fonctionnalités
+
+STACK :
+- Gateway : Kong ou AWS API Gateway pour rate limiting, authentification
+- Documentation : Swagger UI ou ReadMe/Stoplight embeddable
+- Multi-tenant : Architecture schema-based (PostgreSQL) ou database-based selon isolation requise
+- Facturation : Stripe usage-based billing
+
+SÉCURITÉ :
+- Validation webhook signatures (HMAC)
+- CORS strict par domaine autorisé
+- Audit complet appels API (qui, quoi, quand, IP)
+```
+
+---
+
+## 📝 CONTENU & COMMUNICATION
+
+### 36. Centre de Notifications (Multi-canal)
+```markdown
+Implémente le centre de commande des notifications Push, SMS et Email.
+
+CANAUX :
+- Push mobile : Firebase Cloud Messaging (FCM)
+- SMS : Twilio, Africa's Talking, ou opérateurs locaux
+- Email : SendGrid/AWS SES
+- WhatsApp Business : API officielle
+- In-app : Notification center dans apps
+
+FONCTIONNALITÉS :
+1. Campagnes marketing :
+   - Segmentation : "Tous agriculteurs maïs zone Nord + KYC validé + Non actifs 7 jours"
+   - Templates : Éditeur riche (MJML pour email responsive), Variables personnalisées {{nom}}
+   - A/B testing : Test sujet email A vs B sur 10% base, envoi gagnant à 90%
+
+2. Notifications transactionnelles :
+   - Templates liés événements : "Votre paiement de X€ confirmé", "Camion arrivé dans 15min"
+   - Priorisation : Transactionnel (immédiat) vs Marketing (batch nuit pour économie coûts SMS)
+
+3. Calendrier communications :
+   - Planification : "Envoyer rappel récolte semaine prochaine à tous concernés"
+   - Fréquence capping : Max 1 SMS/jour par utilisateur (éviter spam)
+
+4. Monitoring :
+   - Taux livraison : % SMS reçus (delivery reports), % Emails ouverts (open rate)
+   - Bounces : Gestion numéros invalides, Unsubscribe automatique
+
+STACK :
+- Backend : NestJS + Queue (Bull) pour envoi asynchrone, Templates Handlebars/MJML
+- Frontend : Interface type Mailchimp (segments, stats, éditeur)
+- Fournisseurs : Multi-provider failover (Si Twilio down → Africa's Talking)
+
+RÈGLES MÉTIER :
+- Respect horaires locales : Pas de SMS après 20h ou avant 7h selon fuseau
+- Langue : Détection langue utilisateur pour contenu approprié
+- Coût optimisation : Push gratuit prioritaire vs SMS payant
+```
+
+### 37. Documentation & Centre d'Aide
+```markdown
+Crée le système de gestion de la documentation utilisateur et technique.
+
+TYPES DOCUMENTATION :
+- Utilisateur : Tutoriels app, FAQ, Guides (Comment publier une offre ?)
+- API : Référence technique endpoints, Exemples code
+- Interne : Runbooks incidents, Procédures onboarding employés
+
+FONCTIONNALITÉS :
+1. CMS Documentation :
+   - Édition : Markdown/WYSIWYG, Gestion versions (Git-based ou base de données)
+   - Organisation : Catégories, Tags, Recherche full-text (Elasticsearch)
+   - Multilingue : Synchronisation contenu FR ↔ EN ↔ PT
+
+2. Contextual help :
+   - Widget aide intégré : "?" sur chaque page expliquant fonctionnalité spécifique
+   - Tooltips interactifs : Walkthrough guidé première connexion (Product tour)
+
+3. Analytics contenu :
+   - Articles plus consultés, Temps passé, Taux résolution (utile vs inutile)
+   - Feedback : Pouce haut/bas sur chaque article
+
+4. Gestion communauté :
+   - Forum Q&A : Utilisateurs s'entraident, Modération, Best answers
+   - Webinaires : Planning sessions formation en ligne, Replay archivés
+
+STACK :
+- CMS : Strapi (headless) ou Notion embeddable, ou solution statique (Docusaurus)
+- Recherche : Algolia DocSearch ou Elasticsearch
+- Frontend : Next.js pour SEO optimal (documentation publique indexable)
+- Médias : Stockage vidéos tutoriel (Vimeo/YouTube unlisted ou self-hosted)
+
+INTÉGRATION :
+- Chat bot : RAG (Retrieval Augmented Generation) utilisant doc pour réponses auto
+- Tickets support : Lien "Créer ticket" si doc ne résout pas problème
+```
+
+### 38. Community Management (Forum Agriculteurs)
+```markdown
+Développe la plateforme communautaire pour les agriculteurs (réseau social interne).
+
+FONCTIONNALITÉS :
+1. Forum thématique :
+   - Catégories : Technique agricole, Marchés/prix, Matériel, Météo/Climat, Petites annonces
+   - Threads : Question/réponses, Système votes ( meilleures réponses remontent)
+   - Recherche : Historique discussions (knowledge base communautaire)
+
+2. Profils sociaux :
+   - Badges : "Expert Maïs", "Super Contributeur", "Nouveau venu"
+   - Réputation : Points gagnés par contribution utile (gamification)
+   - Messagerie : Contact direct entre membres (option désactivable)
+
+3. Contenu riche :
+   - Partage photos : Maladies cultures (crowdsourcing diagnostic IA), Réussites récoltes
+   - Vidéos : Tutoriels faits par agriculteurs (User Generated Content)
+   - Événements : Calendrier rencontres terrain, Journées portes ouvertes coopératives
+
+4. Modération :
+   - Signalement contenu : Communauté auto-modérée avec supervision admin
+   - Filtrage auto : IA détection contenu inapproprié/haineux
+   - Validation : Posts nouveaux utilisateurs en modération préventive si nécessaire
+
+STACK :
+- Forum : Discourse (open source robuste) ou Flarum (léger), ou custom (Node.js + MongoDB)
+- Médias : Compression images automatique, Modération AWS Rekognition (contenu explicite)
+- Notifications : Email récap quotidien nouveautés, Push mentions
+
+RÈGLES :
+- Charte communautaire claire (respect, pas de spam commercial)
+- Incitation participation : Récompenses monétaires pour meilleurs contributeurs (programme ambassadeurs)
+- Intégration métier : Lien automatique vers offres marketplace si agriculteur mentionne "Vends X"
+```
+
+---
+
+## ⚙️ SYSTÈME & CONFIGURATION
+
+### 39. Sécurité (Firewall, WAF, Intrusion Detection)
+```markdown
+Implémente le Security Operations Center (SOC) léger pour monitoring sécurité.
+
+FONCTIONNALITÉS :
+1. Dashboard menaces :
+   - Attaques temps réel : Carte origine IPs malveillantes, Types attaques (DDoS, XSS, Injection SQL)
+   - Blocages : Nombre requêtes bloquées par WAF (Web Application Firewall) - ModSecurity/CloudFlare
+   - Vulnérabilités : Scan automatique dépendances (npm audit, Snyk) → Liste CVE à patcher
+
+2. Gestion accès :
+   - Sessions actives : Qui est connecté depuis où (IP, Device), Possibilité déconnexion forcée
+   - Tentatives login échouées : Brute force detection, Blocage temporaire IPs suspectes
+   - 2FA management : Forçage 2FA pour rôle Admin, Backup codes génération
+
+3. Politiques sécurité :
+   - Password policy : Longueur min, Complexité, Rotation forcée périodique
+   - IP Whitelist : Accès admin restreint aux bureaux connus (VPN)
+   - Rate limiting config : Personnalisation par endpoint (/login strict, /api/public souple)
+
+4. Incident response :
+   - Playbooks : "Si ransomware détecté → Isoler serveurs → Restaurer backup → Communiquer"
+   - Simulation : Tests intrusion programmés (pentest interne)
+
+STACK :
+- WAF : CloudFlare ou AWS WAF (managed rules)
+- IDS : Snort ou Suricata (self-hosted) logs analysés
+- SIEM : Splunk ou ELK Stack (logs centralisés)
+- Scan : OWASP ZAP intégration CI/CD pour detection vulnérabilités avant prod
+
+COMPLIANCE :
+- Logs conservation : 1 an minimum (légal certains pays)
+- Chiffrement : Vérification TLS 1.3 everywhere, Certificats expiry monitoring
+```
+
+### 40. Backups & Disaster Recovery (DR)
+```markdown
+Crée l'interface de gestion des sauvegardes et plan de reprise d'activité.
+
+STRATÉGIE 3-2-1 :
+- 3 copies données, 2 médias différents, 1 hors site
+
+FONCTIONNALITÉS :
+1. Vue sauvegardes :
+   - Statuts : Dernière backup PostgreSQL (il y a 4h, Succès), MongoDB, Fichiers (S3)
+   - Taille : Évolution volume données (croissance prévisionnelle stockage)
+   - Intégrité : Test restore automatique mensuel (vérifie backup non corrompue)
+
+2. Plan reprise d'activité :
+   - RTO/RPO : Objectifs temps récupération (4h) et perte données max (15min)
+   - Procédures : Checklist étape par étape restauration
+   - Runbooks : Scripts automatiques basculement DNS vers infrastructure backup (DR site)
+
+3. Gestion versions :
+   - Point-in-time recovery : "Restaurer base données telle qu'hier à 14h"
+   - Archivage long terme : Backup mensuel conservé 5 ans (compliance)
+
+4. Tests réguliers :
+   - Simulations : Exercice DR tous les 6 mois (vrai basculement site secondaire)
+   - Rapports : Résultats tests, Améliorations identifiées
+
+STACK :
+- Backup : PostgreSQL (WAL archiving vers S3), MongoDB (mongodump), Velero (Kubernetes)
+- Stockage : S3 Glacier (archives long terme coût faible), Réplication cross-région
+- Automatisation : Ansible/Terraform pour reconstruction infrastructure from scratch
+
+ALERTING :
+- Alerte immédiate si backup échoue 2 fois consécutive
+- Alerte si temps restoration dépasse RTO lors tests
+```
+
+### 41. Feature Flags (A/B Testing & Déploiement)
+```markdown
+Développe le système de Feature Flags pour déploiement progressif et expérimentation.
+
+FONCTIONNALITÉS :
+1. Gestion flags :
+   - Toggle features : Activer/désactiver fonctionnalités sans redéploiement code
+   - Segmentation : "Nouveau dashboard visible que pour Admin CI" ou "10% utilisateurs aléatoires"
+   - Programmation : "Activer feature Vendredi 20h pour maintenance prévue"
+
+2. A/B Testing :
+   - Création expériences : Variante A (contrôle) vs B (nouveau design checkout)
+   - Métriques : Définition succès (taux conversion, temps passé)
+   - Résultats : Calcul significativité statistique, Gagnant auto-détecté ou manuel
+
+3. Kill switch :
+   - Bouton urgence : "Feature X cause erreurs → Désactiver immédiatement pour tous"
+   - Rollback automatique : Si error rate > 1% sur nouvelle feature, auto-revert
+
+4. Audit :
+   - Historique : Qui a activé quoi quand, Pourquoi (commentaire obligatoire)
+
+STACK :
+- Feature flags : LaunchDarkly, Unleash (open source), ou custom (Redis + config)
+- Analytics : Intégration avec Amplitude/Mixpanel pour suivi A/B
+- Backend : Middleware NestJS vérifiant flag avant exécution feature
+
+USAGE MÉTIER :
+- Beta testing : Nouvelle fonctionnalité IoT testée par 50 agriculteurs volontaires avant GA
+- Gradual rollout : Déploiement pays par pays pour détecter problèmes localisés
+- Maintenance : Mode "lecture seule" activable pendant migrations base de données
+```
+
+### 42. Multi-tenancy (Config par Pays/Client)
+```markdown
+Implémente la gestion multi-tenant pour configuration par pays et clients Enterprise.
+
+MODÈLES :
+- Multi-country : CI, Sénégal, Ghana = tenants séparés mais même code
+- Multi-org : Grand acheteur A veut instance isolée avec ses règles
+
+FONCTIONNALITÉS :
+1. Configuration tenant :
+   - Paramètres : Devise, Langue, Fuseau horaire, Seuils alertes spécifiques
+   - Branding : Logo, Couleurs, Nom application (white label complet)
+   - Features : Activation modules (Si Ghana pas encore prêt IA Prediction, désactivé)
+
+2. Isolation données :
+   - Row-level security : Chaque requête SQL filtrée automatiquement tenant_id
+   - Schema separation : Option isolation forte ( PostgreSQL schemas séparés)
+   - Database separation : Option isolation maximale (bases totalement séparées)
+
+3. Gestion ressources :
+   - Quotas : "Tenant Sénégal max 10k requêtes API/heure"
+   - Monitoring usage : CPU/Stockage par tenant (fair use détection)
+
+4. Migration données :
+   - Export tenant complet : "Client X veut quitter → Export CSV/JSON complet de ses données"
+   - Import : Onboarding nouveau pays avec données historiques existantes
+
+STACK :
+- Backend : NestJS avec middleware tenant resolution (sous-domaine, header, ou JWT claim)
+- DB : PostgreSQL (RLS policies), ou Citus pour sharding horizontal si scaling nécessaire
+- Cache : Redis namespaces par tenant
+- Config : Consul ou etcd pour configuration dynamique tenant
+
+ADMIN :
+- Interface création nouveau tenant (Setup wizard pays)
+- Clonage config : "Nouveau pays part avec config similaire CI mais ajustements"
+- Monitoring cross-tenant : Super-admin voit health global tous tenants
+```
+
+### 43. Maintenance (Mode Maintenance & Updates)
+```markdown
+Crée le système de gestion des maintenances et mises à jour planifiées.
+
+FONCTIONNALITÉS :
+1. Mode maintenance :
+   - Activation : Basculement traffic vers page "Back soon" (503 HTTP)
+   - Whitelist : Accès autorisé IP admin pour tests pendant maintenance
+   - Planification : "Mode maintenance auto Dimanche 2h-4h GMT"
+   - Compte à rebours : "Retour dans 15 minutes" pour utilisateurs
+
+2. Gestion déploiements :
+   - Blue/Green : Déploiement nouveau version sans coupure (switch DNS)
+   - Canary : 5% traffic sur nouvelle version, monitoring erreurs, puis 100%
+   - Rollback : Bouton retour version précédente en 1 clic si problème
+
+3. Communication :
+   - Notifications préventives : Email 48h avant maintenance planifiée
+   - Status page : Page publique état services (inspiré status.github.com)
+   - Historique : Logs toutes interventions passées avec durée et impact
+
+4. Health checks :
+   - Sonde globale : Synthetic monitoring (ping toutes les minutes depuis différents pays)
+   - Dépendances : Vérification santé services tiers (API Mobile Money, Satellite)
+
+STACK :
+- Orchestration : Kubernetes (rolling updates), ArgoCD (GitOps)
+- Status page : Cachet ou Statuspage.io ou custom
+- Monitoring : Uptime Kuma ou Pingdom pour alerting externe
+- Communication : Integration email/SMS centre de notifications existant
+
+PROCÉDURES :
+- Checklist pré-déploiement : Tests exécutés, Backup vérifié, Rollback plan prêt
+- Post-déploiement : Vérification métriques 30min après mise en prod
+```
+
+---
+
+## 📋 Instructions d'Utilisation des Prompts
+
+**Pour chaque prompt ci-dessus :**
+
+1. **Contextualise** selon ton stack exact (remplace les suggestions si tu as déjà choisi des outils spécifiques)
+2. **Itère** : Commence par les modules critiques (War Room, KYC, Escrow) avant les avancés (ML Management)
+3. **Spécifie les maquettes** : Ajoute "Figma link: [URL]" ou "Inspire-toi du design system: [nom]"
+4. **Donnes accès aux données** : Précise quelles tables/API existent déjà pour éviter de recréer la roue
+5. **Définis les critères de succès** : Exemple "Doit supporter 1000 requêtes/minute" ou "Temps de chargement < 2s"
+
+**Ordre de priorité suggéré pour le développement :**
+1. **Phase 1** (Immédiat) : War Room, KYC Validation, RBAC, Escrow Governance
+2. **Phase 2** (1-2 mois) : Digital Twin, Command Center Logistique, Supervision Financière
+3. **Phase 3** (3-6 mois) : ML Model Management, Data Pipeline, Advanced Analytics
+
+Ces prompts sont prêts à être copiés-collés dans Claude, GitHub Copilot, ou donnés à ton équipe de développement avec le niveau de détail technique nécessaire pour une implémentation directe.
+
+
+
+
+Voici les **prompts techniques détaillés** pour implémenter chacun de ces onglets critiques, cohérents avec votre design system (dark theme, badges verts cyan, icônes Lucide) et votre stack AgriLogistic.
+
+---
+
+## 1️⃣ GOUVERNANCE - UTILISATEURS (KYC & Directory)
+
+```markdown
+Implémente le module "Gouvernance > Utilisateurs" - le centre de gestion des acteurs de l'écosystème agricole avec validation KYC intégrée.
+
+CONTEXTE ARCHITECTURE :
+- Position : Section "Gouvernance" de la sidebar (icône 👥)
+- Design System : Fond navy obscur (#0B1120), texte gris slate-400, hover:bg-slate-800/50, active:border-l-4 border-emerald-500, badge notification vert cyan (#10B981)
+- Nécessite : RBAC Admin uniquement (middleware @Roles('admin'))
+
+STRUCTURE DE L'INTERFACE :
+
+1. HEADER & NAVIGATION INTERNE
+   - Tabs segmentation : "Tous (1,247)" | "En attente KYC (5)" | "Agriculteurs (892)" | "Transporteurs (198)" | "Acheteurs (157)"
+   - Barre recherche : Placeholder "Rechercher par nom, téléphone, email ou ID..."
+   - Filtres avancés : Pays (CI, Sénégal, Ghana), Statut (Actif, Suspendu, En attente), Date inscription, Score Agri (0-1000)
+
+2. TABLEAU DES UTILISATEURS (Data Grid)
+   - Colonnes : 
+     * Avatar + Nom complet + Badge vérification (✓ vert si KYC validé, 🟡 si pending, 🔴 si rejeté)
+     * Rôle (Pill coloré : 🟢 Agriculteur, 🔵 Transporteur, 🟠 Acheteur, 👑 Admin)
+     * Localisation (Région + Pays avec drapeau emoji)
+     * Contact (Téléphone formaté + WhatsApp click-to-chat)
+     * Statut KYC (Progress bar : 0%, 50%, 100% avec étapes validation)
+     * Date inscription (Relative : "Il y a 2 jours")
+     * Actions (👁️ Voir profil, ✏️ Éditer, 🚫 Suspendre)
+
+3. VUE DÉTAILLÉE UTILISATEUR (Slide-over ou Modal)
+   - Profil complet : Photo ID, Documents uploadés (PDF viewer intégré), Coordonnées GPS parcelle/camion
+   - Timeline activité : Graphique d'engagement (connexions, transactions, offres publiées)
+   - Section KYC : 
+     * Documents vérifiés (CNI, RCCM pour entreprises, Permis transporteur)
+     * Vérification biométrique : Photo selfie vs Photo ID (FaceMatch score %)
+     * Validation manuelle : Boutons "✅ Approuver", "❌ Rejeter avec motif", "⏳ Demander documents complémentaires"
+   - Historique transactions : Wallet Agri, Volume ventes/achats, Litiges
+   - Actions rapides : "🔔 Envoyer notification", "💬 Ouvrir chat support", "🚫 Bloquer accès", "👤 Impersonate (voir comme l'utilisateur)"
+
+4. WORKFLOW KYC INTÉGRÉ (Kanban View optionnelle)
+   - Colonnes : Documents reçus → OCR en cours → Validation auto → Revue manuelle → Approuvé/Rejeté
+   - Drag & drop des dossiers entre étapes
+   - Badge priorité : 🔴 Urgent (>48h d'attente)
+
+STACK TECHNIQUE :
+- Frontend : Next.js 14 (Server Components pour liste), TanStack Table (virtualisation 10k+ lignes), Framer Motion (transitions slide-over)
+- Backend : NestJS, endpoints GET /users?role=&status=&page=, PATCH /users/:id/kyc-status
+- Storage : MinIO/S3 pour documents (presigned URLs sécurisées), PostgreSQL (données utilisateurs), Redis (cache sessions)
+- IA : Python service OCR (Tesseract/AWS Textract) pour scan documents, Face comparison (AWS Rekognition ou DeepFace)
+- Sécurité : Encryption AES-256 documents au repos, audit trail immuable (qui a validé quel KYC quand - stocké blockchain Hyperledger pour conformité OHADA)
+
+FEATURES SPÉCIFIQUES :
+- Export CSV/XLS : Sélection multi-utilisateurs → Export données (RGPD compliant, anonymisation possible)
+- Merge suggestions : Algorithme détection doublons (même téléphone/nom) → Proposition fusion comptes
+- Communication intégrée : Bouton "📱 Envoyer SMS/WhatsApp" depuis la fiche utilisateur
+- Carte géographique : Mini-carte Leaflet montrant localisation précise agriculteur/transporteur
+
+RÈGLES MÉTIER :
+- Validation KYC obligatoire avant première transaction > 100€
+- Notification automatique utilisateur lors changement statut KYC
+- Droit à l'oubli : Bouton "Anonymiser" (RGPD) conservant les transactions mais supprimant données personnelles après 5 ans
+```
+
+---
+
+## 2️⃣ NOTIFICATIONS (Centre de Commande)
+
+```markdown
+Crée le module "Notifications" - hub central de communication temps réel avec les acteurs de la plateforme.
+
+CONTEXTE ARCHITECTURE :
+- Position : Item principal sidebar (icône 🔔) avec badge compteur dynamique vert (#10B981) comme sur l'image (12)
+- Design : Drawers/panels latéral droit (slide-from-right) ou page dédiée selon complexité
+- Temps réel : WebSocket/Socket.io pour mises à jour instantanées
+
+STRUCTURE DE L'INTERFACE :
+
+1. CENTRE DE NOTIFICATIONS (Inbox style)
+   - Header : "Centre de Notifications" + Bouton "🗨️ Nouvelle campagne" + "🖊️ Tout marquer comme lu"
+   - Segmentation tabs : 
+     * "Toutes (128)" 
+     * "Non lues (12)" [Badge vert pulse si nouvelles]
+     * "Système (45)" 
+     * "Utilisateurs (83)"
+   - Liste notifications (Virtualisée) :
+     * Icône contextuelle (🚨 Urgent, ℹ️ Info, ✅ Succès, 💰 Transaction)
+     * Titre + Extrait message (max 2 lignes)
+     * Badge priorité : "Critique", "Haute", "Normale"
+     * Timestamp relatif + Émetteur (Système auto, Admin Jean, etc.)
+     * Actions rapides : "👁️ Voir détails", "✓ Lu", "📌 Épingler"
+
+2. CAMPAGNES DE NOTIFICATIONS (Marketing & Transactionnel)
+   - Création campagne :
+     * Type : Push mobile (FCM), SMS, Email, WhatsApp Business, In-App
+     * Ciblage : Sélecteur segment avancé (ex: "Agriculteurs maïs, Zone Nord, KYC validé, Actifs 7 derniers jours")
+     * Planning : Envoi immédiat vs Programmé (date/heure picker avec timezone)
+     * Contenu : Éditeur riche (MJML pour email), Variables dynamiques {{prenom}}, {{montant}}, Preview mobile
+   - Templates sauvegardés : "Rappel récolte", "Alerte prix", "Notification livraison", "KYC incomplet"
+
+3. STATISTIQUES & PERFORMANCES
+   - Dashboard campagnes :
+     * Taux de délivrance (Delivered %) par canal
+     * Taux d'ouverture/lecture (Opened %)
+     * Taux conversion (clics/actions générées)
+     * Graphique temporel : Volume envois sur 24h/7j/30j
+   - Alertes système : Notifications Webhook échouées, File d'attente SMTP saturée
+
+4. GESTION FILE D'ATTENTE
+   - Queue monitoring : Nombre messages en attente, Vitesse traitement (msg/sec)
+   - Priorisation : Messages transactionnels (OTP, Paiement) prioritaires sur Marketing
+   - Retry automatique : Échec SMS → Retry t+5min, t+15min, t+1h puis abandon + email backup
+
+STACK TECHNIQUE :
+- Frontend : React, Zustand (état notifications non lues global), Framer Motion (animations entrée/sortie), Tailwind (dark theme)
+- Backend : NestJS + Bull Queue (Redis) pour orchestration asynchrone, gestion priorités
+- Canaux :
+  * Push : Firebase Cloud Messaging (FCM)
+  * SMS : Twilio / Africa's Talking / APIs opérateurs locaux (Orange, MTN) avec fallback automatique
+  * Email : SendGrid / AWS SES (templates MJML responsive)
+  * WhatsApp : API Business WhatsApp (Twilio ou direct Meta)
+  * In-App : Socket.io rooms (rooms par user_id pour push ciblé)
+- Base : PostgreSQL (notifications persistées), Redis (cache non lues par user)
+
+FEATURES AVANCÉES :
+- A/B Testing : Tester 2 sujets email sur 10% base, gagnant envoyé à 90% restant après 2h
+- Fréquence capping : "Max 1 SMS/jour par utilisateur" (éviter spam)
+- Géofencing notifications : "Promo engrais zone Abidjan uniquement"
+- Silence hours : Respect fuseaux horaires (pas de SMS 20h-08h local)
+- Tracking ouverture : Pixels invisibles emails, Webhooks SMS delivery reports
+
+INTÉGRATION MÉTIER :
+- Déclencheurs automatiques : 
+  * "Nouvel offre correspondant profil" → Push agriculteur
+  * "Camion arrivé dans 30min" → SMS acheteur  
+  * "KYC expire dans 7 jours" → Email + Push
+  * "Litige ouvert" → Notification admin War Room
+```
+
+---
+
+## 3️⃣ FLEET COMMANDER (Gestion de Flotte)
+
+```markdown
+Implémente "Fleet Commander" - le système avancé de gestion de flotte et commandement des transporteurs.
+
+CONTEXTE ARCHITECTURE :
+- Position : Section Gouvernance OU Logistique (selon votre arborescence), icône 🚛 ou 🚚
+- Design : Dashboard opérationnel style "NASA Mission Control" avec carte temps réel
+- Accès : Admin + Transporteurs (vue restreinte pour eux)
+
+STRUCTURE DE L'INTERFACE :
+
+1. VUE GLOBALE FLOTTE (Dashboard)
+   - KPIs header : 
+     * "🚛 47 Véhicules actifs" | "🟢 32 En mission" | "🟡 12 Disponibles" | "🔴 3 Maintenance" | "⚫ 0 Hors ligne"
+     * Taux remplissage moyen : "87% ↑ 5% vs semaine dernière"
+     * KM parcourus aujourd'hui : "2,847 km"
+   - Carte temps réel (MapLibre GL) :
+     * Clusters de camions (heatmap si zoom out)
+     * Code couleur statut : 🟢 En charge (plein), 🟡 En route vide, 🔴 Arrêté, 🟠 Maintenance, ⚪ Hors ligne > 2h
+     * Overlay température : Pour camions frigorifiques (gradients de couleur selon T° cargo)
+     * Géofencing : Zones de pickup/delivery (cercles), Alertes entrée/sortie
+
+2. LISTE DES VÉHICULES (Data Table)
+   - Colonnes :
+     * Immatriculation + Photo camion + Type (Benne, Frigo, Plateau)
+     * Transporteur assigné (Nom + Téléphone)
+     * Capacité (Tonnes) + Volume (m³)
+     * Statut actuel (En course vers [Destination], Disponible depuis [Heure], Maintenance)
+     * Localisation dernière connue (Ville, Pays + "Il y a 5 min")
+     * Capteurs IoT : 🔋 Batterie, 🌡️ Température cargo, ⛽ Carburant %
+     * Actions : "📍 Localiser", "📋 Détails", "🔧 Maintenance", "👤 Contacter chauffeur"
+   - Filtres : Par type véhicule, Par capacité, Par zone géographique, Par statut
+
+3. FICHE VÉHICULE DÉTAILLÉE
+   - Onglets :
+     * "📊 Performance" : Graphiques KM/mois, Consommation carburant, Taux remplissage historique
+     * "🔧 Maintenance" : Calendrier entretiens (vidange, pneus, assurance), Alertes préventives (prédiction ML pannes)
+     * "📜 Documents" : Assurances, Permis transporteur, Contrôles techniques (PDF avec dates expiration + alertes)
+     * "🗺️ Historique" : Trajets des 30 derniers jours (replay sur carte), Points d'arrêt > 15min détectés
+     * "📡 IoT" : Données temps réel capteurs (graphs température, portes ouvertes/fermées)
+
+4. GESTION MISSIONS (Dispatch)
+   - Assignation mission : Drag & drop offre vers camion disponible
+   - Optimisation suggestions : "Camion TR-89 est à 5km du pickup et disponible → Suggérer assignation"
+   - Validation capacité : Vérification poids/volume marchandise vs capacité camion (alerte si dépassement)
+
+STACK TECHNIQUE :
+- Frontend : MapLibre GL JS (performance), React-Leaflet (fallback), Deck.gl (grands volumes), Recharts (graphs)
+- Backend : NestJS, PostgreSQL (données véhicules), TimescaleDB (séries temporelles GPS/capteurs), Redis (cache positions temps réel)
+- IoT : MQTT broker (Mosquitto/HiveMQ) pour réception données trackers GPS, InfluxDB pour stockage métriques temps réel
+- IA : Python (Prophet ou LSTM) pour prédiction maintenance, détection anomalies conduite
+- Routing : OSRM ou Google Maps API pour calculs distances et ETAs
+
+FEATURES SPÉCIFIQUES :
+- IoT Tracking temps réel : Mise à jour position toutes les 30s si en mouvement, 5min si arrêté (économie batterie)
+- Alertes automatiques : 
+  * "Camion immobile depuis 2h hors pause programmée"
+  * "Température frigo monte au-dessus de 8°C"
+  * "Porte cargo ouverte en zone non sécurisée"
+  * "Niveau carburant < 20%"
+- Gestion chauffeurs : Profils conducteurs associés (permis, heures conduite, scoring sécurité)
+- Routage optimisé : Intégration algorithme OR-Tools pour suggestions tournées multi-points
+- E-Documents : Génération lettres de voiture électroniques (e-CMR), Proof of Delivery (POD) avec photos et signatures
+```
+
+---
+
+## 4️⃣ CONTENU - BLOG & EVENTS
+
+```markdown
+Développe le module "Blog & Events" - système de gestion de contenu (CMS) pour communication externe et événements communautaires.
+
+CONTEXTE ARCHITECTURE :
+- Position : Section "Contenu" de la sidebar (icône 📝), design avec tag "BETA" optionnel
+- Design : Interface type Notion/WordPress admin, éditeur de contenu riche
+- Public cible : Agriculteurs (conseils techniques), Acheteurs (tendances marché), Investisseurs (actualités)
+
+STRUCTURE DE L'INTERFACE :
+
+1. GESTION DES ARTICLES (Blog)
+   - Vue liste : Tableau articles avec :
+     * Image miniature + Titre + Extrait
+     * Auteur (Admin ou Guest writer)
+     * Catégorie (Technique agricole, Marché & Prix, Actualités plateforme, Témoignages)
+     * Tags (Maïs, Irrigation, Logistique, ...)
+     * Statut (Brouillon, Publié, Programmé, Archivé)
+     * Date publication + Vues/Likes/Partages
+     * SEO Score (indicateur qualité méta-données)
+   - Actions : "✏️ Éditer", "👁️ Prévisualiser", "📊 Stats", "🗑️ Corbeille"
+
+2. ÉDITEUR DE CONTENU RICHE (WYSIWYG)
+   - Blocks : Texte enrichi, Images (upload drag & drop), Vidéos (embed YouTube ou upload), Blocs agricoles spéciaux (Météo widget, Calculateur rendement, Carte prix marché)
+   - SEO Tools : Slug éditable, Meta description, Open Graph image per article, Focus keyword suggestions
+   - Versioning : Historique révisions (diff entre versions), Restauration version antérieure
+   - Multi-langue : Toggle FR/EN/PT pour rédaction contenu localisé
+
+3. GESTION ÉVÉNEMENTS (Events)
+   - Calendrier événements : Vue mois/semaine/liste
+   - Types : 
+     * "Journées portes ouvertes" (démonstration technique terrain)
+     * "Webinaires formation" (en ligne)
+     * "Réunions coopératives" (physiques)
+     * "Salons agricoles" (participation SARA, etc.)
+   - Fiches événement :
+     * Titre, Date/heure, Lieu (avec carte GPS), Description
+     * Inscriptions : Gestion liste participants (limité à N places ou illimité)
+     * Rappels automatiques : Email + SMS J-7, J-1, J+1 (feedback)
+     * Matériel : Upload présentations PDF, Replay vidéo post-événement
+
+4. MÉDIATHÈQUE
+   - Bibliothèque fichiers : Images, Vidéos, Documents téléchargeables (guides PDF)
+   - Organisation : Dossiers par type/campagne, Tags, Recherche
+   - Optimisation : Compression auto images (WebP), CDN delivery, Alt text suggestion IA
+
+5. MODÉRATION & ENGAGEMENT
+   - Commentaires : File validation commentaires (anti-spam), Réponses admin
+   - Newsletter : Export liste événements vers campagne email automatique
+   - Analytics contenu : Temps lecture moyen, Taux rebond, Articles populaires
+
+STACK TECHNIQUE :
+- Frontend : Next.js 14, éditeur TipTap ou Slate.js (rich text), React-Image-Crop (redimensionnement), FullCalendar (events)
+- Backend : NestJS, PostgreSQL (articles, événements), MongoDB (commentaires flexibles si volume élevé)
+- Storage : MinIO/S3 (images/vidéos), CDN CloudFront/Cloudflare pour distribution globale
+- SEO : Next.js ISR (Incremental Static Regeneration) pour perf SEO, Sitemap auto-généré
+- Média : Sharp (processing images côté serveur), FFmpeg (compression vidéo si upload)
+
+FEATURES SPÉCIFIQUES :
+- Scheduling : Publication programmée (cron job)
+- Multi-canal publishing : "Publier aussi sur Facebook/Twitter" (APIs sociales)
+- User Generated Content : Soumission articles par agriculteurs (workflow validation admin avant publication)
+- Notification push : "Nouvel article sur la culture du cacao disponible" → Push ciblé agriculteurs cacao
+```
+
+---
+
+## 5️⃣ SYSTÈME - PARAMÈTRES (Configuration Globale)
+
+```markdown
+Crée le module "Système > Paramètres" - panneau de configuration globale de la plateforme AgriLogistic.
+
+CONTEXTE ARCHITECTURE :
+- Position : Section "Système" footer sidebar (icône ⚙️)
+- Design : Interface type paramètres VS Code ou GitHub (sidebar gauche avec catégories, panel droit formulaires)
+- Accès : Super Admin uniquement (risque élevé)
+
+STRUCTURE DE L'INTERFACE :
+
+1. PARAMÈTRES GÉNÉRAUX
+   - Identité plateforme :
+     * Nom plateforme, Logo (upload), Favicon, Couleurs primaires ( HEX picker)
+     * Langue par défaut, Fuseaux horaires supportés, Format date/heure
+   - Localisation : Pays d'opération actifs (CI, Sénégal, Ghana...), Devises affichées (CFA, USD, EUR)
+   - Maintenance : Toggle "Mode maintenance" (page statique publique), Message personnalisé, IPs whitelist admin (accès maintenance)
+
+2. SÉCURITÉ & CONFORMITÉ
+   - Authentification : 
+     * Durée session JWT (minutes), Renouvellement auto refresh token
+     * Politique mots de passe (min caractères, complexité), Historique mots de passe (pas les 5 derniers)
+     * 2FA obligatoire pour rôles (Admin toujours, Optionnel autres)
+   - RGPD/Confidentialité : Texte politique confidentialité éditable, Bannière cookies, Durée conservation données (anonymisation auto après X années)
+   - Rate Limiting : Limiter requêtes API par IP et par user (req/minute)
+   - CORS : Domaines autorisés pour API
+
+3. FONCTIONNALITÉS (Feature Flags)
+   - Toggles : "Activer marketplace", "Activer paiement Mobile Money", "Mode Beta IA Prédictions visible"
+   - Géographique : "Activer KYC strict Côte d'Ivoire", "Désactiver transport Burkina (indisponible)"
+   - Limites : Montant max transaction, Nombre max offres par agriculteur (freemium), Taille max upload fichiers
+
+4. INTÉGRATIONS API
+   - Clés externes : Input clés API (Orange Money, Wave, Météo API, Google Maps, SendGrid...)
+   - Webhooks configuration : URLs endpoints pour notifications externes (sécurisés par signature HMAC)
+   - Testing : Bouton "Tester connexion" pour chaque service (ping health check)
+
+5. NOTIFICATIONS SYSTÈME
+   - Config emails : Adresse expéditeur, Template header/footer, SMTP personnalisé ou SendGrid
+   - SMS Gateway : Sélection provider principal (Twilio vs Africa's Talking) et backup
+   - Seuils alertes : "Notifier admin si > 100 inscriptions/heure" (bot detection), "Alerte si solde compte opérateur SMS < 50€"
+
+6. SAUVEGARDE & PERFORMANCES
+   - Backup : Fréquence auto (quotidien), Stockage (S3 Glacier), Test restore mensuel programmé
+   - Cache : Purge manuelle Redis, Durée TTL par type donnée
+   - Logs : Niveau détail (Error/Warning/Info/Debug), Rétention logs (jours)
+
+7. MONÉTISATION (Modèle économique)
+   - Commission plateforme : Pourcentage par défaut, Grille dégressive selon volume
+   - Abonnements : Configuration plans (Free/Pro/Entreprise), Prix, Limites par plan
+   - Facilités paiement : Délai avant reversement agriculteur (escrow duration - jours)
+
+STACK TECHNIQUE :
+- Frontend : React Hook Form (validation complexe), Zustand (état global settings), Tailwind (forms cohérents)
+- Backend : NestJS, table PostgreSQL `platform_settings` (clé-valeur JSONB flexible), cache Redis des settings (lecture fréquente)
+- Validation : Zod schemas côté client ET serveur
+- Sécurité : Audit log immuable de tous changements settings (qui a changé quoi, ancienne/nouvelle valeur), 2FA requis pour modifications critiques
+- Déploiement : Certaines modifications nécessitent redémarrage services (bouton "Redémarrer workers" avec confirmation)
+
+FEATURES CRITIQUES :
+- Versioning config : Historique modifications settings (rollback possible)
+- Environment switching : Visualisation diff entre config Prod vs Staging
+- Import/Export : Sauvegarde configuration complète (JSON) pour replication environnement
+- Validation cohérence : Empêcher activation paiement sans clés API renseignées, Alertes si paramètres incohérents détectés
+```
+
+---
+
+## 🎨 SPECIFICATIONS VISUELLES COMMUNES
+
+Basé sur vos images, respecter impérativement :
+
+```css
+/* Design System à appliquer dans chaque composant */
+--bg-primary: #0B1120;        /* Fond principal très sombre */
+--bg-secondary: #1E293B;      /* Survol/card */
+--accent-primary: #10B981;    /* Vert cyan émeraude (badges) */
+--accent-warning: #F59E0B;    /* Orange pour KYC pending */
+--accent-danger: #EF4444;     /* Rouge alerts */
+--text-primary: #F8FAFC;      /* Blanc cassé */
+--text-secondary: #94A3B8;    /* Gris slate */
+--border-active: #10B981;     /* Bordure vert 4px gauche item actif */
+```
+
+**Comportements interactifs obligatoires :**
+- **Badge Notification** : Animation pulse douce si nouvelles notifications (comme "12" sur l'image)
+- **État Actif** : `border-l-4 border-emerald-500 bg-slate-800/50` (exemple image avec "Blog & Events")
+- **Hover** : `bg-slate-800/30 transition-colors duration-200`
+- **Icons** : Librairie Lucide React (cohérence système)
+
+**Ordre d'implémentation recommandé :**
+1. **Paramètres** (fondation nécessaire pour configurer les autres)
+2. **Utilisateurs/KYC** (critique pour validation acteurs)
+3. **Notifications** (nécessaire pour communiquer avec utilisateurs)
+4. **Fleet Commander** (logistique opérationnelle)
+5. **Blog & Events** (communication externe)
+
+Ces prompts sont prêts pour être assignés à des développeurs spécifiques ou traités par iterations successives selon votre méthodologie agile.

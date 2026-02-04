@@ -34,7 +34,8 @@ services:
     environment:
       POSTGRES_USER: ${KONG_PG_USER:-kong}
       POSTGRES_DB: ${KONG_PG_DATABASE:-kong}
-      POSTGRES_PASSWORD: ${KONG_PG_PASSWORD}
+      # Même valeur par défaut que kong-bootstrap/kong-gateway pour éviter "authentication exchange unsuccessful"
+      POSTGRES_PASSWORD: ${KONG_PG_PASSWORD:-kong_secure_2026}
     volumes:
       - kong-postgres-data:/var/lib/postgresql/data
     ports:
@@ -59,13 +60,17 @@ services:
     container_name: agrologistic-kong-bootstrap
     command: >
       sh -c "
-        kong migrations bootstrap &&
+        echo 'Waiting for PostgreSQL...';
+        for i in 1 2 3 4 5 6 7 8 9 10; do
+          if kong migrations bootstrap; then break; fi;
+          echo \"Attempt $$i/10 failed, retrying in 5s...\";
+          sleep 5;
+        done &&
         if grep -q '__RSA_PUBLIC_KEY__' /usr/local/kong/declarative/kong.yml; then
           echo 'ERROR: RS256 public key placeholder not replaced.' >&2;
-          echo 'Run: infrastructure/scripts/generate-jwt-keys.ps1 (Windows) or generate-jwt-keys.sh (Linux)' >&2;
           exit 1;
         fi &&
-        kong config db_import /usr/local/kong/declarative/kong.yml
+        kong config db_import /usr/local/kong/declarative/kong.yml > /tmp/import.log 2>&1; r=$$?; cat /tmp/import.log; grep -q 'UNIQUE violation' /tmp/import.log && exit 0; exit $$r
       "
     networks:
       - agrologistic-network
@@ -73,14 +78,15 @@ services:
       KONG_DATABASE: postgres
       KONG_PG_HOST: kong-database
       KONG_PG_USER: ${KONG_PG_USER:-kong}
-      KONG_PG_PASSWORD: ${KONG_PG_PASSWORD}
+      # Même valeur que kong-database (défaut kong_secure_2026) pour éviter authentication exchange unsuccessful
+      KONG_PG_PASSWORD: ${KONG_PG_PASSWORD:-kong_secure_2026}
       KONG_PG_DATABASE: ${KONG_PG_DATABASE:-kong}
     volumes:
       - ./kong/kong.yml:/usr/local/kong/declarative/kong.yml:ro
     depends_on:
       kong-database:
         condition: service_healthy
-    restart: on-failure
+    restart: "no"
 
   # ============================================================
   # Kong API Gateway
@@ -89,6 +95,7 @@ services:
     image: kong:3.5
     container_name: agrologistic-kong-gateway
     restart: unless-stopped
+    command: ["kong", "start", "-c", "/usr/local/kong/kong.conf"]
     networks:
       - agrologistic-network
     environment:
@@ -96,7 +103,7 @@ services:
       KONG_DATABASE: postgres
       KONG_PG_HOST: kong-database
       KONG_PG_USER: ${KONG_PG_USER:-kong}
-      KONG_PG_PASSWORD: ${KONG_PG_PASSWORD}
+      KONG_PG_PASSWORD: ${KONG_PG_PASSWORD:-kong_secure_2026}
       KONG_PG_DATABASE: ${KONG_PG_DATABASE:-kong}
       
       # Proxy configuration
@@ -114,7 +121,7 @@ services:
       KONG_STATUS_LISTEN: 0.0.0.0:8100
       
       # Plugins
-      KONG_PLUGINS: bundled,jwt,rate-limiting,cors,request-transformer,response-transformer,prometheus,file-log,http-log,ip-restriction,request-size-limiting,proxy-cache,acl,correlation-id,zipkin
+      KONG_PLUGINS: bundled,jwt,rate-limiting,cors,request-transformer,response-transformer,prometheus,file-log,http-log,ip-restriction,request-size-limiting,proxy-cache,acl,correlation-id,zipkin,key-auth
       
       # DNS resolver (Docker internal DNS for service discovery)
       KONG_DNS_RESOLVER: 127.0.0.11
@@ -126,6 +133,7 @@ services:
       # Security
       KONG_TRUSTED_IPS: 0.0.0.0/0,::/0
     volumes:
+      - ./kong/kong.conf:/usr/local/kong/kong.conf:ro
       - ./kong/kong.yml:/usr/local/kong/declarative/kong.yml:ro
       - kong-logs:/var/log/kong
     ports:
@@ -163,7 +171,7 @@ services:
       # Konga connects using these credentials
       POSTGRES_USER: ${KONG_PG_USER:-kong}
       POSTGRES_DB: konga
-      POSTGRES_PASSWORD: ${KONG_PG_PASSWORD}
+      POSTGRES_PASSWORD: ${KONG_PG_PASSWORD:-kong_secure_2026}
     volumes:
       - konga-postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -186,7 +194,7 @@ services:
     command: >
       -c prepare
       -a postgres
-      -u postgresql://${KONG_PG_USER:-kong}:${KONG_PG_PASSWORD}@konga-database:5432/konga
+      -u postgresql://${KONG_PG_USER:-kong}:${KONG_PG_PASSWORD:-kong_secure_2026}@konga-database:5432/konga
     depends_on:
       konga-database:
         condition: service_healthy
@@ -202,7 +210,7 @@ services:
       DB_HOST: konga-database
       DB_PORT: 5432
       DB_USER: ${KONG_PG_USER:-kong}
-      DB_PASSWORD: ${KONG_PG_PASSWORD}
+      DB_PASSWORD: ${KONG_PG_PASSWORD:-kong_secure_2026}
       DB_DATABASE: konga
       # IMPORTANT:
       # Konga uses Waterline migrations. In `production` it defaults to a safe

@@ -1,12 +1,12 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --color-primary: #0f3d2e; /* Deep Forest Green */
   --color-primary-foreground: oklch(0.98 0.01 145);
-  
+
   --color-secondary: oklch(0.35 0.1 145);
   --color-secondary-foreground: oklch(0.98 0.01 145);
-  
+
   --color-accent: #e67e22; /* Earthy Orange */
   --color-accent-foreground: oklch(0.98 0.01 45);
 
@@ -23,33 +23,66 @@
 
   /* Custom animations */
   @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
   @keyframes slideUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
   @keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
   }
   @keyframes spin-slow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
   @keyframes spin-slow-reverse {
-    from { transform: rotate(360deg); }
-    to { transform: rotate(0deg); }
+    from {
+      transform: rotate(360deg);
+    }
+    to {
+      transform: rotate(0deg);
+    }
   }
   @keyframes shimmer {
-    0% { transform: translateX(-100%) skewX(-15deg); }
-    100% { transform: translateX(200%) skewX(-15deg); }
+    0% {
+      transform: translateX(-100%) skewX(-15deg);
+    }
+    100% {
+      transform: translateX(200%) skewX(-15deg);
+    }
   }
   @keyframes bounce-slow {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
   }
 }
 
@@ -68,7 +101,9 @@
 }
 
 @layer base {
-  *, ::after, ::before {
+  *,
+  ::after,
+  ::before {
     border-color: var(--color-border);
   }
   body {
@@ -84,7 +119,9 @@
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   background-color: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  box-shadow:
+    0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
 
 .dark .glass {
@@ -102,3 +139,60 @@
   transition: all 0.3s;
 }
 
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Leaflet Custom Styles for War Room */
+.leaflet-container {
+  background: #05070a !important;
+}
+.leaflet-tile {
+  opacity: 0.3 !important;
+}
+
+/* War Room marker pulse animation (cahier des charges) */
+@keyframes war-room-pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px currentColor;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 18px currentColor;
+    transform: scale(1.08);
+  }
+}
+
+.war-room-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.custom-popup .leaflet-popup-content-wrapper {
+  background: #0a0c14 !important;
+  color: white !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(239, 68, 68, 0.2) !important;
+  padding: 8px !important;
+}
+.custom-popup .leaflet-popup-tip {
+  background: #0a0c14 !important;
+}

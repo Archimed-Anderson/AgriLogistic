@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { FixedSizeList as List } from 'react-window';
+import { List } from 'react-window';
 import TruckBadge from './TruckBadge';
 import { type Truck } from '../../data/logistics-operations';
 
@@ -15,23 +15,38 @@ interface TrucksSidebarProps {
   onSmartMatch: (truck: Truck) => void;
 }
 
-const TrucksSidebar: React.FC<TrucksSidebarProps> = ({ 
-  trucks, 
-  selectedTruck, 
-  onSelectTruck, 
-  onSmartMatch 
+const TrucksSidebar: React.FC<TrucksSidebarProps> = ({
+  trucks,
+  selectedTruck,
+  onSelectTruck,
+  onSmartMatch,
 }) => {
-  const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => {
-    const truck = trucks[index];
-    const isSelected = selectedTruck?.id === truck.id;
-
+  const Row = ({
+    index,
+    style,
+    ariaAttributes,
+    trucks: listTrucks,
+    selectedTruck: sel,
+    onSelectTruck: onSel,
+    onSmartMatch: onMatch,
+  }: {
+    index: number;
+    style: React.CSSProperties;
+    ariaAttributes: { role: 'listitem'; 'aria-posinset': number; 'aria-setsize': number };
+    trucks: Truck[];
+    selectedTruck: Truck | null;
+    onSelectTruck: (t: Truck) => void;
+    onSmartMatch: (t: Truck) => void;
+  }) => {
+    const truck = listTrucks[index];
+    const isSelected = sel?.id === truck.id;
     return (
-      <div style={style}>
-        <TruckBadge 
+      <div style={style} {...ariaAttributes}>
+        <TruckBadge
           truck={truck}
           isSelected={isSelected}
-          onClick={() => onSelectTruck(truck)}
-          onMatch={() => onSmartMatch(truck)}
+          onClick={() => onSel(truck)}
+          onMatch={() => onMatch(truck)}
         />
       </div>
     );
@@ -43,21 +58,18 @@ const TrucksSidebar: React.FC<TrucksSidebarProps> = ({
         <h2>🚛 Transporteurs</h2>
         <span className="count-badge">{trucks.length}</span>
       </div>
-      
       <div className="sidebar-search">
         <input type="text" placeholder="Rechercher un chauffeur..." />
       </div>
-
-      <div className="sidebar-content">
+      <div className="sidebar-content" style={{ height: 600 }}>
         <List
-          height={600}
-          itemCount={trucks.length}
-          itemSize={240}
-          width={'100%'}
+          rowCount={trucks.length}
+          rowHeight={240}
+          rowComponent={Row}
+          rowProps={{ trucks, selectedTruck, onSelectTruck, onSmartMatch } as never}
+          style={{ height: 600, width: '100%' }}
           className="virtual-list"
-        >
-          {Row}
-        </List>
+        />
       </div>
     </aside>
   );

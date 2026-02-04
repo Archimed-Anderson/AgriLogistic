@@ -14,7 +14,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // Check localStorage
     const saved = localStorage.getItem('agro-theme');
     if (saved === 'dark' || saved === 'light') return saved;
-    
+
     // Check system preference
     if (window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
     return 'dark'; // Default to dark for War Room
@@ -28,14 +28,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
-  return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme() {

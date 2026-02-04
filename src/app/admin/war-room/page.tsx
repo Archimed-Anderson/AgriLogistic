@@ -1,18 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from '@/app/components/ui/tabs';
-import { 
-  LayoutDashboard, 
-  Truck, 
-  Activity, 
-  Terminal as TerminalIcon,
-  Zap
-} from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
+import { LayoutDashboard, Truck, Activity, Terminal as TerminalIcon, Zap } from 'lucide-react';
 
 import { LiveLogs } from './components/LiveLogs';
 import { AdminConsole } from './components/AdminConsole';
@@ -31,27 +20,35 @@ export default function WarRoomPage() {
               WAR ROOM
             </div>
             <div className="w-1 h-1 rounded-full bg-foreground/20" />
-            <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">v2.1.0-STABLE</p>
+            <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
+              v2.1.0-STABLE
+            </p>
           </div>
           <h1 className="text-4xl font-extrabold tracking-tighter text-foreground">
             Console de Commandement
           </h1>
           <p className="text-muted-foreground mt-2 max-w-xl text-sm leading-relaxed font-medium">
-            Surveillance en temps réel de l'écosystème AgriLogistic. Flux logistiques, santé périmétrale et automatisation des transactions.
+            Surveillance en temps réel de l'écosystème AgriLogistic. Flux logistiques, santé
+            périmétrale et automatisation des transactions.
           </p>
         </div>
-        
+
         <div className="flex items-center gap-3 bg-card/40 backdrop-blur-md p-2 rounded-2xl border border-border shadow-xl">
           <div className="flex -space-x-2">
-            {[1,2,3].map(i => (
-              <div key={i} className="w-8 h-8 rounded-full border-2 border-background bg-muted flex items-center justify-center text-[10px] font-bold text-muted-foreground">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="w-8 h-8 rounded-full border-2 border-background bg-muted flex items-center justify-center text-[10px] font-bold text-muted-foreground"
+              >
                 AD
               </div>
             ))}
           </div>
           <div className="h-8 w-px bg-border mx-1" />
           <div className="text-right pr-2">
-            <p className="text-[10px] font-bold text-foreground uppercase tracking-tight">SESS_ACTIVE</p>
+            <p className="text-[10px] font-bold text-foreground uppercase tracking-tight">
+              SESS_ACTIVE
+            </p>
             <p className="text-[9px] font-mono text-emerald-500 font-bold">4 Admins en ligne</p>
           </div>
         </div>
@@ -60,29 +57,29 @@ export default function WarRoomPage() {
       <Tabs defaultValue="overview" className="w-full">
         <div className="relative mb-8">
           <TabsList className="bg-card/40 border border-border p-1.5 h-auto rounded-2xl backdrop-blur-xl">
-            <TabsTrigger 
-              value="overview" 
+            <TabsTrigger
+              value="overview"
               className="px-6 py-2.5 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all gap-2 text-muted-foreground"
             >
               <LayoutDashboard className="w-4 h-4" />
               <span className="text-xs font-semibold">Vue d'ensemble</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="logistics" 
+            <TabsTrigger
+              value="logistics"
               className="px-6 py-2.5 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all gap-2"
             >
               <Truck className="w-4 h-4" />
               <span className="text-xs font-semibold">Logistique</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="health" 
+            <TabsTrigger
+              value="health"
               className="px-6 py-2.5 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all gap-2"
             >
               <Activity className="w-4 h-4" />
               <span className="text-xs font-semibold">Santé Système</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="terminal" 
+            <TabsTrigger
+              value="terminal"
               className="px-6 py-2.5 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white transition-all gap-2"
             >
               <TerminalIcon className="w-4 h-4" />
@@ -103,7 +100,7 @@ export default function WarRoomPage() {
 
         <AnimatePresence mode="wait">
           <TabsContent value="overview">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
@@ -114,7 +111,7 @@ export default function WarRoomPage() {
           </TabsContent>
 
           <TabsContent value="logistics">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
@@ -125,7 +122,7 @@ export default function WarRoomPage() {
           </TabsContent>
 
           <TabsContent value="health">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
@@ -136,7 +133,7 @@ export default function WarRoomPage() {
           </TabsContent>
 
           <TabsContent value="terminal">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
@@ -156,5 +153,3 @@ export default function WarRoomPage() {
     </div>
   );
 }
-
-

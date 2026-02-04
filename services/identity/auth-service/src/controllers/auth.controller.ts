@@ -1,14 +1,23 @@
 import { Request, Response } from 'express';
-import crypto from 'crypto';
-import { JWTService } from '../services/jwt.service';
-import { PasswordService } from '../services/password.service';
-import { OAuth2Service } from '../services/oauth2.service';
+import * as crypto from 'crypto';
+import type { AuthenticatedRequest } from '../middleware/auth.middleware';
 import { UserRepository } from '../repositories/user.repository';
 import { LoginAttemptRepository } from '../repositories/login-attempt.repository';
+import { PasswordService } from '../services/password.service';
+import { JWTService } from '../services/jwt.service';
 import { getRedisService } from '../services/redis.service';
+import { OAuth2Service } from '../services/oauth2.service';
 import { getPermissionsByRole, UserRole } from '../models/permission.model';
-import { logLoginAttempt, logSecurityAlert, logAuthEvent } from '../services/logger.service';
+import {
+  logLoginAttempt,
+  logSecurityAlert,
+  logAuthEvent,
+} from '../services/logger.service';
+import { plainToInstance } from 'class-transformer';
+import { validateOrReject, ValidationError } from 'class-validator';
+import { RegisterDto, LoginDto, RefreshTokenDto } from '../common/dto/auth.dto';
 
+// @deprecated This file is legacy. Logic is being migrated to NestJS controller.
 export class AuthController {
   private jwtService: JWTService;
   private passwordService: PasswordService;
@@ -44,12 +53,17 @@ export class AuthController {
         const expiresIn = 60 * 60; // 1 hour
         const sessionId = `pwdreset:${resetToken}`;
 
-        await redisService.setSession(sessionId, { userId: user.id, email: user.email }, expiresIn);
+        await redisService.setSession(
+          sessionId,
+          { userId: user.id, email: user.email },
+          expiresIn,
+        );
 
         // Send reset token by email (best-effort)
         try {
           const notificationUrl =
-            process.env.NOTIFICATION_SERVICE_URL || 'http://notification-service:3006';
+            process.env.NOTIFICATION_SERVICE_URL ||
+            'http://notification-service:3006';
 
           await fetch(`${notificationUrl}/notifications/send`, {
             method: 'POST',
@@ -93,11 +107,14 @@ export class AuthController {
       const password = (req.body?.password || '').toString();
 
       if (!token || !password) {
-        res.status(400).json({ success: false, error: 'Token and password are required' });
+        res
+          .status(400)
+          .json({ success: false, error: 'Token and password are required' });
         return;
       }
 
-      const passwordValidation = this.passwordService.validatePasswordStrength(password);
+      const passwordValidation =
+        this.passwordService.validatePasswordStrength(password);
       if (!passwordValidation.valid) {
         res.status(400).json({
           success: false,
@@ -109,15 +126,22 @@ export class AuthController {
 
       const redisService = getRedisService();
       const sessionId = `pwdreset:${token}`;
-      const session = await redisService.getSession(sessionId);
+      const session = await redisService.getSession<{ userId: string }>(
+        sessionId,
+      );
 
       if (!session?.userId) {
-        res.status(400).json({ success: false, error: 'Invalid or expired token' });
+        res
+          .status(400)
+          .json({ success: false, error: 'Invalid or expired token' });
         return;
       }
 
       const passwordHash = await this.passwordService.hashPassword(password);
-      const updated = await this.userRepository.updatePassword(session.userId, passwordHash);
+      const updated = await this.userRepository.updatePassword(
+        session.userId,
+        passwordHash,
+      );
       await redisService.clearSession(sessionId);
 
       // Invalider les refresh tokens existants (best-effort)
@@ -141,22 +165,20 @@ export class AuthController {
    * POST /auth/register
    * Register new user
    */
+  /**
+   * POST /auth/register
+   * Register new user
+   */
   register = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { email, password, firstName, lastName, role, phone } = req.body;
+      // Validate input using DTO
+      const dto = plainToInstance(RegisterDto, req.body);
+      await validateOrReject(dto);
+
       const ipAddress = req.ip || req.socket.remoteAddress || 'unknown';
 
-      // Validate input
-      if (!email || !password || !firstName || !lastName) {
-        res.status(400).json({
-          success: false,
-          error: 'Missing required fields',
-        });
-        return;
-      }
-
       // Validate role - admin cannot be self-registered
-      const userRole = (role || 'buyer').toLowerCase();
+      const userRole = (dto.role || 'buyer').toLowerCase();
       if (userRole === 'admin') {
         res.status(403).json({
           success: false,
@@ -174,7 +196,7 @@ export class AuthController {
       }
 
       // Check if user exists
-      const existingUser = await this.userRepository.findByEmail(email);
+      const existingUser = await this.userRepository.findByEmail(dto.email);
       if (existingUser) {
         res.status(409).json({
           success: false,
@@ -184,7 +206,9 @@ export class AuthController {
       }
 
       // Validate password strength
-      const passwordValidation = this.passwordService.validatePasswordStrength(password);
+      const passwordValidation = this.passwordService.validatePasswordStrength(
+        dto.password,
+      );
       if (!passwordValidation.valid) {
         res.status(400).json({
           success: false,
@@ -195,20 +219,22 @@ export class AuthController {
       }
 
       // Hash password
-      const passwordHash = await this.passwordService.hashPassword(password);
+      const passwordHash = await this.passwordService.hashPassword(
+        dto.password,
+      );
 
       // Create user
       const user = await this.userRepository.create({
-        email,
-        firstName,
-        lastName,
+        email: dto.email,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
         role: userRole as 'buyer' | 'transporter',
-        phone,
+        phone: dto.phone,
         passwordHash,
       });
 
       // Get permissions for role
-      const permissions = getPermissionsByRole(userRole as UserRole);
+      const permissions = getPermissionsByRole(user.role as UserRole);
 
       // Generate tokens
       const tokens = this.jwtService.generateTokenPair({
@@ -221,7 +247,10 @@ export class AuthController {
       });
 
       // Log registration
-      logAuthEvent('user_registered', user.id, user.email, { ip: ipAddress, role: user.role });
+      logAuthEvent('user_registered', user.id, user.email, {
+        ip: ipAddress,
+        role: user.role,
+      });
 
       res.status(201).json({
         success: true,
@@ -236,6 +265,16 @@ export class AuthController {
         expiresIn: tokens.expiresIn,
       });
     } catch (error) {
+      if (
+        Array.isArray(error) &&
+        error.length > 0 &&
+        error[0] instanceof ValidationError
+      ) {
+        res
+          .status(400)
+          .json({ success: false, error: 'Validation failed', details: error });
+        return;
+      }
       console.error('Registration error:', error);
       res.status(500).json({
         success: false,
@@ -250,27 +289,26 @@ export class AuthController {
    */
   login = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { email, password } = req.body;
+      // Validate input using DTO
+      const dto = plainToInstance(LoginDto, req.body);
+      await validateOrReject(dto);
+
       const ipAddress = req.ip || req.socket.remoteAddress || 'unknown';
       const userAgent = req.get('User-Agent') || 'unknown';
 
-      if (!email || !password) {
-        res.status(400).json({
-          success: false,
-          error: 'Email and password are required',
-        });
-        return;
-      }
-
       // Check for too many failed attempts
-      const shouldLock = await this.loginAttemptRepository.shouldLockAccount(email, 5, 15);
+      const shouldLock = await this.loginAttemptRepository.shouldLockAccount(
+        dto.email,
+        5,
+        15,
+      );
       if (shouldLock) {
         await this.loginAttemptRepository.recordAttempt({
-          email,
+          email: dto.email,
           ipAddress,
           success: false,
         });
-        logSecurityAlert(email, 5, ipAddress, userAgent);
+        logSecurityAlert(dto.email, 5, ipAddress, userAgent);
         res.status(429).json({
           success: false,
           error: 'Too many failed login attempts. Please try again later.',
@@ -279,14 +317,14 @@ export class AuthController {
       }
 
       // Find user
-      const user = await this.userRepository.findByEmail(email);
+      const user = await this.userRepository.findByEmail(dto.email);
       if (!user || !user.passwordHash) {
         await this.loginAttemptRepository.recordAttempt({
-          email,
+          email: dto.email,
           ipAddress,
           success: false,
         });
-        logLoginAttempt(email, false, ipAddress, userAgent);
+        logLoginAttempt(dto.email, false, ipAddress, userAgent);
         res.status(401).json({
           success: false,
           error: 'Invalid credentials',
@@ -296,22 +334,25 @@ export class AuthController {
 
       // Verify password
       const isValidPassword = await this.passwordService.verifyPassword(
-        password,
-        user.passwordHash
+        dto.password,
+        user.passwordHash,
       );
 
       if (!isValidPassword) {
         await this.loginAttemptRepository.recordAttempt({
-          email,
+          email: dto.email,
           ipAddress,
           success: false,
         });
-        logLoginAttempt(email, false, ipAddress, userAgent, user.role);
-        
+        logLoginAttempt(dto.email, false, ipAddress, userAgent, user.role);
+
         // Check if we should alert after this failed attempt
-        const failedCount = await this.loginAttemptRepository.getFailedAttempts(email, 15);
+        const failedCount = await this.loginAttemptRepository.getFailedAttempts(
+          dto.email,
+          15,
+        );
         if (failedCount >= 5) {
-          logSecurityAlert(email, failedCount, ipAddress, userAgent);
+          logSecurityAlert(dto.email, failedCount, ipAddress, userAgent);
         }
 
         res.status(401).json({
@@ -336,7 +377,7 @@ export class AuthController {
 
       // Record successful login attempt
       await this.loginAttemptRepository.recordAttempt({
-        email,
+        email: dto.email,
         ipAddress,
         success: true,
       });
@@ -344,10 +385,17 @@ export class AuthController {
       // Store refresh token in Redis
       const redisService = getRedisService();
       const refreshExpiry = 7 * 24 * 60 * 60; // 7 days in seconds
-      await redisService.storeRefreshToken(user.id, tokens.refreshToken, refreshExpiry);
+      await redisService.storeRefreshToken(
+        user.id,
+        tokens.refreshToken,
+        refreshExpiry,
+      );
 
-      logLoginAttempt(email, true, ipAddress, userAgent, user.role);
-      logAuthEvent('user_logged_in', user.id, user.email, { ip: ipAddress, role: user.role });
+      logLoginAttempt(dto.email, true, ipAddress, userAgent, user.role);
+      logAuthEvent('user_logged_in', user.id, user.email, {
+        ip: ipAddress,
+        role: user.role,
+      });
 
       res.status(200).json({
         success: true,
@@ -362,6 +410,16 @@ export class AuthController {
         expiresIn: tokens.expiresIn,
       });
     } catch (error) {
+      if (
+        Array.isArray(error) &&
+        error.length > 0 &&
+        error[0] instanceof ValidationError
+      ) {
+        res
+          .status(400)
+          .json({ success: false, error: 'Validation failed', details: error });
+        return;
+      }
       console.error('Login error:', error);
       res.status(500).json({
         success: false,
@@ -376,18 +434,11 @@ export class AuthController {
    */
   refresh = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { refreshToken } = req.body;
-
-      if (!refreshToken) {
-        res.status(400).json({
-          success: false,
-          error: 'Refresh token is required',
-        });
-        return;
-      }
+      const dto = plainToInstance(RefreshTokenDto, req.body);
+      await validateOrReject(dto);
 
       // Verify refresh token
-      const decoded = this.jwtService.verifyRefreshToken(refreshToken);
+      const decoded = this.jwtService.verifyRefreshToken(dto.refreshToken);
 
       // Get user
       const user = await this.userRepository.findById(decoded.sub);
@@ -401,7 +452,10 @@ export class AuthController {
 
       // Check if refresh token exists in Redis
       const redisService = getRedisService();
-      const hasToken = await redisService.hasRefreshToken(user.id, refreshToken);
+      const hasToken = await redisService.hasRefreshToken(
+        user.id,
+        dto.refreshToken,
+      );
       if (!hasToken) {
         res.status(401).json({
           success: false,
@@ -425,8 +479,12 @@ export class AuthController {
 
       // Store new refresh token in Redis
       const refreshExpiry = 7 * 24 * 60 * 60; // 7 days in seconds
-      await redisService.removeRefreshToken(user.id, refreshToken);
-      await redisService.storeRefreshToken(user.id, tokens.refreshToken, refreshExpiry);
+      await redisService.removeRefreshToken(user.id, dto.refreshToken);
+      await redisService.storeRefreshToken(
+        user.id,
+        tokens.refreshToken,
+        refreshExpiry,
+      );
 
       res.status(200).json({
         success: true,
@@ -449,7 +507,8 @@ export class AuthController {
    */
   me = async (req: Request, res: Response): Promise<void> => {
     try {
-      if (!req.user) {
+      const authUser = (req as AuthenticatedRequest).user;
+      if (!authUser) {
         res.status(401).json({
           success: false,
           error: 'Not authenticated',
@@ -457,7 +516,7 @@ export class AuthController {
         return;
       }
 
-      const user = await this.userRepository.findById(req.user.id);
+      const user = await this.userRepository.findById(authUser.id);
       if (!user) {
         res.status(404).json({
           success: false,
@@ -491,7 +550,7 @@ export class AuthController {
    * GET /auth/oauth/google
    * Redirect to Google OAuth
    */
-  googleAuth = async (_req: Request, res: Response): Promise<void> => {
+  googleAuth = (_req: Request, res: Response): void => {
     try {
       if (!this.oauth2Service.isOAuth2Configured()) {
         res.status(503).json({
@@ -538,7 +597,7 @@ export class AuthController {
 
       // Get user info
       const googleUser = await this.oauth2Service.getGoogleUserInfo(
-        googleTokens.accessToken
+        googleTokens.accessToken,
       );
 
       // Find or create user
@@ -571,7 +630,7 @@ export class AuthController {
       // Redirect to frontend with tokens
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
       res.redirect(
-        `${frontendUrl}/auth/callback?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`
+        `${frontendUrl}/auth/callback?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`,
       );
     } catch (error) {
       console.error('Google OAuth callback error:', error);
@@ -598,7 +657,10 @@ export class AuthController {
           const jwtService = new JWTService();
           const expiration = jwtService.getTokenExpiration(token);
           if (expiration) {
-            const expiresIn = Math.max(0, Math.floor((expiration.getTime() - Date.now()) / 1000));
+            const expiresIn = Math.max(
+              0,
+              Math.floor((expiration.getTime() - Date.now()) / 1000),
+            );
             await redisService.blacklistToken(token, expiresIn);
           }
         } catch (error) {
@@ -608,14 +670,15 @@ export class AuthController {
       }
 
       // Remove refresh token if provided
-      if (refreshToken && req.user) {
-        await redisService.removeRefreshToken(req.user.id, refreshToken);
+      const authUser = (req as AuthenticatedRequest).user;
+      if (refreshToken && authUser) {
+        await redisService.removeRefreshToken(authUser.id, refreshToken);
       }
 
       // Remove all refresh tokens for user if authenticated
-      if (req.user) {
-        await redisService.removeAllRefreshTokens(req.user.id);
-        logAuthEvent('user_logged_out', req.user.id, req.user.email);
+      if (authUser) {
+        await redisService.removeAllRefreshTokens(authUser.id);
+        logAuthEvent('user_logged_out', authUser.id, authUser.email);
       }
 
       res.status(200).json({

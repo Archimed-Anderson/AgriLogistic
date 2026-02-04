@@ -88,9 +88,7 @@ const mockDeliveries: Delivery[] = [
     status: 'delivered',
     scheduledDate: new Date('2026-01-22T09:00:00'),
     actualArrival: new Date('2026-01-22T09:45:00'),
-    items: [
-      { name: 'Arachides', quantity: 200, unit: 'kg' },
-    ],
+    items: [{ name: 'Arachides', quantity: 200, unit: 'kg' }],
     totalValue: 240000,
     transporterName: 'Kolda Express',
     vehicleInfo: 'Camion - KO-3456-EF',
@@ -105,9 +103,7 @@ const mockDeliveries: Delivery[] = [
     status: 'delayed',
     scheduledDate: new Date('2026-01-22T14:00:00'),
     estimatedArrival: new Date('2026-01-23T16:00:00'),
-    items: [
-      { name: 'Oignons Violets', quantity: 300, unit: 'kg' },
-    ],
+    items: [{ name: 'Oignons Violets', quantity: 300, unit: 'kg' }],
     totalValue: 240000,
     transporterName: 'Express Agro',
     vehicleInfo: 'Fourgon - TH-1234-GH',
@@ -121,19 +117,21 @@ export function useDeliveries() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['buyer', 'deliveries'],
     queryFn: async () => {
-      await new Promise(resolve => setTimeout(resolve, 600));
+      await new Promise((resolve) => setTimeout(resolve, 600));
       return mockDeliveries;
     },
   });
 
   const deliveries = data || [];
-  const todayDeliveries = deliveries.filter(d => {
+  const todayDeliveries = deliveries.filter((d) => {
     const today = new Date();
     const schedDate = new Date(d.scheduledDate);
     return schedDate.toDateString() === today.toDateString() && d.status !== 'delivered';
   });
-  const inTransitDeliveries = deliveries.filter(d => d.status === 'in_transit' || d.status === 'arriving');
-  const delayedDeliveries = deliveries.filter(d => d.status === 'delayed');
+  const inTransitDeliveries = deliveries.filter(
+    (d) => d.status === 'in_transit' || d.status === 'arriving'
+  );
+  const delayedDeliveries = deliveries.filter((d) => d.status === 'delayed');
 
   return {
     deliveries,

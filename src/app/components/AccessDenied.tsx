@@ -1,5 +1,5 @@
-import { ShieldAlert } from "lucide-react";
-import { Button } from "./ui/button";
+import { ShieldAlert } from 'lucide-react';
+import { Button } from './ui/button';
 
 type AccessDeniedProps = {
   title?: string;
@@ -8,8 +8,8 @@ type AccessDeniedProps = {
 };
 
 export function AccessDenied({
-  title = "Accès refusé",
-  message = "Vous n’avez pas les permissions nécessaires pour accéder à ce module.",
+  title = 'Accès refusé',
+  message = 'Vous n’avez pas les permissions nécessaires pour accéder à ce module.',
   onBack,
 }: AccessDeniedProps) {
   return (
@@ -33,4 +33,3 @@ export function AccessDenied({
     </div>
   );
 }
-

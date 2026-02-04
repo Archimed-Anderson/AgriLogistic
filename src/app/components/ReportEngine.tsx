@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   FileText,
   Clock,
@@ -42,14 +42,14 @@ import {
   Bookmark,
   Star,
   TrendingDown,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 interface Report {
   id: string;
   name: string;
   type: string;
-  status: "active" | "paused" | "draft" | "error";
+  status: 'active' | 'paused' | 'draft' | 'error';
   frequency: string;
   nextRun: string;
   lastRun: string;
@@ -59,10 +59,12 @@ interface Report {
 }
 
 export function ReportEngine() {
-  const [activeView, setActiveView] = useState<"dashboard" | "templates" | "schedule" | "analytics" | "archive">("dashboard");
+  const [activeView, setActiveView] = useState<
+    'dashboard' | 'templates' | 'schedule' | 'analytics' | 'archive'
+  >('dashboard');
   const [showWizard, setShowWizard] = useState(false);
   const [wizardStep, setWizardStep] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedReportType, setSelectedReportType] = useState<string | null>(null);
   const [selectedDataSources, setSelectedDataSources] = useState<string[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
@@ -70,43 +72,43 @@ export function ReportEngine() {
   // KPIs Data
   const kpis = [
     {
-      id: "active",
-      label: "Rapports Actifs",
-      value: "24/50",
-      subtitle: "48% capacity",
+      id: 'active',
+      label: 'Rapports Actifs',
+      value: '24/50',
+      subtitle: '48% capacity',
       icon: FileText,
-      color: "blue",
-      trend: "+3 ce mois",
+      color: 'blue',
+      trend: '+3 ce mois',
       trendUp: true,
     },
     {
-      id: "next",
-      label: "Prochain Exécution",
-      value: "14:00",
+      id: 'next',
+      label: 'Prochain Exécution',
+      value: '14:00',
       subtitle: "Aujourd'hui",
       icon: Clock,
-      color: "orange",
-      trend: "Dans 2h 15min",
+      color: 'orange',
+      trend: 'Dans 2h 15min',
       trendUp: false,
     },
     {
-      id: "recipients",
-      label: "Destinataires",
-      value: "156",
-      subtitle: "Agriculteurs actifs",
+      id: 'recipients',
+      label: 'Destinataires',
+      value: '156',
+      subtitle: 'Agriculteurs actifs',
       icon: Users,
-      color: "green",
-      trend: "+12 cette semaine",
+      color: 'green',
+      trend: '+12 cette semaine',
       trendUp: true,
     },
     {
-      id: "engagement",
-      label: "Engagement Moyen",
-      value: "78%",
+      id: 'engagement',
+      label: 'Engagement Moyen',
+      value: '78%',
       subtitle: "Taux d'ouverture",
       icon: TrendingUp,
-      color: "purple",
-      trend: "+5% vs dernier mois",
+      color: 'purple',
+      trend: '+5% vs dernier mois',
       trendUp: true,
     },
   ];
@@ -114,160 +116,181 @@ export function ReportEngine() {
   // Reports Data
   const reports: Report[] = [
     {
-      id: "1",
-      name: "Production Quotidienne - Région Nord",
-      type: "daily",
-      status: "active",
-      frequency: "Quotidien à 08:00",
-      nextRun: "Demain, 08:00",
+      id: '1',
+      name: 'Production Quotidienne - Région Nord',
+      type: 'daily',
+      status: 'active',
+      frequency: 'Quotidien à 08:00',
+      nextRun: 'Demain, 08:00',
       lastRun: "Aujourd'hui, 08:00",
       recipients: 45,
       engagement: 85,
-      template: "production-daily",
+      template: 'production-daily',
     },
     {
-      id: "2",
-      name: "Analyse Hebdomadaire - Toutes cultures",
-      type: "weekly",
-      status: "active",
-      frequency: "Lundi à 09:00",
-      nextRun: "Lundi 15 Jan, 09:00",
-      lastRun: "Lundi 8 Jan, 09:00",
+      id: '2',
+      name: 'Analyse Hebdomadaire - Toutes cultures',
+      type: 'weekly',
+      status: 'active',
+      frequency: 'Lundi à 09:00',
+      nextRun: 'Lundi 15 Jan, 09:00',
+      lastRun: 'Lundi 8 Jan, 09:00',
       recipients: 120,
       engagement: 72,
-      template: "analysis-weekly",
+      template: 'analysis-weekly',
     },
     {
-      id: "3",
-      name: "Alertes Critiques - Irrigation",
-      type: "alert",
-      status: "active",
-      frequency: "Temps réel",
-      nextRun: "En attente",
-      lastRun: "Il y a 2h",
+      id: '3',
+      name: 'Alertes Critiques - Irrigation',
+      type: 'alert',
+      status: 'active',
+      frequency: 'Temps réel',
+      nextRun: 'En attente',
+      lastRun: 'Il y a 2h',
       recipients: 34,
       engagement: 95,
-      template: "alert-critical",
+      template: 'alert-critical',
     },
     {
-      id: "4",
-      name: "Rapport Mensuel - Finance",
-      type: "monthly",
-      status: "draft",
-      frequency: "1er du mois à 10:00",
-      nextRun: "1 Fév, 10:00",
-      lastRun: "1 Jan, 10:00",
+      id: '4',
+      name: 'Rapport Mensuel - Finance',
+      type: 'monthly',
+      status: 'draft',
+      frequency: '1er du mois à 10:00',
+      nextRun: '1 Fév, 10:00',
+      lastRun: '1 Jan, 10:00',
       recipients: 8,
       engagement: 68,
-      template: "financial-monthly",
+      template: 'financial-monthly',
     },
   ];
 
   // Report Types
   const reportTypes = [
     {
-      id: "daily-production",
-      name: "Production Quotidienne",
-      description: "Suivi journalier des rendements et activités",
+      id: 'daily-production',
+      name: 'Production Quotidienne',
+      description: 'Suivi journalier des rendements et activités',
       icon: Activity,
-      color: "blue",
+      color: 'blue',
       popular: true,
     },
     {
-      id: "weekly-analysis",
-      name: "Analyse Hebdomadaire",
-      description: "Synthèse des performances sur 7 jours",
+      id: 'weekly-analysis',
+      name: 'Analyse Hebdomadaire',
+      description: 'Synthèse des performances sur 7 jours',
       icon: BarChart3,
-      color: "green",
+      color: 'green',
       popular: true,
     },
     {
-      id: "monthly-complete",
-      name: "Rapport Mensuel Complet",
+      id: 'monthly-complete',
+      name: 'Rapport Mensuel Complet',
       description: "Vue d'ensemble mensuelle détaillée",
       icon: FileText,
-      color: "purple",
+      color: 'purple',
       popular: false,
     },
     {
-      id: "critical-alerts",
-      name: "Alertes Critiques",
-      description: "Notifications urgentes et événements",
+      id: 'critical-alerts',
+      name: 'Alertes Critiques',
+      description: 'Notifications urgentes et événements',
       icon: AlertCircle,
-      color: "red",
+      color: 'red',
       popular: true,
     },
     {
-      id: "custom",
-      name: "Personnalisé",
-      description: "Créez votre propre configuration",
+      id: 'custom',
+      name: 'Personnalisé',
+      description: 'Créez votre propre configuration',
       icon: Settings,
-      color: "orange",
+      color: 'orange',
       popular: false,
     },
   ];
 
   // Data Sources
   const dataSources = [
-    { id: "iot", label: "Données capteurs IoT", icon: Cpu, checked: false },
-    { id: "soil", label: "Analyses de sol", icon: Database, checked: false },
-    { id: "weather", label: "Informations météo", icon: Cloud, checked: false },
-    { id: "financial", label: "Données financières", icon: DollarSign, checked: false },
-    { id: "users", label: "Activité utilisateurs", icon: Users, checked: false },
-    { id: "equipment", label: "Performances équipements", icon: Zap, checked: false },
+    { id: 'iot', label: 'Données capteurs IoT', icon: Cpu, checked: false },
+    { id: 'soil', label: 'Analyses de sol', icon: Database, checked: false },
+    { id: 'weather', label: 'Informations météo', icon: Cloud, checked: false },
+    { id: 'financial', label: 'Données financières', icon: DollarSign, checked: false },
+    { id: 'users', label: 'Activité utilisateurs', icon: Users, checked: false },
+    { id: 'equipment', label: 'Performances équipements', icon: Zap, checked: false },
   ];
 
   // Templates
   const templates = [
     {
-      id: "production-daily",
-      name: "Production Quotidienne",
-      category: "Production Agricole",
-      description: "Rapport journalier avec métriques de rendement",
-      image: "📊",
+      id: 'production-daily',
+      name: 'Production Quotidienne',
+      category: 'Production Agricole',
+      description: 'Rapport journalier avec métriques de rendement',
+      image: '📊',
       rating: 4.8,
       downloads: 342,
-      compatibility: ["Desktop", "Mobile", "Print"],
+      compatibility: ['Desktop', 'Mobile', 'Print'],
     },
     {
-      id: "financial-monthly",
-      name: "Synthèse Financière",
-      category: "Financier",
+      id: 'financial-monthly',
+      name: 'Synthèse Financière',
+      category: 'Financier',
       description: "Vue d'ensemble mensuelle des revenus et coûts",
-      image: "💰",
+      image: '💰',
       rating: 4.6,
       downloads: 198,
-      compatibility: ["Desktop", "Print"],
+      compatibility: ['Desktop', 'Print'],
     },
     {
-      id: "iot-tech",
-      name: "Monitoring IoT",
-      category: "IoT & Technologie",
-      description: "État des capteurs et données télémétrie",
-      image: "📡",
+      id: 'iot-tech',
+      name: 'Monitoring IoT',
+      category: 'IoT & Technologie',
+      description: 'État des capteurs et données télémétrie',
+      image: '📡',
       rating: 4.9,
       downloads: 256,
-      compatibility: ["Desktop", "Mobile"],
+      compatibility: ['Desktop', 'Mobile'],
     },
     {
-      id: "team-performance",
-      name: "Performance Équipe",
-      category: "Équipe & Ressources",
-      description: "Suivi des activités et productivité",
-      image: "👥",
+      id: 'team-performance',
+      name: 'Performance Équipe',
+      category: 'Équipe & Ressources',
+      description: 'Suivi des activités et productivité',
+      image: '👥',
       rating: 4.5,
       downloads: 167,
-      compatibility: ["Desktop"],
+      compatibility: ['Desktop'],
     },
   ];
 
   const getStatusConfig = (status: string) => {
-    const configs: { [key: string]: { icon: any; label: string; color: string; bgColor: string } } = {
-      active: { icon: CheckCircle, label: "Actif", color: "text-green-700", bgColor: "bg-green-100 dark:bg-green-900/20" },
-      paused: { icon: Pause, label: "Pausé", color: "text-orange-700", bgColor: "bg-orange-100 dark:bg-orange-900/20" },
-      draft: { icon: Edit, label: "Brouillon", color: "text-gray-700", bgColor: "bg-gray-100 dark:bg-gray-800" },
-      error: { icon: AlertCircle, label: "Erreur", color: "text-red-700", bgColor: "bg-red-100 dark:bg-red-900/20" },
-    };
+    const configs: { [key: string]: { icon: any; label: string; color: string; bgColor: string } } =
+      {
+        active: {
+          icon: CheckCircle,
+          label: 'Actif',
+          color: 'text-green-700',
+          bgColor: 'bg-green-100 dark:bg-green-900/20',
+        },
+        paused: {
+          icon: Pause,
+          label: 'Pausé',
+          color: 'text-orange-700',
+          bgColor: 'bg-orange-100 dark:bg-orange-900/20',
+        },
+        draft: {
+          icon: Edit,
+          label: 'Brouillon',
+          color: 'text-gray-700',
+          bgColor: 'bg-gray-100 dark:bg-gray-800',
+        },
+        error: {
+          icon: AlertCircle,
+          label: 'Erreur',
+          color: 'text-red-700',
+          bgColor: 'bg-red-100 dark:bg-red-900/20',
+        },
+      };
     return configs[status];
   };
 
@@ -280,7 +303,7 @@ export function ReportEngine() {
     if (wizardStep < 5) {
       setWizardStep(wizardStep + 1);
     } else {
-      toast.success("Rapport créé avec succès !");
+      toast.success('Rapport créé avec succès !');
       setShowWizard(false);
       setWizardStep(1);
     }
@@ -294,7 +317,7 @@ export function ReportEngine() {
 
   const toggleDataSource = (id: string) => {
     if (selectedDataSources.includes(id)) {
-      setSelectedDataSources(selectedDataSources.filter(s => s !== id));
+      setSelectedDataSources(selectedDataSources.filter((s) => s !== id));
     } else {
       setSelectedDataSources([...selectedDataSources, id]);
     }
@@ -318,7 +341,7 @@ export function ReportEngine() {
                 {kpi.trendUp !== undefined && (
                   <div
                     className={`flex items-center gap-1 text-xs font-semibold ${
-                      kpi.trendUp ? "text-green-600" : "text-muted-foreground"
+                      kpi.trendUp ? 'text-green-600' : 'text-muted-foreground'
                     }`}
                   >
                     {kpi.trendUp ? (
@@ -346,10 +369,25 @@ export function ReportEngine() {
         <h3 className="text-lg font-semibold mb-4">Actions Rapides</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { label: "Nouveau Rapport", icon: Plus, color: "blue", action: handleCreateReport },
-            { label: "Templates Library", icon: Layout, color: "purple", action: () => setActiveView("templates") },
-            { label: "Calendrier", icon: CalendarIcon, color: "green", action: () => setActiveView("schedule") },
-            { label: "Analytics", icon: BarChart3, color: "orange", action: () => setActiveView("analytics") },
+            { label: 'Nouveau Rapport', icon: Plus, color: 'blue', action: handleCreateReport },
+            {
+              label: 'Templates Library',
+              icon: Layout,
+              color: 'purple',
+              action: () => setActiveView('templates'),
+            },
+            {
+              label: 'Calendrier',
+              icon: CalendarIcon,
+              color: 'green',
+              action: () => setActiveView('schedule'),
+            },
+            {
+              label: 'Analytics',
+              icon: BarChart3,
+              color: 'orange',
+              action: () => setActiveView('analytics'),
+            },
           ].map((action, index) => {
             const Icon = action.icon;
             return (
@@ -412,7 +450,9 @@ export function ReportEngine() {
                   <tr key={report.id} className="border-t hover:bg-muted/50 transition-colors">
                     <td className="px-4 py-3">
                       <div className="font-medium">{report.name}</div>
-                      <div className="text-xs text-muted-foreground">Template: {report.template}</div>
+                      <div className="text-xs text-muted-foreground">
+                        Template: {report.template}
+                      </div>
                     </td>
                     <td className="px-4 py-3">
                       <span className="px-2 py-1 bg-muted rounded text-xs font-medium capitalize">
@@ -476,19 +516,27 @@ export function ReportEngine() {
           <h3 className="text-lg font-semibold mb-4">Activité Récente</h3>
           <div className="space-y-3">
             {[
-              { time: "Il y a 5 min", action: "Rapport 'Production Quotidienne' envoyé", status: "success" },
-              { time: "Il y a 1h", action: "Template 'Financial Monthly' modifié", status: "info" },
-              { time: "Il y a 2h", action: "Alerte critique déclenchée - Irrigation", status: "warning" },
-              { time: "Il y a 4h", action: "Nouveau destinataire ajouté: Jean D.", status: "info" },
+              {
+                time: 'Il y a 5 min',
+                action: "Rapport 'Production Quotidienne' envoyé",
+                status: 'success',
+              },
+              { time: 'Il y a 1h', action: "Template 'Financial Monthly' modifié", status: 'info' },
+              {
+                time: 'Il y a 2h',
+                action: 'Alerte critique déclenchée - Irrigation',
+                status: 'warning',
+              },
+              { time: 'Il y a 4h', action: 'Nouveau destinataire ajouté: Jean D.', status: 'info' },
             ].map((activity, index) => (
               <div key={index} className="flex items-start gap-3 p-3 border rounded-lg">
                 <div
                   className={`w-2 h-2 rounded-full mt-2 ${
-                    activity.status === "success"
-                      ? "bg-green-500"
-                      : activity.status === "warning"
-                      ? "bg-orange-500"
-                      : "bg-blue-500"
+                    activity.status === 'success'
+                      ? 'bg-green-500'
+                      : activity.status === 'warning'
+                      ? 'bg-orange-500'
+                      : 'bg-blue-500'
                   }`}
                 />
                 <div className="flex-1">
@@ -504,12 +552,15 @@ export function ReportEngine() {
           <h3 className="text-lg font-semibold mb-4">Statistiques Rapides</h3>
           <div className="space-y-4">
             {[
-              { label: "Rapports envoyés (7j)", value: "156", change: "+12%" },
-              { label: "Taux d'ouverture moyen", value: "78%", change: "+5%" },
-              { label: "Temps moyen de lecture", value: "4m 32s", change: "+18s" },
-              { label: "Actions déclenchées", value: "42", change: "+8" },
+              { label: 'Rapports envoyés (7j)', value: '156', change: '+12%' },
+              { label: "Taux d'ouverture moyen", value: '78%', change: '+5%' },
+              { label: 'Temps moyen de lecture', value: '4m 32s', change: '+18s' },
+              { label: 'Actions déclenchées', value: '42', change: '+8' },
             ].map((stat, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+              <div
+                key={index}
+                className="flex items-center justify-between p-3 bg-muted rounded-lg"
+              >
                 <div>
                   <div className="text-sm text-muted-foreground">{stat.label}</div>
                   <div className="text-2xl font-bold">{stat.value}</div>
@@ -538,7 +589,13 @@ export function ReportEngine() {
 
       {/* Categories */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2">
-        {["Tous", "Production Agricole", "Financier", "IoT & Technologie", "Équipe & Ressources"].map((cat) => (
+        {[
+          'Tous',
+          'Production Agricole',
+          'Financier',
+          'IoT & Technologie',
+          'Équipe & Ressources',
+        ].map((cat) => (
           <button
             key={cat}
             className="px-4 py-2 border rounded-lg hover:bg-muted whitespace-nowrap text-sm"
@@ -630,7 +687,7 @@ export function ReportEngine() {
 
           {/* Calendar Grid */}
           <div className="grid grid-cols-7 gap-2">
-            {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day) => (
+            {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day) => (
               <div key={day} className="text-center text-sm font-medium text-muted-foreground py-2">
                 {day}
               </div>
@@ -642,10 +699,10 @@ export function ReportEngine() {
                 <div
                   key={i}
                   className={`aspect-square border rounded-lg p-2 hover:bg-muted transition-colors cursor-pointer ${
-                    day === 13 ? "bg-blue-50 dark:bg-blue-900/20 border-blue-500" : ""
+                    day === 13 ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500' : ''
                   }`}
                 >
-                  <div className="text-sm font-medium">{day > 0 && day <= 31 ? day : ""}</div>
+                  <div className="text-sm font-medium">{day > 0 && day <= 31 ? day : ''}</div>
                   {hasEvent && day > 0 && day <= 31 && (
                     <div className="mt-1">
                       <div className="w-full h-1 bg-green-500 rounded mb-0.5" />
@@ -663,10 +720,10 @@ export function ReportEngine() {
           <h3 className="text-lg font-semibold mb-4">Prochains 7 jours</h3>
           <div className="space-y-3">
             {[
-              { name: "Production Daily", time: "Demain, 08:00", type: "daily" },
-              { name: "Weekly Analysis", time: "Lundi, 09:00", type: "weekly" },
-              { name: "IoT Status", time: "Mardi, 10:00", type: "tech" },
-              { name: "Financial Report", time: "Vendredi, 14:00", type: "financial" },
+              { name: 'Production Daily', time: 'Demain, 08:00', type: 'daily' },
+              { name: 'Weekly Analysis', time: 'Lundi, 09:00', type: 'weekly' },
+              { name: 'IoT Status', time: 'Mardi, 10:00', type: 'tech' },
+              { name: 'Financial Report', time: 'Vendredi, 14:00', type: 'financial' },
             ].map((report, index) => (
               <div key={index} className="p-3 border rounded-lg hover:bg-muted transition-colors">
                 <div className="flex items-start justify-between">
@@ -718,11 +775,11 @@ export function ReportEngine() {
           <h3 className="text-lg font-semibold mb-6">Top 5 Rapports</h3>
           <div className="space-y-3">
             {[
-              { name: "Production Quotidienne", engagement: 95, opens: 342 },
-              { name: "Alertes Critiques", engagement: 92, opens: 287 },
-              { name: "Analyse Hebdo", engagement: 88, opens: 256 },
-              { name: "IoT Monitoring", engagement: 85, opens: 234 },
-              { name: "Financial Monthly", engagement: 78, opens: 198 },
+              { name: 'Production Quotidienne', engagement: 95, opens: 342 },
+              { name: 'Alertes Critiques', engagement: 92, opens: 287 },
+              { name: 'Analyse Hebdo', engagement: 88, opens: 256 },
+              { name: 'IoT Monitoring', engagement: 85, opens: 234 },
+              { name: 'Financial Monthly', engagement: 78, opens: 198 },
             ].map((report, index) => (
               <div key={index} className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -756,7 +813,7 @@ export function ReportEngine() {
             Stockage: <span className="font-semibold">45 Go</span> / 100 Go
           </div>
           <div className="w-32 h-2 bg-muted rounded-full overflow-hidden">
-            <div className="h-full bg-[#4A6FA5]" style={{ width: "45%" }} />
+            <div className="h-full bg-[#4A6FA5]" style={{ width: '45%' }} />
           </div>
         </div>
       </div>
@@ -832,10 +889,7 @@ export function ReportEngine() {
         <div className="p-6 border-b">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-2xl font-bold">Créer un Nouveau Rapport</h3>
-            <button
-              onClick={() => setShowWizard(false)}
-              className="p-2 hover:bg-muted rounded"
-            >
+            <button onClick={() => setShowWizard(false)} className="p-2 hover:bg-muted rounded">
               <Trash2 className="h-5 w-5" />
             </button>
           </div>
@@ -843,21 +897,21 @@ export function ReportEngine() {
           {/* Progress Steps */}
           <div className="flex items-center justify-between">
             {[
-              { num: 1, label: "Type" },
-              { num: 2, label: "Sources" },
-              { num: 3, label: "Template" },
-              { num: 4, label: "Planification" },
-              { num: 5, label: "Règles" },
+              { num: 1, label: 'Type' },
+              { num: 2, label: 'Sources' },
+              { num: 3, label: 'Template' },
+              { num: 4, label: 'Planification' },
+              { num: 5, label: 'Règles' },
             ].map((step) => (
               <div key={step.num} className="flex items-center flex-1">
                 <div className="flex flex-col items-center">
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
                       wizardStep === step.num
-                        ? "bg-[#4A6FA5] text-white"
+                        ? 'bg-[#4A6FA5] text-white'
                         : wizardStep > step.num
-                        ? "bg-green-500 text-white"
-                        : "bg-muted text-muted-foreground"
+                        ? 'bg-green-500 text-white'
+                        : 'bg-muted text-muted-foreground'
                     }`}
                   >
                     {wizardStep > step.num ? <CheckCircle className="h-5 w-5" /> : step.num}
@@ -867,7 +921,7 @@ export function ReportEngine() {
                 {step.num < 5 && (
                   <div
                     className={`flex-1 h-1 mx-2 rounded ${
-                      wizardStep > step.num ? "bg-green-500" : "bg-muted"
+                      wizardStep > step.num ? 'bg-green-500' : 'bg-muted'
                     }`}
                   />
                 )}
@@ -896,12 +950,14 @@ export function ReportEngine() {
                       onClick={() => setSelectedReportType(type.id)}
                       className={`p-6 border-2 rounded-xl text-left transition-all ${
                         selectedReportType === type.id
-                          ? "border-[#4A6FA5] bg-blue-50 dark:bg-blue-900/10"
-                          : "border-transparent hover:border-gray-300"
+                          ? 'border-[#4A6FA5] bg-blue-50 dark:bg-blue-900/10'
+                          : 'border-transparent hover:border-gray-300'
                       }`}
                     >
                       <div className="flex items-start gap-4">
-                        <div className={`p-3 rounded-lg bg-${type.color}-100 dark:bg-${type.color}-900/20`}>
+                        <div
+                          className={`p-3 rounded-lg bg-${type.color}-100 dark:bg-${type.color}-900/20`}
+                        >
                           <Icon className={`h-8 w-8 text-${type.color}-600`} />
                         </div>
                         <div className="flex-1">
@@ -942,12 +998,16 @@ export function ReportEngine() {
                       onClick={() => toggleDataSource(source.id)}
                       className={`p-4 border-2 rounded-xl text-left transition-all ${
                         isSelected
-                          ? "border-[#4A6FA5] bg-blue-50 dark:bg-blue-900/10"
-                          : "border-transparent hover:border-gray-300"
+                          ? 'border-[#4A6FA5] bg-blue-50 dark:bg-blue-900/10'
+                          : 'border-transparent hover:border-gray-300'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${isSelected ? "bg-[#4A6FA5] text-white" : "bg-muted"}`}>
+                        <div
+                          className={`p-2 rounded-lg ${
+                            isSelected ? 'bg-[#4A6FA5] text-white' : 'bg-muted'
+                          }`}
+                        >
                           <Icon className="h-6 w-6" />
                         </div>
                         <div className="flex-1">
@@ -993,8 +1053,8 @@ export function ReportEngine() {
                     onClick={() => setSelectedTemplate(template.id)}
                     className={`border-2 rounded-xl overflow-hidden transition-all ${
                       selectedTemplate === template.id
-                        ? "border-[#4A6FA5]"
-                        : "border-transparent hover:border-gray-300"
+                        ? 'border-[#4A6FA5]'
+                        : 'border-transparent hover:border-gray-300'
                     }`}
                   >
                     <div className="h-32 bg-gradient-to-br from-[#4A6FA5] to-[#6A8FC5] flex items-center justify-center text-5xl">
@@ -1052,10 +1112,10 @@ export function ReportEngine() {
                 <label className="block text-sm font-medium mb-2">Méthode de distribution</label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {[
-                    { id: "email", label: "Email", icon: Mail },
-                    { id: "sms", label: "SMS", icon: MessageSquare },
-                    { id: "app", label: "In-App", icon: Bell },
-                    { id: "download", label: "Download", icon: Download },
+                    { id: 'email', label: 'Email', icon: Mail },
+                    { id: 'sms', label: 'SMS', icon: MessageSquare },
+                    { id: 'app', label: 'In-App', icon: Bell },
+                    { id: 'download', label: 'Download', icon: Download },
                   ].map((method) => {
                     const Icon = method.icon;
                     return (
@@ -1079,7 +1139,7 @@ export function ReportEngine() {
                     <span>Ajouter des destinataires</span>
                   </button>
                   <div className="flex items-center gap-2 flex-wrap">
-                    {["Tous les agriculteurs", "Équipe Nord", "Managers"].map((group) => (
+                    {['Tous les agriculteurs', 'Équipe Nord', 'Managers'].map((group) => (
                       <span
                         key={group}
                         className="px-3 py-1 bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 rounded-full text-sm font-medium flex items-center gap-2"
@@ -1106,12 +1166,14 @@ export function ReportEngine() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Conditions de déclenchement</label>
+                <label className="block text-sm font-medium mb-2">
+                  Conditions de déclenchement
+                </label>
                 <div className="space-y-3">
                   {[
-                    "Si pluie > 50mm dans les 24h",
-                    "Si température < 5°C",
-                    "Si rendement baisse de 10%",
+                    'Si pluie > 50mm dans les 24h',
+                    'Si température < 5°C',
+                    'Si rendement baisse de 10%',
                   ].map((condition, index) => (
                     <div key={index} className="flex items-center gap-3 p-3 border rounded-lg">
                       <input type="checkbox" className="w-4 h-4" />
@@ -1132,12 +1194,15 @@ export function ReportEngine() {
                 <label className="block text-sm font-medium mb-2">Actions supplémentaires</label>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { label: "Générer PDF + Excel", checked: true },
-                    { label: "Archiver automatiquement", checked: true },
-                    { label: "Partager sur Slack", checked: false },
-                    { label: "Créer tâche de suivi", checked: false },
+                    { label: 'Générer PDF + Excel', checked: true },
+                    { label: 'Archiver automatiquement', checked: true },
+                    { label: 'Partager sur Slack', checked: false },
+                    { label: 'Créer tâche de suivi', checked: false },
                   ].map((action, index) => (
-                    <label key={index} className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-muted">
+                    <label
+                      key={index}
+                      className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-muted"
+                    >
                       <input type="checkbox" defaultChecked={action.checked} className="w-4 h-4" />
                       <span className="text-sm">{action.label}</span>
                     </label>
@@ -1153,8 +1218,8 @@ export function ReportEngine() {
                       Rapport prêt à être créé
                     </h5>
                     <p className="text-sm text-green-800 dark:text-green-200">
-                      Votre rapport sera configuré avec {selectedDataSources.length} sources de données et
-                      envoyé selon la planification définie.
+                      Votre rapport sera configuré avec {selectedDataSources.length} sources de
+                      données et envoyé selon la planification définie.
                     </p>
                   </div>
                 </div>
@@ -1174,15 +1239,13 @@ export function ReportEngine() {
             Précédent
           </button>
 
-          <div className="text-sm text-muted-foreground">
-            Étape {wizardStep} sur 5
-          </div>
+          <div className="text-sm text-muted-foreground">Étape {wizardStep} sur 5</div>
 
           <button
             onClick={handleNextStep}
             className="px-6 py-2 bg-[#4A6FA5] text-white rounded-lg hover:bg-[#3A5F95] transition-colors font-semibold flex items-center gap-2"
           >
-            {wizardStep === 5 ? "Créer le Rapport" : "Suivant"}
+            {wizardStep === 5 ? 'Créer le Rapport' : 'Suivant'}
             {wizardStep < 5 && <ChevronRight className="h-4 w-4" />}
           </button>
         </div>
@@ -1222,11 +1285,11 @@ export function ReportEngine() {
       {/* Navigation Tabs */}
       <div className="bg-card border rounded-xl p-2 flex gap-2">
         {[
-          { id: "dashboard", label: "Dashboard", icon: BarChart3 },
-          { id: "templates", label: "Templates", icon: Layout },
-          { id: "schedule", label: "Calendrier", icon: CalendarIcon },
-          { id: "analytics", label: "Analytics", icon: TrendingUp },
-          { id: "archive", label: "Archive", icon: Archive },
+          { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
+          { id: 'templates', label: 'Templates', icon: Layout },
+          { id: 'schedule', label: 'Calendrier', icon: CalendarIcon },
+          { id: 'analytics', label: 'Analytics', icon: TrendingUp },
+          { id: 'archive', label: 'Archive', icon: Archive },
         ].map((tab) => {
           const Icon = tab.icon;
           return (
@@ -1234,9 +1297,7 @@ export function ReportEngine() {
               key={tab.id}
               onClick={() => setActiveView(tab.id as any)}
               className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
-                activeView === tab.id
-                  ? "bg-[#4A6FA5] text-white"
-                  : "hover:bg-muted"
+                activeView === tab.id ? 'bg-[#4A6FA5] text-white' : 'hover:bg-muted'
               }`}
             >
               <Icon className="h-4 w-4" />
@@ -1247,11 +1308,11 @@ export function ReportEngine() {
       </div>
 
       {/* Content */}
-      {activeView === "dashboard" && renderDashboard()}
-      {activeView === "templates" && renderTemplates()}
-      {activeView === "schedule" && renderSchedule()}
-      {activeView === "analytics" && renderAnalytics()}
-      {activeView === "archive" && renderArchive()}
+      {activeView === 'dashboard' && renderDashboard()}
+      {activeView === 'templates' && renderTemplates()}
+      {activeView === 'schedule' && renderSchedule()}
+      {activeView === 'analytics' && renderAnalytics()}
+      {activeView === 'archive' && renderArchive()}
 
       {/* Wizard Modal */}
       {showWizard && renderWizard()}

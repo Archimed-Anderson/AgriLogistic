@@ -1,18 +1,11 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { 
-  Bell, 
-  Search, 
-  Cloud, 
-  Droplets, 
-  Thermometer,
-  ChevronDown
-} from "lucide-react"
-import { useFarmerStore } from "@/store/farmerStore"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import * as React from 'react';
+import { Bell, Search, Cloud, Droplets, Thermometer, ChevronDown } from 'lucide-react';
+import { useFarmerStore } from '@/store/farmerStore';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,12 +13,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
 
 export function FarmerTopbar() {
-  const { weather, notifications } = useFarmerStore()
-  const unreadCount = notifications.filter(n => !n.read).length
+  const { weather, notifications } = useFarmerStore();
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[#1B4D3E]/10 bg-white/70 backdrop-blur-xl dark:bg-[#0a1f18]/70">
@@ -51,8 +44,8 @@ export function FarmerTopbar() {
 
           <div className="relative w-64 hidden lg:block">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input 
-              placeholder="Rechercher une parcelle..." 
+            <Input
+              placeholder="Rechercher une parcelle..."
               className="pl-10 h-9 bg-slate-50 border-none rounded-full text-xs"
             />
           </div>
@@ -60,7 +53,11 @@ export function FarmerTopbar() {
 
         {/* Right: Actions & Profile */}
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="relative rounded-full hover:bg-[#1B4D3E]/5">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative rounded-full hover:bg-[#1B4D3E]/5"
+          >
             <Bell className="h-5 w-5 text-slate-600" />
             {unreadCount > 0 && (
               <span className="absolute top-2 right-2 flex h-2 w-2 rounded-full bg-red-500" />
@@ -69,14 +66,21 @@ export function FarmerTopbar() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center gap-3 px-2 py-1.5 rounded-full hover:bg-[#1B4D3E]/5">
+              <Button
+                variant="ghost"
+                className="flex items-center gap-3 px-2 py-1.5 rounded-full hover:bg-[#1B4D3E]/5"
+              >
                 <Avatar className="h-8 w-8 border-2 border-[#D4A017]">
                   <AvatarImage src="/avatars/farmer.png" />
                   <AvatarFallback className="bg-[#1B4D3E] text-white font-bold">JD</AvatarFallback>
                 </Avatar>
                 <div className="hidden md:block text-left">
-                  <p className="text-xs font-black text-[#1B4D3E] dark:text-white leading-tight">Jean Dupont</p>
-                  <p className="text-[10px] text-muted-foreground font-medium">Exploitant Agricole</p>
+                  <p className="text-xs font-black text-[#1B4D3E] dark:text-white leading-tight">
+                    Jean Dupont
+                  </p>
+                  <p className="text-[10px] text-muted-foreground font-medium">
+                    Exploitant Agricole
+                  </p>
                 </div>
                 <ChevronDown className="h-3 w-3 text-muted-foreground hidden md:block" />
               </Button>
@@ -94,5 +98,5 @@ export function FarmerTopbar() {
         </div>
       </div>
     </header>
-  )
+  );
 }

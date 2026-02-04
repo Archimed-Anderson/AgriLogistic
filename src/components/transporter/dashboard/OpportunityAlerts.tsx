@@ -78,7 +78,8 @@ export function OpportunityAlerts({ alerts, onDismiss }: OpportunityAlertsProps)
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-gray-900">Opportunités</h2>
         <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
-          {alerts.filter((a) => !a.read).length} nouvelle{alerts.filter((a) => !a.read).length > 1 ? 's' : ''}
+          {alerts.filter((a) => !a.read).length} nouvelle
+          {alerts.filter((a) => !a.read).length > 1 ? 's' : ''}
         </span>
       </div>
 
@@ -120,10 +121,7 @@ export function OpportunityAlerts({ alerts, onDismiss }: OpportunityAlertsProps)
                       {alert.priority === 'low' && 'Faible'}
                     </span>
                     {alert.actionUrl && (
-                      <Link
-                        to={alert.actionUrl}
-                        className="text-sm font-medium hover:underline"
-                      >
+                      <Link to={alert.actionUrl} className="text-sm font-medium hover:underline">
                         {alert.actionLabel || 'Voir plus'} →
                       </Link>
                     )}
@@ -132,10 +130,7 @@ export function OpportunityAlerts({ alerts, onDismiss }: OpportunityAlertsProps)
                     <div className="mt-2 flex items-center gap-1 text-xs opacity-75">
                       <Clock className="w-3 h-3" />
                       <span>
-                        Expire dans{' '}
-                        {Math.round(
-                          (alert.expiresAt.getTime() - Date.now()) / 60000
-                        )}{' '}
+                        Expire dans {Math.round((alert.expiresAt.getTime() - Date.now()) / 60000)}{' '}
                         min
                       </span>
                     </div>

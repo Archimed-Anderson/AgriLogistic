@@ -5,7 +5,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Map, { Marker, Source, Layer, Popup } from 'react-map-gl';
+import ReactMapGL, { Marker, Source, Layer, Popup } from 'react-map-gl';
+const Map = ReactMapGL.Map as React.FC<Record<string, unknown>>;
 import { MapPin, Navigation } from 'lucide-react';
 import type { Delivery } from '@/types/farmer/logistics';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -157,7 +158,8 @@ export function DeliveryMap({ delivery }: DeliveryMapProps) {
           </div>
           {delivery.tracking.eta && (
             <p className="text-xs text-gray-600">
-              ETA: {new Date(delivery.tracking.eta).toLocaleTimeString('fr-FR', {
+              ETA:{' '}
+              {new Date(delivery.tracking.eta).toLocaleTimeString('fr-FR', {
                 hour: '2-digit',
                 minute: '2-digit',
               })}

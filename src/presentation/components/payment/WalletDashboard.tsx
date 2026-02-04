@@ -5,7 +5,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useWalletBalance, useWalletTransactions, useTopUpWallet, useTransferFunds } from '@/application/hooks/usePayment';
+import {
+  useWalletBalance,
+  useWalletTransactions,
+  useTopUpWallet,
+  useTransferFunds,
+} from '@/application/hooks/usePayment';
 import { formatCurrency } from '@/lib/utils';
 
 export function WalletDashboard() {
@@ -40,14 +45,14 @@ export function WalletDashboard() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-3 gap-4">
-        <button 
+        <button
           onClick={() => setShowTopUp(true)}
           className="flex flex-col items-center p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border"
         >
           <span className="text-2xl mb-2">💳</span>
           <span className="text-sm font-medium">Recharger</span>
         </button>
-        <button 
+        <button
           onClick={() => setShowTransfer(true)}
           className="flex flex-col items-center p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border"
         >
@@ -72,20 +77,30 @@ export function WalletDashboard() {
         ) : transactions?.items?.length > 0 ? (
           <div className="space-y-3">
             {transactions.items.map((tx: any) => (
-              <div key={tx.id} className="flex items-center justify-between py-3 border-b last:border-0">
+              <div
+                key={tx.id}
+                className="flex items-center justify-between py-3 border-b last:border-0"
+              >
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    tx.amount > 0 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
-                  }`}>
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                      tx.amount > 0 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
+                    }`}
+                  >
                     {tx.amount > 0 ? '↓' : '↑'}
                   </div>
                   <div>
                     <p className="font-medium">{tx.description}</p>
-                    <p className="text-sm text-gray-500">{new Date(tx.created_at).toLocaleDateString('fr-FR')}</p>
+                    <p className="text-sm text-gray-500">
+                      {new Date(tx.created_at).toLocaleDateString('fr-FR')}
+                    </p>
                   </div>
                 </div>
-                <span className={`font-semibold ${tx.amount > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {tx.amount > 0 ? '+' : ''}{formatCurrency(tx.amount, 'XOF')}
+                <span
+                  className={`font-semibold ${tx.amount > 0 ? 'text-green-600' : 'text-red-600'}`}
+                >
+                  {tx.amount > 0 ? '+' : ''}
+                  {formatCurrency(tx.amount, 'XOF')}
                 </span>
               </div>
             ))}

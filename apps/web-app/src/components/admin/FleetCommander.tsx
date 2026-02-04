@@ -27,6 +27,7 @@ import {
   Zap,
   ArrowUpRight,
   MapPin,
+  Plus,
   X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -279,7 +280,7 @@ function VehicleTable() {
               <td className="px-8 py-6">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-slate-800 border border-white/5 overflow-hidden">
-                    <img src={v.image} className="w-full h-full object-cover" />
+                    <img src={v.image} alt="" className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <h5 className="text-[12px] font-black text-white tracking-widest group-hover:text-emerald-500 transition-colors uppercase">{v.plate}</h5>
@@ -452,7 +453,7 @@ function VehicleDetailSideOver({ vehicle, onClose }: { vehicle: Vehicle, onClose
                   <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Conducteur Assigné</h4>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <img src={vehicle.driver.avatar} className="w-12 h-12 rounded-full border border-white/10" />
+                      <img src={vehicle.driver.avatar} alt="" className="w-12 h-12 rounded-full border border-white/10" />
                       <div>
                         <div className="text-sm font-black text-white italic uppercase">{vehicle.driver.name}</div>
                         <div className="text-[10px] text-slate-500 font-bold">{vehicle.driver.phone}</div>

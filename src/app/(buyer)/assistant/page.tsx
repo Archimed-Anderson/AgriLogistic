@@ -15,7 +15,7 @@ import {
   FileText,
   RefreshCw,
   ChevronRight,
-  User
+  User,
 } from 'lucide-react';
 
 interface Message {
@@ -30,7 +30,8 @@ const initialMessages: Message[] = [
   {
     id: 'm-1',
     role: 'assistant',
-    content: 'Bonjour ! Je suis votre assistant IA pour le sourcing. Comment puis-je vous aider aujourd\'hui ?',
+    content:
+      "Bonjour ! Je suis votre assistant IA pour le sourcing. Comment puis-je vous aider aujourd'hui ?",
     timestamp: new Date(),
     suggestions: [
       'Trouve-moi des tomates bio à moins de 2000 FCFA/kg',
@@ -42,7 +43,11 @@ const initialMessages: Message[] = [
 ];
 
 const quickActions = [
-  { icon: TrendingDown, label: 'Alertes prix', action: 'Quelles sont les meilleures offres actuelles ?' },
+  {
+    icon: TrendingDown,
+    label: 'Alertes prix',
+    action: 'Quelles sont les meilleures offres actuelles ?',
+  },
   { icon: Package, label: 'Stocks critiques', action: 'Quels produits dois-je réapprovisionner ?' },
   { icon: Truck, label: 'Livraisons', action: 'Où en sont mes livraisons du jour ?' },
   { icon: FileText, label: 'Factures', action: 'Ai-je des factures en attente de paiement ?' },
@@ -64,31 +69,31 @@ export default function BuyerAssistantPage() {
 
   const simulateResponse = (userMessage: string): string => {
     const lowerMsg = userMessage.toLowerCase();
-    
+
     if (lowerMsg.includes('tomate')) {
       return `J'ai trouvé **3 offres** intéressantes pour les tomates bio :\n\n1. **Ferme Bio Casamance** - 1 850 FCFA/kg ⭐ 4.8\n   - Disponibilité: 250 kg\n   - Livraison: 2 jours\n\n2. **Coopérative Niayes** - 1 920 FCFA/kg ⭐ 4.5\n   - Disponibilité: 180 kg\n   - Livraison: 1 jour\n\n3. **Verger du Fleuve** - 2 100 FCFA/kg ⭐ 4.9\n   - Bio certifié Ecocert\n   - Livraison express disponible\n\nVoulez-vous que je compare les prix avec vos achats précédents ?`;
     }
-    
+
     if (lowerMsg.includes('fournisseur') || lowerMsg.includes('note')) {
       return `Voici vos **top fournisseurs** par note :\n\n🥇 **Ferme Bio Casamance** - ⭐ 4.8/5\n   - 234 commandes, 95% fiabilité\n   - Spécialité: Légumes bio\n\n🥈 **Coopérative Niayes** - ⭐ 4.5/5\n   - 189 commandes, 92% fiabilité\n   - Prix compétitifs\n\n🥉 **Verger du Fleuve** - ⭐ 4.4/5\n   - 78 commandes, 88% fiabilité\n   - Fruits de saison\n\nSouhaitez-vous voir les détails d'un fournisseur ?`;
     }
-    
+
     if (lowerMsg.includes('dépense') || lowerMsg.includes('analyse')) {
       return `📊 **Analyse de vos dépenses** (Janvier 2026) :\n\n**Total**: 4 500 000 FCFA\n\n**Par catégorie** :\n- Légumes: 42% (1 890 000 FCFA)\n- Fruits: 30% (1 350 000 FCFA)\n- Autres: 28% (1 260 000 FCFA)\n\n📈 **Tendances** :\n- +12% vs décembre 2025\n- Pic d'achats: Semaine 3\n\n💡 **Recommandation** : Vous avez économisé 15% en achetant directement aux coopératives. Je suggère d'augmenter ces achats.`;
     }
-    
+
     if (lowerMsg.includes('stock') || lowerMsg.includes('réapprovision')) {
       return `⚠️ **Produits à réapprovisionner** :\n\n🔴 **Critique** :\n- Mangues Kent: 15 kg (min: 50 kg)\n\n🟡 **Stock bas** :\n- Oignons Violets: 45 kg (min: 80 kg)\n\n**Action recommandée** :\nJ'ai identifié une offre chez Ferme Kolda pour les oignons à -10% avec livraison gratuite.\n\nVoulez-vous que je prépare une commande ?`;
     }
-    
+
     if (lowerMsg.includes('livraison')) {
       return `🚚 **Livraisons du jour** :\n\n**En cours** (2) :\n1. AGR-2026-0001 - Ferme Bio Casamance\n   - ETA: 14h30\n   - Position: Kaolack → Dakar\n\n2. AGR-2026-0002 - Coopérative Niayes\n   - ETA: 09h15 (arrivée imminente!)\n   - Position: Périphérie Dakar\n\n⚠️ **Retardée** (1) :\n- AGR-2026-0005: +24h (météo)\n\nVoulez-vous contacter un transporteur ?`;
     }
-    
+
     if (lowerMsg.includes('facture')) {
       return `📋 **Factures en attente** :\n\n1. **FACT-2026-0047** - 160 000 FCFA\n   - Verger du Fleuve\n   - Échéance: 22 fév. 2026\n   - Statut: En attente\n\n2. **FACT-2026-0048** - 305 000 FCFA\n   - Ferme Kolda\n   - Échéance: 20 jan. 2026\n   - ⚠️ **En retard**\n\nVoulez-vous payer une facture maintenant ?`;
     }
-    
+
     return `Je comprends votre demande concernant "${userMessage}".\n\nJe peux vous aider avec :\n- 🔍 Recherche de produits et fournisseurs\n- 📊 Analyse de vos dépenses\n- 📦 Gestion des stocks\n- 🚚 Suivi des livraisons\n- 💰 Optimisation des coûts\n\nQue souhaitez-vous explorer ?`;
   };
 
@@ -103,12 +108,12 @@ export default function BuyerAssistantPage() {
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, newUserMessage]);
+    setMessages((prev) => [...prev, newUserMessage]);
     setInput('');
     setIsTyping(true);
 
     // Simulate AI response delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     const response = simulateResponse(userMessage);
     const newAssistantMessage: Message = {
@@ -118,7 +123,7 @@ export default function BuyerAssistantPage() {
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, newAssistantMessage]);
+    setMessages((prev) => [...prev, newAssistantMessage]);
     setIsTyping(false);
   };
 
@@ -192,11 +197,7 @@ export default function BuyerAssistantPage() {
                   <User className="w-5 h-5 text-slate-600" />
                 )}
               </div>
-              <div
-                className={`max-w-[70%] ${
-                  message.role === 'user' ? 'text-right' : ''
-                }`}
-              >
+              <div className={`max-w-[70%] ${message.role === 'user' ? 'text-right' : ''}`}>
                 <div
                   className={`inline-block p-4 rounded-2xl ${
                     message.role === 'user'
@@ -231,9 +232,18 @@ export default function BuyerAssistantPage() {
               </div>
               <div className="bg-slate-100 rounded-2xl p-4">
                 <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <div
+                    className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
+                    style={{ animationDelay: '0ms' }}
+                  />
+                  <div
+                    className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
+                    style={{ animationDelay: '150ms' }}
+                  />
+                  <div
+                    className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
+                    style={{ animationDelay: '300ms' }}
+                  />
                 </div>
               </div>
             </div>

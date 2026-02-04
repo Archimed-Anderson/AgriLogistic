@@ -1,17 +1,17 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { Sidebar } from "./Sidebar"
-import { Menu } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import * as React from 'react';
+import { Sidebar } from './Sidebar';
+import { Menu } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface MainLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export function MainLayout({ children }: MainLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = React.useState(false)
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -34,10 +34,8 @@ export function MainLayout({ children }: MainLayoutProps) {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-6">
-          {children}
-        </main>
+        <main className="flex-1 overflow-y-auto p-4 lg:p-6">{children}</main>
       </div>
     </div>
-  )
+  );
 }

@@ -2,7 +2,12 @@
  * Rental Data Hook
  */
 import { useQuery } from '@tanstack/react-query';
-import type { Equipment, Rental, MaintenanceSchedule, AvailabilitySlot } from '@/types/farmer/rental';
+import type {
+  Equipment,
+  Rental,
+  MaintenanceSchedule,
+  AvailabilitySlot,
+} from '@/types/farmer/rental';
 
 // Mock data
 const mockEquipment: Equipment[] = [

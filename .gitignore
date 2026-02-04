@@ -39,11 +39,27 @@ coverage/
 test-results/
 playwright-report/
 *.spec.ts-snapshots/
+tests/e2e/screenshots/
+tests/e2e/analysis-reports/
+apps/web-app/test-results/
+apps/web-app/playwright-report/
+
+# Backups (générés par fix-auth-service.ps1)
+.backups/
 
 # Temp
 *.tmp
 *.temp
 *.cache
+*.bak
+*~
+
+# Script / test output artifacts
+discovery_output.txt
+test_output*.txt
+final_*_test.txt
+final_test_results.txt
+landing_files.txt
 
 # Package management
 # We track pnpm-lock.yaml for stability

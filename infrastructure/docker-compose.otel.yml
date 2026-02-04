@@ -1,0 +1,50 @@
+# =============================================================================
+# OpenTelemetry - Jaeger + Collector (tracing distribué)
+# =============================================================================
+# Jaeger UI : http://localhost:16686
+# OTLP gRPC : 4317, OTLP HTTP : 4318 | Jaeger thrift agent : 6831
+# Lancer : docker compose -f docker-compose.otel.yml up -d
+# =============================================================================
+
+services:
+  jaeger:
+    image: jaegertracing/all-in-one:1.55
+    container_name: AgriLogistic-jaeger
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+      COLLECTOR_JAEGER_HOSTNAME: jaeger
+    ports:
+      - "16686:16686"   # UI
+      - "4317:4317"     # OTLP gRPC
+      - "4318:4318"     # OTLP HTTP
+      - "6831:6831/udp" # Jaeger thrift agent
+    networks:
+      - otel-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:16686"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # Collector optionnel (profil with-collector) : recevoir OTLP et réexporter vers Jaeger
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.91.0
+    container_name: AgriLogistic-otel-collector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
+    ports:
+      - "13271:4317"
+      - "13272:4318"
+    networks:
+      - otel-network
+    depends_on:
+      - jaeger
+    restart: unless-stopped
+    profiles:
+      - with-collector
+
+networks:
+  otel-network:
+    driver: bridge

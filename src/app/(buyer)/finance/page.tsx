@@ -23,7 +23,7 @@ import {
   X,
   ChevronRight,
   Building,
-  Smartphone
+  Smartphone,
 } from 'lucide-react';
 
 const transactionTypeConfig = {
@@ -39,7 +39,15 @@ const invoiceStatusConfig = {
 };
 
 export default function BuyerFinancePage() {
-  const { transactions, invoices, paymentMethods, balance, pendingPayments, monthlySpending, isLoading } = useFinance();
+  const {
+    transactions,
+    invoices,
+    paymentMethods,
+    balance,
+    pendingPayments,
+    monthlySpending,
+    isLoading,
+  } = useFinance();
   const [activeTab, setActiveTab] = useState<'transactions' | 'invoices'>('transactions');
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
 
@@ -130,7 +138,9 @@ export default function BuyerFinancePage() {
                   <span className="font-medium text-slate-900">{method.label}</span>
                 </div>
                 {method.isDefault && (
-                  <span className="text-xs bg-amber-500 text-white px-2 py-1 rounded-lg">Par défaut</span>
+                  <span className="text-xs bg-amber-500 text-white px-2 py-1 rounded-lg">
+                    Par défaut
+                  </span>
                 )}
               </div>
               <p className="text-sm text-slate-500 font-mono">{method.details}</p>
@@ -177,17 +187,26 @@ export default function BuyerFinancePage() {
                 <div key={transaction.id} className="p-4 hover:bg-slate-50 transition-colors">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${config.color}`}>
+                      <div
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center ${config.color}`}
+                      >
                         <Icon className="w-5 h-5" />
                       </div>
                       <div>
                         <p className="font-medium text-slate-900">{transaction.description}</p>
-                        <p className="text-sm text-slate-500">{formatDate(transaction.date)} • {transaction.paymentMethod}</p>
+                        <p className="text-sm text-slate-500">
+                          {formatDate(transaction.date)} • {transaction.paymentMethod}
+                        </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className={`font-semibold ${transaction.type === 'payment' ? 'text-red-600' : 'text-emerald-600'}`}>
-                        {transaction.type === 'payment' ? '-' : '+'}{formatCurrency(transaction.amount)}
+                      <p
+                        className={`font-semibold ${
+                          transaction.type === 'payment' ? 'text-red-600' : 'text-emerald-600'
+                        }`}
+                      >
+                        {transaction.type === 'payment' ? '-' : '+'}
+                        {formatCurrency(transaction.amount)}
                       </p>
                       <div className="flex items-center gap-1 text-sm">
                         {transaction.status === 'completed' ? (
@@ -197,7 +216,13 @@ export default function BuyerFinancePage() {
                         ) : (
                           <AlertCircle className="w-4 h-4 text-red-500" />
                         )}
-                        <span className="text-slate-500 capitalize">{transaction.status === 'completed' ? 'Effectuée' : transaction.status === 'pending' ? 'En attente' : 'Échoué'}</span>
+                        <span className="text-slate-500 capitalize">
+                          {transaction.status === 'completed'
+                            ? 'Effectuée'
+                            : transaction.status === 'pending'
+                            ? 'En attente'
+                            : 'Échoué'}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -215,7 +240,9 @@ export default function BuyerFinancePage() {
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
                 <th className="text-left px-6 py-4 text-sm font-medium text-slate-600">Facture</th>
-                <th className="text-left px-6 py-4 text-sm font-medium text-slate-600">Fournisseur</th>
+                <th className="text-left px-6 py-4 text-sm font-medium text-slate-600">
+                  Fournisseur
+                </th>
                 <th className="text-left px-6 py-4 text-sm font-medium text-slate-600">Montant</th>
                 <th className="text-left px-6 py-4 text-sm font-medium text-slate-600">Échéance</th>
                 <th className="text-left px-6 py-4 text-sm font-medium text-slate-600">Statut</th>
@@ -233,19 +260,25 @@ export default function BuyerFinancePage() {
                     className="hover:bg-slate-50 cursor-pointer transition-colors"
                   >
                     <td className="px-6 py-4">
-                      <span className="font-mono text-sm font-medium text-slate-900">{invoice.number}</span>
+                      <span className="font-mono text-sm font-medium text-slate-900">
+                        {invoice.number}
+                      </span>
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-slate-700">{invoice.supplierName}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-semibold text-slate-900">{formatCurrency(invoice.totalAmount)}</span>
+                      <span className="font-semibold text-slate-900">
+                        {formatCurrency(invoice.totalAmount)}
+                      </span>
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-slate-600">{formatDate(invoice.dueDate)}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`px-3 py-1 text-xs font-medium rounded-lg border ${statusConf.color}`}>
+                      <span
+                        className={`px-3 py-1 text-xs font-medium rounded-lg border ${statusConf.color}`}
+                      >
                         {statusConf.label}
                       </span>
                     </td>
@@ -270,7 +303,10 @@ export default function BuyerFinancePage() {
                   <h2 className="text-xl font-bold text-slate-900">{selectedInvoice.number}</h2>
                   <p className="text-slate-500">{selectedInvoice.supplierName}</p>
                 </div>
-                <button onClick={() => setSelectedInvoice(null)} className="p-2 hover:bg-slate-100 rounded-lg">
+                <button
+                  onClick={() => setSelectedInvoice(null)}
+                  className="p-2 hover:bg-slate-100 rounded-lg"
+                >
                   <X className="w-5 h-5 text-slate-500" />
                 </button>
               </div>
@@ -278,7 +314,11 @@ export default function BuyerFinancePage() {
 
             <div className="p-6 space-y-6">
               <div className="flex items-center justify-center">
-                <span className={`px-4 py-2 text-sm font-medium rounded-xl border ${invoiceStatusConfig[selectedInvoice.status].color}`}>
+                <span
+                  className={`px-4 py-2 text-sm font-medium rounded-xl border ${
+                    invoiceStatusConfig[selectedInvoice.status].color
+                  }`}
+                >
                   {invoiceStatusConfig[selectedInvoice.status].label}
                 </span>
               </div>
@@ -286,26 +326,36 @@ export default function BuyerFinancePage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
                   <span className="text-slate-600">Montant HT</span>
-                  <span className="font-medium text-slate-900">{formatCurrency(selectedInvoice.amount)}</span>
+                  <span className="font-medium text-slate-900">
+                    {formatCurrency(selectedInvoice.amount)}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
                   <span className="text-slate-600">TVA</span>
-                  <span className="font-medium text-slate-900">{formatCurrency(selectedInvoice.taxAmount)}</span>
+                  <span className="font-medium text-slate-900">
+                    {formatCurrency(selectedInvoice.taxAmount)}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between p-4 bg-amber-50 rounded-xl border border-amber-200">
                   <span className="font-medium text-amber-700">Total TTC</span>
-                  <span className="font-bold text-amber-800">{formatCurrency(selectedInvoice.totalAmount)}</span>
+                  <span className="font-bold text-amber-800">
+                    {formatCurrency(selectedInvoice.totalAmount)}
+                  </span>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-slate-50 p-4 rounded-xl">
                   <p className="text-sm text-slate-500">Date d'émission</p>
-                  <p className="font-medium text-slate-900">{formatDate(selectedInvoice.issueDate)}</p>
+                  <p className="font-medium text-slate-900">
+                    {formatDate(selectedInvoice.issueDate)}
+                  </p>
                 </div>
                 <div className="bg-slate-50 p-4 rounded-xl">
                   <p className="text-sm text-slate-500">Date d'échéance</p>
-                  <p className="font-medium text-slate-900">{formatDate(selectedInvoice.dueDate)}</p>
+                  <p className="font-medium text-slate-900">
+                    {formatDate(selectedInvoice.dueDate)}
+                  </p>
                 </div>
               </div>
 

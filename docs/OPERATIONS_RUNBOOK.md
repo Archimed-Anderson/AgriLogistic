@@ -152,6 +152,8 @@ docker-compose kill
 
 ## Gestion des Incidents
 
+**Problèmes courants au démarrage** (base manquante, port déjà utilisé, auth Postgres) : voir [Dépannage](TROUBLESHOOTING.md).
+
 ### Niveau de Sévérité
 
 | Niveau | Description | Temps de Réponse | Exemple |

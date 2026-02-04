@@ -1,7 +1,7 @@
-"use client"
+'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ShoppingCart, Package, TrendingUp, Heart } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ShoppingCart, Package, TrendingUp, Heart } from 'lucide-react';
 
 export function BuyerDashboard() {
   return (
@@ -9,9 +9,7 @@ export function BuyerDashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Tableau de Bord Acheteur</h1>
-          <p className="text-muted-foreground">
-            Gérez vos commandes et explorez le marketplace
-          </p>
+          <p className="text-muted-foreground">Gérez vos commandes et explorez le marketplace</p>
         </div>
       </div>
 
@@ -23,9 +21,7 @@ export function BuyerDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">24</div>
-            <p className="text-xs text-muted-foreground">
-              +3 cette semaine
-            </p>
+            <p className="text-xs text-muted-foreground">+3 cette semaine</p>
           </CardContent>
         </Card>
 
@@ -36,9 +32,7 @@ export function BuyerDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">156</div>
-            <p className="text-xs text-muted-foreground">
-              Disponibles sur le marketplace
-            </p>
+            <p className="text-xs text-muted-foreground">Disponibles sur le marketplace</p>
           </CardContent>
         </Card>
 
@@ -49,9 +43,7 @@ export function BuyerDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">
-              Produits sauvegardés
-            </p>
+            <p className="text-xs text-muted-foreground">Produits sauvegardés</p>
           </CardContent>
         </Card>
 
@@ -62,9 +54,7 @@ export function BuyerDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">15%</div>
-            <p className="text-xs text-muted-foreground">
-              Réduction moyenne
-            </p>
+            <p className="text-xs text-muted-foreground">Réduction moyenne</p>
           </CardContent>
         </Card>
       </div>
@@ -73,9 +63,7 @@ export function BuyerDashboard() {
         <Card>
           <CardHeader>
             <CardTitle>Mes Commandes</CardTitle>
-            <CardDescription>
-              Suivez l'état de vos commandes en cours
-            </CardDescription>
+            <CardDescription>Suivez l'état de vos commandes en cours</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
@@ -87,9 +75,7 @@ export function BuyerDashboard() {
         <Card>
           <CardHeader>
             <CardTitle>Marketplace</CardTitle>
-            <CardDescription>
-              Découvrez les produits agricoles disponibles
-            </CardDescription>
+            <CardDescription>Découvrez les produits agricoles disponibles</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
@@ -99,5 +85,5 @@ export function BuyerDashboard() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

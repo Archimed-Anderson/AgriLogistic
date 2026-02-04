@@ -27,10 +27,16 @@ export const logisticsAPI = {
   /**
    * Update delivery status
    */
-  updateDeliveryStatus: async (deliveryId: string, status: Delivery['status']): Promise<Delivery> => {
-    const response = await apiClient.patch(`/api/farmer/logistics/deliveries/${deliveryId}/status`, {
-      status,
-    });
+  updateDeliveryStatus: async (
+    deliveryId: string,
+    status: Delivery['status']
+  ): Promise<Delivery> => {
+    const response = await apiClient.patch(
+      `/api/farmer/logistics/deliveries/${deliveryId}/status`,
+      {
+        status,
+      }
+    );
     return response.data;
   },
 
@@ -55,7 +61,10 @@ export const logisticsAPI = {
   /**
    * Optimize route
    */
-  optimizeRoute: async (deliveryIds: string[], algorithm?: Route['optimization']['algorithm']): Promise<Route> => {
+  optimizeRoute: async (
+    deliveryIds: string[],
+    algorithm?: Route['optimization']['algorithm']
+  ): Promise<Route> => {
     const response = await apiClient.post('/api/farmer/logistics/routes/optimize', {
       deliveryIds,
       algorithm: algorithm || 'nearest_neighbor',

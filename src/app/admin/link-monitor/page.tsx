@@ -26,7 +26,9 @@ const GlobalMonitorPage: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-[#050505] text-cyan-500 font-mono">
         <div className="w-16 h-16 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin mb-4"></div>
-        <div className="animate-pulse tracking-widest text-xs font-black uppercase">Chargement du Global Monitor...</div>
+        <div className="animate-pulse tracking-widest text-xs font-black uppercase">
+          Chargement du Global Monitor...
+        </div>
       </div>
     );
   }
@@ -36,13 +38,15 @@ const GlobalMonitorPage: React.FC = () => {
       {/* Header */}
       <header className="monitor-header-premium">
         <div className="header-title-group">
-          <h1>GLOBAL MONITOR <span>v3.0</span></h1>
+          <h1>
+            GLOBAL MONITOR <span>v3.0</span>
+          </h1>
           <div className="badge-live">
             <span className="live-dot"></span>
             SYSTÈME OPÉRATIONNEL - TEMPS RÉEL
           </div>
         </div>
-        
+
         <div className="flex gap-4">
           <button className="px-4 py-2 border border-white/5 rounded-lg bg-white/5 text-xs font-bold hover:bg-white/10 transition-all">
             MODES DE VUE
@@ -59,7 +63,9 @@ const GlobalMonitorPage: React.FC = () => {
       {/* Carte des Flux Mondiaux (God Mode) */}
       <div className="mb-8">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-sm font-black text-gray-500 uppercase tracking-widest">Flux Logistiques Actifs</h2>
+          <h2 className="text-sm font-black text-gray-500 uppercase tracking-widest">
+            Flux Logistiques Actifs
+          </h2>
           <span className="text-[10px] text-cyan-400 font-mono">MAP_MODE: BEZIER_ARCS</span>
         </div>
         <GlobalFlowMap loads={mockLoads} />

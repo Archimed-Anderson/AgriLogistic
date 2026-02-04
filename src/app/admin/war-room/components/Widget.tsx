@@ -10,10 +10,12 @@ interface WidgetProps {
 
 export function Widget({ title, className, headerAction, children }: WidgetProps) {
   return (
-    <div className={cn(
-      "group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0A0A0A] p-5 shadow-2xl transition-all duration-300 hover:border-white/20",
-      className
-    )}>
+    <div
+      className={cn(
+        'group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0A0A0A] p-5 shadow-2xl transition-all duration-300 hover:border-white/20',
+        className
+      )}
+    >
       {(title || headerAction) && (
         <div className="mb-4 flex items-center justify-between">
           {title && (
@@ -24,9 +26,7 @@ export function Widget({ title, className, headerAction, children }: WidgetProps
           {headerAction}
         </div>
       )}
-      <div className="flex-1">
-        {children}
-      </div>
+      <div className="flex-1">{children}</div>
     </div>
   );
 }

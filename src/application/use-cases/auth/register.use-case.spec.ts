@@ -104,7 +104,9 @@ describe('RegisterUseCase', () => {
     it('should reject registration without firstName', async () => {
       const invalidRequest = { ...validRegisterRequest, firstName: '' };
 
-      await expect(registerUseCase.execute(invalidRequest)).rejects.toThrow('firstName is required');
+      await expect(registerUseCase.execute(invalidRequest)).rejects.toThrow(
+        'firstName is required'
+      );
     });
 
     it('should reject registration without lastName', async () => {
@@ -128,11 +130,7 @@ describe('RegisterUseCase', () => {
     });
 
     it('should accept valid email formats', async () => {
-      const validEmails = [
-        'user@example.com',
-        'user.name@example.com',
-        'user+tag@example.co.uk',
-      ];
+      const validEmails = ['user@example.com', 'user.name@example.com', 'user+tag@example.co.uk'];
 
       for (const email of validEmails) {
         const request = { ...validRegisterRequest, email };
@@ -149,7 +147,9 @@ describe('RegisterUseCase', () => {
         confirmPassword: 'Different123!',
       };
 
-      await expect(registerUseCase.execute(invalidRequest)).rejects.toThrow('Passwords do not match');
+      await expect(registerUseCase.execute(invalidRequest)).rejects.toThrow(
+        'Passwords do not match'
+      );
     });
 
     it('should reject passwords shorter than 8 characters', async () => {
@@ -184,11 +184,7 @@ describe('RegisterUseCase', () => {
     });
 
     it('should accept strong passwords', async () => {
-      const strongPasswords = [
-        'SecurePass123!',
-        'MyP@ssw0rd',
-        'C0mpl3x!Pass',
-      ];
+      const strongPasswords = ['SecurePass123!', 'MyP@ssw0rd', 'C0mpl3x!Pass'];
 
       for (const password of strongPasswords) {
         const request = {
@@ -210,7 +206,9 @@ describe('RegisterUseCase', () => {
 
       for (const phone of invalidPhones) {
         const request = { ...validRegisterRequest, phone };
-        await expect(registerUseCase.execute(request)).rejects.toThrow('Invalid phone number format');
+        await expect(registerUseCase.execute(request)).rejects.toThrow(
+          'Invalid phone number format'
+        );
       }
     });
 
@@ -221,11 +219,7 @@ describe('RegisterUseCase', () => {
     });
 
     it('should accept valid international phone numbers', async () => {
-      const validPhones = [
-        '+33612345678',
-        '+15551234567',
-        '+447911123456',
-      ];
+      const validPhones = ['+33612345678', '+15551234567', '+447911123456'];
 
       for (const phone of validPhones) {
         const request = { ...validRegisterRequest, phone };

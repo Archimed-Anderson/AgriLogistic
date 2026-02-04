@@ -1,82 +1,58 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Admin Dashboard', () => {
-  test.beforeEach(async ({ page }) => {
-    // Navigate to the admin dashboard
-    await page.goto('/admin/dashboard', { waitUntil: 'load' });
-  });
+test.describe('Admin Dashboard E2E', () => {
 
-  test('should render the admin layout with sidebar (on desktop)', async ({ page, isMobile }) => {
-    if (isMobile) {
-      test.skip();
-    }
+  test('Admin Login and War Room Access', async ({ page }) => {
+    // 1. Intercept and mock the Login API to return an Admin user
+    await page.route('**/api/v1/auth/login', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          accessToken: 'mock-admin-token',
+          user: {
+            id: 'admin-1',
+            email: 'admin@agrodeep.com',
+            role: 'admin',
+            name: 'Super Admin'
+          }
+        })
+      });
+    });
 
-    // Check for the sidebar by checking for unique text in it
-    // Wait for the sidebar text to appear
-    await expect(page.getByText('Menu Principal')).toBeVisible({ timeout: 15000 });
+    // 2. Navigate to Login Page
+    await page.goto('/login');
 
-    // Check for the navbar
-    const navbar = page.locator('header');
-    await expect(navbar).toBeVisible();
-  });
+    // 3. Click Admin Quick Access (Direct login in dev/mock mode)
+    await page.getByRole('button', { name: "Se connecter en tant qu'ADMIN" }).click();
 
-  test('should display dashboard KPIs and title', async ({ page }) => {
-    // Check for the main title
-    await expect(page.getByText('Tableau de Bord')).toBeVisible({ timeout: 15000 });
+    // 5. Verify Redirection to Admin Dashboard
+    // We expect the URL to switch to something under /admin
+    await expect(page).toHaveURL(/\/admin/, { timeout: 15000 });
 
-    // Check for some KPI labels
-    await expect(page.getByText('Utilisateurs Actifs')).toBeVisible();
-  });
+    // 6. Verify Sidebar contains "War Room"
+    // We look for a link or text in the sidebar navigation
+    const warRoomLink = page.getByRole('link', { name: /war room/i }).first();
+    await expect(warRoomLink).toBeVisible();
 
-  test('should navigate to different admin modules via sidebar (on desktop)', async ({ page, isMobile }) => {
-    if (isMobile) {
-      test.skip();
-    }
-
-    // Click on "Sol & Eau" link in the sidebar
-    // Sometimes getByRole fails with complex link content, so we use getByText inside the sidebar
-    const sidebar = page.locator('div.bg-slate-900');
-    await sidebar.getByText('Sol & Eau').click();
-
-    // Verify navigation to the correct URL
-    await expect(page).toHaveURL(/.*\/admin\/soil-water/);
-
-    // Verify placeholder content
-    await expect(page.getByText('Sol & Eau', { exact: true }).first()).toBeVisible();
-  });
-
-  test('should navigate to settings page (on desktop)', async ({ page, isMobile }) => {
-    if (isMobile) {
-      test.skip();
-    }
-
-    const sidebar = page.locator('div.bg-slate-900');
-    await sidebar.getByText('Paramètres').click();
-
+    // 7. Navigate to War Room
+    await warRoomLink.click();
+    
     // Verify URL
-    await expect(page).toHaveURL(/.*\/admin\/settings/);
+    await expect(page).toHaveURL(/.*\/admin\/war-room/);
 
-    // Verify settings content
-    await expect(page.getByText('Paramètres', { exact: true }).first()).toBeVisible();
-  });
-
-  test('should redirect /admin to /admin/dashboard', async ({ page }) => {
-    await page.goto('/admin');
-    await expect(page).toHaveURL(/.*\/admin\/dashboard/);
-  });
-
-  test('logo in sidebar should link back to homepage (on desktop)', async ({ page, isMobile }) => {
-    if (isMobile) {
-      test.skip();
-    }
+    // 8. Verify War Room Content
+    // Check for the main title
+    await expect(page.getByRole('heading', { name: /war room/i }).first()).toBeVisible();
     
-    // The logo link contains "AgriLogisticAdmin"
-    const logoLink = page.locator('a').filter({ hasText: 'AgriLogistic' }).first();
-    await expect(logoLink).toHaveAttribute('href', '/');
-    
-    await logoLink.click();
-    await expect(page).toHaveURL('/');
+    // Check for "Active Threats" or "Critical Alerts" to ensure widgets loaded
+    // (Based on common War Room designs)
+    // We'll look for generic critical indicators usually present
+    await expect(page.getByText('Incidents active')).toBeVisible();
+    await expect(page.getByText('War Room Alpha')).toBeVisible();
+
+    // 9. Take Screenshot
+    // Ensure directory exists or let playwright handle it. Playwright usually creates directories.
+    await page.screenshot({ path: 'tests/e2e/screenshots/admin-war-room.png', fullPage: true });
   });
 });
-
-

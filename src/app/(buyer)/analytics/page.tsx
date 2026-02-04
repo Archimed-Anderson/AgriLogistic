@@ -29,7 +29,7 @@ import {
   Percent,
   Calendar,
   Download,
-  Users
+  Users,
 } from 'lucide-react';
 
 export default function BuyerAnalyticsPage() {
@@ -106,7 +106,9 @@ export default function BuyerAnalyticsPage() {
             <Percent className="w-8 h-8 text-purple-500" />
             <span className="text-sm text-slate-500">Panier moyen</span>
           </div>
-          <p className="text-3xl font-bold text-slate-900">{formatCurrency(analytics.avgOrderValue)}</p>
+          <p className="text-3xl font-bold text-slate-900">
+            {formatCurrency(analytics.avgOrderValue)}
+          </p>
           <div className="flex items-center gap-1 text-sm text-emerald-600 mt-1">
             <TrendingUp className="w-4 h-4" />
             <span>+5.3% vs mois dernier</span>
@@ -189,8 +191,16 @@ export default function BuyerAnalyticsPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-medium text-slate-900">{cat.percentage}%</span>
-                    <span className={`text-xs flex items-center gap-0.5 ${cat.trend >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                      {cat.trend >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                    <span
+                      className={`text-xs flex items-center gap-0.5 ${
+                        cat.trend >= 0 ? 'text-emerald-600' : 'text-red-600'
+                      }`}
+                    >
+                      {cat.trend >= 0 ? (
+                        <TrendingUp className="w-3 h-3" />
+                      ) : (
+                        <TrendingDown className="w-3 h-3" />
+                      )}
                       {Math.abs(cat.trend)}%
                     </span>
                   </div>
@@ -213,8 +223,19 @@ export default function BuyerAnalyticsPage() {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={analytics.spendingBySupplier} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis type="number" tick={{ fontSize: 12 }} stroke="#94a3b8" tickFormatter={(v) => `${(v / 1000000).toFixed(1)}M`} />
-                <YAxis dataKey="supplierName" type="category" tick={{ fontSize: 11 }} stroke="#94a3b8" width={130} />
+                <XAxis
+                  type="number"
+                  tick={{ fontSize: 12 }}
+                  stroke="#94a3b8"
+                  tickFormatter={(v) => `${(v / 1000000).toFixed(1)}M`}
+                />
+                <YAxis
+                  dataKey="supplierName"
+                  type="category"
+                  tick={{ fontSize: 11 }}
+                  stroke="#94a3b8"
+                  width={130}
+                />
                 <Tooltip formatter={(value: number) => formatCurrency(value)} />
                 <Bar dataKey="amount" fill="#3b82f6" radius={[0, 4, 4, 0]} />
               </BarChart>
@@ -237,7 +258,9 @@ export default function BuyerAnalyticsPage() {
                     <p className="text-sm text-slate-500">{product.quantity} kg achetés</p>
                   </div>
                 </div>
-                <span className="font-semibold text-slate-900">{formatCurrency(product.amount)}</span>
+                <span className="font-semibold text-slate-900">
+                  {formatCurrency(product.amount)}
+                </span>
               </div>
             ))}
           </div>

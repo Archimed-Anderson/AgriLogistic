@@ -5,12 +5,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { 
-  useAffiliateStats, 
-  useAffiliateLinks, 
+import {
+  useAffiliateStats,
+  useAffiliateLinks,
   useAffiliateCommissions,
   useCreateAffiliateLink,
-  useRequestPayout
+  useRequestPayout,
 } from '@/application/hooks/useAffiliation';
 import { formatCurrency } from '@/lib/utils';
 
@@ -29,27 +29,22 @@ export function AffiliateDashboard() {
     <div className="space-y-6">
       {/* Stats Overview */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard 
-          title="Gains totaux" 
-          value={formatCurrency(stats?.total_earnings || 0, 'XOF')} 
+        <StatCard
+          title="Gains totaux"
+          value={formatCurrency(stats?.total_earnings || 0, 'XOF')}
           icon="💰"
           color="green"
         />
-        <StatCard 
-          title="En attente" 
-          value={formatCurrency(stats?.pending_earnings || 0, 'XOF')} 
+        <StatCard
+          title="En attente"
+          value={formatCurrency(stats?.pending_earnings || 0, 'XOF')}
           icon="⏳"
           color="yellow"
         />
-        <StatCard 
-          title="Conversions" 
-          value={stats?.conversions || 0} 
-          icon="🎯"
-          color="blue"
-        />
-        <StatCard 
-          title="Taux conv." 
-          value={`${stats?.conversion_rate || 0}%`} 
+        <StatCard title="Conversions" value={stats?.conversions || 0} icon="🎯" color="blue" />
+        <StatCard
+          title="Taux conv."
+          value={`${stats?.conversion_rate || 0}%`}
           icon="📈"
           color="purple"
         />
@@ -103,10 +98,13 @@ export function AffiliateDashboard() {
       {/* Active Links */}
       <div className="bg-white rounded-xl shadow-sm border p-6">
         <h3 className="font-semibold text-lg mb-4">Liens actifs ({stats?.active_links || 0})</h3>
-        {links?.items?.length > 0 ? (
+        {(links?.length ?? 0) > 0 ? (
           <div className="space-y-3">
-            {links.items.map((link: any) => (
-              <div key={link.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            {links!.map((link: any) => (
+              <div
+                key={link.id}
+                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+              >
                 <div className="flex-1 min-w-0">
                   <p className="font-medium truncate">{link.affiliate_url}</p>
                   <p className="text-sm text-gray-500 truncate">{link.target_url}</p>
@@ -120,7 +118,7 @@ export function AffiliateDashboard() {
                     <p className="font-semibold text-green-600">{link.conversions}</p>
                     <p className="text-xs text-gray-500">Conv.</p>
                   </div>
-                  <button 
+                  <button
                     onClick={() => navigator.clipboard.writeText(link.affiliate_url)}
                     className="p-2 hover:bg-gray-200 rounded"
                     title="Copier le lien"
@@ -139,7 +137,7 @@ export function AffiliateDashboard() {
       {/* Recent Commissions */}
       <div className="bg-white rounded-xl shadow-sm border p-6">
         <h3 className="font-semibold text-lg mb-4">Commissions récentes</h3>
-        {commissions?.items?.length > 0 ? (
+        {(commissions?.length ?? 0) > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -151,18 +149,28 @@ export function AffiliateDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {commissions.items.map((c: any) => (
+                {commissions!.map((c: any) => (
                   <tr key={c.id} className="border-b last:border-0">
                     <td className="py-3">{new Date(c.created_at).toLocaleDateString('fr-FR')}</td>
                     <td>{formatCurrency(c.order_amount, 'XOF')}</td>
-                    <td className="font-semibold text-green-600">+{formatCurrency(c.commission_amount, 'XOF')}</td>
+                    <td className="font-semibold text-green-600">
+                      +{formatCurrency(c.commission_amount, 'XOF')}
+                    </td>
                     <td>
-                      <span className={`px-2 py-1 rounded-full text-xs ${
-                        c.status === 'paid' ? 'bg-green-100 text-green-700' :
-                        c.status === 'approved' ? 'bg-blue-100 text-blue-700' :
-                        'bg-yellow-100 text-yellow-700'
-                      }`}>
-                        {c.status === 'pending' ? 'En attente' : c.status === 'approved' ? 'Approuvée' : 'Payée'}
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs ${
+                          c.status === 'paid'
+                            ? 'bg-green-100 text-green-700'
+                            : c.status === 'approved'
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'bg-yellow-100 text-yellow-700'
+                        }`}
+                      >
+                        {c.status === 'pending'
+                          ? 'En attente'
+                          : c.status === 'approved'
+                          ? 'Approuvée'
+                          : 'Payée'}
                       </span>
                     </td>
                   </tr>
@@ -178,7 +186,17 @@ export function AffiliateDashboard() {
   );
 }
 
-function StatCard({ title, value, icon, color }: { title: string; value: string | number; icon: string; color: string }) {
+function StatCard({
+  title,
+  value,
+  icon,
+  color,
+}: {
+  title: string;
+  value: string | number;
+  icon: string;
+  color: string;
+}) {
   const colorClasses = {
     green: 'bg-green-50 border-green-200',
     yellow: 'bg-yellow-50 border-yellow-200',

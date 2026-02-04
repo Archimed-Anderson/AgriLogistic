@@ -1,4 +1,15 @@
-import { Cloud, Sun, CloudRain, Wind, Thermometer, Droplets, Calendar, MapPin, TrendingUp, AlertTriangle } from 'lucide-react';
+import {
+  Cloud,
+  Sun,
+  CloudRain,
+  Wind,
+  Thermometer,
+  Droplets,
+  Calendar,
+  MapPin,
+  TrendingUp,
+  AlertTriangle,
+} from 'lucide-react';
 
 // Mock weather data
 const currentWeather = {
@@ -47,18 +58,18 @@ export function WeatherDashboard() {
               <span className="text-sm opacity-90">{currentWeather.location}</span>
             </div>
             <p className="text-sm opacity-75 mb-4">{currentWeather.date}</p>
-            
+
             <div className="flex items-center gap-6">
               <div className="text-6xl font-light">{currentWeather.temperature}°C</div>
               <div>
                 <Sun className="w-16 h-16 text-yellow-300" />
               </div>
             </div>
-            
+
             <p className="text-lg mt-2">{currentWeather.condition}</p>
             <p className="text-sm opacity-75">Ressenti {currentWeather.feelsLike}°C</p>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-white/10 rounded-xl p-3 text-center">
               <Droplets className="w-5 h-5 mx-auto mb-1" />
@@ -89,18 +100,32 @@ export function WeatherDashboard() {
         <div className="space-y-3">
           <h2 className="text-lg font-semibold text-gray-900">Alertes Météo</h2>
           {alerts.map((alert, index) => (
-            <div 
+            <div
               key={index}
               className={`flex items-center gap-3 p-4 rounded-xl ${
-                alert.type === 'warning' ? 'bg-yellow-50 border border-yellow-200' : 'bg-blue-50 border border-blue-200'
+                alert.type === 'warning'
+                  ? 'bg-yellow-50 border border-yellow-200'
+                  : 'bg-blue-50 border border-blue-200'
               }`}
             >
-              <AlertTriangle className={`w-5 h-5 ${alert.type === 'warning' ? 'text-yellow-600' : 'text-blue-600'}`} />
+              <AlertTriangle
+                className={`w-5 h-5 ${
+                  alert.type === 'warning' ? 'text-yellow-600' : 'text-blue-600'
+                }`}
+              />
               <div className="flex-1">
-                <p className={`font-medium ${alert.type === 'warning' ? 'text-yellow-800' : 'text-blue-800'}`}>
+                <p
+                  className={`font-medium ${
+                    alert.type === 'warning' ? 'text-yellow-800' : 'text-blue-800'
+                  }`}
+                >
                   {alert.message}
                 </p>
-                <p className={`text-sm ${alert.type === 'warning' ? 'text-yellow-600' : 'text-blue-600'}`}>
+                <p
+                  className={`text-sm ${
+                    alert.type === 'warning' ? 'text-yellow-600' : 'text-blue-600'
+                  }`}
+                >
                   {alert.time}
                 </p>
               </div>
@@ -115,17 +140,25 @@ export function WeatherDashboard() {
           <h2 className="text-lg font-semibold text-gray-900">Prévisions 7 jours</h2>
           <button className="text-sm text-[#0B7A4B] font-medium hover:underline">Voir plus</button>
         </div>
-        
+
         <div className="grid grid-cols-7 gap-4">
           {forecast.map((day, _index) => {
             const Icon = day.icon;
             return (
-              <div key={day.day} className="text-center p-3 rounded-xl hover:bg-gray-50 transition-colors">
+              <div
+                key={day.day}
+                className="text-center p-3 rounded-xl hover:bg-gray-50 transition-colors"
+              >
                 <p className="text-sm font-medium text-gray-600 mb-2">{day.day}</p>
-                <Icon className={`w-8 h-8 mx-auto mb-2 ${
-                  day.condition === 'sunny' ? 'text-yellow-500' :
-                  day.condition === 'rainy' ? 'text-blue-500' : 'text-gray-400'
-                }`} />
+                <Icon
+                  className={`w-8 h-8 mx-auto mb-2 ${
+                    day.condition === 'sunny'
+                      ? 'text-yellow-500'
+                      : day.condition === 'rainy'
+                      ? 'text-blue-500'
+                      : 'text-gray-400'
+                  }`}
+                />
                 <p className="text-lg font-semibold text-gray-900">{day.temp}°</p>
               </div>
             );
@@ -145,7 +178,7 @@ export function WeatherDashboard() {
           <p className="text-3xl font-bold text-gray-900 mb-1">Optimal</p>
           <p className="text-sm text-gray-500">Conditions favorables pour vos cultures</p>
         </div>
-        
+
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
@@ -156,7 +189,7 @@ export function WeatherDashboard() {
           <p className="text-3xl font-bold text-gray-900 mb-1">Recommandée</p>
           <p className="text-sm text-gray-500">Arrosez dans les 2 prochains jours</p>
         </div>
-        
+
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-lg bg-yellow-100 flex items-center justify-center">

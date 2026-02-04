@@ -17,7 +17,7 @@ export function useNotifications() {
 
   const deleteNotification = (notificationId: string) => {
     // Supprimer une notification
-    setNotifications(prev => prev.filter(n => n.id !== notificationId));
+    setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
   };
 
   return {

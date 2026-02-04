@@ -69,17 +69,23 @@ Après le déploiement, accédez à :
 
 ---
 
-## ðŸ§ª Test Rapide
+## Test Rapide
 
-### 1. Vérifier que Kong fonctionne
+### 1. Vérifier que Kong fonctionne (Admin API)
 
 ```bash
-curl http://localhost:8001/status
+curl -i http://localhost:8001/status
 ```
 
 **Résultat attendu :** HTTP 200 avec des statistiques Kong
 
-### 2. Tester une route protégée (sans auth)
+### 2. Lister les services (commande de validation cahier des charges)
+
+```bash
+curl -i http://localhost:8001/services
+```
+
+### 3. Tester une route protégée (sans auth)
 
 ```bash
 curl http://localhost:8000/api/v1/products
@@ -87,21 +93,32 @@ curl http://localhost:8000/api/v1/products
 
 **Résultat attendu :** HTTP 401 (JWT requis)
 
-### 3. Tester avec un JWT
+### 4. Tester avec un JWT (commande de validation cahier des charges)
 
 ```bash
-# Récupérer le token généré
-$TOKEN = (Get-Content kong-tokens.txt | Select-String "Web App Token" -Context 0,1).Context.PostContext
+# Récupérer un JWT via login
+curl -s -X POST http://localhost:8000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@agrologistic.app","password":"admin123"}' | jq -r '.access_token'
 
-# Utiliser le token
-curl http://localhost:8000/api/v1/products -H "Authorization: Bearer $TOKEN"
+# Appel à /api/v1/users avec JWT
+curl -i http://localhost:8000/api/v1/users --header "Authorization: Bearer <JWT>"
+```
+
+Sous PowerShell :
+
+```powershell
+$TOKEN = (Get-Content kong-tokens.txt | Select-String "Web App Token" -Context 0,1).Context.PostContext
+curl -i http://localhost:8000/api/v1/users -H "Authorization: Bearer $TOKEN"
 ```
 
 **Résultat attendu :** HTTP 502 (service backend pas encore déployé) ou HTTP 200 si backend actif
 
+**Script de validation cahier des charges :** `scripts/validate-kong-cahier.sh` — lance les tests GET /services, GET /api/v1/users avec JWT, GET /status. Exécuter depuis `infrastructure` : `./scripts/validate-kong-cahier.sh` (ou `wsl bash scripts/validate-kong-cahier.sh` sous Windows).
+
 ---
 
-## ðŸ§ª Suite de Tests Complète
+## Suite de Tests Complète
 
 Pour valider l'installation complète :
 
@@ -202,6 +219,24 @@ docker-compose -f docker-compose.kong.yml down -v
 .\scripts\kong-deploy.ps1
 ```
 
+### Bootstrap Kong échoue : "authentication exchange unsuccessful"
+
+Le bootstrap ne peut pas se connecter à PostgreSQL car le mot de passe ne correspond pas à celui utilisé lors de la **première** création du volume. Deux solutions :
+
+1. **Recréer le volume** (recommandé) : utiliser le même mot de passe partout et repartir de zéro.
+   ```powershell
+   cd infrastructure
+   docker-compose -f docker-compose.kong.yml --env-file .env.kong down -v
+   docker-compose -f docker-compose.kong.yml --env-file .env.kong up -d kong-database kong-bootstrap kong-gateway
+   ```
+   Vérifier que `KONG_PG_PASSWORD` dans `.env.kong` est bien défini (ou laisser le défaut `kong_secure_2026` si vous n'utilisez pas `--env-file`).
+
+2. **Garder le volume** : si vous connaissez l'ancien mot de passe de la base, mettez-le dans `.env.kong` (`KONG_PG_PASSWORD=ancien_mot_de_passe`) et relancez sans `down -v`.
+
+### Bootstrap : "UNIQUE violation" sur JWT keys
+
+Si le bootstrap échoue en boucle avec `UNIQUE violation detected on '{key="admin-jwt-key"}'` (ou web-app-jwt-key, mobile-app-jwt-key), c’est que la base contient déjà ces consumers/JWT. La config actuelle traite ce cas comme un succès : le bootstrap sort en code 0 et Kong Gateway peut démarrer. Le conteneur `kong-bootstrap` a `restart: "no"` pour ne pas redémarrer en boucle. Après un `up`, si le bootstrap affiche cette erreur une fois puis s’arrête (exited 0), c’est normal.
+
 ### Erreur "Port déjà utilisé"
 
 ```bash
@@ -219,7 +254,8 @@ curl http://localhost:8001/consumers
 
 # Regénérer les tokens
 cd infrastructure
-bash scripts/kong-init.sh
+bash scripts/init-kong.sh
+# ou : bash scripts/kong-init.sh
 
 # Vérifier kong-tokens.txt
 cat kong-tokens.txt
@@ -253,9 +289,11 @@ infrastructure/
     â””â”€â”€ kong-architecture.md    # Architecture technique
 ```
 
+**Cahier des charges 1.1 :** Fichiers ajoutés - `kong/kong.conf` (config Kong), `scripts/init-kong.sh` (initialisation, appelle kong-init.sh), `docs/routing-table.md` (table des routes, ports 8001-8011, commandes de validation).
+
 ---
 
-## ðŸŽ¯ Prochaines Étapes
+## Prochaines Étapes
 
 Maintenant que Kong est déployé, vous pouvez :
 
@@ -320,6 +358,25 @@ Avant de passer à la Phase 2, assurez-vous que :
 - [x] Konga UI est accessible
 - [x] Prometheus collecte les métriques Kong
 - [x] Grafana est configuré
+
+---
+
+## Event Bus Kafka (Cahier 1.2)
+
+Pour déployer l’Event Bus Apache Kafka (KRaft, 3 brokers, Schema Registry, Kafka Connect, Kafka UI) :
+
+```bash
+docker compose -f infrastructure/docker-compose.kafka.yml up -d
+```
+
+Validation :
+
+```bash
+docker exec kafka-broker-1 kafka-topics --bootstrap-server localhost:9092 --list
+docker exec kafka-broker-1 kafka-console-consumer --bootstrap-server localhost:9092 --topic order.events --from-beginning
+```
+
+Voir **infrastructure/docs/kafka-cahier-1.2.md** pour les détails (topics, connecteurs, validation).
 
 ---
 

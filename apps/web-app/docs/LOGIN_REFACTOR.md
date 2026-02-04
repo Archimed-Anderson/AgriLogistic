@@ -51,11 +51,13 @@ Ce document décrit la refonte complète du dashboard de connexion de l'applicat
 **Fichier :** `src/lib/api/auth.ts`
 
 Fonctions principales :
+
 - `login(email, password)` : Connexion avec email et mot de passe
 - `forgotPassword(email)` : Demande de réinitialisation
 - `resetPassword(token, password)` : Réinitialisation avec token
 
 Fonctions de gestion des tokens :
+
 - `storeTokens(accessToken, refreshToken)` : Stockage dans localStorage
 - `getAccessToken()` : Récupération du token d'accès
 - `getRefreshToken()` : Récupération du token de rafraîchissement
@@ -63,6 +65,7 @@ Fonctions de gestion des tokens :
 - `isAuthenticated()` : Vérification de l'authentification
 
 Gestion des erreurs :
+
 - Classe `AuthApiError` pour les erreurs API
 - Gestion des codes HTTP (401, 429, 500, etc.)
 - Messages d'erreur utilisateur clairs
@@ -170,6 +173,7 @@ Design moderne avec :
 **Fichier :** `src/app/globals.css`
 
 Nouvelles animations :
+
 - `fadeIn` : Fondu d'apparition
 - `slideUp` : Glissement vers le haut
 - `slideDown` : Glissement vers le bas
@@ -177,6 +181,7 @@ Nouvelles animations :
 - `zoomIn` : Zoom d'apparition
 
 Classes utilitaires :
+
 - `.animate-in` : Base pour les animations
 - `.fade-in-0` : Fondu d'apparition
 - `.slide-in-from-top-*` : Glissement depuis le haut
@@ -184,6 +189,7 @@ Classes utilitaires :
 - `.zoom-in-0` : Zoom d'apparition
 
 Transitions :
+
 - `.transition-input` : Transitions sur les inputs
 - `.transition-button` : Transitions sur les boutons
 
@@ -256,7 +262,7 @@ function MyComponent() {
 
   if (isLoading) return <div>Chargement...</div>
   if (isAuthenticated) return <div>Bienvenue {user?.email}</div>
-  
+
   return <button onClick={handleLogin}>Se connecter</button>
 }
 ```
@@ -266,8 +272,8 @@ function MyComponent() {
 #### Input avec icône
 
 ```tsx
-import { Input } from "@/components/ui/input"
-import { Mail } from "lucide-react"
+import { Input } from '@/components/ui/input';
+import { Mail } from 'lucide-react';
 
 <Input
   type="email"
@@ -275,27 +281,27 @@ import { Mail } from "lucide-react"
   icon={<Mail className="h-4 w-4" />}
   iconPosition="left"
   error={hasError}
-/>
+/>;
 ```
 
 #### Alert
 
 ```tsx
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle } from "lucide-react"
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 <Alert variant="destructive">
   <AlertCircle className="h-4 w-4" />
   <AlertDescription>Message d'erreur</AlertDescription>
-</Alert>
+</Alert>;
 ```
 
 #### LoadingSpinner
 
 ```tsx
-import { LoadingSpinner } from "@/components/ui/loading-spinner"
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
-<LoadingSpinner size="md" variant="default" label="Chargement..." />
+<LoadingSpinner size="md" variant="default" label="Chargement..." />;
 ```
 
 ## Guide de Test
@@ -408,6 +414,7 @@ pnpm test:coverage
 ## Support
 
 Pour toute question ou problème, consultez :
+
 - La documentation Next.js : https://nextjs.org/docs
 - La documentation shadcn/ui : https://ui.shadcn.com
 - La documentation React Hook Form : https://react-hook-form.com

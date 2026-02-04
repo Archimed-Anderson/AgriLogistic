@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { ChevronRight, History, Plus, SlidersHorizontal, Sparkles, Star } from "lucide-react";
+import { useMemo, useState } from 'react';
+import { ChevronRight, History, Plus, SlidersHorizontal, Sparkles, Star } from 'lucide-react';
 
 export type PriceRange = [number, number];
 
@@ -73,8 +73,8 @@ export function ProductFilterSidebar({
   onDeletePreset,
   onSaveCurrentFilters,
 }: ProductFilterSidebarProps) {
-  const labels = ["Bio", "Local", "Primeur", "Fermier", "AOP"];
-  const [categoryRename, setCategoryRename] = useState("");
+  const labels = ['Bio', 'Local', 'Primeur', 'Fermier', 'AOP'];
+  const [categoryRename, setCategoryRename] = useState('');
   const [showPresets, setShowPresets] = useState(false);
 
   const hasActiveFilters = useMemo(
@@ -85,7 +85,7 @@ export function ProductFilterSidebar({
       maxDistance !== 50 ||
       minRating > 0 ||
       selectedLabels.length > 0,
-    [selectedCategories, priceRange, maxDistance, minRating, selectedLabels],
+    [selectedCategories, priceRange, maxDistance, minRating, selectedLabels]
   );
 
   return (
@@ -155,7 +155,7 @@ export function ProductFilterSidebar({
               Mes filtres enregistrés ({savedFilterPresets.length})
             </span>
             <ChevronRight
-              className={`h-4 w-4 transition-transform ${showPresets ? "rotate-90" : ""}`}
+              className={`h-4 w-4 transition-transform ${showPresets ? 'rotate-90' : ''}`}
             />
           </button>
           {showPresets && (
@@ -204,13 +204,13 @@ export function ProductFilterSidebar({
                     onCategoriesChange(
                       isSelected
                         ? selectedCategories.filter((c) => c !== category.name)
-                        : [...selectedCategories, category.name],
+                        : [...selectedCategories, category.name]
                     )
                   }
                   className={`flex-1 px-3 py-2 rounded-lg border text-sm text-left transition-colors ${
                     isSelected
-                      ? "border-[#15803d] bg-[#15803d]/10 text-[#15803d]"
-                      : "border-border hover:border-[#15803d]/60"
+                      ? 'border-[#15803d] bg-[#15803d]/10 text-[#15803d]'
+                      : 'border-border hover:border-[#15803d]/60'
                   }`}
                 >
                   {category.name}
@@ -244,7 +244,7 @@ export function ProductFilterSidebar({
               onClick={() => {
                 if (!categoryRename.trim()) return;
                 onRenameCategory(categoryMenuOpen, categoryRename.trim());
-                setCategoryRename("");
+                setCategoryRename('');
                 onCategoryMenuOpen(null);
                 onEditCategory(null);
               }}
@@ -297,15 +297,15 @@ export function ProductFilterSidebar({
                 data-testid={`rating-${rating}`}
                 className={`flex items-center gap-1 px-2 py-1 border rounded-lg text-xs ${
                   minRating === rating
-                    ? "border-[#15803d] bg-[#15803d]/10 text-[#15803d]"
-                    : "border-border"
+                    ? 'border-[#15803d] bg-[#15803d]/10 text-[#15803d]'
+                    : 'border-border'
                 }`}
               >
                 <Star
                   className={`h-3 w-3 ${
                     minRating >= rating
-                      ? "fill-yellow-400 text-yellow-400"
-                      : "text-muted-foreground"
+                      ? 'fill-yellow-400 text-yellow-400'
+                      : 'text-muted-foreground'
                   }`}
                 />
                 {rating}+
@@ -327,14 +327,14 @@ export function ProductFilterSidebar({
                     onLabelsChange(
                       isSelected
                         ? selectedLabels.filter((l) => l !== label)
-                        : [...selectedLabels, label],
+                        : [...selectedLabels, label]
                     )
                   }
                   data-testid={`label-${label}`}
                   className={`px-3 py-1 rounded-full text-xs border transition-colors ${
                     isSelected
-                      ? "border-[#15803d] bg-[#15803d]/10 text-[#15803d]"
-                      : "border-border hover:border-[#15803d]/60"
+                      ? 'border-[#15803d] bg-[#15803d]/10 text-[#15803d]'
+                      : 'border-border hover:border-[#15803d]/60'
                   }`}
                 >
                   {label}

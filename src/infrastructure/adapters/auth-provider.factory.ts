@@ -6,12 +6,12 @@ export enum AuthProviderType {
   MOCK = 'mock',
   REAL = 'real',
   SUPABASE = 'supabase',
-  CUSTOM = 'custom'
+  CUSTOM = 'custom',
 }
 
 /**
  * Auth Provider Factory
- * 
+ *
  * Creates and manages authentication provider instances based on configuration.
  * This factory pattern allows the application to switch between different
  * authentication backends without modifying business logic.
@@ -44,19 +44,19 @@ export class AuthProviderFactory {
       case AuthProviderType.MOCK:
         console.log('🔧 Using Mock Auth Provider');
         return new MockAuthAdapter();
-      
+
       case AuthProviderType.REAL:
         console.log('🚀 Using Real Auth Provider (Backend API)');
         return new RealAuthAdapter();
-      
+
       case AuthProviderType.SUPABASE:
         console.warn('Supabase provider not yet implemented, falling back to Real');
         return new RealAuthAdapter();
-      
+
       case AuthProviderType.CUSTOM:
         console.warn('Custom provider not yet implemented, falling back to Real');
         return new RealAuthAdapter();
-      
+
       default:
         throw new Error(`Unknown auth provider type: ${type}`);
     }
@@ -80,9 +80,9 @@ export class AuthProviderFactory {
     }
 
     const envProvider = import.meta.env?.VITE_AUTH_PROVIDER as string;
-    
+
     let providerType: AuthProviderType;
-    
+
     switch (envProvider?.toLowerCase()) {
       case 'mock':
         providerType = AuthProviderType.MOCK;
@@ -98,7 +98,7 @@ export class AuthProviderFactory {
       default:
         providerType = AuthProviderType.REAL;
     }
-    
+
     return this.getProvider(providerType);
   }
 }

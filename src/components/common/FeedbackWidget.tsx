@@ -18,7 +18,7 @@ export function FeedbackWidget() {
     if (!feedback.trim() || rating === 0) return;
 
     setIsSubmitting(true);
-    
+
     try {
       await fetch('/api/feedback', {
         method: 'POST',
@@ -115,9 +115,7 @@ export function FeedbackWidget() {
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent h-32 resize-none"
                     maxLength={500}
                   />
-                  <p className="text-xs text-gray-500 mt-1 text-right">
-                    {feedback.length}/500
-                  </p>
+                  <p className="text-xs text-gray-500 mt-1 text-right">{feedback.length}/500</p>
                 </div>
 
                 <button
@@ -145,5 +143,3 @@ export function FeedbackWidget() {
     </>
   );
 }
-
-

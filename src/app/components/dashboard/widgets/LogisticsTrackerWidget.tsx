@@ -8,19 +8,19 @@ const statusConfig = {
     bg: 'bg-blue-50',
     icon: Truck,
   },
-  'delivered': {
+  delivered: {
     label: 'Delivered',
     color: 'text-green-600',
     bg: 'bg-green-50',
     icon: CheckCircle2,
   },
-  'pending': {
+  pending: {
     label: 'Pending',
     color: 'text-yellow-600',
     bg: 'bg-yellow-50',
     icon: Clock,
   },
-  'delayed': {
+  delayed: {
     label: 'Delayed',
     color: 'text-red-600',
     bg: 'bg-red-50',
@@ -65,7 +65,9 @@ export function LogisticsTrackerWidget() {
                     </div>
                   </div>
                 </div>
-                <div className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium ${config.bg} ${config.color}`}>
+                <div
+                  className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium ${config.bg} ${config.color}`}
+                >
                   <StatusIcon className="w-3 h-3" />
                   {config.label}
                 </div>
@@ -74,7 +76,13 @@ export function LogisticsTrackerWidget() {
               {/* Progress bar */}
               <div className="relative h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div
-                  className={`absolute left-0 top-0 h-full transition-all duration-500 ${shipment.status === 'delivered' ? 'bg-green-500' : shipment.status === 'delayed' ? 'bg-red-500' : 'bg-blue-500'}`}
+                  className={`absolute left-0 top-0 h-full transition-all duration-500 ${
+                    shipment.status === 'delivered'
+                      ? 'bg-green-500'
+                      : shipment.status === 'delayed'
+                      ? 'bg-red-500'
+                      : 'bg-blue-500'
+                  }`}
                   style={{ width: `${shipment.progress}%` }}
                 />
               </div>

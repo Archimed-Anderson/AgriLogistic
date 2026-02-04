@@ -26,10 +26,41 @@ import {
 
 // Mock data for demonstration
 const kpis = [
-  { label: 'Livraisons aujourd\'hui', value: '12', change: '+3', trend: 'up', icon: Package, color: 'from-blue-500 to-blue-600' },
-  { label: 'Revenus du jour', value: '185 000', suffix: 'FCFA', change: '+12%', trend: 'up', icon: DollarSign, color: 'from-emerald-500 to-emerald-600' },
-  { label: 'Distance parcourue', value: '245', suffix: 'km', change: '-8%', trend: 'down', icon: Navigation, color: 'from-purple-500 to-purple-600' },
-  { label: 'Note moyenne', value: '4.8', suffix: '/5', change: '+0.2', trend: 'up', icon: Star, color: 'from-amber-500 to-amber-600' },
+  {
+    label: "Livraisons aujourd'hui",
+    value: '12',
+    change: '+3',
+    trend: 'up',
+    icon: Package,
+    color: 'from-blue-500 to-blue-600',
+  },
+  {
+    label: 'Revenus du jour',
+    value: '185 000',
+    suffix: 'FCFA',
+    change: '+12%',
+    trend: 'up',
+    icon: DollarSign,
+    color: 'from-emerald-500 to-emerald-600',
+  },
+  {
+    label: 'Distance parcourue',
+    value: '245',
+    suffix: 'km',
+    change: '-8%',
+    trend: 'down',
+    icon: Navigation,
+    color: 'from-purple-500 to-purple-600',
+  },
+  {
+    label: 'Note moyenne',
+    value: '4.8',
+    suffix: '/5',
+    change: '+0.2',
+    trend: 'up',
+    icon: Star,
+    color: 'from-amber-500 to-amber-600',
+  },
 ];
 
 const activeShipments = [
@@ -69,8 +100,16 @@ const activeShipments = [
 ];
 
 const alerts = [
-  { type: 'warning', message: 'Embouteillage détecté sur Route de Ouakam - Retard estimé 15 min', time: '5 min' },
-  { type: 'info', message: 'Nouveau client disponible dans votre zone - Bonus +20%', time: '12 min' },
+  {
+    type: 'warning',
+    message: 'Embouteillage détecté sur Route de Ouakam - Retard estimé 15 min',
+    time: '5 min',
+  },
+  {
+    type: 'info',
+    message: 'Nouveau client disponible dans votre zone - Bonus +20%',
+    time: '12 min',
+  },
 ];
 
 const upcomingDeliveries = [
@@ -83,7 +122,11 @@ const statusConfig = {
   in_transit: { label: 'En transit', color: 'bg-blue-100 text-blue-700', dotColor: 'bg-blue-500' },
   pickup: { label: 'Enlèvement', color: 'bg-amber-100 text-amber-700', dotColor: 'bg-amber-500' },
   pending: { label: 'En attente', color: 'bg-slate-100 text-slate-700', dotColor: 'bg-slate-400' },
-  delivered: { label: 'Livré', color: 'bg-emerald-100 text-emerald-700', dotColor: 'bg-emerald-500' },
+  delivered: {
+    label: 'Livré',
+    color: 'bg-emerald-100 text-emerald-700',
+    dotColor: 'bg-emerald-500',
+  },
 };
 
 export default function TransporterDashboardPage() {
@@ -115,13 +158,26 @@ export default function TransporterDashboardPage() {
         {kpis.map((kpi) => {
           const Icon = kpi.icon;
           return (
-            <div key={kpi.label} className="bg-white rounded-2xl border border-slate-200 p-6 hover:shadow-lg transition-all">
+            <div
+              key={kpi.label}
+              className="bg-white rounded-2xl border border-slate-200 p-6 hover:shadow-lg transition-all"
+            >
               <div className="flex items-start justify-between mb-4">
-                <div className={`w-12 h-12 bg-gradient-to-br ${kpi.color} rounded-xl flex items-center justify-center shadow-lg`}>
+                <div
+                  className={`w-12 h-12 bg-gradient-to-br ${kpi.color} rounded-xl flex items-center justify-center shadow-lg`}
+                >
                   <Icon className="w-6 h-6 text-white" />
                 </div>
-                <div className={`flex items-center gap-1 text-sm font-medium ${kpi.trend === 'up' ? 'text-emerald-600' : 'text-red-600'}`}>
-                  {kpi.trend === 'up' ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                <div
+                  className={`flex items-center gap-1 text-sm font-medium ${
+                    kpi.trend === 'up' ? 'text-emerald-600' : 'text-red-600'
+                  }`}
+                >
+                  {kpi.trend === 'up' ? (
+                    <TrendingUp className="w-4 h-4" />
+                  ) : (
+                    <TrendingDown className="w-4 h-4" />
+                  )}
                   {kpi.change}
                 </div>
               </div>
@@ -152,10 +208,18 @@ export default function TransporterDashboardPage() {
               ) : (
                 <Zap className="w-5 h-5 text-blue-600 shrink-0" />
               )}
-              <p className={`flex-1 text-sm ${alert.type === 'warning' ? 'text-amber-800' : 'text-blue-800'}`}>
+              <p
+                className={`flex-1 text-sm ${
+                  alert.type === 'warning' ? 'text-amber-800' : 'text-blue-800'
+                }`}
+              >
                 {alert.message}
               </p>
-              <span className={`text-xs ${alert.type === 'warning' ? 'text-amber-600' : 'text-blue-600'}`}>
+              <span
+                className={`text-xs ${
+                  alert.type === 'warning' ? 'text-amber-600' : 'text-blue-600'
+                }`}
+              >
                 Il y a {alert.time}
               </span>
             </div>
@@ -169,7 +233,10 @@ export default function TransporterDashboardPage() {
         <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 overflow-hidden">
           <div className="flex items-center justify-between p-6 border-b border-slate-100">
             <h2 className="text-lg font-semibold text-slate-900">Livraisons actives</h2>
-            <Link to="/transporter/shipments" className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+            <Link
+              to="/transporter/shipments"
+              className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+            >
               Voir tout <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
@@ -177,13 +244,20 @@ export default function TransporterDashboardPage() {
             {activeShipments.map((shipment) => {
               const config = statusConfig[shipment.status as keyof typeof statusConfig];
               return (
-                <div key={shipment.id} className="p-6 hover:bg-slate-50 transition-colors cursor-pointer">
+                <div
+                  key={shipment.id}
+                  className="p-6 hover:bg-slate-50 transition-colors cursor-pointer"
+                >
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="font-mono text-sm font-medium text-slate-900">{shipment.id}</span>
+                        <span className="font-mono text-sm font-medium text-slate-900">
+                          {shipment.id}
+                        </span>
                         {shipment.priority === 'high' && (
-                          <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded-lg">Prioritaire</span>
+                          <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded-lg">
+                            Prioritaire
+                          </span>
                         )}
                       </div>
                       <p className="text-slate-600">{shipment.client}</p>

@@ -23,7 +23,7 @@ const GlobalFlowMap: React.FC<GlobalFlowMapProps> = ({ loads }) => {
     latitude: 10,
     zoom: 2,
     pitch: 0,
-    bearing: 0
+    bearing: 0,
   });
 
   const [dashOffset, setDashOffset] = useState(0);
@@ -32,7 +32,7 @@ const GlobalFlowMap: React.FC<GlobalFlowMapProps> = ({ loads }) => {
   // Animation loop pour le dash offset (traveling particles)
   useEffect(() => {
     const animate = () => {
-      setDashOffset(prev => (prev - 0.05) % 4);
+      setDashOffset((prev) => (prev - 0.05) % 4);
       requestRef.current = requestAnimationFrame(animate);
     };
     requestRef.current = requestAnimationFrame(animate);
@@ -43,14 +43,14 @@ const GlobalFlowMap: React.FC<GlobalFlowMapProps> = ({ loads }) => {
 
   // Génération des Arcs (Great Circle paths)
   const flowsGeoJson = useMemo(() => {
-    const features = loads.flatMap(load => {
+    const features = loads.flatMap((load) => {
       try {
-        const start = [load.origin.lon, load.origin.lat];
-        const end = [load.destination.lon, load.destination.lat];
-        
+        const start = [load.origin[1], load.origin[0]];
+        const end = [load.destination[1], load.destination[0]];
+
         // Créer une ligne "Great Circle" (Arc)
         const line = turf.greatCircle(start, end, { npoints: 50 });
-        
+
         return [
           {
             ...line,
@@ -58,9 +58,9 @@ const GlobalFlowMap: React.FC<GlobalFlowMapProps> = ({ loads }) => {
               id: load.id,
               status: load.status,
               product: load.productType,
-              quantity: load.quantity
-            }
-          }
+              quantity: load.quantity,
+            },
+          },
         ];
       } catch (err) {
         return [];
@@ -69,28 +69,28 @@ const GlobalFlowMap: React.FC<GlobalFlowMapProps> = ({ loads }) => {
 
     return {
       type: 'FeatureCollection',
-      features
+      features,
     };
   }, [loads]);
 
   // Points (Origine et Destination)
   const pointsGeoJson = useMemo(() => {
-    const features = loads.flatMap(load => [
+    const features = loads.flatMap((load) => [
       {
         type: 'Feature',
-        geometry: { type: 'Point', coordinates: [load.origin.lon, load.origin.lat] },
-        properties: { type: 'origin', id: load.id }
+        geometry: { type: 'Point', coordinates: [load.origin[1], load.origin[0]] },
+        properties: { type: 'origin', id: load.id },
       },
       {
         type: 'Feature',
-        geometry: { type: 'Point', coordinates: [load.destination.lon, load.destination.lat] },
-        properties: { type: 'destination', id: load.id }
-      }
+        geometry: { type: 'Point', coordinates: [load.destination[1], load.destination[0]] },
+        properties: { type: 'destination', id: load.id },
+      },
     ]);
 
     return {
       type: 'FeatureCollection',
-      features
+      features,
     };
   }, [loads]);
 
@@ -98,7 +98,7 @@ const GlobalFlowMap: React.FC<GlobalFlowMapProps> = ({ loads }) => {
     <div className="global-map-wrapper shadow-2xl rounded-2xl overflow-hidden border border-white/5 bg-black">
       <Map
         {...viewState}
-        onMove={evt => setViewState(evt.viewState)}
+        onMove={(evt) => setViewState(evt.viewState)}
         mapStyle="mapbox://styles/mapbox/dark-v11"
         mapboxAccessToken={MAPBOX_TOKEN}
         style={{ width: '100%', height: '500px' }}
@@ -111,16 +111,20 @@ const GlobalFlowMap: React.FC<GlobalFlowMapProps> = ({ loads }) => {
               'line-color': [
                 'match',
                 ['get', 'status'],
-                'Pending', '#00f2ff',
-                'Matched', '#00ff41',
-                'In Transit', '#ff00d9',
-                'Delivered', '#94a3b8',
-                '#ff00d9' // Default
+                'Pending',
+                '#00f2ff',
+                'Matched',
+                '#00ff41',
+                'In Transit',
+                '#ff00d9',
+                'Delivered',
+                '#94a3b8',
+                '#ff00d9', // Default
               ],
               'line-width': 2,
               'line-opacity': 0.6,
               'line-dasharray': [2, 2],
-              'line-dashoffset': dashOffset
+              'line-dashoffset': dashOffset,
             }}
           />
         </Source>
@@ -134,13 +138,15 @@ const GlobalFlowMap: React.FC<GlobalFlowMapProps> = ({ loads }) => {
               'circle-color': [
                 'match',
                 ['get', 'type'],
-                'origin', '#ff00d9',
-                'destination', '#00f2ff',
-                '#ffffff'
+                'origin',
+                '#ff00d9',
+                'destination',
+                '#00f2ff',
+                '#ffffff',
               ],
               'circle-stroke-width': 1,
               'circle-stroke-color': '#fff',
-              'circle-opacity': 0.8
+              'circle-opacity': 0.8,
             }}
           />
         </Source>

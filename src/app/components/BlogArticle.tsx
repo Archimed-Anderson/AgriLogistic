@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   ArrowLeft,
   Clock,
@@ -27,76 +27,76 @@ import {
   CheckCircle,
   TrendingUp,
   FileText,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 export function BlogArticle({ onNavigate }: { onNavigate: (route: string) => void }) {
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showShareMenu, setShowShareMenu] = useState(false);
-  const [commentText, setCommentText] = useState("");
-  const [readingMode, setReadingMode] = useState<"light" | "dark" | "sepia">("light");
+  const [commentText, setCommentText] = useState('');
+  const [readingMode, setReadingMode] = useState<'light' | 'dark' | 'sepia'>('light');
 
   // Article data
   const article = {
-    id: "1",
+    id: '1',
     title: "Comment réduire sa consommation d'eau de 30% avec l'IA",
     excerpt:
       "Découvrez comment les technologies d'intelligence artificielle révolutionnent la gestion de l'eau dans l'agriculture moderne et permettent des économies significatives.",
     author: {
-      name: "Marie Dubois",
-      avatar: "MD",
-      role: "Experte en Agriculture de Précision",
+      name: 'Marie Dubois',
+      avatar: 'MD',
+      role: 'Experte en Agriculture de Précision',
       bio: "Ingénieure agronome spécialisée en agriculture de précision avec 15 ans d'expérience. Fondatrice du blog AgroTech Innovations.",
       articles: 42,
       followers: 3240,
     },
-    category: "Technologies Agricoles",
-    categoryColor: "blue",
-    date: "15 Janvier 2026",
+    category: 'Technologies Agricoles',
+    categoryColor: 'blue',
+    date: '15 Janvier 2026',
     readTime: 8,
     views: 3240,
     comments: 47,
     likes: 189,
-    image: "featured",
+    image: 'featured',
   };
 
   // Table of contents
   const tableOfContents = [
-    { id: "intro", title: "Introduction", level: 1 },
-    { id: "challenges", title: "Les défis de la gestion de l'eau", level: 1 },
-    { id: "ai-solution", title: "L'IA comme solution", level: 1 },
-    { id: "sensors", title: "Capteurs et données", level: 2 },
-    { id: "algorithms", title: "Algorithmes prédictifs", level: 2 },
-    { id: "results", title: "Résultats concrets", level: 1 },
-    { id: "implementation", title: "Mise en œuvre pratique", level: 1 },
-    { id: "conclusion", title: "Conclusion", level: 1 },
+    { id: 'intro', title: 'Introduction', level: 1 },
+    { id: 'challenges', title: "Les défis de la gestion de l'eau", level: 1 },
+    { id: 'ai-solution', title: "L'IA comme solution", level: 1 },
+    { id: 'sensors', title: 'Capteurs et données', level: 2 },
+    { id: 'algorithms', title: 'Algorithmes prédictifs', level: 2 },
+    { id: 'results', title: 'Résultats concrets', level: 1 },
+    { id: 'implementation', title: 'Mise en œuvre pratique', level: 1 },
+    { id: 'conclusion', title: 'Conclusion', level: 1 },
   ];
 
   // Comments
   const comments = [
     {
-      id: "1",
-      author: { name: "Jean Dupont", avatar: "JD", badge: "Expert" },
+      id: '1',
+      author: { name: 'Jean Dupont', avatar: 'JD', badge: 'Expert' },
       text: "Excellent article ! Nous avons implémenté un système similaire et économisé 28% sur notre consommation d'eau. Les résultats sont impressionnants.",
-      date: "Il y a 2 heures",
+      date: 'Il y a 2 heures',
       likes: 24,
       replies: 3,
     },
     {
-      id: "2",
-      author: { name: "Sophie Martin", avatar: "SM", badge: "Pro" },
-      text: "Très intéressant. Auriez-vous des recommandations spécifiques pour les cultures maraîchères ?",
-      date: "Il y a 5 heures",
+      id: '2',
+      author: { name: 'Sophie Martin', avatar: 'SM', badge: 'Pro' },
+      text: 'Très intéressant. Auriez-vous des recommandations spécifiques pour les cultures maraîchères ?',
+      date: 'Il y a 5 heures',
       likes: 12,
       replies: 1,
     },
     {
-      id: "3",
-      author: { name: "Pierre Laurent", avatar: "PL", badge: null },
-      text: "Merci pour cet article détaillé. Je vais tester ces recommandations sur ma parcelle test.",
-      date: "Il y a 1 jour",
+      id: '3',
+      author: { name: 'Pierre Laurent', avatar: 'PL', badge: null },
+      text: 'Merci pour cet article détaillé. Je vais tester ces recommandations sur ma parcelle test.',
+      date: 'Il y a 1 jour',
       likes: 8,
       replies: 0,
     },
@@ -105,36 +105,36 @@ export function BlogArticle({ onNavigate }: { onNavigate: (route: string) => voi
   // Related articles
   const relatedArticles = [
     {
-      id: "2",
+      id: '2',
       title: "Optimiser l'irrigation avec les capteurs IoT",
-      category: "Technologies",
+      category: 'Technologies',
       readTime: 6,
-      image: "🌊",
+      image: '🌊',
     },
     {
-      id: "3",
+      id: '3',
       title: "ROI des systèmes d'irrigation intelligents",
-      category: "Business",
+      category: 'Business',
       readTime: 10,
-      image: "💰",
+      image: '💰',
     },
     {
-      id: "4",
+      id: '4',
       title: "Guide : Choisir ses capteurs d'humidité",
-      category: "Guides",
+      category: 'Guides',
       readTime: 12,
-      image: "📘",
+      image: '📘',
     },
   ];
 
   const handleLike = () => {
     setIsLiked(!isLiked);
-    toast.success(isLiked ? "Like retiré" : "Article liké");
+    toast.success(isLiked ? 'Like retiré' : 'Article liké');
   };
 
   const handleBookmark = () => {
     setIsBookmarked(!isBookmarked);
-    toast.success(isBookmarked ? "Signet retiré" : "Article enregistré");
+    toast.success(isBookmarked ? 'Signet retiré' : 'Article enregistré');
   };
 
   const handleShare = (platform: string) => {
@@ -144,19 +144,19 @@ export function BlogArticle({ onNavigate }: { onNavigate: (route: string) => voi
 
   const handleComment = () => {
     if (commentText.trim()) {
-      toast.success("Commentaire publié");
-      setCommentText("");
+      toast.success('Commentaire publié');
+      setCommentText('');
     }
   };
 
   const getReadingModeStyles = () => {
     switch (readingMode) {
-      case "dark":
-        return "bg-gray-900 text-gray-100";
-      case "sepia":
-        return "bg-[#f4ecd8] text-[#5b4636]";
+      case 'dark':
+        return 'bg-gray-900 text-gray-100';
+      case 'sepia':
+        return 'bg-[#f4ecd8] text-[#5b4636]';
       default:
-        return "bg-white text-gray-900";
+        return 'bg-white text-gray-900';
     }
   };
 
@@ -175,20 +175,20 @@ export function BlogArticle({ onNavigate }: { onNavigate: (route: string) => voi
         <button
           onClick={handleLike}
           className={`p-3 rounded-lg transition-all ${
-            isLiked ? "bg-red-100 text-red-600" : "hover:bg-muted"
+            isLiked ? 'bg-red-100 text-red-600' : 'hover:bg-muted'
           }`}
           title="Like"
         >
-          <Heart className={`h-5 w-5 ${isLiked ? "fill-current" : ""}`} />
+          <Heart className={`h-5 w-5 ${isLiked ? 'fill-current' : ''}`} />
         </button>
         <button
           onClick={handleBookmark}
           className={`p-3 rounded-lg transition-all ${
-            isBookmarked ? "bg-blue-100 text-blue-600" : "hover:bg-muted"
+            isBookmarked ? 'bg-blue-100 text-blue-600' : 'hover:bg-muted'
           }`}
           title="Bookmark"
         >
-          <Bookmark className={`h-5 w-5 ${isBookmarked ? "fill-current" : ""}`} />
+          <Bookmark className={`h-5 w-5 ${isBookmarked ? 'fill-current' : ''}`} />
         </button>
         <div className="relative">
           <button
@@ -201,28 +201,28 @@ export function BlogArticle({ onNavigate }: { onNavigate: (route: string) => voi
           {showShareMenu && (
             <div className="absolute right-full mr-3 top-0 bg-card border rounded-lg shadow-lg p-2 space-y-1 w-48">
               <button
-                onClick={() => handleShare("Facebook")}
+                onClick={() => handleShare('Facebook')}
                 className="w-full flex items-center gap-3 px-3 py-2 hover:bg-muted rounded-lg text-sm"
               >
                 <Facebook className="h-4 w-4 text-blue-600" />
                 Facebook
               </button>
               <button
-                onClick={() => handleShare("Twitter")}
+                onClick={() => handleShare('Twitter')}
                 className="w-full flex items-center gap-3 px-3 py-2 hover:bg-muted rounded-lg text-sm"
               >
                 <Twitter className="h-4 w-4 text-blue-400" />
                 Twitter
               </button>
               <button
-                onClick={() => handleShare("LinkedIn")}
+                onClick={() => handleShare('LinkedIn')}
                 className="w-full flex items-center gap-3 px-3 py-2 hover:bg-muted rounded-lg text-sm"
               >
                 <Linkedin className="h-4 w-4 text-blue-700" />
                 LinkedIn
               </button>
               <button
-                onClick={() => handleShare("Lien")}
+                onClick={() => handleShare('Lien')}
                 className="w-full flex items-center gap-3 px-3 py-2 hover:bg-muted rounded-lg text-sm"
               >
                 <Link2 className="h-4 w-4" />
@@ -239,7 +239,7 @@ export function BlogArticle({ onNavigate }: { onNavigate: (route: string) => voi
           <Printer className="h-5 w-5" />
         </button>
         <button
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="p-3 rounded-lg hover:bg-muted transition-all"
           title="Haut de page"
         >
@@ -249,27 +249,27 @@ export function BlogArticle({ onNavigate }: { onNavigate: (route: string) => voi
         <div className="border-t pt-3">
           <div className="flex flex-col gap-2">
             <button
-              onClick={() => setReadingMode("light")}
+              onClick={() => setReadingMode('light')}
               className={`p-2 rounded ${
-                readingMode === "light" ? "bg-yellow-100" : "hover:bg-muted"
+                readingMode === 'light' ? 'bg-yellow-100' : 'hover:bg-muted'
               }`}
               title="Mode clair"
             >
               <Sun className="h-4 w-4" />
             </button>
             <button
-              onClick={() => setReadingMode("dark")}
+              onClick={() => setReadingMode('dark')}
               className={`p-2 rounded ${
-                readingMode === "dark" ? "bg-gray-700 text-white" : "hover:bg-muted"
+                readingMode === 'dark' ? 'bg-gray-700 text-white' : 'hover:bg-muted'
               }`}
               title="Mode sombre"
             >
               <Moon className="h-4 w-4" />
             </button>
             <button
-              onClick={() => setReadingMode("sepia")}
+              onClick={() => setReadingMode('sepia')}
               className={`p-2 rounded ${
-                readingMode === "sepia" ? "bg-[#f4ecd8]" : "hover:bg-muted"
+                readingMode === 'sepia' ? 'bg-[#f4ecd8]' : 'hover:bg-muted'
               }`}
               title="Mode sepia"
             >
@@ -283,7 +283,7 @@ export function BlogArticle({ onNavigate }: { onNavigate: (route: string) => voi
       <div className="max-w-4xl mx-auto px-6 pt-8">
         <button
           className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-6"
-          onClick={() => onNavigate("/blog")}
+          onClick={() => onNavigate('/blog')}
         >
           <ArrowLeft className="h-4 w-4" />
           Retour au blog
@@ -353,9 +353,9 @@ export function BlogArticle({ onNavigate }: { onNavigate: (route: string) => voi
           <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-600 p-6 rounded-r-lg mb-8">
             <p className="text-lg leading-relaxed">
               <strong>Introduction:</strong> L'agriculture fait face à un défi majeur : produire
-              plus avec moins d'eau. Dans un contexte de changement climatique et de raréfaction
-              des ressources en eau, l'intelligence artificielle émerge comme une solution
-              prometteuse pour optimiser la gestion de l'irrigation.
+              plus avec moins d'eau. Dans un contexte de changement climatique et de raréfaction des
+              ressources en eau, l'intelligence artificielle émerge comme une solution prometteuse
+              pour optimiser la gestion de l'irrigation.
             </p>
           </div>
 
@@ -385,8 +385,8 @@ export function BlogArticle({ onNavigate }: { onNavigate: (route: string) => voi
                 </h3>
                 <p className="text-green-800 dark:text-green-200">
                   Commencez par installer des capteurs d'humidité sur une parcelle test avant de
-                  déployer la solution sur toute votre exploitation. Cela vous permettra de
-                  calibrer le système et de mesurer les gains réels sur vos cultures spécifiques.
+                  déployer la solution sur toute votre exploitation. Cela vous permettra de calibrer
+                  le système et de mesurer les gains réels sur vos cultures spécifiques.
                 </p>
               </div>
             </div>
@@ -403,9 +403,7 @@ export function BlogArticle({ onNavigate }: { onNavigate: (route: string) => voi
           <h3 id="sensors" className="text-2xl font-bold mt-8 mb-4">
             Capteurs et données
           </h3>
-          <p className="mb-6">
-            Le système collecte des données provenant de multiples sources :
-          </p>
+          <p className="mb-6">Le système collecte des données provenant de multiples sources :</p>
           <ul className="mb-6 space-y-2">
             <li>
               <strong>Capteurs sol :</strong> Humidité à différentes profondeurs, température,
@@ -449,7 +447,9 @@ export function BlogArticle({ onNavigate }: { onNavigate: (route: string) => voi
             <li>Prédire les besoins en eau des cultures selon leur stade phénologique</li>
             <li>Anticiper les périodes de stress hydrique avant qu'elles ne surviennent</li>
             <li>Optimiser le calendrier d'irrigation en fonction de la météo prévue</li>
-            <li>Adapter les recommandations selon les caractéristiques spécifiques de chaque sol</li>
+            <li>
+              Adapter les recommandations selon les caractéristiques spécifiques de chaque sol
+            </li>
           </ol>
 
           <h2 id="results" className="text-3xl font-bold mt-12 mb-4">
@@ -621,9 +621,7 @@ export function BlogArticle({ onNavigate }: { onNavigate: (route: string) => voi
 
         {/* Comments Section */}
         <div id="comments" className="border-t pt-12">
-          <h3 className="text-2xl font-bold mb-2">
-            Commentaires ({comments.length})
-          </h3>
+          <h3 className="text-2xl font-bold mb-2">Commentaires ({comments.length})</h3>
           <p className="text-muted-foreground mb-6">
             Partagez votre expérience et posez vos questions à la communauté
           </p>
@@ -643,9 +641,7 @@ export function BlogArticle({ onNavigate }: { onNavigate: (route: string) => voi
                   rows={4}
                 />
                 <div className="flex items-center justify-between mt-3">
-                  <div className="text-sm text-muted-foreground">
-                    Format Markdown supporté
-                  </div>
+                  <div className="text-sm text-muted-foreground">Format Markdown supporté</div>
                   <button
                     onClick={handleComment}
                     disabled={!commentText.trim()}
@@ -689,7 +685,7 @@ export function BlogArticle({ onNavigate }: { onNavigate: (route: string) => voi
                     </button>
                     {comment.replies > 0 && (
                       <button className="text-[#2ECC71] hover:underline">
-                        Voir {comment.replies} réponse{comment.replies > 1 ? "s" : ""}
+                        Voir {comment.replies} réponse{comment.replies > 1 ? 's' : ''}
                       </button>
                     )}
                     <button className="ml-auto text-muted-foreground hover:text-foreground transition-colors">
@@ -741,8 +737,8 @@ export function BlogArticle({ onNavigate }: { onNavigate: (route: string) => voi
                 key={item.id}
                 href={`#${item.id}`}
                 className={`block text-sm hover:text-[#2ECC71] transition-colors ${
-                  item.level === 2 ? "ml-4" : ""
-                } ${item.level === 1 ? "font-medium" : ""}`}
+                  item.level === 2 ? 'ml-4' : ''
+                } ${item.level === 1 ? 'font-medium' : ''}`}
               >
                 {item.title}
               </a>

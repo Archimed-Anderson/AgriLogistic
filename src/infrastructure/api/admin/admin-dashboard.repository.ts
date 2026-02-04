@@ -45,9 +45,7 @@ export class AdminDashboardRepository {
       params.append('to', dateRange.to);
     }
 
-    return apiClient.get<DashboardMetrics>(
-      `${this.basePath}/metrics?${params.toString()}`
-    );
+    return apiClient.get<DashboardMetrics>(`${this.basePath}/metrics?${params.toString()}`);
   }
 
   /**
@@ -68,9 +66,7 @@ export class AdminDashboardRepository {
    * Get recent activity
    */
   async getRecentActivity(limit: number = 10): Promise<Activity[]> {
-    return apiClient.get<Activity[]>(
-      `${this.basePath}/activity?limit=${limit}`
-    );
+    return apiClient.get<Activity[]>(`${this.basePath}/activity?limit=${limit}`);
   }
 }
 

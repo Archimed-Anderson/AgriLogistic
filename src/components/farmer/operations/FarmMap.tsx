@@ -45,9 +45,7 @@ export function FarmMap({ fields, sensors, isLoading }: FarmMapProps) {
           <button
             onClick={() => setShowSensors(!showSensors)}
             className={`flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg ${
-              showSensors
-                ? 'bg-blue-100 text-blue-700'
-                : 'bg-gray-100 text-gray-600'
+              showSensors ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
             }`}
           >
             <Activity className="w-4 h-4" />
@@ -86,11 +84,11 @@ export function FarmMap({ fields, sensors, isLoading }: FarmMapProps) {
               <MapPin className="w-5 h-5 flex-shrink-0 mt-0.5" />
               <div className="text-left">
                 <p className="font-semibold">{field.name}</p>
-                <p className="text-xs opacity-90">{field.area} ha • {field.soilType}</p>
+                <p className="text-xs opacity-90">
+                  {field.area} ha • {field.soilType}
+                </p>
                 {field.currentCrop && (
-                  <p className="text-xs mt-1 opacity-75">
-                    🌱 {field.currentCrop.name}
-                  </p>
+                  <p className="text-xs mt-1 opacity-75">🌱 {field.currentCrop.name}</p>
                 )}
               </div>
             </button>
@@ -102,13 +100,18 @@ export function FarmMap({ fields, sensors, isLoading }: FarmMapProps) {
           <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 max-w-xs">
             <h3 className="font-semibold text-sm mb-2 flex items-center gap-2">
               <Activity className="w-4 h-4" />
-              Capteurs Actifs ({sensors.filter(s => s.status === 'active').length}/{sensors.length})
+              Capteurs Actifs ({sensors.filter((s) => s.status === 'active').length}/
+              {sensors.length})
             </h3>
             <div className="space-y-2">
               {sensors.slice(0, 3).map((sensor) => (
                 <div key={sensor.id} className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${getSensorStatusColor(sensor.lastReading.status)}`} />
+                    <div
+                      className={`w-2 h-2 rounded-full ${getSensorStatusColor(
+                        sensor.lastReading.status
+                      )}`}
+                    />
                     <span className="capitalize">{sensor.type.replace('_', ' ')}</span>
                   </div>
                   <span className="font-semibold">
@@ -126,7 +129,8 @@ export function FarmMap({ fields, sensors, isLoading }: FarmMapProps) {
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-4">
             <span className="text-gray-600">
-              Surface totale: <span className="font-semibold text-gray-900">
+              Surface totale:{' '}
+              <span className="font-semibold text-gray-900">
                 {fields.reduce((sum, f) => sum + f.area, 0).toFixed(1)} ha
               </span>
             </span>

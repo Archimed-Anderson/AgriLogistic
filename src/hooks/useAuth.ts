@@ -6,6 +6,8 @@ export interface User {
   email: string;
   name: string;
   roles: string[];
+  avatar?: string;
+  adminRole?: string;
 }
 
 export function useAuth() {

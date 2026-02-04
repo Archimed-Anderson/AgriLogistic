@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { DndProvider, useDrag, useDrop } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import { useState } from 'react';
+import { DndProvider, useDrag, useDrop } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import {
   ChevronRight,
   ChevronDown,
@@ -28,8 +28,8 @@ import {
   Package,
   Loader2,
   GripVertical,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 interface Category {
   id: string;
@@ -49,7 +49,7 @@ interface Product {
   model: string;
   brand: string;
   categoryId: string;
-  status: "published" | "draft" | "archived";
+  status: 'published' | 'draft' | 'archived';
   pricePerDay: number;
   pricePerWeek?: number;
   image?: string;
@@ -58,26 +58,27 @@ interface Product {
 }
 
 export function CategoryManagement() {
-  const [activeView, setActiveView] = useState<"categories" | "all-products">("categories");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>("CAT-002");
+  const [activeView, setActiveView] = useState<'categories' | 'all-products'>('categories');
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>('CAT-002');
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showProductModal, setShowProductModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>('all');
 
   const selectedCategory = findCategoryById(categories, selectedCategoryId);
 
   const filteredProducts = products.filter((product) => {
-    const matchesCategory = activeView === "all-products" || product.categoryId === selectedCategoryId;
+    const matchesCategory =
+      activeView === 'all-products' || product.categoryId === selectedCategoryId;
     const matchesSearch =
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.sku.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "all" || product.status === statusFilter;
+    const matchesStatus = statusFilter === 'all' || product.status === statusFilter;
     return matchesCategory && matchesSearch && matchesStatus;
   });
 
@@ -91,11 +92,11 @@ export function CategoryManagement() {
 
   const handleAddCategory = (parentId: string | null = null) => {
     setEditingCategory({
-      id: "",
-      name: "",
+      id: '',
+      name: '',
       parentId,
       productCount: 0,
-      icon: "📁",
+      icon: '📁',
     });
     setShowCategoryModal(true);
   };
@@ -109,15 +110,15 @@ export function CategoryManagement() {
     if (editingCategory?.id) {
       // Update existing
       setCategories(updateCategory(categories, editingCategory.id, categoryData));
-      toast.success("Catégorie mise à jour");
+      toast.success('Catégorie mise à jour');
     } else {
       // Create new
       const newCategory: Category = {
         id: `CAT-${Date.now()}`,
-        name: categoryData.name || "Nouvelle catégorie",
+        name: categoryData.name || 'Nouvelle catégorie',
         parentId: categoryData.parentId || null,
         productCount: 0,
-        icon: categoryData.icon || "📁",
+        icon: categoryData.icon || '📁',
         description: categoryData.description,
       };
       setCategories([...categories, newCategory]);
@@ -129,17 +130,17 @@ export function CategoryManagement() {
 
   const handleAddProduct = () => {
     setEditingProduct({
-      id: "",
-      name: "",
-      sku: "",
-      model: "",
-      brand: "",
-      categoryId: selectedCategoryId || "",
-      status: "draft",
+      id: '',
+      name: '',
+      sku: '',
+      model: '',
+      brand: '',
+      categoryId: selectedCategoryId || '',
+      status: 'draft',
       pricePerDay: 0,
       specifications: [
-        { attribute: "Puissance (ch)", value: "" },
-        { attribute: "Largeur de travail (m)", value: "" },
+        { attribute: 'Puissance (ch)', value: '' },
+        { attribute: 'Largeur de travail (m)', value: '' },
       ],
     });
     setShowProductModal(true);
@@ -154,31 +155,29 @@ export function CategoryManagement() {
     if (editingProduct?.id) {
       // Update
       setProducts(products.map((p) => (p.id === editingProduct.id ? { ...p, ...productData } : p)));
-      toast.success("Produit mis à jour");
+      toast.success('Produit mis à jour');
     } else {
       // Create
       const newProduct: Product = {
         id: `PROD-${Date.now()}`,
-        name: productData.name || "Nouveau produit",
+        name: productData.name || 'Nouveau produit',
         sku: productData.sku || `SKU-${Date.now()}`,
-        model: productData.model || "",
-        brand: productData.brand || "",
-        categoryId: productData.categoryId || selectedCategoryId || "",
-        status: productData.status || "draft",
+        model: productData.model || '',
+        brand: productData.brand || '',
+        categoryId: productData.categoryId || selectedCategoryId || '',
+        status: productData.status || 'draft',
         pricePerDay: productData.pricePerDay || 0,
         pricePerWeek: productData.pricePerWeek,
         description: productData.description,
         specifications: productData.specifications || [],
       };
       setProducts([...products, newProduct]);
-      
+
       // Update category product count
-      setCategories(
-        updateCategoryProductCount(categories, newProduct.categoryId, 1)
-      );
-      
+      setCategories(updateCategoryProductCount(categories, newProduct.categoryId, 1));
+
       toast.success(`Produit "${newProduct.name}" ajouté avec succès !`);
-      
+
       // Select the category to show the new product
       setSelectedCategoryId(newProduct.categoryId);
     }
@@ -191,7 +190,7 @@ export function CategoryManagement() {
     if (product) {
       setProducts(products.filter((p) => p.id !== productId));
       setCategories(updateCategoryProductCount(categories, product.categoryId, -1));
-      toast.success("Produit supprimé");
+      toast.success('Produit supprimé');
     }
   };
 
@@ -204,28 +203,28 @@ export function CategoryManagement() {
     };
     setProducts([...products, newProduct]);
     setCategories(updateCategoryProductCount(categories, newProduct.categoryId, 1));
-    toast.success("Produit dupliqué");
+    toast.success('Produit dupliqué');
   };
 
   const handleBulkAction = (action: string) => {
     if (selectedProducts.length === 0) {
-      toast.error("Sélectionnez au moins un produit");
+      toast.error('Sélectionnez au moins un produit');
       return;
     }
 
     switch (action) {
-      case "publish":
+      case 'publish':
         setProducts(
           products.map((p) =>
-            selectedProducts.includes(p.id) ? { ...p, status: "published" as const } : p
+            selectedProducts.includes(p.id) ? { ...p, status: 'published' as const } : p
           )
         );
         toast.success(`${selectedProducts.length} produit(s) publié(s)`);
         break;
-      case "archive":
+      case 'archive':
         setProducts(
           products.map((p) =>
-            selectedProducts.includes(p.id) ? { ...p, status: "archived" as const } : p
+            selectedProducts.includes(p.id) ? { ...p, status: 'archived' as const } : p
           )
         );
         toast.success(`${selectedProducts.length} produit(s) archivé(s)`);
@@ -243,7 +242,7 @@ export function CategoryManagement() {
     const updatedCategories = categories.map((cat) =>
       cat.id === draggedId ? { ...cat, parentId: targetId } : cat
     );
-    
+
     setCategories(updatedCategories);
     toast.success(`"${draggedCategory.name}" déplacé avec succès`);
   };
@@ -263,11 +262,11 @@ export function CategoryManagement() {
         <div className="border-b">
           <nav className="flex gap-6">
             <button
-              onClick={() => setActiveView("categories")}
+              onClick={() => setActiveView('categories')}
               className={`px-4 py-3 border-b-2 transition-colors text-sm font-medium ${
-                activeView === "categories"
-                  ? "border-[#2563eb] text-[#2563eb]"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
+                activeView === 'categories'
+                  ? 'border-[#2563eb] text-[#2563eb]'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
             >
               <span className="flex items-center gap-2">
@@ -276,11 +275,11 @@ export function CategoryManagement() {
               </span>
             </button>
             <button
-              onClick={() => setActiveView("all-products")}
+              onClick={() => setActiveView('all-products')}
               className={`px-4 py-3 border-b-2 transition-colors text-sm font-medium ${
-                activeView === "all-products"
-                  ? "border-[#2563eb] text-[#2563eb]"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
+                activeView === 'all-products'
+                  ? 'border-[#2563eb] text-[#2563eb]'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
             >
               <span className="flex items-center gap-2">
@@ -294,7 +293,7 @@ export function CategoryManagement() {
         {/* Two Panel Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Panel - Category Tree (only in categories view) */}
-          {activeView === "categories" && (
+          {activeView === 'categories' && (
             <div className="lg:col-span-1">
               <CategoryTreePanel
                 categories={categories}
@@ -309,7 +308,7 @@ export function CategoryManagement() {
           )}
 
           {/* Right Panel - Products Table */}
-          <div className={activeView === "categories" ? "lg:col-span-2" : "lg:col-span-3"}>
+          <div className={activeView === 'categories' ? 'lg:col-span-2' : 'lg:col-span-3'}>
             <ProductsTablePanel
               products={filteredProducts}
               selectedCategory={selectedCategory}
@@ -424,7 +423,7 @@ function CategoryTreeNode({
   const isExpanded = category.expanded;
 
   const [{ isDragging }, drag, dragPreview] = useDrag({
-    type: "CATEGORY",
+    type: 'CATEGORY',
     item: { id: category.id, name: category.name },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
@@ -432,7 +431,7 @@ function CategoryTreeNode({
   });
 
   const [{ isOver, canDrop }, drop] = useDrop({
-    accept: "CATEGORY",
+    accept: 'CATEGORY',
     canDrop: (item: any) => item.id !== category.id,
     drop: (item: any) => {
       onMoveCategory(item.id, category.id);
@@ -453,9 +452,9 @@ function CategoryTreeNode({
           setShowContextMenu(!showContextMenu);
         }}
         className={`flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer transition-colors group relative ${
-          isSelected ? "bg-[#2563eb] text-white" : "hover:bg-background"
-        } ${isDragging ? "opacity-50" : ""} ${
-          isOver && canDrop ? "ring-2 ring-[#2563eb] ring-offset-2" : ""
+          isSelected ? 'bg-[#2563eb] text-white' : 'hover:bg-background'
+        } ${isDragging ? 'opacity-50' : ''} ${
+          isOver && canDrop ? 'ring-2 ring-[#2563eb] ring-offset-2' : ''
         }`}
         style={{ paddingLeft: `${level * 16 + 8}px` }}
       >
@@ -463,7 +462,7 @@ function CategoryTreeNode({
         <div
           ref={drag}
           className={`cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity ${
-            isSelected ? "text-white" : "text-muted-foreground"
+            isSelected ? 'text-white' : 'text-muted-foreground'
           }`}
         >
           <GripVertical className="h-3 w-3" />
@@ -489,15 +488,15 @@ function CategoryTreeNode({
         )}
 
         {/* Icon */}
-        <span className="text-base">{category.icon || "📁"}</span>
-        
+        <span className="text-base">{category.icon || '📁'}</span>
+
         {/* Name */}
         <span className="flex-1 text-sm truncate">{category.name}</span>
-        
+
         {/* Product Count Badge */}
         <span
           className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${
-            isSelected ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"
+            isSelected ? 'bg-white/20 text-white' : 'bg-muted text-muted-foreground'
           }`}
         >
           {category.productCount}
@@ -510,7 +509,7 @@ function CategoryTreeNode({
             setShowContextMenu(!showContextMenu);
           }}
           className={`opacity-0 group-hover:opacity-100 p-1 hover:bg-muted rounded transition-opacity ${
-            isSelected ? "text-white hover:bg-white/20" : ""
+            isSelected ? 'text-white hover:bg-white/20' : ''
           }`}
         >
           <MoreVertical className="h-3 w-3" />
@@ -542,7 +541,7 @@ function CategoryTreeNode({
           </button>
           <button
             onClick={() => {
-              toast.success("Catégorie archivée");
+              toast.success('Catégorie archivée');
               setShowContextMenu(false);
             }}
             className="w-full px-3 py-1.5 text-left hover:bg-muted rounded flex items-center gap-2 text-red-600"
@@ -616,9 +615,9 @@ function ProductsTablePanel({
         <div className="flex items-center justify-between">
           <div>
             <h2 className="font-semibold text-lg">
-              {viewMode === "categories" && selectedCategory
+              {viewMode === 'categories' && selectedCategory
                 ? `Produits de la Catégorie : ${selectedCategory.name}`
-                : "Tous les produits"}
+                : 'Tous les produits'}
             </h2>
             <p className="text-sm text-muted-foreground">{products.length} produit(s)</p>
           </div>
@@ -662,13 +661,13 @@ function ProductsTablePanel({
             <span className="text-sm font-medium">{selectedProducts.length} sélectionné(s)</span>
             <div className="flex gap-2">
               <button
-                onClick={() => onBulkAction("publish")}
+                onClick={() => onBulkAction('publish')}
                 className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 transition-colors"
               >
                 Publier la sélection
               </button>
               <button
-                onClick={() => onBulkAction("archive")}
+                onClick={() => onBulkAction('archive')}
                 className="px-3 py-1 border rounded text-sm hover:bg-muted transition-colors"
               >
                 Archiver
@@ -687,7 +686,7 @@ function ProductsTablePanel({
             <p className="text-muted-foreground mb-4">
               {selectedCategory
                 ? `Ajoutez votre premier équipement à louer dans la catégorie "${selectedCategory.name}".`
-                : "Ajoutez votre premier équipement à louer."}
+                : 'Ajoutez votre premier équipement à louer.'}
             </p>
             <button
               onClick={onAddProduct}
@@ -747,19 +746,19 @@ function ProductsTablePanel({
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    {product.status === "published" && (
+                    {product.status === 'published' && (
                       <span className="px-2 py-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-xs font-medium rounded-full flex items-center gap-1 w-fit">
                         <CheckCircle2 className="h-3 w-3" />
                         Publié
                       </span>
                     )}
-                    {product.status === "draft" && (
+                    {product.status === 'draft' && (
                       <span className="px-2 py-1 bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400 text-xs font-medium rounded-full flex items-center gap-1 w-fit">
                         <FileText className="h-3 w-3" />
                         Brouillon
                       </span>
                     )}
-                    {product.status === "archived" && (
+                    {product.status === 'archived' && (
                       <span className="px-2 py-1 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 text-xs font-medium rounded-full flex items-center gap-1 w-fit">
                         <Archive className="h-3 w-3" />
                         Archivé
@@ -788,7 +787,7 @@ function ProductsTablePanel({
                       </button>
                       <button
                         onClick={() => {
-                          if (confirm("Supprimer ce produit ?")) {
+                          if (confirm('Supprimer ce produit ?')) {
                             onDeleteProduct(product.id);
                           }
                         }}
@@ -812,20 +811,20 @@ function ProductsTablePanel({
 // Category Modal Component
 function CategoryModal({ category, categories, onClose, onSave }: any) {
   const [formData, setFormData] = useState({
-    name: category?.name || "",
-    parentId: category?.parentId || "",
-    icon: category?.icon || "📁",
-    description: category?.description || "",
+    name: category?.name || '',
+    parentId: category?.parentId || '',
+    icon: category?.icon || '📁',
+    description: category?.description || '',
   });
 
-  const iconOptions = ["📁", "🚜", "🥚", "🚛", "🪚", "💧", "🔧", "📦", "🌾", "🐄"];
+  const iconOptions = ['📁', '🚜', '🥚', '🚛', '🪚', '💧', '🔧', '📦', '🌾', '🐄'];
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-card border rounded-lg shadow-xl w-full max-w-lg">
         <div className="px-6 py-4 border-b flex items-center justify-between">
           <h2 className="text-xl font-bold">
-            {category?.id ? "Éditer la catégorie" : "Nouvelle catégorie"}
+            {category?.id ? 'Éditer la catégorie' : 'Nouvelle catégorie'}
           </h2>
           <button onClick={onClose} className="p-1 hover:bg-muted rounded transition-colors">
             <X className="h-5 w-5" />
@@ -870,7 +869,7 @@ function CategoryModal({ category, categories, onClose, onSave }: any) {
                   key={icon}
                   onClick={() => setFormData({ ...formData, icon })}
                   className={`text-2xl p-2 border rounded hover:bg-muted transition-colors ${
-                    formData.icon === icon ? "ring-2 ring-[#2563eb]" : ""
+                    formData.icon === icon ? 'ring-2 ring-[#2563eb]' : ''
                   }`}
                 >
                   {icon}
@@ -903,7 +902,7 @@ function CategoryModal({ category, categories, onClose, onSave }: any) {
             disabled={!formData.name}
             className="px-6 py-2 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {category?.id ? "Mettre à jour" : "Créer"}
+            {category?.id ? 'Mettre à jour' : 'Créer'}
           </button>
         </div>
       </div>
@@ -913,20 +912,20 @@ function CategoryModal({ category, categories, onClose, onSave }: any) {
 
 // Product Modal Component
 function ProductModal({ product, categories, onClose, onSave }: any) {
-  const [activeTab, setActiveTab] = useState("basic");
+  const [activeTab, setActiveTab] = useState('basic');
   const [formData, setFormData] = useState({
-    name: product?.name || "",
-    sku: product?.sku || "",
-    brand: product?.brand || "",
-    model: product?.model || "",
-    categoryId: product?.categoryId || "",
-    status: product?.status || "draft",
+    name: product?.name || '',
+    sku: product?.sku || '',
+    brand: product?.brand || '',
+    model: product?.model || '',
+    categoryId: product?.categoryId || '',
+    status: product?.status || 'draft',
     pricePerDay: product?.pricePerDay || 0,
     pricePerWeek: product?.pricePerWeek || 0,
-    description: product?.description || "",
+    description: product?.description || '',
     specifications: product?.specifications || [
-      { attribute: "Puissance (ch)", value: "" },
-      { attribute: "Largeur de travail (m)", value: "" },
+      { attribute: 'Puissance (ch)', value: '' },
+      { attribute: 'Largeur de travail (m)', value: '' },
     ],
   });
 
@@ -943,11 +942,11 @@ function ProductModal({ product, categories, onClose, onSave }: any) {
   const addSpecification = () => {
     setFormData({
       ...formData,
-      specifications: [...formData.specifications, { attribute: "", value: "" }],
+      specifications: [...formData.specifications, { attribute: '', value: '' }],
     });
   };
 
-  const updateSpecification = (index: number, field: "attribute" | "value", value: string) => {
+  const updateSpecification = (index: number, field: 'attribute' | 'value', value: string) => {
     const newSpecs = [...formData.specifications];
     newSpecs[index][field] = value;
     setFormData({ ...formData, specifications: newSpecs });
@@ -961,11 +960,11 @@ function ProductModal({ product, categories, onClose, onSave }: any) {
   };
 
   const tabs = [
-    { id: "basic", label: "Infos de base", icon: FileText },
-    { id: "specs", label: "Spécifications", icon: Settings },
-    { id: "media", label: "Galerie", icon: ImageIcon },
-    { id: "pricing", label: "Tarification", icon: Package },
-    { id: "preview", label: "Aperçu", icon: Eye },
+    { id: 'basic', label: 'Infos de base', icon: FileText },
+    { id: 'specs', label: 'Spécifications', icon: Settings },
+    { id: 'media', label: 'Galerie', icon: ImageIcon },
+    { id: 'pricing', label: 'Tarification', icon: Package },
+    { id: 'preview', label: 'Aperçu', icon: Eye },
   ];
 
   return (
@@ -973,7 +972,7 @@ function ProductModal({ product, categories, onClose, onSave }: any) {
       <div className="bg-card border rounded-lg shadow-xl w-full max-w-4xl my-8">
         <div className="px-6 py-4 border-b flex items-center justify-between">
           <h2 className="text-xl font-bold">
-            {product?.id ? "Éditer le produit" : "Nouveau produit"}
+            {product?.id ? 'Éditer le produit' : 'Nouveau produit'}
           </h2>
           <button onClick={onClose} className="p-1 hover:bg-muted rounded transition-colors">
             <X className="h-5 w-5" />
@@ -991,8 +990,8 @@ function ProductModal({ product, categories, onClose, onSave }: any) {
                   onClick={() => setActiveTab(tab.id)}
                   className={`px-4 py-3 border-b-2 transition-colors text-sm font-medium flex items-center gap-2 whitespace-nowrap ${
                     activeTab === tab.id
-                      ? "border-[#2563eb] text-[#2563eb]"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
+                      ? 'border-[#2563eb] text-[#2563eb]'
+                      : 'border-transparent text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -1004,7 +1003,7 @@ function ProductModal({ product, categories, onClose, onSave }: any) {
         </div>
 
         <div className="p-6 max-h-[60vh] overflow-y-auto">
-          {activeTab === "basic" && (
+          {activeTab === 'basic' && (
             <div className="space-y-4 max-w-2xl">
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
@@ -1081,7 +1080,7 @@ function ProductModal({ product, categories, onClose, onSave }: any) {
             </div>
           )}
 
-          {activeTab === "specs" && (
+          {activeTab === 'specs' && (
             <div className="space-y-4 max-w-3xl">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold">Spécifications techniques</h3>
@@ -1100,14 +1099,14 @@ function ProductModal({ product, categories, onClose, onSave }: any) {
                     <input
                       type="text"
                       value={spec.attribute}
-                      onChange={(e) => updateSpecification(index, "attribute", e.target.value)}
+                      onChange={(e) => updateSpecification(index, 'attribute', e.target.value)}
                       placeholder="Ex: Puissance (ch)"
                       className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
                     />
                     <input
                       type="text"
                       value={spec.value}
-                      onChange={(e) => updateSpecification(index, "value", e.target.value)}
+                      onChange={(e) => updateSpecification(index, 'value', e.target.value)}
                       placeholder="Ex: 220"
                       className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
                     />
@@ -1133,7 +1132,7 @@ function ProductModal({ product, categories, onClose, onSave }: any) {
             </div>
           )}
 
-          {activeTab === "media" && (
+          {activeTab === 'media' && (
             <div className="space-y-4 max-w-2xl">
               <div className="border-2 border-dashed rounded-lg p-12 text-center">
                 <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
@@ -1148,7 +1147,7 @@ function ProductModal({ product, categories, onClose, onSave }: any) {
             </div>
           )}
 
-          {activeTab === "pricing" && (
+          {activeTab === 'pricing' && (
             <div className="space-y-4 max-w-2xl">
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -1180,13 +1179,14 @@ function ProductModal({ product, categories, onClose, onSave }: any) {
 
               <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                 <p className="text-sm text-muted-foreground">
-                  💡 <strong>Astuce :</strong> Un tarif hebdomadaire attractif encourage les locations longue durée
+                  💡 <strong>Astuce :</strong> Un tarif hebdomadaire attractif encourage les
+                  locations longue durée
                 </p>
               </div>
             </div>
           )}
 
-          {activeTab === "preview" && (
+          {activeTab === 'preview' && (
             <div className="max-w-2xl">
               <div className="bg-muted/50 border-2 border-dashed rounded-lg p-8">
                 <h3 className="text-center font-semibold mb-4">Aperçu de la fiche produit</h3>
@@ -1196,7 +1196,7 @@ function ProductModal({ product, categories, onClose, onSave }: any) {
                   </div>
                   <div className="p-6 space-y-3">
                     <div>
-                      <h2 className="text-2xl font-bold">{formData.name || "Nom du produit"}</h2>
+                      <h2 className="text-2xl font-bold">{formData.name || 'Nom du produit'}</h2>
                       <p className="text-muted-foreground">{formData.model || formData.brand}</p>
                     </div>
                     {formData.description && (
@@ -1210,7 +1210,7 @@ function ProductModal({ product, categories, onClose, onSave }: any) {
                             .filter((s: any) => s.attribute && s.value)
                             .map((spec: any, i: number) => (
                               <div key={i}>
-                                <span className="text-muted-foreground">{spec.attribute}:</span>{" "}
+                                <span className="text-muted-foreground">{spec.attribute}:</span>{' '}
                                 <span className="font-medium">{spec.value}</span>
                               </div>
                             ))}
@@ -1268,10 +1268,10 @@ function ProductModal({ product, categories, onClose, onSave }: any) {
               {isSaving ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  {formData.status === "published" ? "Publication..." : "Sauvegarde..."}
+                  {formData.status === 'published' ? 'Publication...' : 'Sauvegarde...'}
                 </>
               ) : (
-                <>{formData.status === "published" ? "Publier" : "Sauvegarder"}</>
+                <>{formData.status === 'published' ? 'Publier' : 'Sauvegarder'}</>
               )}
             </button>
           </div>
@@ -1288,9 +1288,7 @@ function findCategoryById(categories: Category[], id: string | null): Category |
 }
 
 function updateCategoryExpanded(categories: Category[], id: string): Category[] {
-  return categories.map((cat) =>
-    cat.id === id ? { ...cat, expanded: !cat.expanded } : cat
-  );
+  return categories.map((cat) => (cat.id === id ? { ...cat, expanded: !cat.expanded } : cat));
 }
 
 function updateCategory(
@@ -1313,147 +1311,147 @@ function updateCategoryProductCount(
 
 function getCategoryIcon(categoryId: string): string {
   const icons: Record<string, string> = {
-    "CAT-001": "🚜",
-    "CAT-002": "🚜",
-    "CAT-003": "🌾",
-    "CAT-004": "🥚",
-    "CAT-005": "🐄",
-    "CAT-006": "🌾",
+    'CAT-001': '🚜',
+    'CAT-002': '🚜',
+    'CAT-003': '🌾',
+    'CAT-004': '🥚',
+    'CAT-005': '🐄',
+    'CAT-006': '🌾',
   };
-  return icons[categoryId] || "📦";
+  return icons[categoryId] || '📦';
 }
 
 // Initial mock data - Updated structure
 const initialCategories: Category[] = [
   {
-    id: "CAT-001",
-    name: "Machinerie Lourde",
+    id: 'CAT-001',
+    name: 'Machinerie Lourde',
     parentId: null,
     productCount: 17,
-    icon: "🚜",
+    icon: '🚜',
     expanded: true,
-    description: "Équipements agricoles lourds et motorisés",
+    description: 'Équipements agricoles lourds et motorisés',
   },
   {
-    id: "CAT-002",
-    name: "Tracteurs",
-    parentId: "CAT-001",
+    id: 'CAT-002',
+    name: 'Tracteurs',
+    parentId: 'CAT-001',
     productCount: 12,
-    icon: "🚜",
+    icon: '🚜',
     expanded: false,
-    description: "Tracteurs de toutes puissances",
+    description: 'Tracteurs de toutes puissances',
   },
   {
-    id: "CAT-003",
-    name: "Moissonneuses-batteuses",
-    parentId: "CAT-001",
+    id: 'CAT-003',
+    name: 'Moissonneuses-batteuses',
+    parentId: 'CAT-001',
     productCount: 5,
-    icon: "🌾",
+    icon: '🌾',
     expanded: false,
-    description: "Moissonneuses pour céréales",
+    description: 'Moissonneuses pour céréales',
   },
   {
-    id: "CAT-004",
-    name: "Élevage & Aviculture",
+    id: 'CAT-004',
+    name: 'Élevage & Aviculture',
     parentId: null,
     productCount: 8,
-    icon: "🥚",
+    icon: '🥚',
     expanded: true,
     description: "Matériel pour l'élevage",
   },
   {
-    id: "CAT-005",
-    name: "Couveuses",
-    parentId: "CAT-004",
+    id: 'CAT-005',
+    name: 'Couveuses',
+    parentId: 'CAT-004',
     productCount: 8,
-    icon: "🥚",
+    icon: '🥚',
     expanded: false,
-    description: "Couveuses automatiques et manuelles",
+    description: 'Couveuses automatiques et manuelles',
   },
 ];
 
 const initialProducts: Product[] = [
   {
-    id: "PROD-001",
-    name: "Tracteur John Deere 6155M",
-    sku: "JD-6155M-001",
-    model: "6155M",
-    brand: "John Deere",
-    categoryId: "CAT-002",
-    status: "published",
+    id: 'PROD-001',
+    name: 'Tracteur John Deere 6155M',
+    sku: 'JD-6155M-001',
+    model: '6155M',
+    brand: 'John Deere',
+    categoryId: 'CAT-002',
+    status: 'published',
     pricePerDay: 420,
     pricePerWeek: 2520,
-    description: "Tracteur polyvalent 155 CV avec cabine climatisée",
+    description: 'Tracteur polyvalent 155 CV avec cabine climatisée',
     specifications: [
-      { attribute: "Puissance (ch)", value: "155" },
-      { attribute: "Largeur de travail (m)", value: "3.2" },
+      { attribute: 'Puissance (ch)', value: '155' },
+      { attribute: 'Largeur de travail (m)', value: '3.2' },
     ],
   },
   {
-    id: "PROD-002",
-    name: "Tracteur Massey Ferguson 7718",
-    sku: "MF-7718-001",
-    model: "7718 S",
-    brand: "Massey Ferguson",
-    categoryId: "CAT-002",
-    status: "published",
+    id: 'PROD-002',
+    name: 'Tracteur Massey Ferguson 7718',
+    sku: 'MF-7718-001',
+    model: '7718 S',
+    brand: 'Massey Ferguson',
+    categoryId: 'CAT-002',
+    status: 'published',
     pricePerDay: 380,
     pricePerWeek: 2280,
     specifications: [
-      { attribute: "Puissance (ch)", value: "180" },
-      { attribute: "Poids (kg)", value: "8500" },
+      { attribute: 'Puissance (ch)', value: '180' },
+      { attribute: 'Poids (kg)', value: '8500' },
     ],
   },
   {
-    id: "PROD-003",
-    name: "Tracteur New Holland T7.270",
-    sku: "NH-T7270-001",
-    model: "T7.270",
-    brand: "New Holland",
-    categoryId: "CAT-002",
-    status: "draft",
+    id: 'PROD-003',
+    name: 'Tracteur New Holland T7.270',
+    sku: 'NH-T7270-001',
+    model: 'T7.270',
+    brand: 'New Holland',
+    categoryId: 'CAT-002',
+    status: 'draft',
     pricePerDay: 450,
-    specifications: [{ attribute: "Puissance (ch)", value: "270" }],
+    specifications: [{ attribute: 'Puissance (ch)', value: '270' }],
   },
   {
-    id: "PROD-004",
-    name: "Couveuse Automatique 456 Œufs",
-    sku: "INC-456-001",
-    model: "REAL 49 Plus",
-    brand: "Borotto",
-    categoryId: "CAT-005",
-    status: "published",
+    id: 'PROD-004',
+    name: 'Couveuse Automatique 456 Œufs',
+    sku: 'INC-456-001',
+    model: 'REAL 49 Plus',
+    brand: 'Borotto',
+    categoryId: 'CAT-005',
+    status: 'published',
     pricePerDay: 35,
     pricePerWeek: 210,
     specifications: [
-      { attribute: "Capacité (œufs)", value: "456" },
-      { attribute: "Consommation (W)", value: "150" },
+      { attribute: 'Capacité (œufs)', value: '456' },
+      { attribute: 'Consommation (W)', value: '150' },
     ],
   },
   {
-    id: "PROD-005",
-    name: "Couveuse Professionnelle 300 Œufs",
-    sku: "INC-300-001",
-    model: "Pro 300",
-    brand: "Incubex",
-    categoryId: "CAT-005",
-    status: "published",
+    id: 'PROD-005',
+    name: 'Couveuse Professionnelle 300 Œufs',
+    sku: 'INC-300-001',
+    model: 'Pro 300',
+    brand: 'Incubex',
+    categoryId: 'CAT-005',
+    status: 'published',
     pricePerDay: 28,
-    specifications: [{ attribute: "Capacité (œufs)", value: "300" }],
+    specifications: [{ attribute: 'Capacité (œufs)', value: '300' }],
   },
   {
-    id: "PROD-006",
-    name: "Moissonneuse-batteuse CLAAS Lexion 780",
-    sku: "CLAAS-LEX780-001",
-    model: "Lexion 780",
-    brand: "CLAAS",
-    categoryId: "CAT-003",
-    status: "published",
+    id: 'PROD-006',
+    name: 'Moissonneuse-batteuse CLAAS Lexion 780',
+    sku: 'CLAAS-LEX780-001',
+    model: 'Lexion 780',
+    brand: 'CLAAS',
+    categoryId: 'CAT-003',
+    status: 'published',
     pricePerDay: 850,
     pricePerWeek: 5100,
     specifications: [
-      { attribute: "Puissance (ch)", value: "530" },
-      { attribute: "Largeur de coupe (m)", value: "9.2" },
+      { attribute: 'Puissance (ch)', value: '530' },
+      { attribute: 'Largeur de coupe (m)', value: '9.2' },
     ],
   },
 ];

@@ -70,29 +70,144 @@ interface Shift {
 
 // Mock Data
 const TEAM_MEMBERS: TeamMember[] = [
-  { id: '1', name: 'Marie Dupont', role: 'Chef d\'équipe', status: 'active', location: 'Parcelle A3', currentTask: 'Récolte tomates', performance: 94, hoursToday: 6.5, avatar: '👩‍🌾', phone: '+33 6 12 34 56 78', iotDevice: 'IOT-001' },
-  { id: '2', name: 'Jean-Pierre Martin', role: 'Ouvrier agricole', status: 'active', location: 'Parcelle B1', currentTask: 'Irrigation', performance: 88, hoursToday: 7.2, avatar: '👨‍🌾', phone: '+33 6 23 45 67 89', iotDevice: 'IOT-002' },
-  { id: '3', name: 'Sophie Bernard', role: 'Technicienne', status: 'break', location: 'Entrepôt', currentTask: 'Pause déjeuner', performance: 92, hoursToday: 4.0, avatar: '👩', phone: '+33 6 34 56 78 90' },
-  { id: '4', name: 'Thomas Petit', role: 'Conducteur', status: 'active', location: 'Route D47', currentTask: 'Transport récolte', performance: 96, hoursToday: 5.8, avatar: '👨', phone: '+33 6 45 67 89 01', iotDevice: 'IOT-003' },
-  { id: '5', name: 'Emma Leroy', role: 'Ouvrier agricole', status: 'offline', location: 'N/A', currentTask: 'Hors service', performance: 85, hoursToday: 0, avatar: '👩', phone: '+33 6 56 78 90 12' },
+  {
+    id: '1',
+    name: 'Marie Dupont',
+    role: "Chef d'équipe",
+    status: 'active',
+    location: 'Parcelle A3',
+    currentTask: 'Récolte tomates',
+    performance: 94,
+    hoursToday: 6.5,
+    avatar: '👩‍🌾',
+    phone: '+33 6 12 34 56 78',
+    iotDevice: 'IOT-001',
+  },
+  {
+    id: '2',
+    name: 'Jean-Pierre Martin',
+    role: 'Ouvrier agricole',
+    status: 'active',
+    location: 'Parcelle B1',
+    currentTask: 'Irrigation',
+    performance: 88,
+    hoursToday: 7.2,
+    avatar: '👨‍🌾',
+    phone: '+33 6 23 45 67 89',
+    iotDevice: 'IOT-002',
+  },
+  {
+    id: '3',
+    name: 'Sophie Bernard',
+    role: 'Technicienne',
+    status: 'break',
+    location: 'Entrepôt',
+    currentTask: 'Pause déjeuner',
+    performance: 92,
+    hoursToday: 4.0,
+    avatar: '👩',
+    phone: '+33 6 34 56 78 90',
+  },
+  {
+    id: '4',
+    name: 'Thomas Petit',
+    role: 'Conducteur',
+    status: 'active',
+    location: 'Route D47',
+    currentTask: 'Transport récolte',
+    performance: 96,
+    hoursToday: 5.8,
+    avatar: '👨',
+    phone: '+33 6 45 67 89 01',
+    iotDevice: 'IOT-003',
+  },
+  {
+    id: '5',
+    name: 'Emma Leroy',
+    role: 'Ouvrier agricole',
+    status: 'offline',
+    location: 'N/A',
+    currentTask: 'Hors service',
+    performance: 85,
+    hoursToday: 0,
+    avatar: '👩',
+    phone: '+33 6 56 78 90 12',
+  },
 ];
 
 const TEAMS: Team[] = [
-  { id: '1', name: 'Équipe Récolte', members: 8, activeNow: 6, productivity: 92, currentZone: 'Parcelles A-C' },
-  { id: '2', name: 'Équipe Logistique', members: 5, activeNow: 4, productivity: 88, currentZone: 'Entrepôt + Routes' },
-  { id: '3', name: 'Équipe Maintenance', members: 3, activeNow: 2, productivity: 95, currentZone: 'Atelier' },
+  {
+    id: '1',
+    name: 'Équipe Récolte',
+    members: 8,
+    activeNow: 6,
+    productivity: 92,
+    currentZone: 'Parcelles A-C',
+  },
+  {
+    id: '2',
+    name: 'Équipe Logistique',
+    members: 5,
+    activeNow: 4,
+    productivity: 88,
+    currentZone: 'Entrepôt + Routes',
+  },
+  {
+    id: '3',
+    name: 'Équipe Maintenance',
+    members: 3,
+    activeNow: 2,
+    productivity: 95,
+    currentZone: 'Atelier',
+  },
 ];
 
 const ALERTS: Alert[] = [
-  { id: '1', type: 'warning', message: 'Prévision de pénurie: 2 ouvriers manquants demain matin', time: 'Il y a 15 min' },
-  { id: '2', type: 'info', message: 'Nouvelle rotation recommandée par l\'IA pour optimiser la récolte', time: 'Il y a 1h' },
-  { id: '3', type: 'critical', message: 'Alerte météo: pluie prévue à 14h - adapter les plannings', time: 'Il y a 30 min' },
+  {
+    id: '1',
+    type: 'warning',
+    message: 'Prévision de pénurie: 2 ouvriers manquants demain matin',
+    time: 'Il y a 15 min',
+  },
+  {
+    id: '2',
+    type: 'info',
+    message: "Nouvelle rotation recommandée par l'IA pour optimiser la récolte",
+    time: 'Il y a 1h',
+  },
+  {
+    id: '3',
+    type: 'critical',
+    message: 'Alerte météo: pluie prévue à 14h - adapter les plannings',
+    time: 'Il y a 30 min',
+  },
 ];
 
 const SHIFTS: Shift[] = [
-  { id: '1', name: 'Matin', startTime: '06:00', endTime: '14:00', assignedCount: 12, zone: 'Toutes parcelles' },
-  { id: '2', name: 'Après-midi', startTime: '14:00', endTime: '22:00', assignedCount: 8, zone: 'Parcelles A-D' },
-  { id: '3', name: 'Nuit', startTime: '22:00', endTime: '06:00', assignedCount: 2, zone: 'Surveillance' },
+  {
+    id: '1',
+    name: 'Matin',
+    startTime: '06:00',
+    endTime: '14:00',
+    assignedCount: 12,
+    zone: 'Toutes parcelles',
+  },
+  {
+    id: '2',
+    name: 'Après-midi',
+    startTime: '14:00',
+    endTime: '22:00',
+    assignedCount: 8,
+    zone: 'Parcelles A-D',
+  },
+  {
+    id: '3',
+    name: 'Nuit',
+    startTime: '22:00',
+    endTime: '06:00',
+    assignedCount: 2,
+    zone: 'Surveillance',
+  },
 ];
 
 const AI_PREDICTIONS = [
@@ -104,44 +219,60 @@ const AI_PREDICTIONS = [
 
 export function LaborManagement() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'overview' | 'teams' | 'schedule' | 'analytics'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'teams' | 'schedule' | 'analytics'>(
+    'overview'
+  );
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
 
   const filteredMembers = useMemo(() => {
     if (!searchQuery) return TEAM_MEMBERS;
-    return TEAM_MEMBERS.filter(m =>
-      m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      m.role.toLowerCase().includes(searchQuery.toLowerCase())
+    return TEAM_MEMBERS.filter(
+      (m) =>
+        m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        m.role.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [searchQuery]);
 
-  const activeCount = TEAM_MEMBERS.filter(m => m.status === 'active').length;
+  const activeCount = TEAM_MEMBERS.filter((m) => m.status === 'active').length;
   const totalHours = TEAM_MEMBERS.reduce((sum, m) => sum + m.hoursToday, 0);
-  const avgPerformance = Math.round(TEAM_MEMBERS.reduce((sum, m) => sum + m.performance, 0) / TEAM_MEMBERS.length);
+  const avgPerformance = Math.round(
+    TEAM_MEMBERS.reduce((sum, m) => sum + m.performance, 0) / TEAM_MEMBERS.length
+  );
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-emerald-500';
-      case 'break': return 'bg-amber-500';
-      case 'offline': return 'bg-gray-400';
-      default: return 'bg-gray-400';
+      case 'active':
+        return 'bg-emerald-500';
+      case 'break':
+        return 'bg-amber-500';
+      case 'offline':
+        return 'bg-gray-400';
+      default:
+        return 'bg-gray-400';
     }
   };
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'active': return 'Actif';
-      case 'break': return 'Pause';
-      case 'offline': return 'Hors ligne';
-      default: return status;
+      case 'active':
+        return 'Actif';
+      case 'break':
+        return 'Pause';
+      case 'offline':
+        return 'Hors ligne';
+      default:
+        return status;
     }
   };
 
   const getAlertIcon = (type: string) => {
     switch (type) {
-      case 'critical': return <AlertTriangle className="h-4 w-4 text-red-500" />;
-      case 'warning': return <AlertTriangle className="h-4 w-4 text-amber-500" />;
-      default: return <Brain className="h-4 w-4 text-blue-500" />;
+      case 'critical':
+        return <AlertTriangle className="h-4 w-4 text-red-500" />;
+      case 'warning':
+        return <AlertTriangle className="h-4 w-4 text-amber-500" />;
+      default:
+        return <Brain className="h-4 w-4 text-blue-500" />;
     }
   };
 
@@ -170,7 +301,7 @@ export function LaborManagement() {
       {/* Tabs */}
       <div className="flex gap-1 p-1 bg-gray-100 dark:bg-gray-800 rounded-xl w-fit">
         {[
-          { id: 'overview', label: 'Vue d\'ensemble', icon: Activity },
+          { id: 'overview', label: "Vue d'ensemble", icon: Activity },
           { id: 'teams', label: 'Équipes', icon: Users },
           { id: 'schedule', label: 'Plannings', icon: Calendar },
           { id: 'analytics', label: 'Analytics IA', icon: BarChart3 },
@@ -199,7 +330,10 @@ export function LaborManagement() {
             </div>
             <div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Employés actifs</div>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">{activeCount}<span className="text-sm font-normal text-gray-500">/{TEAM_MEMBERS.length}</span></div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                {activeCount}
+                <span className="text-sm font-normal text-gray-500">/{TEAM_MEMBERS.length}</span>
+              </div>
             </div>
           </div>
         </Card>
@@ -211,7 +345,9 @@ export function LaborManagement() {
             </div>
             <div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Heures aujourd'hui</div>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">{totalHours.toFixed(1)}h</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                {totalHours.toFixed(1)}h
+              </div>
             </div>
           </div>
         </Card>
@@ -223,7 +359,9 @@ export function LaborManagement() {
             </div>
             <div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Performance moy.</div>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">{avgPerformance}%</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                {avgPerformance}%
+              </div>
             </div>
           </div>
         </Card>
@@ -235,7 +373,10 @@ export function LaborManagement() {
             </div>
             <div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Appareils IoT</div>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">{TEAM_MEMBERS.filter(m => m.iotDevice).length}<span className="text-sm font-normal text-gray-500"> connectés</span></div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                {TEAM_MEMBERS.filter((m) => m.iotDevice).length}
+                <span className="text-sm font-normal text-gray-500"> connectés</span>
+              </div>
             </div>
           </div>
         </Card>
@@ -277,13 +418,21 @@ export function LaborManagement() {
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0B7A4B] to-[#059669] flex items-center justify-center text-2xl">
                       {member.avatar}
                     </div>
-                    <span className={`absolute -bottom-1 -right-1 w-4 h-4 ${getStatusColor(member.status)} rounded-full border-2 border-white dark:border-gray-900`} />
+                    <span
+                      className={`absolute -bottom-1 -right-1 w-4 h-4 ${getStatusColor(
+                        member.status
+                      )} rounded-full border-2 border-white dark:border-gray-900`}
+                    />
                   </div>
-                  
+
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-gray-900 dark:text-white truncate">{member.name}</span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">{member.role}</span>
+                      <span className="font-medium text-gray-900 dark:text-white truncate">
+                        {member.name}
+                      </span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {member.role}
+                      </span>
                       {member.iotDevice && (
                         <span className="flex items-center gap-1 px-1.5 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 text-xs rounded">
                           <Wifi className="h-3 w-3" />
@@ -303,18 +452,26 @@ export function LaborManagement() {
 
                   <div className="hidden md:flex items-center gap-4">
                     <div className="text-right">
-                      <div className="text-sm font-medium text-gray-900 dark:text-white">{member.performance}%</div>
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">
+                        {member.performance}%
+                      </div>
                       <div className="text-xs text-gray-500">Performance</div>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm font-medium text-gray-900 dark:text-white">{member.hoursToday}h</div>
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">
+                        {member.hoursToday}h
+                      </div>
                       <div className="text-xs text-gray-500">Aujourd'hui</div>
                     </div>
-                    <span className={`px-2 py-1 text-xs font-medium rounded-lg ${
-                      member.status === 'active' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
-                      member.status === 'break' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
-                      'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
-                    }`}>
+                    <span
+                      className={`px-2 py-1 text-xs font-medium rounded-lg ${
+                        member.status === 'active'
+                          ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+                          : member.status === 'break'
+                          ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                          : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+                      }`}
+                    >
                       {getStatusLabel(member.status)}
                     </span>
                   </div>
@@ -348,7 +505,9 @@ export function LaborManagement() {
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium text-gray-900 dark:text-white">{shift.name}</span>
-                    <span className="text-sm text-gray-500">{shift.startTime} - {shift.endTime}</span>
+                    <span className="text-sm text-gray-500">
+                      {shift.startTime} - {shift.endTime}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                     <Users className="h-4 w-4" />
@@ -400,7 +559,10 @@ export function LaborManagement() {
 
             <div className="space-y-3">
               {AI_PREDICTIONS.map((pred, idx) => (
-                <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+                <div
+                  key={idx}
+                  className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50"
+                >
                   <div className="grid h-10 w-10 place-items-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
                     <pred.icon className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                   </div>
@@ -434,9 +596,11 @@ export function LaborManagement() {
                 <div
                   key={alert.id}
                   className={`p-3 rounded-xl border ${
-                    alert.type === 'critical' ? 'bg-red-50 border-red-200 dark:bg-red-900/10 dark:border-red-800' :
-                    alert.type === 'warning' ? 'bg-amber-50 border-amber-200 dark:bg-amber-900/10 dark:border-amber-800' :
-                    'bg-blue-50 border-blue-200 dark:bg-blue-900/10 dark:border-blue-800'
+                    alert.type === 'critical'
+                      ? 'bg-red-50 border-red-200 dark:bg-red-900/10 dark:border-red-800'
+                      : alert.type === 'warning'
+                      ? 'bg-amber-50 border-amber-200 dark:bg-amber-900/10 dark:border-amber-800'
+                      : 'bg-blue-50 border-blue-200 dark:bg-blue-900/10 dark:border-blue-800'
                   }`}
                 >
                   <div className="flex items-start gap-2">
@@ -470,7 +634,9 @@ export function LaborManagement() {
                     <span className="text-emerald-600 font-medium">{team.productivity}%</span>
                   </div>
                   <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-                    <span>{team.activeNow}/{team.members} actifs</span>
+                    <span>
+                      {team.activeNow}/{team.members} actifs
+                    </span>
                     <span>•</span>
                     <span>{team.currentZone}</span>
                   </div>

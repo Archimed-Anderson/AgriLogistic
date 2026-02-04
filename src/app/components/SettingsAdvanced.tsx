@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Settings,
   Shield,
@@ -23,17 +23,17 @@ import {
   DollarSign,
   FileText,
   Clock,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 export function SettingsAdvanced() {
-  const [activeTab, setActiveTab] = useState("general");
-  const [density, setDensity] = useState("comfortable");
+  const [activeTab, setActiveTab] = useState('general');
+  const [density, setDensity] = useState('comfortable');
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [show2FASetup, setShow2FASetup] = useState(false);
   const [twoFactorStep, setTwoFactorStep] = useState(1);
-  const [verificationCode, setVerificationCode] = useState("");
-  
+  const [verificationCode, setVerificationCode] = useState('');
+
   // Notifications matrix
   const [notifications, setNotifications] = useState({
     messages: { email: true, push: true, inApp: true },
@@ -46,66 +46,71 @@ export function SettingsAdvanced() {
   // Mock data
   const activeSessions = [
     {
-      id: "1",
-      device: "Chrome - Windows",
-      location: "Lyon, France",
-      ip: "192.168.1.1",
-      date: "Il y a 2 minutes",
+      id: '1',
+      device: 'Chrome - Windows',
+      location: 'Lyon, France',
+      ip: '192.168.1.1',
+      date: 'Il y a 2 minutes',
       current: true,
     },
     {
-      id: "2",
-      device: "Safari - iPhone 14",
-      location: "Paris, France",
-      ip: "92.154.23.45",
-      date: "Il y a 3 heures",
+      id: '2',
+      device: 'Safari - iPhone 14',
+      location: 'Paris, France',
+      ip: '92.154.23.45',
+      date: 'Il y a 3 heures',
       current: false,
     },
     {
-      id: "3",
-      device: "Firefox - MacBook Pro",
-      location: "Marseille, France",
-      ip: "176.32.98.12",
-      date: "Il y a 2 jours",
+      id: '3',
+      device: 'Firefox - MacBook Pro',
+      location: 'Marseille, France',
+      ip: '176.32.98.12',
+      date: 'Il y a 2 jours',
       current: false,
     },
   ];
 
   const loginHistory = [
-    { date: "10 Jan 2026, 14:32", ip: "192.168.1.1", location: "Lyon, FR", status: "success" },
-    { date: "09 Jan 2026, 09:15", ip: "92.154.23.45", location: "Paris, FR", status: "success" },
-    { date: "08 Jan 2026, 22:47", ip: "176.32.98.12", location: "Marseille, FR", status: "success" },
-    { date: "07 Jan 2026, 18:20", ip: "45.67.89.123", location: "Unknown", status: "failed" },
+    { date: '10 Jan 2026, 14:32', ip: '192.168.1.1', location: 'Lyon, FR', status: 'success' },
+    { date: '09 Jan 2026, 09:15', ip: '92.154.23.45', location: 'Paris, FR', status: 'success' },
+    {
+      date: '08 Jan 2026, 22:47',
+      ip: '176.32.98.12',
+      location: 'Marseille, FR',
+      status: 'success',
+    },
+    { date: '07 Jan 2026, 18:20', ip: '45.67.89.123', location: 'Unknown', status: 'failed' },
   ];
 
   const backupCodes = [
-    "8K9L-M3N4-P7Q2",
-    "R5S6-T9U1-V4W8",
-    "X2Y3-Z7A4-B1C9",
-    "D6E8-F2G5-H3J7",
-    "K1L9-M4N6-P8Q3",
-    "R7S2-T5U9-V1W4",
-    "X8Y6-Z3A1-B9C5",
-    "D4E7-F1G8-H6J2",
-    "K9L3-M7N2-P5Q8",
-    "R4S1-T6U3-V9W7",
+    '8K9L-M3N4-P7Q2',
+    'R5S6-T9U1-V4W8',
+    'X2Y3-Z7A4-B1C9',
+    'D6E8-F2G5-H3J7',
+    'K1L9-M4N6-P8Q3',
+    'R7S2-T5U9-V1W4',
+    'X8Y6-Z3A1-B9C5',
+    'D4E7-F1G8-H6J2',
+    'K9L3-M7N2-P5Q8',
+    'R4S1-T6U3-V9W7',
   ];
 
   const invoices = [
-    { id: "INV-001", date: "01 Jan 2026", amount: 49.99, status: "paid" },
-    { id: "INV-002", date: "01 Déc 2025", amount: 49.99, status: "paid" },
-    { id: "INV-003", date: "01 Nov 2025", amount: 49.99, status: "paid" },
+    { id: 'INV-001', date: '01 Jan 2026', amount: 49.99, status: 'paid' },
+    { id: 'INV-002', date: '01 Déc 2025', amount: 49.99, status: 'paid' },
+    { id: 'INV-003', date: '01 Nov 2025', amount: 49.99, status: 'paid' },
   ];
 
   const shortcuts = [
-    { key: "Ctrl + K", action: "Recherche rapide" },
-    { key: "Ctrl + N", action: "Nouveau produit" },
-    { key: "Ctrl + S", action: "Sauvegarder" },
-    { key: "Ctrl + /", action: "Raccourcis clavier" },
+    { key: 'Ctrl + K', action: 'Recherche rapide' },
+    { key: 'Ctrl + N', action: 'Nouveau produit' },
+    { key: 'Ctrl + S', action: 'Sauvegarder' },
+    { key: 'Ctrl + /', action: 'Raccourcis clavier' },
   ];
 
   const handleTerminateSession = (sessionId: string) => {
-    toast.success("Session terminée");
+    toast.success('Session terminée');
   };
 
   const handleEnable2FA = () => {
@@ -119,12 +124,12 @@ export function SettingsAdvanced() {
     } else {
       setTwoFactorEnabled(true);
       setShow2FASetup(false);
-      toast.success("Authentification à deux facteurs activée");
+      toast.success('Authentification à deux facteurs activée');
     }
   };
 
   const handleDownloadCodes = () => {
-    toast.success("Codes de secours téléchargés");
+    toast.success('Codes de secours téléchargés');
   };
 
   const handleToggleNotification = (type: string, channel: string) => {
@@ -132,16 +137,19 @@ export function SettingsAdvanced() {
       ...notifications,
       [type]: {
         ...notifications[type as keyof typeof notifications],
-        [channel]: !notifications[type as keyof typeof notifications][channel as keyof typeof notifications.messages],
+        [channel]:
+          !notifications[type as keyof typeof notifications][
+            channel as keyof typeof notifications.messages
+          ],
       },
     });
   };
 
   const tabs = [
-    { id: "general", label: "Général", icon: Settings },
-    { id: "security", label: "Sécurité", icon: Shield },
-    { id: "notifications", label: "Notifications", icon: Bell },
-    { id: "billing", label: "Facturation", icon: CreditCard },
+    { id: 'general', label: 'Général', icon: Settings },
+    { id: 'security', label: 'Sécurité', icon: Shield },
+    { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'billing', label: 'Facturation', icon: CreditCard },
   ];
 
   return (
@@ -166,9 +174,7 @@ export function SettingsAdvanced() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left ${
-                    activeTab === tab.id
-                      ? "bg-[#2563eb] text-white"
-                      : "hover:bg-muted"
+                    activeTab === tab.id ? 'bg-[#2563eb] text-white' : 'hover:bg-muted'
                   }`}
                 >
                   <Icon className="h-5 w-5" />
@@ -182,23 +188,23 @@ export function SettingsAdvanced() {
         {/* Content Area */}
         <div className="flex-1 space-y-6">
           {/* General Tab */}
-          {activeTab === "general" && (
+          {activeTab === 'general' && (
             <>
               <div className="bg-card border rounded-lg p-6">
                 <h2 className="text-xl font-semibold mb-6">Densité d'affichage</h2>
                 <div className="grid grid-cols-3 gap-4">
                   {[
-                    { value: "compact", label: "Compact", desc: "Plus d'infos à l'écran" },
-                    { value: "comfortable", label: "Confortable", desc: "Équilibré" },
-                    { value: "spacious", label: "Espacé", desc: "Plus d'espace" },
+                    { value: 'compact', label: 'Compact', desc: "Plus d'infos à l'écran" },
+                    { value: 'comfortable', label: 'Confortable', desc: 'Équilibré' },
+                    { value: 'spacious', label: 'Espacé', desc: "Plus d'espace" },
                   ].map((option) => (
                     <button
                       key={option.value}
                       onClick={() => setDensity(option.value)}
                       className={`p-4 border-2 rounded-lg text-left transition-all ${
                         density === option.value
-                          ? "border-[#2563eb] bg-[#2563eb]/10"
-                          : "hover:border-muted-foreground"
+                          ? 'border-[#2563eb] bg-[#2563eb]/10'
+                          : 'hover:border-muted-foreground'
                       }`}
                     >
                       <div className="font-medium mb-1">{option.label}</div>
@@ -265,11 +271,11 @@ export function SettingsAdvanced() {
           )}
 
           {/* Security Tab */}
-          {activeTab === "security" && (
+          {activeTab === 'security' && (
             <>
               <div className="bg-card border rounded-lg p-6">
                 <h2 className="text-xl font-semibold mb-6">Authentification à deux facteurs</h2>
-                
+
                 {!twoFactorEnabled ? (
                   <div className="flex items-start gap-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg mb-6">
                     <Shield className="h-6 w-6 text-blue-600 mt-1" />
@@ -278,7 +284,8 @@ export function SettingsAdvanced() {
                         Sécurisez votre compte
                       </div>
                       <p className="text-sm text-blue-700 dark:text-blue-300 mb-4">
-                        Ajoutez une couche de sécurité supplémentaire avec l'authentification à deux facteurs.
+                        Ajoutez une couche de sécurité supplémentaire avec l'authentification à deux
+                        facteurs.
                       </p>
                       <button
                         onClick={handleEnable2FA}
@@ -367,12 +374,12 @@ export function SettingsAdvanced() {
                           <td className="px-4 py-3">
                             <span
                               className={`px-2 py-1 text-xs rounded-full ${
-                                entry.status === "success"
-                                  ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                                  : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                                entry.status === 'success'
+                                  ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                                  : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
                               }`}
                             >
-                              {entry.status === "success" ? "Réussie" : "Échouée"}
+                              {entry.status === 'success' ? 'Réussie' : 'Échouée'}
                             </span>
                           </td>
                         </tr>
@@ -385,11 +392,11 @@ export function SettingsAdvanced() {
           )}
 
           {/* Notifications Tab */}
-          {activeTab === "notifications" && (
+          {activeTab === 'notifications' && (
             <>
               <div className="bg-card border rounded-lg p-6">
                 <h2 className="text-xl font-semibold mb-6">Préférences de notification</h2>
-                
+
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead className="bg-muted/50">
@@ -411,17 +418,21 @@ export function SettingsAdvanced() {
                     </thead>
                     <tbody>
                       {[
-                        { key: "messages", label: "Messages" },
-                        { key: "security", label: "Sécurité" },
-                        { key: "promotions", label: "Promotions" },
+                        { key: 'messages', label: 'Messages' },
+                        { key: 'security', label: 'Sécurité' },
+                        { key: 'promotions', label: 'Promotions' },
                       ].map((type) => (
                         <tr key={type.key} className="border-b last:border-b-0">
                           <td className="px-4 py-4 font-medium">{type.label}</td>
-                          {["email", "push", "inApp"].map((channel) => (
+                          {['email', 'push', 'inApp'].map((channel) => (
                             <td key={channel} className="px-4 py-4 text-center">
                               <input
                                 type="checkbox"
-                                checked={notifications[type.key as keyof typeof notifications][channel as keyof typeof notifications.messages]}
+                                checked={
+                                  notifications[type.key as keyof typeof notifications][
+                                    channel as keyof typeof notifications.messages
+                                  ]
+                                }
                                 onChange={() => handleToggleNotification(type.key, channel)}
                                 className="h-5 w-5 rounded border-gray-300 text-[#2563eb] focus:ring-[#2563eb]"
                               />
@@ -437,18 +448,19 @@ export function SettingsAdvanced() {
               <div className="bg-card border rounded-lg p-6">
                 <h2 className="text-xl font-semibold mb-6">Période de silence</h2>
                 <p className="text-sm text-muted-foreground mb-6">
-                  Définissez les heures pendant lesquelles vous ne souhaitez pas recevoir de notifications
+                  Définissez les heures pendant lesquelles vous ne souhaitez pas recevoir de
+                  notifications
                 </p>
-                
+
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <div className="flex-1">
                       <label className="block text-sm font-medium mb-2">Début</label>
                       <input
                         type="time"
-                        value={`${silentHours.start.toString().padStart(2, "0")}:00`}
+                        value={`${silentHours.start.toString().padStart(2, '0')}:00`}
                         onChange={(e) => {
-                          const hours = parseInt(e.target.value.split(":")[0]);
+                          const hours = parseInt(e.target.value.split(':')[0]);
                           setSilentHours({ ...silentHours, start: hours });
                         }}
                         className="w-full px-4 py-2 border rounded-lg bg-background"
@@ -458,20 +470,21 @@ export function SettingsAdvanced() {
                       <label className="block text-sm font-medium mb-2">Fin</label>
                       <input
                         type="time"
-                        value={`${silentHours.end.toString().padStart(2, "0")}:00`}
+                        value={`${silentHours.end.toString().padStart(2, '0')}:00`}
                         onChange={(e) => {
-                          const hours = parseInt(e.target.value.split(":")[0]);
+                          const hours = parseInt(e.target.value.split(':')[0]);
                           setSilentHours({ ...silentHours, end: hours });
                         }}
                         className="w-full px-4 py-2 border rounded-lg bg-background"
                       />
                     </div>
                   </div>
-                  
+
                   <div className="p-4 bg-muted/50 rounded-lg">
                     <Clock className="h-5 w-5 text-[#2563eb] mb-2" />
                     <div className="text-sm">
-                      Les notifications seront silencieuses de <strong>{silentHours.start}h</strong> à <strong>{silentHours.end}h</strong>
+                      Les notifications seront silencieuses de <strong>{silentHours.start}h</strong>{' '}
+                      à <strong>{silentHours.end}h</strong>
                     </div>
                   </div>
                 </div>
@@ -498,20 +511,18 @@ export function SettingsAdvanced() {
           )}
 
           {/* Billing Tab */}
-          {activeTab === "billing" && (
+          {activeTab === 'billing' && (
             <>
               <div className="bg-card border rounded-lg p-6">
                 <h2 className="text-xl font-semibold mb-6">Moyen de paiement</h2>
-                
+
                 <div className="bg-gradient-to-r from-[#2563eb] to-blue-600 rounded-xl p-6 text-white mb-4">
                   <div className="flex justify-between items-start mb-8">
                     <CreditCard className="h-8 w-8" />
                     <span className="text-sm">Visa</span>
                   </div>
                   <div className="space-y-4">
-                    <div className="font-mono text-xl tracking-wider">
-                      •••• •••• •••• 4242
-                    </div>
+                    <div className="font-mono text-xl tracking-wider">•••• •••• •••• 4242</div>
                     <div className="flex justify-between text-sm">
                       <div>
                         <div className="text-xs opacity-75">Titulaire</div>
@@ -537,7 +548,7 @@ export function SettingsAdvanced() {
 
               <div className="bg-card border rounded-lg p-6">
                 <h2 className="text-xl font-semibold mb-6">Utilisation</h2>
-                
+
                 <div className="space-y-4">
                   <div>
                     <div className="flex justify-between text-sm mb-2">
@@ -574,7 +585,7 @@ export function SettingsAdvanced() {
                   <h2 className="text-xl font-semibold">Historique des factures</h2>
                   <button className="text-sm text-[#2563eb] hover:underline">Voir tout</button>
                 </div>
-                
+
                 <div className="space-y-3">
                   {invoices.map((invoice) => (
                     <div
@@ -617,7 +628,7 @@ export function SettingsAdvanced() {
                   <div
                     key={step}
                     className={`h-2 flex-1 rounded-full ${
-                      step <= twoFactorStep ? "bg-[#2563eb]" : "bg-muted"
+                      step <= twoFactorStep ? 'bg-[#2563eb]' : 'bg-muted'
                     }`}
                   />
                 ))}
@@ -631,9 +642,9 @@ export function SettingsAdvanced() {
                   <h3 className="text-xl font-semibold">Choisissez votre méthode</h3>
                   <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
                     {[
-                      { value: "app", label: "Application", icon: Smartphone },
-                      { value: "sms", label: "SMS", icon: MessageSquare },
-                      { value: "email", label: "Email", icon: Mail },
+                      { value: 'app', label: 'Application', icon: Smartphone },
+                      { value: 'sms', label: 'SMS', icon: MessageSquare },
+                      { value: 'email', label: 'Email', icon: Mail },
                     ].map((method) => {
                       const Icon = method.icon;
                       return (
@@ -657,7 +668,8 @@ export function SettingsAdvanced() {
                     <QrCode className="h-48 w-48 text-gray-900" />
                   </div>
                   <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                    Utilisez une application d'authentification comme Google Authenticator ou Authy pour scanner ce code
+                    Utilisez une application d'authentification comme Google Authenticator ou Authy
+                    pour scanner ce code
                   </p>
                 </div>
               )}
@@ -688,7 +700,8 @@ export function SettingsAdvanced() {
                     <div className="flex gap-2 mb-2">
                       <AlertTriangle className="h-5 w-5 text-yellow-600" />
                       <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                        Sauvegardez ces codes en lieu sûr. Chaque code ne peut être utilisé qu'une fois.
+                        Sauvegardez ces codes en lieu sûr. Chaque code ne peut être utilisé qu'une
+                        fois.
                       </p>
                     </div>
                   </div>
@@ -722,13 +735,13 @@ export function SettingsAdvanced() {
                 }}
                 className="px-4 py-2 border rounded-lg hover:bg-muted transition-colors"
               >
-                {twoFactorStep === 1 ? "Annuler" : "Retour"}
+                {twoFactorStep === 1 ? 'Annuler' : 'Retour'}
               </button>
               <button
                 onClick={handleNextStep}
                 className="px-6 py-2 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors"
               >
-                {twoFactorStep === 4 ? "Terminer" : "Suivant"}
+                {twoFactorStep === 4 ? 'Terminer' : 'Suivant'}
               </button>
             </div>
           </div>

@@ -2,6 +2,8 @@
  * WebSocket Client for Real-time Updates
  */
 
+import React from 'react';
+
 type MessageHandler = (data: any) => void;
 
 export class WebSocketClient {
@@ -124,7 +126,7 @@ export class WebSocketClient {
       this.reconnectAttempts++;
       const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
       console.log(`Attempting to reconnect in ${delay}ms (attempt ${this.reconnectAttempts})`);
-      
+
       setTimeout(() => {
         this.connect().catch((error) => {
           console.error('Reconnection failed:', error);
@@ -157,10 +159,11 @@ export function useWebSocket(channel: string, handler: MessageHandler) {
 
   React.useEffect(() => {
     const client = getWebSocketClient();
-    
+
     // Connect if not already connected
     if (!client.isConnected()) {
-      client.connect()
+      client
+        .connect()
         .then(() => setIsConnected(true))
         .catch((error) => console.error('WebSocket connection failed:', error));
     } else {

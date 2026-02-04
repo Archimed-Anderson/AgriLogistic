@@ -42,30 +42,24 @@ export default function SecurityPage() {
       status: 'failure',
     },
   ];
-  
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Sécurité & Audit
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Sécurité & Audit</h1>
         <p className="text-gray-600 dark:text-gray-400 mt-1">
           Logs d'audit et surveillance des activités
         </p>
       </div>
-      
+
       {/* Filters */}
       <Card>
         <CardContent className="pt-6">
           <div className="flex gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <Input
-                type="search"
-                placeholder="Rechercher dans les logs..."
-                className="pl-10"
-              />
+              <Input type="search" placeholder="Rechercher dans les logs..." className="pl-10" />
             </div>
             <Button variant="outline">
               <Filter className="w-4 h-4 mr-2" />
@@ -74,7 +68,7 @@ export default function SecurityPage() {
           </div>
         </CardContent>
       </Card>
-      
+
       {/* Audit Logs */}
       <Card>
         <CardHeader>
@@ -110,7 +104,7 @@ export default function SecurityPage() {
           </div>
         </CardContent>
       </Card>
-      
+
       {/* Active Sessions */}
       <Card>
         <CardHeader>

@@ -91,7 +91,10 @@ export function parseCsvToObjects(csvText: string): CsvRow[] {
     });
 }
 
-export function toCsv(headers: string[], rows: Array<Array<string | number | null | undefined>>): string {
+export function toCsv(
+  headers: string[],
+  rows: Array<Array<string | number | null | undefined>>
+): string {
   const escape = (value: string) => {
     const needsQuotes = /[",\n\r]/.test(value);
     const escaped = value.replace(/"/g, '""');
@@ -112,4 +115,3 @@ export function downloadTextFile(filename: string, content: string, mime: string
   link.click();
   URL.revokeObjectURL(link.href);
 }
-

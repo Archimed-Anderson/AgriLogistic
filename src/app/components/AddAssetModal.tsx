@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   X,
   ChevronRight,
@@ -12,8 +12,8 @@ import {
   Shield,
   Eye,
   Calendar,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 interface AddAssetModalProps {
   onClose: () => void;
@@ -23,37 +23,37 @@ interface AddAssetModalProps {
 export function AddAssetModal({ onClose, onSave }: AddAssetModalProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
-    title: "",
-    category: "",
-    brand: "",
-    model: "",
-    description: "",
+    title: '',
+    category: '',
+    brand: '',
+    model: '',
+    description: '',
     photos: [] as string[],
-    pricePerDay: "",
-    pricePerWeek: "",
-    deposit: "",
-    address: "",
+    pricePerDay: '',
+    pricePerWeek: '',
+    deposit: '',
+    address: '',
     deliveryAvailable: false,
-    deliveryFee: "",
-    rules: "",
-    checklist: "",
+    deliveryFee: '',
+    rules: '',
+    checklist: '',
   });
 
   const steps = [
-    { number: 1, title: "Description", icon: FileText },
-    { number: 2, title: "Tarification", icon: Euro },
-    { number: 3, title: "Localisation", icon: MapPinned },
-    { number: 4, title: "Conditions", icon: Shield },
-    { number: 5, title: "Aperçu", icon: Eye },
+    { number: 1, title: 'Description', icon: FileText },
+    { number: 2, title: 'Tarification', icon: Euro },
+    { number: 3, title: 'Localisation', icon: MapPinned },
+    { number: 4, title: 'Conditions', icon: Shield },
+    { number: 5, title: 'Aperçu', icon: Eye },
   ];
 
   const categories = [
-    { value: "Tracteur", label: "Tracteur", icon: "🚜" },
-    { value: "Couveuse", label: "Couveuse", icon: "🥚" },
-    { value: "Remorque", label: "Remorque", icon: "🚛" },
-    { value: "Scie", label: "Scie / Tronçonneuse", icon: "🪚" },
-    { value: "Pulvérisateur", label: "Pulvérisateur", icon: "💧" },
-    { value: "Outil", label: "Autre outil", icon: "🔧" },
+    { value: 'Tracteur', label: 'Tracteur', icon: '🚜' },
+    { value: 'Couveuse', label: 'Couveuse', icon: '🥚' },
+    { value: 'Remorque', label: 'Remorque', icon: '🚛' },
+    { value: 'Scie', label: 'Scie / Tronçonneuse', icon: '🪚' },
+    { value: 'Pulvérisateur', label: 'Pulvérisateur', icon: '💧' },
+    { value: 'Outil', label: 'Autre outil', icon: '🔧' },
   ];
 
   const handleNext = () => {
@@ -71,11 +71,11 @@ export function AddAssetModal({ onClose, onSave }: AddAssetModalProps) {
   const handleSave = (isDraft: boolean) => {
     const asset = {
       ...formData,
-      status: isDraft ? "draft" : "published",
+      status: isDraft ? 'draft' : 'published',
       id: `EQ-${Math.floor(Math.random() * 10000)}`,
     };
     onSave(asset);
-    toast.success(isDraft ? "Brouillon enregistré" : "Actif publié avec succès !");
+    toast.success(isDraft ? 'Brouillon enregistré' : 'Actif publié avec succès !');
     onClose();
   };
 
@@ -86,9 +86,9 @@ export function AddAssetModal({ onClose, onSave }: AddAssetModalProps) {
         ...formData,
         photos: [...formData.photos, `photo-${formData.photos.length + 1}`],
       });
-      toast.success("Photo ajoutée");
+      toast.success('Photo ajoutée');
     } else {
-      toast.error("Maximum 3 photos");
+      toast.error('Maximum 3 photos');
     }
   };
 
@@ -117,17 +117,17 @@ export function AddAssetModal({ onClose, onSave }: AddAssetModalProps) {
                     <div
                       className={`h-10 w-10 rounded-full flex items-center justify-center border-2 transition-colors ${
                         isCompleted
-                          ? "bg-green-600 border-green-600 text-white"
+                          ? 'bg-green-600 border-green-600 text-white'
                           : isCurrent
-                          ? "bg-[#2563eb] border-[#2563eb] text-white"
-                          : "bg-background border-gray-300 text-muted-foreground"
+                          ? 'bg-[#2563eb] border-[#2563eb] text-white'
+                          : 'bg-background border-gray-300 text-muted-foreground'
                       }`}
                     >
                       {isCompleted ? <Check className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
                     </div>
                     <span
                       className={`text-xs mt-2 font-medium ${
-                        isCurrent ? "text-[#2563eb]" : "text-muted-foreground"
+                        isCurrent ? 'text-[#2563eb]' : 'text-muted-foreground'
                       }`}
                     >
                       {step.title}
@@ -136,7 +136,7 @@ export function AddAssetModal({ onClose, onSave }: AddAssetModalProps) {
                   {index < steps.length - 1 && (
                     <div
                       className={`h-0.5 flex-1 mx-2 -mt-8 ${
-                        isCompleted ? "bg-green-600" : "bg-gray-300"
+                        isCompleted ? 'bg-green-600' : 'bg-gray-300'
                       }`}
                     />
                   )}
@@ -223,7 +223,9 @@ export function AddAssetModal({ onClose, onSave }: AddAssetModalProps) {
                     >
                       <div className="text-center">
                         <ImageIcon className="h-8 w-8 mx-auto text-green-600 mb-2" />
-                        <p className="text-xs text-green-700 dark:text-green-400">Photo {index + 1}</p>
+                        <p className="text-xs text-green-700 dark:text-green-400">
+                          Photo {index + 1}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -280,7 +282,8 @@ export function AddAssetModal({ onClose, onSave }: AddAssetModalProps) {
                   </div>
                   {formData.pricePerDay && (
                     <p className="text-xs text-muted-foreground mt-1">
-                      Suggestion: {(parseFloat(formData.pricePerDay) * 6.2).toFixed(0)}€ (remise 11%)
+                      Suggestion: {(parseFloat(formData.pricePerDay) * 6.2).toFixed(0)}€ (remise
+                      11%)
                     </p>
                   )}
                 </div>
@@ -296,7 +299,9 @@ export function AddAssetModal({ onClose, onSave }: AddAssetModalProps) {
                     onChange={(e) => setFormData({ ...formData, deposit: e.target.value })}
                     className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">€</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    €
+                  </span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
                   Montant remboursé après inspection du matériel
@@ -408,15 +413,13 @@ export function AddAssetModal({ onClose, onSave }: AddAssetModalProps) {
           {currentStep === 5 && (
             <div className="space-y-6">
               <div className="bg-muted/50 border-2 border-dashed rounded-lg p-8">
-                <h3 className="text-lg font-semibold mb-4 text-center">
-                  Aperçu de votre annonce
-                </h3>
+                <h3 className="text-lg font-semibold mb-4 text-center">Aperçu de votre annonce</h3>
 
                 <div className="bg-card border rounded-lg overflow-hidden max-w-2xl mx-auto">
                   {/* Preview Header */}
                   <div className="relative h-48 bg-gradient-to-br from-green-100 to-blue-100 dark:from-green-900/30 dark:to-blue-900/30 flex items-center justify-center">
                     <div className="text-8xl">
-                      {categories.find((c) => c.value === formData.category)?.icon || "📦"}
+                      {categories.find((c) => c.value === formData.category)?.icon || '📦'}
                     </div>
                   </div>
 
@@ -427,14 +430,14 @@ export function AddAssetModal({ onClose, onSave }: AddAssetModalProps) {
                         {formData.title || "Titre de l'annonce"}
                       </h2>
                       <p className="text-muted-foreground">
-                        {formData.model || formData.brand || "Modèle"}
+                        {formData.model || formData.brand || 'Modèle'}
                       </p>
                     </div>
 
                     <div className="flex items-center justify-between pt-4 border-t">
                       <div>
                         <div className="text-3xl font-bold text-[#2563eb]">
-                          {formData.pricePerDay || "0"}€
+                          {formData.pricePerDay || '0'}€
                         </div>
                         <div className="text-sm text-muted-foreground">par jour</div>
                       </div>

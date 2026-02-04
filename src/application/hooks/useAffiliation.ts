@@ -59,46 +59,61 @@ export interface Commission {
   paid_at?: string;
 }
 
+export interface Payout {
+  id: string;
+  amount: number;
+  payment_method: string;
+  status: string;
+  created_at: string;
+  paid_at?: string;
+}
+
 // API Functions
 const affiliationApi = {
   register: async (): Promise<Affiliate> => {
-    const response = await apiClient.post('/api/v1/affiliates/register', {});
-    return response.data;
+    return apiClient.post<Affiliate>('/api/v1/affiliates/register', {});
   },
 
   getProfile: async (): Promise<Affiliate> => {
-    const response = await apiClient.get('/api/v1/affiliates/me');
-    return response.data;
+    return apiClient.get<Affiliate>('/api/v1/affiliates/me');
   },
 
   getStats: async (): Promise<AffiliateStats> => {
-    const response = await apiClient.get('/api/v1/affiliates/stats');
-    return response.data;
+    return apiClient.get<AffiliateStats>('/api/v1/affiliates/stats');
   },
 
   createLink: async (data: { target_url: string; campaign?: string; product_id?: string }) => {
-    const response = await apiClient.post('/api/v1/affiliates/links', data);
-    return response.data;
+    return apiClient.post<AffiliateLink>('/api/v1/affiliates/links', data);
   },
 
   getLinks: async (params?: { limit?: number; offset?: number }) => {
-    const response = await apiClient.get('/api/v1/affiliates/links', { params });
-    return response.data;
+    const response = await apiClient.get<{ links: AffiliateLink[] }>('/api/v1/affiliates/links', {
+      params,
+    });
+    return response.links;
   },
 
   getCommissions: async (params?: { status?: string; limit?: number; offset?: number }) => {
-    const response = await apiClient.get('/api/v1/affiliates/commissions', { params });
-    return response.data;
+    const response = await apiClient.get<{ commissions: Commission[] }>(
+      '/api/v1/affiliates/commissions',
+      { params }
+    );
+    return response.commissions;
   },
 
-  requestPayout: async (data: { amount: number; payment_method: string; payment_details: object }) => {
-    const response = await apiClient.post('/api/v1/affiliates/payouts', data);
-    return response.data;
+  requestPayout: async (data: {
+    amount: number;
+    payment_method: string;
+    payment_details: object;
+  }) => {
+    return apiClient.post<Payout>('/api/v1/affiliates/payouts', data);
   },
 
   getPayouts: async (params?: { limit?: number; offset?: number }) => {
-    const response = await apiClient.get('/api/v1/affiliates/payouts', { params });
-    return response.data;
+    const response = await apiClient.get<{ payouts: Payout[] }>('/api/v1/affiliates/payouts', {
+      params,
+    });
+    return response.payouts;
   },
 };
 
@@ -147,27 +162,27 @@ export function useAffiliatePayouts() {
 
 export function useRegisterAffiliate() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: affiliationApi.register,
     onSuccess: (data) => {
       queryClient.setQueryData(['affiliate', 'profile'], data);
-      toast.success('Inscription au programme d\'affiliation réussie!');
+      toast.success("Inscription au programme d'affiliation réussie!");
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.detail || 'Erreur lors de l\'inscription');
+      toast.error(error.response?.data?.detail || "Erreur lors de l'inscription");
     },
   });
 }
 
 export function useCreateAffiliateLink() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: affiliationApi.createLink,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['affiliate', 'links'] });
-      toast.success('Lien d\'affiliation créé!');
+      toast.success("Lien d'affiliation créé!");
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.detail || 'Erreur de création du lien');
@@ -177,7 +192,7 @@ export function useCreateAffiliateLink() {
 
 export function useRequestPayout() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: affiliationApi.requestPayout,
     onSuccess: () => {

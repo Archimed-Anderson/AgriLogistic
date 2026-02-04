@@ -4,11 +4,14 @@ import { TrendingUp, DollarSign } from 'lucide-react';
 
 export function RevenueTrendsWidget() {
   const monthlyData = getMonthlyHistoricalData();
-  
+
   // Calculate totals and growth
   const currentMonth = monthlyData[monthlyData.length - 1];
   const previousMonth = monthlyData[monthlyData.length - 2];
-  const growth = ((currentMonth.revenue - previousMonth.revenue) / previousMonth.revenue * 100).toFixed(1);
+  const growth = (
+    ((currentMonth.revenue - previousMonth.revenue) / previousMonth.revenue) *
+    100
+  ).toFixed(1);
 
   const chartDataKeys = [
     { key: 'revenue', color: '#10B981', label: 'Revenue' },
@@ -26,7 +29,11 @@ export function RevenueTrendsWidget() {
           <p className="text-2xl font-bold text-slate-900">
             €{currentMonth.revenue.toLocaleString()}
           </p>
-          <p className={`text-sm font-medium flex items-center gap-1 justify-end ${growth.startsWith('-') ? 'text-red-600' : 'text-green-600'}`}>
+          <p
+            className={`text-sm font-medium flex items-center gap-1 justify-end ${
+              growth.startsWith('-') ? 'text-red-600' : 'text-green-600'
+            }`}
+          >
             <TrendingUp className="w-4 h-4" />
             {growth}% vs last month
           </p>
@@ -34,11 +41,7 @@ export function RevenueTrendsWidget() {
       </div>
 
       <div style={{ height: '300px' }}>
-        <AreaChartComponent
-          data={monthlyData}
-          dataKeys={chartDataKeys}
-          yAxisLabel="Amount (€)"
-        />
+        <AreaChartComponent data={monthlyData} dataKeys={chartDataKeys} yAxisLabel="Amount (€)" />
       </div>
 
       <div className="mt-6 grid grid-cols-2 gap-4 pt-6 border-t border-slate-100">
@@ -49,7 +52,10 @@ export function RevenueTrendsWidget() {
           <div>
             <p className="text-xs text-slate-500">Avg. Revenue</p>
             <p className="text-lg font-bold text-slate-900">
-              €{Math.round(monthlyData.reduce((sum, m) => sum + m.revenue, 0) / monthlyData.length).toLocaleString()}
+              €
+              {Math.round(
+                monthlyData.reduce((sum, m) => sum + m.revenue, 0) / monthlyData.length
+              ).toLocaleString()}
             </p>
           </div>
         </div>
@@ -60,7 +66,10 @@ export function RevenueTrendsWidget() {
           <div>
             <p className="text-xs text-slate-500">Avg. Costs</p>
             <p className="text-lg font-bold text-slate-900">
-              €{Math.round(monthlyData.reduce((sum, m) => sum + m.costs, 0) / monthlyData.length).toLocaleString()}
+              €
+              {Math.round(
+                monthlyData.reduce((sum, m) => sum + m.costs, 0) / monthlyData.length
+              ).toLocaleString()}
             </p>
           </div>
         </div>

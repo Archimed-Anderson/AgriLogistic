@@ -1,4 +1,4 @@
-import { Parcel, Harvest, WeatherData } from "@/types/farmer";
+import { Parcel, Harvest, WeatherData } from '@/types/farmer';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -7,39 +7,41 @@ export const farmApi = {
     await sleep(800);
     return [
       {
-        id: "p1",
-        name: "Parcelle Nord - Maïs",
-        cropType: "Maïs",
+        id: 'p1',
+        name: 'Parcelle Nord - Maïs',
+        cropType: 'Maïs',
         area: 12.5,
         healthScore: 88,
-        status: "Growing",
+        status: 'Growing',
         coordinates: [45.123, 5.456],
-        plantingDate: "2024-03-15",
+        plantingDate: '2024-03-15',
       },
       {
-        id: "p2",
-        name: "Zone Sud - Blé",
-        cropType: "Blé",
+        id: 'p2',
+        name: 'Zone Sud - Blé',
+        cropType: 'Blé',
         area: 8.2,
         healthScore: 72,
-        status: "Growing",
+        status: 'Growing',
         coordinates: [45.125, 5.458],
-        plantingDate: "2024-04-02",
+        plantingDate: '2024-04-02',
       },
       {
-        id: "p3",
-        name: "Vallée Est - Colza",
-        cropType: "Colza",
+        id: 'p3',
+        name: 'Vallée Est - Colza',
+        cropType: 'Colza',
         area: 15.0,
         healthScore: 95,
-        status: "Harvested",
-        coordinates: [45.128, 5.460],
-        plantingDate: "2023-09-10",
+        status: 'Harvested',
+        coordinates: [45.128, 5.46],
+        plantingDate: '2023-09-10',
       },
     ];
   },
 
-  predictYield: async (parcelId: string): Promise<{ predictedYield: number; confidence: number }> => {
+  predictYield: async (
+    parcelId: string
+  ): Promise<{ predictedYield: number; confidence: number }> => {
     await sleep(1200);
     return {
       predictedYield: 8.5, // tons per hectare
@@ -47,7 +49,7 @@ export const farmApi = {
     };
   },
 
-  submitHarvest: async (harvest: Omit<Harvest, "id">): Promise<Harvest> => {
+  submitHarvest: async (harvest: Omit<Harvest, 'id'>): Promise<Harvest> => {
     await sleep(1000);
     return {
       ...harvest,
@@ -60,11 +62,11 @@ export const farmApi = {
     return {
       temp: 24,
       humidity: 65,
-      condition: "Partly Cloudy",
+      condition: 'Partly Cloudy',
       forecast: [
-        { day: "Mon", temp: 25 },
-        { day: "Tue", temp: 22 },
-        { day: "Wed", temp: 28 },
+        { day: 'Mon', temp: 25 },
+        { day: 'Tue', temp: 22 },
+        { day: 'Wed', temp: 28 },
       ],
     };
   },

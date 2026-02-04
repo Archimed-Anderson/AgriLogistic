@@ -123,18 +123,16 @@ export function PasswordStrength({ password, className = '' }: PasswordStrengthP
       {/* Critères */}
       <div className="space-y-1.5 pt-1">
         {criteria.map((criterion, index) => (
-          <div
-            key={index}
-            className="flex items-center gap-2 text-xs"
-            aria-live="polite"
-          >
+          <div key={index} className="flex items-center gap-2 text-xs" aria-live="polite">
             {criterion.met ? (
               <CheckCircle2 className="h-3.5 w-3.5 text-green-600 shrink-0" aria-hidden="true" />
             ) : (
               <XCircle className="h-3.5 w-3.5 text-gray-400 shrink-0" aria-hidden="true" />
             )}
             <span
-              className={criterion.met ? 'text-green-700 dark:text-green-400' : 'text-muted-foreground'}
+              className={
+                criterion.met ? 'text-green-700 dark:text-green-400' : 'text-muted-foreground'
+              }
             >
               {criterion.label}
             </span>

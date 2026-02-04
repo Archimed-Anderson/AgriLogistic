@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Heart,
   MessageCircle,
@@ -9,11 +9,11 @@ import {
   Reply,
   ThumbsUp,
   CheckCircle,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface Notification {
   id: string;
-  type: "message" | "like" | "system";
+  type: 'message' | 'like' | 'system';
   title: string;
   message: string;
   time: string;
@@ -22,51 +22,51 @@ interface Notification {
 }
 
 export function NotificationsDropdown({ onClose }: { onClose: () => void }) {
-  const [activeTab, setActiveTab] = useState<"all" | "unread" | "mentions">("all");
+  const [activeTab, setActiveTab] = useState<'all' | 'unread' | 'mentions'>('all');
   const [notifications, setNotifications] = useState<Notification[]>([
     {
-      id: "1",
-      type: "message",
-      title: "Nouveau message",
-      message: "Marie Martin vous a envoyé un message concernant votre commande",
-      time: "Il y a 5 min",
+      id: '1',
+      type: 'message',
+      title: 'Nouveau message',
+      message: 'Marie Martin vous a envoyé un message concernant votre commande',
+      time: 'Il y a 5 min',
       read: false,
-      avatar: "👩",
+      avatar: '👩',
     },
     {
-      id: "2",
-      type: "like",
-      title: "Nouvelle réaction",
-      message: "Jean Dupont a aimé votre publication sur les tomates bio",
-      time: "Il y a 1 h",
+      id: '2',
+      type: 'like',
+      title: 'Nouvelle réaction',
+      message: 'Jean Dupont a aimé votre publication sur les tomates bio',
+      time: 'Il y a 1 h',
       read: false,
-      avatar: "👨",
+      avatar: '👨',
     },
     {
-      id: "3",
-      type: "system",
-      title: "Mise à jour système",
-      message: "Votre commande #1234 a été expédiée",
-      time: "Il y a 2 h",
+      id: '3',
+      type: 'system',
+      title: 'Mise à jour système',
+      message: 'Votre commande #1234 a été expédiée',
+      time: 'Il y a 2 h',
       read: true,
     },
     {
-      id: "4",
-      type: "message",
-      title: "Nouveau message",
-      message: "Pierre Lefebvre a répondu à votre commentaire",
-      time: "Il y a 3 h",
+      id: '4',
+      type: 'message',
+      title: 'Nouveau message',
+      message: 'Pierre Lefebvre a répondu à votre commentaire',
+      time: 'Il y a 3 h',
       read: true,
-      avatar: "🧑",
+      avatar: '🧑',
     },
   ]);
 
   const getFilteredNotifications = () => {
     switch (activeTab) {
-      case "unread":
+      case 'unread':
         return notifications.filter((n) => !n.read);
-      case "mentions":
-        return notifications.filter((n) => n.message.includes("@"));
+      case 'mentions':
+        return notifications.filter((n) => n.message.includes('@'));
       default:
         return notifications;
     }
@@ -77,9 +77,7 @@ export function NotificationsDropdown({ onClose }: { onClose: () => void }) {
   };
 
   const markAsRead = (id: string) => {
-    setNotifications(
-      notifications.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
+    setNotifications(notifications.map((n) => (n.id === id ? { ...n, read: true } : n)));
   };
 
   const deleteNotification = (id: string) => {
@@ -88,11 +86,11 @@ export function NotificationsDropdown({ onClose }: { onClose: () => void }) {
 
   const getIcon = (type: string) => {
     switch (type) {
-      case "message":
+      case 'message':
         return <MessageCircle className="h-5 w-5 text-blue-600" />;
-      case "like":
+      case 'like':
         return <Heart className="h-5 w-5 text-red-600" />;
-      case "system":
+      case 'system':
         return <Settings className="h-5 w-5 text-gray-600" />;
       default:
         return <Bell className="h-5 w-5" />;
@@ -116,17 +114,11 @@ export function NotificationsDropdown({ onClose }: { onClose: () => void }) {
         </div>
         <div className="flex items-center gap-2">
           {unreadCount > 0 && (
-            <button
-              onClick={markAllAsRead}
-              className="text-xs text-[#0B7A4B] hover:underline"
-            >
+            <button onClick={markAllAsRead} className="text-xs text-[#0B7A4B] hover:underline">
               Tout marquer comme lu
             </button>
           )}
-          <button
-            onClick={onClose}
-            className="p-1 hover:bg-muted rounded transition-colors"
-          >
+          <button onClick={onClose} className="p-1 hover:bg-muted rounded transition-colors">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -135,17 +127,17 @@ export function NotificationsDropdown({ onClose }: { onClose: () => void }) {
       {/* Tabs */}
       <div className="flex border-b">
         {[
-          { value: "all", label: "Toutes" },
-          { value: "unread", label: "Non lues" },
-          { value: "mentions", label: "Mentions" },
+          { value: 'all', label: 'Toutes' },
+          { value: 'unread', label: 'Non lues' },
+          { value: 'mentions', label: 'Mentions' },
         ].map((tab) => (
           <button
             key={tab.value}
             onClick={() => setActiveTab(tab.value as any)}
             className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
               activeTab === tab.value
-                ? "text-[#0B7A4B] border-b-2 border-[#0B7A4B]"
-                : "text-muted-foreground hover:text-foreground"
+                ? 'text-[#0B7A4B] border-b-2 border-[#0B7A4B]'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             {tab.label}
@@ -169,7 +161,7 @@ export function NotificationsDropdown({ onClose }: { onClose: () => void }) {
               <div
                 key={notification.id}
                 className={`p-4 border-b last:border-b-0 hover:bg-muted/50 transition-colors ${
-                  !notification.read ? "bg-blue-50 dark:bg-blue-900/10" : ""
+                  !notification.read ? 'bg-blue-50 dark:bg-blue-900/10' : ''
                 }`}
               >
                 <div className="flex gap-3">
@@ -198,13 +190,11 @@ export function NotificationsDropdown({ onClose }: { onClose: () => void }) {
                       {notification.message}
                     </p>
                     <div className="flex items-center gap-4 mt-2">
-                      <span className="text-xs text-muted-foreground">
-                        {notification.time}
-                      </span>
-                      
+                      <span className="text-xs text-muted-foreground">{notification.time}</span>
+
                       {/* Actions */}
                       <div className="flex items-center gap-2">
-                        {notification.type === "message" && (
+                        {notification.type === 'message' && (
                           <>
                             <button className="text-xs text-[#0B7A4B] hover:underline flex items-center gap-1">
                               <Reply className="h-3 w-3" />
@@ -221,7 +211,7 @@ export function NotificationsDropdown({ onClose }: { onClose: () => void }) {
                             )}
                           </>
                         )}
-                        {notification.type === "like" && (
+                        {notification.type === 'like' && (
                           <>
                             <button className="text-xs text-[#0B7A4B] hover:underline flex items-center gap-1">
                               <Eye className="h-3 w-3" />
@@ -233,7 +223,7 @@ export function NotificationsDropdown({ onClose }: { onClose: () => void }) {
                             </button>
                           </>
                         )}
-                        {notification.type === "system" && (
+                        {notification.type === 'system' && (
                           <>
                             <button className="text-xs text-[#0B7A4B] hover:underline flex items-center gap-1">
                               <CheckCircle className="h-3 w-3" />

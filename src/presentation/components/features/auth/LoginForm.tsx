@@ -37,9 +37,7 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: LoginForm
           </div>
         </div>
         <CardTitle className="text-2xl">Bienvenue sur AgroLogistic</CardTitle>
-        <CardDescription>
-          Connectez-vous à votre compte pour continuer
-        </CardDescription>
+        <CardDescription>Connectez-vous à votre compte pour continuer</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -75,10 +73,7 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: LoginForm
                 onCheckedChange={(checked) => setRememberMe(checked === true)}
                 disabled={isLoading}
               />
-              <label
-                htmlFor="remember"
-                className="text-sm text-muted-foreground cursor-pointer"
-              >
+              <label htmlFor="remember" className="text-sm text-muted-foreground cursor-pointer">
                 Se souvenir de moi
               </label>
             </div>
@@ -91,8 +86,8 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: LoginForm
               Mot de passe oublié ?
             </button>
           </div>
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             className="w-full bg-[#2563eb] hover:bg-[#1d4ed8]"
             disabled={isLoading}
           >

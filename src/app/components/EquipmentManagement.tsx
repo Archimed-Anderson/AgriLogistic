@@ -1,50 +1,61 @@
-import { Wrench, Plus, Search, Filter, MoreHorizontal, AlertTriangle, CheckCircle, Clock, Fuel, Calendar } from 'lucide-react';
+import {
+  Wrench,
+  Plus,
+  Search,
+  Filter,
+  MoreHorizontal,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Fuel,
+  Calendar,
+} from 'lucide-react';
 
 // Mock equipment data
 const equipment = [
-  { 
-    id: 1, 
-    name: 'Tracteur John Deere 6250R', 
+  {
+    id: 1,
+    name: 'Tracteur John Deere 6250R',
     type: 'Tracteur',
     status: 'operational',
     lastMaintenance: '15/01/2024',
     nextMaintenance: '15/04/2024',
     hoursUsed: 1250,
     fuelLevel: 75,
-    location: 'Hangar A'
+    location: 'Hangar A',
   },
-  { 
-    id: 2, 
-    name: 'Moissonneuse New Holland CR9.90', 
+  {
+    id: 2,
+    name: 'Moissonneuse New Holland CR9.90',
     type: 'Moissonneuse',
     status: 'maintenance',
     lastMaintenance: '01/12/2023',
     nextMaintenance: 'En cours',
     hoursUsed: 890,
     fuelLevel: 30,
-    location: 'Atelier'
+    location: 'Atelier',
   },
-  { 
-    id: 3, 
-    name: 'Pulvérisateur Amazone UX 5201', 
+  {
+    id: 3,
+    name: 'Pulvérisateur Amazone UX 5201',
     type: 'Pulvérisateur',
     status: 'operational',
     lastMaintenance: '20/02/2024',
     nextMaintenance: '20/05/2024',
     hoursUsed: 450,
     fuelLevel: 90,
-    location: 'Zone Nord'
+    location: 'Zone Nord',
   },
-  { 
-    id: 4, 
-    name: 'Semoir Väderstad Rapid A600S', 
+  {
+    id: 4,
+    name: 'Semoir Väderstad Rapid A600S',
     type: 'Semoir',
     status: 'idle',
     lastMaintenance: '10/11/2023',
     nextMaintenance: '10/02/2024',
     hoursUsed: 680,
     fuelLevel: 45,
-    location: 'Hangar B'
+    location: 'Hangar B',
   },
 ];
 
@@ -120,23 +131,38 @@ export function EquipmentManagement() {
       {maintenanceAlerts.length > 0 && (
         <div className="space-y-2">
           {maintenanceAlerts.map((alert, index) => (
-            <div key={index} className={`flex items-center gap-3 p-4 rounded-xl ${
-              alert.priority === 'high' ? 'bg-red-50 border border-red-200' : 'bg-yellow-50 border border-yellow-200'
-            }`}>
-              <AlertTriangle className={`w-5 h-5 ${
-                alert.priority === 'high' ? 'text-red-600' : 'text-yellow-600'
-              }`} />
+            <div
+              key={index}
+              className={`flex items-center gap-3 p-4 rounded-xl ${
+                alert.priority === 'high'
+                  ? 'bg-red-50 border border-red-200'
+                  : 'bg-yellow-50 border border-yellow-200'
+              }`}
+            >
+              <AlertTriangle
+                className={`w-5 h-5 ${
+                  alert.priority === 'high' ? 'text-red-600' : 'text-yellow-600'
+                }`}
+              />
               <div className="flex-1">
-                <span className={`font-medium ${
-                  alert.priority === 'high' ? 'text-red-800' : 'text-yellow-800'
-                }`}>{alert.equipment}: </span>
+                <span
+                  className={`font-medium ${
+                    alert.priority === 'high' ? 'text-red-800' : 'text-yellow-800'
+                  }`}
+                >
+                  {alert.equipment}:{' '}
+                </span>
                 <span className={alert.priority === 'high' ? 'text-red-700' : 'text-yellow-700'}>
                   {alert.message}
                 </span>
               </div>
-              <button className={`text-sm font-medium ${
-                alert.priority === 'high' ? 'text-red-700 hover:text-red-800' : 'text-yellow-700 hover:text-yellow-800'
-              }`}>
+              <button
+                className={`text-sm font-medium ${
+                  alert.priority === 'high'
+                    ? 'text-red-700 hover:text-red-800'
+                    : 'text-yellow-700 hover:text-yellow-800'
+                }`}
+              >
                 Planifier
               </button>
             </div>
@@ -166,14 +192,24 @@ export function EquipmentManagement() {
           <div key={item.id} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                  item.status === 'operational' ? 'bg-green-100' :
-                  item.status === 'maintenance' ? 'bg-yellow-100' : 'bg-gray-100'
-                }`}>
-                  <Wrench className={`w-6 h-6 ${
-                    item.status === 'operational' ? 'text-green-600' :
-                    item.status === 'maintenance' ? 'text-yellow-600' : 'text-gray-500'
-                  }`} />
+                <div
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                    item.status === 'operational'
+                      ? 'bg-green-100'
+                      : item.status === 'maintenance'
+                      ? 'bg-yellow-100'
+                      : 'bg-gray-100'
+                  }`}
+                >
+                  <Wrench
+                    className={`w-6 h-6 ${
+                      item.status === 'operational'
+                        ? 'text-green-600'
+                        : item.status === 'maintenance'
+                        ? 'text-yellow-600'
+                        : 'text-gray-500'
+                    }`}
+                  />
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">{item.name}</h3>
@@ -181,19 +217,27 @@ export function EquipmentManagement() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                  item.status === 'operational' ? 'bg-green-100 text-green-700' :
-                  item.status === 'maintenance' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'
-                }`}>
-                  {item.status === 'operational' ? 'Opérationnel' :
-                   item.status === 'maintenance' ? 'En maintenance' : 'Inactif'}
+                <span
+                  className={`px-2 py-1 text-xs font-medium rounded-full ${
+                    item.status === 'operational'
+                      ? 'bg-green-100 text-green-700'
+                      : item.status === 'maintenance'
+                      ? 'bg-yellow-100 text-yellow-700'
+                      : 'bg-gray-100 text-gray-700'
+                  }`}
+                >
+                  {item.status === 'operational'
+                    ? 'Opérationnel'
+                    : item.status === 'maintenance'
+                    ? 'En maintenance'
+                    : 'Inactif'}
                 </span>
                 <button className="text-gray-400 hover:text-gray-600">
                   <MoreHorizontal className="w-5 h-5" />
                 </button>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div>
                 <p className="text-xs text-gray-500">Heures d'utilisation</p>
@@ -208,23 +252,33 @@ export function EquipmentManagement() {
                 <p className="font-semibold text-gray-900">{item.nextMaintenance}</p>
               </div>
             </div>
-            
+
             {/* Fuel Level */}
             <div>
               <div className="flex items-center justify-between text-sm mb-1">
                 <span className="text-gray-600 flex items-center gap-1">
                   <Fuel className="w-4 h-4" /> Niveau carburant
                 </span>
-                <span className={`font-medium ${
-                  item.fuelLevel >= 50 ? 'text-green-600' :
-                  item.fuelLevel >= 25 ? 'text-yellow-600' : 'text-red-600'
-                }`}>{item.fuelLevel}%</span>
+                <span
+                  className={`font-medium ${
+                    item.fuelLevel >= 50
+                      ? 'text-green-600'
+                      : item.fuelLevel >= 25
+                      ? 'text-yellow-600'
+                      : 'text-red-600'
+                  }`}
+                >
+                  {item.fuelLevel}%
+                </span>
               </div>
               <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div 
+                <div
                   className={`h-full rounded-full ${
-                    item.fuelLevel >= 50 ? 'bg-green-500' :
-                    item.fuelLevel >= 25 ? 'bg-yellow-500' : 'bg-red-500'
+                    item.fuelLevel >= 50
+                      ? 'bg-green-500'
+                      : item.fuelLevel >= 25
+                      ? 'bg-yellow-500'
+                      : 'bg-red-500'
                   }`}
                   style={{ width: `${item.fuelLevel}%` }}
                 ></div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Search,
   TrendingUp,
@@ -20,69 +20,73 @@ import {
   Download,
   Star,
   Users,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 export function BlogHome({ onNavigate }: { onNavigate: (route: string) => void }) {
-  const [selectedFilter, setSelectedFilter] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("recent");
+  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState('recent');
 
   // Featured article
   const featuredArticle = {
-    id: "1",
+    id: '1',
     title: "Comment réduire sa consommation d'eau de 30% avec l'IA",
-    excerpt: "Découvrez comment les technologies d'intelligence artificielle révolutionnent la gestion de l'eau dans l'agriculture moderne et permettent des économies significatives.",
+    excerpt:
+      "Découvrez comment les technologies d'intelligence artificielle révolutionnent la gestion de l'eau dans l'agriculture moderne et permettent des économies significatives.",
     author: {
-      name: "Marie Dubois",
-      avatar: "MD",
-      role: "Experte en Agriculture de Précision",
+      name: 'Marie Dubois',
+      avatar: 'MD',
+      role: 'Experte en Agriculture de Précision',
     },
-    category: "Technologies Agricoles",
-    categoryColor: "blue",
-    image: "featured",
-    date: "15 Janvier 2026",
+    category: 'Technologies Agricoles',
+    categoryColor: 'blue',
+    image: 'featured',
+    date: '15 Janvier 2026',
     readTime: 8,
     views: 3240,
     comments: 47,
     likes: 189,
-    badge: "À ne pas manquer",
+    badge: 'À ne pas manquer',
   };
 
   // Secondary featured articles
   const secondaryFeatured = [
     {
-      id: "2",
-      title: "Témoignage : La transformation numérique de la Ferme des 3 Vallées",
-      excerpt: "Comment une exploitation familiale a multiplié son rendement par 1.5 grâce aux outils connectés.",
-      author: { name: "Jean Dupont", avatar: "JD" },
-      category: "Témoignages",
-      categoryColor: "green",
-      date: "12 Janvier 2026",
+      id: '2',
+      title: 'Témoignage : La transformation numérique de la Ferme des 3 Vallées',
+      excerpt:
+        'Comment une exploitation familiale a multiplié son rendement par 1.5 grâce aux outils connectés.',
+      author: { name: 'Jean Dupont', avatar: 'JD' },
+      category: 'Témoignages',
+      categoryColor: 'green',
+      date: '12 Janvier 2026',
       readTime: 6,
       views: 2180,
       comments: 32,
     },
     {
-      id: "3",
-      title: "Guide complet : Choisir ses capteurs IoT en 2026",
-      excerpt: "Tous les critères pour faire le bon choix et optimiser votre investissement dans les capteurs connectés.",
-      author: { name: "Sophie Martin", avatar: "SM" },
-      category: "Guides Pratiques",
-      categoryColor: "purple",
-      date: "10 Janvier 2026",
+      id: '3',
+      title: 'Guide complet : Choisir ses capteurs IoT en 2026',
+      excerpt:
+        'Tous les critères pour faire le bon choix et optimiser votre investissement dans les capteurs connectés.',
+      author: { name: 'Sophie Martin', avatar: 'SM' },
+      category: 'Guides Pratiques',
+      categoryColor: 'purple',
+      date: '10 Janvier 2026',
       readTime: 12,
       views: 1890,
       comments: 28,
     },
     {
-      id: "4",
-      title: "Impact du changement climatique sur les cultures céréalières",
-      excerpt: "Une analyse approfondie des défis et opportunités pour les agriculteurs face aux évolutions climatiques.",
-      author: { name: "Dr. Pierre Laurent", avatar: "PL" },
-      category: "Recherche",
-      categoryColor: "orange",
-      date: "8 Janvier 2026",
+      id: '4',
+      title: 'Impact du changement climatique sur les cultures céréalières',
+      excerpt:
+        'Une analyse approfondie des défis et opportunités pour les agriculteurs face aux évolutions climatiques.',
+      author: { name: 'Dr. Pierre Laurent', avatar: 'PL' },
+      category: 'Recherche',
+      categoryColor: 'orange',
+      date: '8 Janvier 2026',
       readTime: 15,
       views: 1650,
       comments: 41,
@@ -92,67 +96,72 @@ export function BlogHome({ onNavigate }: { onNavigate: (route: string) => void }
   // All articles
   const allArticles = [
     {
-      id: "5",
+      id: '5',
       title: "Tutoriel : Installer son système d'irrigation intelligent",
-      excerpt: "Un guide pas-à-pas complet avec vidéo pour installer et configurer votre premier système d'irrigation connecté.",
-      author: { name: "Marc Legrand", avatar: "ML" },
-      category: "Tutoriels",
-      categoryColor: "cyan",
-      type: "video",
-      date: "5 Janvier 2026",
+      excerpt:
+        "Un guide pas-à-pas complet avec vidéo pour installer et configurer votre premier système d'irrigation connecté.",
+      author: { name: 'Marc Legrand', avatar: 'ML' },
+      category: 'Tutoriels',
+      categoryColor: 'cyan',
+      type: 'video',
+      date: '5 Janvier 2026',
       readTime: 10,
       views: 2340,
       comments: 56,
       likes: 134,
     },
     {
-      id: "6",
-      title: "Les 5 erreurs à éviter en agriculture de précision",
-      excerpt: "Apprenez des erreurs des autres pour optimiser votre transition vers l'agriculture connectée.",
-      author: { name: "Claire Rousseau", avatar: "CR" },
-      category: "Conseils",
-      categoryColor: "red",
-      date: "3 Janvier 2026",
+      id: '6',
+      title: 'Les 5 erreurs à éviter en agriculture de précision',
+      excerpt:
+        "Apprenez des erreurs des autres pour optimiser votre transition vers l'agriculture connectée.",
+      author: { name: 'Claire Rousseau', avatar: 'CR' },
+      category: 'Conseils',
+      categoryColor: 'red',
+      date: '3 Janvier 2026',
       readTime: 7,
       views: 1980,
       comments: 34,
       likes: 98,
     },
     {
-      id: "7",
-      title: "Optimiser sa fertilisation avec les données satellitaires",
-      excerpt: "Comment utiliser l'imagerie satellite pour adapter vos apports en nutriments au plus près des besoins.",
-      author: { name: "Thomas Blanc", avatar: "TB" },
-      category: "Technologies",
-      categoryColor: "blue",
-      date: "1 Janvier 2026",
+      id: '7',
+      title: 'Optimiser sa fertilisation avec les données satellitaires',
+      excerpt:
+        "Comment utiliser l'imagerie satellite pour adapter vos apports en nutriments au plus près des besoins.",
+      author: { name: 'Thomas Blanc', avatar: 'TB' },
+      category: 'Technologies',
+      categoryColor: 'blue',
+      date: '1 Janvier 2026',
       readTime: 9,
       views: 1560,
       comments: 23,
       likes: 87,
     },
     {
-      id: "8",
+      id: '8',
       title: "ROI de l'agriculture connectée : Étude de cas 2025",
-      excerpt: "Analyse complète du retour sur investissement de 50 exploitations ayant adopté les technologies AgroLogistic.",
-      author: { name: "Sarah Moreau", avatar: "SM" },
-      category: "Business",
-      categoryColor: "green",
-      type: "pdf",
-      date: "28 Décembre 2025",
+      excerpt:
+        'Analyse complète du retour sur investissement de 50 exploitations ayant adopté les technologies AgroLogistic.',
+      author: { name: 'Sarah Moreau', avatar: 'SM' },
+      category: 'Business',
+      categoryColor: 'green',
+      type: 'pdf',
+      date: '28 Décembre 2025',
       readTime: 14,
       views: 2890,
       comments: 67,
       likes: 201,
     },
     {
-      id: "9",
+      id: '9',
       title: "Drones agricoles : Guide d'achat 2026",
-      excerpt: "Comparatif complet des meilleurs drones pour l'agriculture avec analyse coût/bénéfice détaillée.",
-      author: { name: "Antoine Bernard", avatar: "AB" },
-      category: "Guides",
-      categoryColor: "purple",
-      date: "25 Décembre 2025",
+      excerpt:
+        "Comparatif complet des meilleurs drones pour l'agriculture avec analyse coût/bénéfice détaillée.",
+      author: { name: 'Antoine Bernard', avatar: 'AB' },
+      category: 'Guides',
+      categoryColor: 'purple',
+      date: '25 Décembre 2025',
       readTime: 11,
       views: 3120,
       comments: 45,
@@ -162,41 +171,41 @@ export function BlogHome({ onNavigate }: { onNavigate: (route: string) => void }
 
   // Categories
   const categories = [
-    { id: "all", name: "Tous", count: 245, icon: BookOpen, color: "gray" },
-    { id: "tutorials", name: "Tutoriels", count: 67, icon: Video, color: "blue" },
-    { id: "news", name: "Actualités", count: 89, icon: Zap, color: "orange" },
-    { id: "stories", name: "Témoignages", count: 34, icon: Users, color: "green" },
-    { id: "guides", name: "Guides", count: 55, icon: BookOpen, color: "purple" },
+    { id: 'all', name: 'Tous', count: 245, icon: BookOpen, color: 'gray' },
+    { id: 'tutorials', name: 'Tutoriels', count: 67, icon: Video, color: 'blue' },
+    { id: 'news', name: 'Actualités', count: 89, icon: Zap, color: 'orange' },
+    { id: 'stories', name: 'Témoignages', count: 34, icon: Users, color: 'green' },
+    { id: 'guides', name: 'Guides', count: 55, icon: BookOpen, color: 'purple' },
   ];
 
   // Contributors
   const topContributors = [
-    { name: "Marie Dubois", articles: 42, avatar: "MD", badge: "Expert" },
-    { name: "Jean Dupont", articles: 38, avatar: "JD", badge: "Pro" },
-    { name: "Sophie Martin", articles: 31, avatar: "SM", badge: "Expert" },
+    { name: 'Marie Dubois', articles: 42, avatar: 'MD', badge: 'Expert' },
+    { name: 'Jean Dupont', articles: 38, avatar: 'JD', badge: 'Pro' },
+    { name: 'Sophie Martin', articles: 31, avatar: 'SM', badge: 'Expert' },
   ];
 
   const handleLike = (id: string) => {
-    toast.success("Article ajouté à vos favoris");
+    toast.success('Article ajouté à vos favoris');
   };
 
   const handleBookmark = (id: string) => {
-    toast.success("Article enregistré");
+    toast.success('Article enregistré');
   };
 
   const handleShare = (id: string) => {
-    toast.success("Lien copié dans le presse-papier");
+    toast.success('Lien copié dans le presse-papier');
   };
 
   const getCategoryColor = (color: string) => {
     const colors: { [key: string]: string } = {
-      blue: "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400",
-      green: "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400",
-      purple: "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400",
-      orange: "bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400",
-      red: "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400",
-      cyan: "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/20 dark:text-cyan-400",
-      gray: "bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400",
+      blue: 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400',
+      green: 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400',
+      purple: 'bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400',
+      orange: 'bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400',
+      red: 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400',
+      cyan: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/20 dark:text-cyan-400',
+      gray: 'bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400',
     };
     return colors[color] || colors.gray;
   };
@@ -208,8 +217,8 @@ export function BlogHome({ onNavigate }: { onNavigate: (route: string) => void }
         <div className="max-w-4xl">
           <h1 className="text-5xl font-bold mb-4">Le Blog AgroLogistic</h1>
           <p className="text-xl opacity-90 mb-8">
-            Découvrez les dernières innovations, conseils pratiques et success stories
-            de l'agriculture connectée
+            Découvrez les dernières innovations, conseils pratiques et success stories de
+            l'agriculture connectée
           </p>
 
           {/* Stats */}
@@ -412,8 +421,8 @@ export function BlogHome({ onNavigate }: { onNavigate: (route: string) => void }
                 onClick={() => setSelectedFilter(cat.id)}
                 className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${
                   selectedFilter === cat.id
-                    ? "bg-[#2ECC71] text-white"
-                    : "bg-muted hover:bg-muted/80"
+                    ? 'bg-[#2ECC71] text-white'
+                    : 'bg-muted hover:bg-muted/80'
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -452,13 +461,13 @@ export function BlogHome({ onNavigate }: { onNavigate: (route: string) => void }
                 <div className="grid md:grid-cols-3 gap-6">
                   <div className="relative h-48 md:h-auto bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800">
                     <div className="absolute inset-0 flex items-center justify-center text-4xl">
-                      {article.type === "video" ? "🎥" : article.type === "pdf" ? "📄" : "📝"}
+                      {article.type === 'video' ? '🎥' : article.type === 'pdf' ? '📄' : '📝'}
                     </div>
                     {article.type && (
                       <div className="absolute top-2 right-2 px-2 py-1 bg-black/70 text-white text-xs rounded flex items-center gap-1">
-                        {article.type === "video" ? (
+                        {article.type === 'video' ? (
                           <Video className="h-3 w-3" />
-                        ) : article.type === "pdf" ? (
+                        ) : article.type === 'pdf' ? (
                           <Download className="h-3 w-3" />
                         ) : (
                           <FileText className="h-3 w-3" />
@@ -601,18 +610,18 @@ export function BlogHome({ onNavigate }: { onNavigate: (route: string) => void }
 
             <div className="flex flex-wrap gap-2">
               {[
-                "IoT",
-                "IA",
-                "Irrigation",
-                "Rendement",
-                "Capteurs",
-                "Drone",
-                "Satellite",
-                "ROI",
-                "Durable",
-                "Innovation",
-                "Climat",
-                "Fertilisation",
+                'IoT',
+                'IA',
+                'Irrigation',
+                'Rendement',
+                'Capteurs',
+                'Drone',
+                'Satellite',
+                'ROI',
+                'Durable',
+                'Innovation',
+                'Climat',
+                'Fertilisation',
               ].map((tag) => (
                 <button
                   key={tag}
@@ -627,35 +636,34 @@ export function BlogHome({ onNavigate }: { onNavigate: (route: string) => void }
           {/* Upcoming Events */}
           <div className="bg-card border rounded-xl p-6">
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-[#2ECC71]" />
-              À venir
+              <Calendar className="h-5 w-5 text-[#2ECC71]" />À venir
             </h3>
 
             <div className="space-y-4">
               {[
                 {
-                  title: "Webinar : IA en Agriculture",
-                  date: "20 Jan 2026",
-                  time: "14h00",
+                  title: 'Webinar : IA en Agriculture',
+                  date: '20 Jan 2026',
+                  time: '14h00',
                 },
                 {
-                  title: "Article : Nouveaux capteurs 2026",
-                  date: "22 Jan 2026",
-                  time: "10h00",
+                  title: 'Article : Nouveaux capteurs 2026',
+                  date: '22 Jan 2026',
+                  time: '10h00',
                 },
                 {
-                  title: "Interview : Expert climat",
-                  date: "25 Jan 2026",
-                  time: "16h00",
+                  title: 'Interview : Expert climat',
+                  date: '25 Jan 2026',
+                  time: '16h00',
                 },
               ].map((event, index) => (
                 <div key={index} className="flex gap-3">
                   <div className="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex flex-col items-center justify-center">
                     <div className="text-xs text-blue-600 dark:text-blue-400 font-semibold">
-                      {event.date.split(" ")[0]}
+                      {event.date.split(' ')[0]}
                     </div>
                     <div className="text-xs text-blue-600 dark:text-blue-400">
-                      {event.date.split(" ")[1]}
+                      {event.date.split(' ')[1]}
                     </div>
                   </div>
                   <div className="flex-1 min-w-0">
@@ -670,16 +678,14 @@ export function BlogHome({ onNavigate }: { onNavigate: (route: string) => void }
           {/* Poll */}
           <div className="bg-card border rounded-xl p-6">
             <h3 className="text-lg font-semibold mb-4">📊 Sondage de la semaine</h3>
-            <p className="text-sm mb-4">
-              Quelle technologie vous intéresse le plus en 2026 ?
-            </p>
+            <p className="text-sm mb-4">Quelle technologie vous intéresse le plus en 2026 ?</p>
 
             <div className="space-y-2">
               {[
-                { option: "Intelligence Artificielle", votes: 45 },
-                { option: "Drones agricoles", votes: 32 },
-                { option: "Capteurs IoT", votes: 18 },
-                { option: "Imagerie satellite", votes: 5 },
+                { option: 'Intelligence Artificielle', votes: 45 },
+                { option: 'Drones agricoles', votes: 32 },
+                { option: 'Capteurs IoT', votes: 18 },
+                { option: 'Imagerie satellite', votes: 5 },
               ].map((item, index) => (
                 <button
                   key={index}
@@ -690,10 +696,7 @@ export function BlogHome({ onNavigate }: { onNavigate: (route: string) => void }
                     <span className="font-medium">{item.votes}%</span>
                   </div>
                   <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-[#2ECC71]"
-                      style={{ width: `${item.votes}%` }}
-                    />
+                    <div className="h-full bg-[#2ECC71]" style={{ width: `${item.votes}%` }} />
                   </div>
                 </button>
               ))}

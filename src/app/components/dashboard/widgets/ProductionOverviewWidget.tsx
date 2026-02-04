@@ -6,7 +6,7 @@ export function ProductionOverviewWidget() {
   const summary = getDashboardSummary();
   const totalTons = cropData.reduce((sum, crop) => sum + crop.tons, 0);
 
-  const chartData = cropData.map(crop => ({
+  const chartData = cropData.map((crop) => ({
     name: crop.name,
     value: crop.tons,
     color: crop.color,
@@ -22,10 +22,7 @@ export function ProductionOverviewWidget() {
       </div>
 
       <div className="relative" style={{ height: '300px' }}>
-        <DonutChartComponent
-          data={chartData}
-          centerText={totalTons.toString()}
-        />
+        <DonutChartComponent data={chartData} centerText={totalTons.toString()} />
       </div>
 
       <div className="mt-6 grid grid-cols-2 gap-4 pt-6 border-t border-slate-100">

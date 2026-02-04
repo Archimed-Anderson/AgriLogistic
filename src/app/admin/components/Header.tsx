@@ -7,7 +7,9 @@ export function Header() {
     <header className="fixed left-20 right-0 top-0 z-30 flex h-[70px] items-center justify-between border-b border-border bg-background/80 px-8 backdrop-blur-md transition-colors duration-500">
       <div className="flex items-center gap-3 text-lg font-bold tracking-tight">
         <Triangle size={24} className="text-primary fill-primary/20 rotate-180" />
-        <span className="text-foreground">AgroLogistic <span className="text-primary font-black">WAR ROOM</span></span>
+        <span className="text-foreground">
+          AgroLogistic <span className="text-primary font-black">WAR ROOM</span>
+        </span>
       </div>
 
       <div className="flex items-center gap-4">
@@ -15,7 +17,7 @@ export function Header() {
           <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-success shadow-[0_0_8px_var(--success-glow)]" />
           SYSTEMS OPERATIONAL
         </div>
-        
+
         <div className="h-8 w-px bg-border mx-2" />
 
         <ThemeToggle />

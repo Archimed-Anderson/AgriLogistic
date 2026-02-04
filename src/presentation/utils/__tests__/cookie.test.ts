@@ -4,7 +4,7 @@ import { setSecureCookie, getCookie, deleteCookie, hasCookie } from '../cookie';
 describe('cookie utilities', () => {
   beforeEach(() => {
     // Clear all cookies before each test
-    document.cookie.split(';').forEach(cookie => {
+    document.cookie.split(';').forEach((cookie) => {
       const eqPos = cookie.indexOf('=');
       const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
       deleteCookie(name);
@@ -13,7 +13,7 @@ describe('cookie utilities', () => {
 
   afterEach(() => {
     // Clean up after each test
-    document.cookie.split(';').forEach(cookie => {
+    document.cookie.split(';').forEach((cookie) => {
       const eqPos = cookie.indexOf('=');
       const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
       deleteCookie(name);
@@ -23,21 +23,21 @@ describe('cookie utilities', () => {
   describe('setSecureCookie', () => {
     it('should set a cookie with default options', () => {
       setSecureCookie('test', 'value');
-      
+
       const cookie = getCookie('test');
       expect(cookie).toBe('value');
     });
 
     it('should set a cookie with custom maxAge', () => {
       setSecureCookie('test', 'value', { maxAge: 7 });
-      
+
       const cookie = getCookie('test');
       expect(cookie).toBe('value');
     });
 
     it('should encode cookie value', () => {
       setSecureCookie('test', 'value with spaces');
-      
+
       const cookie = getCookie('test');
       expect(cookie).toBe('value with spaces');
     });
@@ -46,7 +46,7 @@ describe('cookie utilities', () => {
   describe('getCookie', () => {
     it('should retrieve existing cookie', () => {
       setSecureCookie('test', 'value');
-      
+
       const cookie = getCookie('test');
       expect(cookie).toBe('value');
     });
@@ -58,7 +58,7 @@ describe('cookie utilities', () => {
 
     it('should decode cookie value', () => {
       setSecureCookie('test', 'value%20with%20spaces');
-      
+
       const cookie = getCookie('test');
       expect(cookie).toBe('value%20with%20spaces');
     });
@@ -68,7 +68,7 @@ describe('cookie utilities', () => {
     it('should delete an existing cookie', () => {
       setSecureCookie('test', 'value');
       expect(getCookie('test')).toBe('value');
-      
+
       deleteCookie('test');
       expect(getCookie('test')).toBeNull();
     });

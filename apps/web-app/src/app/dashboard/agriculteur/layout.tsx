@@ -1,14 +1,14 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { 
-  LayoutDashboard, 
-  Map as MapIcon, 
-  FileInput, 
-  Cpu, 
-  ShoppingBag, 
-  GraduationCap, 
+import * as React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  LayoutDashboard,
+  Map as MapIcon,
+  FileInput,
+  Cpu,
+  ShoppingBag,
+  GraduationCap,
   Truck,
   ChevronLeft,
   Menu,
@@ -18,12 +18,12 @@ import {
   User,
   Settings,
   LogOut,
-  ChevronDown
-} from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+  ChevronDown,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,24 +31,24 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+} from '@/components/ui/dropdown-menu';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 // --- Menu Items ---
 const menuItems = [
-  { icon: LayoutDashboard, label: "Vue d'ensemble", href: "/dashboard/agriculteur" },
-  { icon: MapIcon, label: "Parcelles 3D", href: "/dashboard/agriculteur/parcelles" },
-  { icon: FileInput, label: "Saisie", href: "/dashboard/agriculteur/saisie" },
-  { icon: Cpu, label: "IA", href: "/dashboard/agriculteur/ai" },
-  { icon: ShoppingBag, label: "Marketplace", href: "/dashboard/agriculteur/marketplace" },
-  { icon: GraduationCap, label: "Formation", href: "/dashboard/agriculteur/formation" },
-  { icon: Truck, label: "Logistique", href: "/dashboard/agriculteur/logistique" },
-]
+  { icon: LayoutDashboard, label: "Vue d'ensemble", href: '/dashboard/agriculteur' },
+  { icon: MapIcon, label: 'Parcelles 3D', href: '/dashboard/agriculteur/parcelles' },
+  { icon: FileInput, label: 'Saisie', href: '/dashboard/agriculteur/saisie' },
+  { icon: Cpu, label: 'IA', href: '/dashboard/agriculteur/ai' },
+  { icon: ShoppingBag, label: 'Marketplace', href: '/dashboard/agriculteur/marketplace' },
+  { icon: GraduationCap, label: 'Formation', href: '/dashboard/agriculteur/formation' },
+  { icon: Truck, label: 'Logistique', href: '/dashboard/agriculteur/logistique' },
+];
 
 export default function FarmerDashboardLayout({ children }: { children: React.ReactNode }) {
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(true)
-  const pathname = usePathname()
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
+  const pathname = usePathname();
 
   return (
     <div className="flex h-screen bg-[#F8FAF9] dark:bg-[#050505] overflow-hidden font-sans">
@@ -57,8 +57,8 @@ export default function FarmerDashboardLayout({ children }: { children: React.Re
         initial={false}
         animate={{ width: isSidebarOpen ? 280 : 80 }}
         className={cn(
-          "relative flex flex-col h-screen border-r border-[#1B4D3E]/10 bg-white dark:bg-[#0a1f18] transition-all duration-300 ease-in-out z-50",
-          !isSidebarOpen && "items-center"
+          'relative flex flex-col h-screen border-r border-[#1B4D3E]/10 bg-white dark:bg-[#0a1f18] transition-all duration-300 ease-in-out z-50',
+          !isSidebarOpen && 'items-center'
         )}
       >
         {/* Logo */}
@@ -84,23 +84,25 @@ export default function FarmerDashboardLayout({ children }: { children: React.Re
         {/* Nav */}
         <nav className="flex-1 px-4 space-y-2 overflow-y-auto overflow-x-hidden custom-scrollbar">
           {menuItems.map((item) => {
-            const isActive = pathname === item.href
+            const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "group relative flex items-center w-full p-3 rounded-xl transition-all duration-200",
-                  isActive 
-                    ? "bg-[#1B4D3E] text-white shadow-lg shadow-[#1B4D3E]/20" 
-                    : "text-slate-500 hover:bg-[#1B4D3E]/5 dark:hover:bg-white/5"
+                  'group relative flex items-center w-full p-3 rounded-xl transition-all duration-200',
+                  isActive
+                    ? 'bg-[#1B4D3E] text-white shadow-lg shadow-[#1B4D3E]/20'
+                    : 'text-slate-500 hover:bg-[#1B4D3E]/5 dark:hover:bg-white/5'
                 )}
               >
-                <item.icon className={cn(
-                  "h-5 w-5 shrink-0 transition-colors",
-                  isActive ? "text-[#D4A017]" : "group-hover:text-[#1B4D3E]"
-                )} />
-                
+                <item.icon
+                  className={cn(
+                    'h-5 w-5 shrink-0 transition-colors',
+                    isActive ? 'text-[#D4A017]' : 'group-hover:text-[#1B4D3E]'
+                  )}
+                />
+
                 <AnimatePresence>
                   {isSidebarOpen && (
                     <motion.span
@@ -121,7 +123,7 @@ export default function FarmerDashboardLayout({ children }: { children: React.Re
                   />
                 )}
               </Link>
-            )
+            );
           })}
         </nav>
 
@@ -143,17 +145,21 @@ export default function FarmerDashboardLayout({ children }: { children: React.Re
         {/* Topbar */}
         <header className="h-16 border-b border-[#1B4D3E]/10 bg-white dark:bg-[#0a1f18] flex items-center justify-between px-8 z-40 shrink-0">
           <div className="flex items-center gap-4 flex-1">
-             <div className="relative w-64 hidden md:block">
-               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-               <Input 
-                 placeholder="Rechercher..." 
-                 className="pl-10 h-10 bg-slate-50 dark:bg-white/5 border-none rounded-2xl text-xs font-bold"
-               />
-             </div>
+            <div className="relative w-64 hidden md:block">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Input
+                placeholder="Rechercher..."
+                className="pl-10 h-10 bg-slate-50 dark:bg-white/5 border-none rounded-2xl text-xs font-bold"
+              />
+            </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" className="rounded-xl hover:bg-[#1B4D3E]/5 relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-xl hover:bg-[#1B4D3E]/5 relative"
+            >
               <Bell className="h-5 w-5 text-slate-600" />
               <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-red-500 border-2 border-white" />
             </Button>
@@ -162,20 +168,29 @@ export default function FarmerDashboardLayout({ children }: { children: React.Re
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center gap-3 px-2 rounded-2xl hover:bg-[#1B4D3E]/5">
+                <Button
+                  variant="ghost"
+                  className="flex items-center gap-3 px-2 rounded-2xl hover:bg-[#1B4D3E]/5"
+                >
                   <Avatar className="h-9 w-9 border-2 border-[#D4A017]">
                     <AvatarImage src="https://github.com/shadcn.png" />
                     <AvatarFallback>JD</AvatarFallback>
                   </Avatar>
                   <div className="hidden sm:block text-left">
-                    <p className="text-xs font-black text-[#1B4D3E] dark:text-white leading-tight">Jean Dupont</p>
-                    <p className="text-[9px] text-slate-500 font-bold uppercase tracking-tighter">Exploitant Premium</p>
+                    <p className="text-xs font-black text-[#1B4D3E] dark:text-white leading-tight">
+                      Jean Dupont
+                    </p>
+                    <p className="text-[9px] text-slate-500 font-bold uppercase tracking-tighter">
+                      Exploitant Premium
+                    </p>
                   </div>
                   <ChevronDown className="h-3 w-3 text-slate-400 hidden sm:block" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 border-[#1B4D3E]/10">
-                <DropdownMenuLabel className="font-black text-[10px] uppercase text-slate-500 px-3 py-2">Mon Compte</DropdownMenuLabel>
+                <DropdownMenuLabel className="font-black text-[10px] uppercase text-slate-500 px-3 py-2">
+                  Mon Compte
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-[#1B4D3E]/5" />
                 <DropdownMenuItem className="rounded-xl flex gap-3 p-3 font-bold text-sm cursor-pointer">
                   <User className="h-4 w-4 text-[#D4A017]" /> Profil Expert
@@ -194,9 +209,9 @@ export default function FarmerDashboardLayout({ children }: { children: React.Re
 
         {/* Page Content */}
         <main className="flex-1 overflow-auto bg-[#F8FAF9] dark:bg-[#050505] p-8 custom-scrollbar">
-           {children}
+          {children}
         </main>
       </div>
     </div>
-  )
+  );
 }

@@ -1,24 +1,24 @@
-import { 
-  LayoutDashboard, 
-  BarChart3, 
-  Sprout, 
-  ClipboardList, 
-  Wrench, 
-  Store, 
-  Package, 
-  ShoppingCart, 
-  DollarSign, 
-  Truck, 
-  Map, 
-  Users, 
-  ShieldCheck, 
-  History, 
-  Settings, 
-  Cpu, 
-  Radio, 
+import {
+  LayoutDashboard,
+  BarChart3,
+  Sprout,
+  ClipboardList,
+  Wrench,
+  Store,
+  Package,
+  ShoppingCart,
+  DollarSign,
+  Truck,
+  Map,
+  Users,
+  ShieldCheck,
+  History,
+  Settings,
+  Cpu,
+  Radio,
   Blocks,
   Sparkles,
-  LucideIcon 
+  LucideIcon,
 } from 'lucide-react';
 
 export interface NavItem {
@@ -41,15 +41,15 @@ export const ADMIN_NAVIGATION: NavItem[] = [
         title: 'War Room',
         icon: LayoutDashboard,
         path: '/admin',
-        badge: 'Live'
+        badge: 'Live',
       },
       {
         id: 'analytics',
         title: 'Analytics Global',
         icon: BarChart3,
-        path: '/admin/analytics'
-      }
-    ]
+        path: '/admin/analytics',
+      },
+    ],
   },
   {
     id: 'operations',
@@ -61,21 +61,21 @@ export const ADMIN_NAVIGATION: NavItem[] = [
         title: 'Agriculture',
         icon: Sprout,
         path: '/admin/crops',
-        badge: 'Suivi'
+        badge: 'Suivi',
       },
       {
         id: 'tasks-labor',
-        title: 'Tâches & Main d\'œuvre',
+        title: "Tâches & Main d'œuvre",
         icon: ClipboardList,
-        path: '/admin/tasks'
+        path: '/admin/tasks',
       },
       {
         id: 'equipment',
         title: 'Equipements',
         icon: Wrench,
-        path: '/admin/equipment'
-      }
-    ]
+        path: '/admin/equipment',
+      },
+    ],
   },
   {
     id: 'business',
@@ -86,27 +86,27 @@ export const ADMIN_NAVIGATION: NavItem[] = [
         id: 'marketplace',
         title: 'Marketplace',
         icon: Store,
-        path: '/admin/marketplace'
+        path: '/admin/marketplace',
       },
       {
         id: 'products',
         title: 'Produits & Catalogue',
         icon: Package,
-        path: '/admin/products'
+        path: '/admin/products',
       },
       {
         id: 'orders',
         title: 'Commandes',
         icon: ShoppingCart,
-        path: '/admin/orders'
+        path: '/admin/orders',
       },
       {
         id: 'finance',
         title: 'Finance & Revenus',
         icon: DollarSign,
-        path: '/admin/finance'
-      }
-    ]
+        path: '/admin/finance',
+      },
+    ],
   },
   {
     id: 'logistics',
@@ -117,36 +117,36 @@ export const ADMIN_NAVIGATION: NavItem[] = [
         id: 'tracking',
         title: 'Tracking Live',
         icon: Truck,
-        path: '/admin/tracking'
+        path: '/admin/tracking',
       },
       {
         id: 'fleet',
         title: 'Flotte & Véhicules',
         icon: Truck,
-        path: '/admin/fleet'
+        path: '/admin/fleet',
       },
       {
         id: 'routes',
         title: 'Calculateur Transport',
         icon: Map,
         path: '/admin/transport-calculator',
-        badge: 'New'
+        badge: 'New',
       },
       {
         id: 'link-hub-admin',
         title: 'AgriLogistic Link Hub',
         icon: Sparkles,
         path: '/link-hub',
-        badge: 'God Mode'
+        badge: 'God Mode',
       },
       {
         id: 'global-monitor',
         title: 'Global Monitor Admin',
         icon: Radio,
         path: '/admin/link-monitor',
-        badge: 'Admin'
-      }
-    ]
+        badge: 'Admin',
+      },
+    ],
   },
   {
     id: 'governance',
@@ -158,27 +158,27 @@ export const ADMIN_NAVIGATION: NavItem[] = [
         title: 'Utilisateurs',
         icon: Users,
         path: '/admin/users',
-        badge: 'Prioritaire'
+        badge: 'Prioritaire',
       },
       {
         id: 'roles',
         title: 'Rôles & Permissions',
         icon: ShieldCheck,
-        path: '/admin/roles'
+        path: '/admin/roles',
       },
       {
         id: 'audit',
         title: 'Audit Trail',
         icon: History,
-        path: '/admin/audit'
+        path: '/admin/audit',
       },
       {
         id: 'configuration',
         title: 'Configuration',
         icon: Settings,
-        path: '/admin/platform'
-      }
-    ]
+        path: '/admin/platform',
+      },
+    ],
   },
   {
     id: 'innovation',
@@ -189,27 +189,27 @@ export const ADMIN_NAVIGATION: NavItem[] = [
         id: 'ai-center',
         title: 'AI Insights',
         icon: Cpu,
-        path: '/admin/ai-insights'
+        path: '/admin/ai-insights',
       },
       {
         id: 'iot',
         title: 'IoT Hub',
         icon: Radio,
-        path: '/admin/iot'
+        path: '/admin/iot',
       },
       {
         id: 'automation',
         title: 'Automation',
         icon: Wrench, // Using Wrench as generic tool icon, could import Bot/Workflow unique icon if available
-        path: '/admin/automation'
+        path: '/admin/automation',
       },
       {
         id: 'blockchain',
         title: 'Blockchain Explorer',
         icon: Blocks,
-        path: '/admin/blockchain'
-      }
-    ]
+        path: '/admin/blockchain',
+      },
+    ],
   },
   {
     id: 'extras',
@@ -220,15 +220,15 @@ export const ADMIN_NAVIGATION: NavItem[] = [
         id: 'blog',
         title: 'Blog & Évents',
         icon: ClipboardList,
-        path: '/admin/blog'
+        path: '/admin/blog',
       },
       {
         id: 'affiliations',
         title: 'Affiliations',
         icon: Users,
         path: '/admin/affiliate-dashboard',
-        badge: '💰'
-      }
-    ]
-  }
+        badge: '💰',
+      },
+    ],
+  },
 ];

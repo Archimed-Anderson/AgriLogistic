@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef } from 'react';
 import {
   Users,
   Plus,
@@ -28,17 +28,17 @@ import {
   FileSpreadsheet,
   FileText,
   BarChart3,
-} from "lucide-react";
-import { toast } from "sonner";
-import { downloadTextFile, parseCsvToObjects, toCsv } from "../../shared/utils/csv";
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { downloadTextFile, parseCsvToObjects, toCsv } from '../../shared/utils/csv';
 
 // Types
 interface User {
   id: number;
   name: string;
   email: string;
-  role: "Admin" | "Farmer" | "Customer" | "Logistics";
-  status: "Actif" | "Inactif" | "Non vérifié";
+  role: 'Admin' | 'Farmer' | 'Customer' | 'Logistics';
+  status: 'Actif' | 'Inactif' | 'Non vérifié';
   registrationDate: string;
   lastLogin: string;
   avatar: string;
@@ -52,7 +52,7 @@ interface User {
 }
 
 interface ActivityLog {
-  type: "login" | "order" | "role_change" | "registration";
+  type: 'login' | 'order' | 'role_change' | 'registration';
   description: string;
   timestamp: string;
 }
@@ -61,171 +61,171 @@ interface ActivityLog {
 const mockUsers: User[] = [
   {
     id: 1,
-    name: "Sophie Leroy",
-    email: "sophie.leroy@AgroLogistic.fr",
-    role: "Admin",
-    status: "Actif",
-    registrationDate: "12/08/2025",
-    lastLogin: "10/01/2026 14:32",
-    avatar: "SL",
+    name: 'Sophie Leroy',
+    email: 'sophie.leroy@AgroLogistic.fr',
+    role: 'Admin',
+    status: 'Actif',
+    registrationDate: '12/08/2025',
+    lastLogin: '10/01/2026 14:32',
+    avatar: 'SL',
     isOnline: true,
-    phone: "+33 6 12 34 56 78",
-    address: "25 rue de la République",
-    city: "Lyon",
-    country: "France",
+    phone: '+33 6 12 34 56 78',
+    address: '25 rue de la République',
+    city: 'Lyon',
+    country: 'France',
     totalOrders: 0,
     totalSpent: 0,
   },
   {
     id: 2,
-    name: "Marc Dubois",
-    email: "marc.dubois@fermier.fr",
-    role: "Farmer",
-    status: "Actif",
-    registrationDate: "15/09/2025",
-    lastLogin: "09/01/2026 09:15",
-    avatar: "MD",
+    name: 'Marc Dubois',
+    email: 'marc.dubois@fermier.fr',
+    role: 'Farmer',
+    status: 'Actif',
+    registrationDate: '15/09/2025',
+    lastLogin: '09/01/2026 09:15',
+    avatar: 'MD',
     isOnline: false,
-    phone: "+33 6 23 45 67 89",
-    address: "Ferme du Chêne Vert",
-    city: "Bordeaux",
-    country: "France",
+    phone: '+33 6 23 45 67 89',
+    address: 'Ferme du Chêne Vert',
+    city: 'Bordeaux',
+    country: 'France',
     totalOrders: 23,
     totalSpent: 45600,
   },
   {
     id: 3,
-    name: "Camille Bernard",
-    email: "camille.bernard@client.com",
-    role: "Customer",
-    status: "Actif",
-    registrationDate: "02/10/2025",
-    lastLogin: "10/01/2026 11:28",
-    avatar: "CB",
+    name: 'Camille Bernard',
+    email: 'camille.bernard@client.com',
+    role: 'Customer',
+    status: 'Actif',
+    registrationDate: '02/10/2025',
+    lastLogin: '10/01/2026 11:28',
+    avatar: 'CB',
     isOnline: true,
-    phone: "+33 6 34 56 78 90",
-    address: "14 avenue des Lilas",
-    city: "Paris",
-    country: "France",
+    phone: '+33 6 34 56 78 90',
+    address: '14 avenue des Lilas',
+    city: 'Paris',
+    country: 'France',
     totalOrders: 12,
     totalSpent: 8540,
   },
   {
     id: 4,
-    name: "Thomas Martin",
-    email: "thomas.martin@logistique.fr",
-    role: "Logistics",
-    status: "Actif",
-    registrationDate: "20/09/2025",
-    lastLogin: "10/01/2026 08:45",
-    avatar: "TM",
+    name: 'Thomas Martin',
+    email: 'thomas.martin@logistique.fr',
+    role: 'Logistics',
+    status: 'Actif',
+    registrationDate: '20/09/2025',
+    lastLogin: '10/01/2026 08:45',
+    avatar: 'TM',
     isOnline: true,
-    phone: "+33 6 45 67 89 01",
-    address: "Zone industrielle Nord",
-    city: "Lille",
-    country: "France",
+    phone: '+33 6 45 67 89 01',
+    address: 'Zone industrielle Nord',
+    city: 'Lille',
+    country: 'France',
     totalOrders: 156,
     totalSpent: 0,
   },
   {
     id: 5,
-    name: "Émilie Rousseau",
-    email: "emilie.rousseau@fermier.fr",
-    role: "Farmer",
-    status: "Actif",
-    registrationDate: "05/11/2025",
-    lastLogin: "08/01/2026 16:20",
-    avatar: "ER",
+    name: 'Émilie Rousseau',
+    email: 'emilie.rousseau@fermier.fr',
+    role: 'Farmer',
+    status: 'Actif',
+    registrationDate: '05/11/2025',
+    lastLogin: '08/01/2026 16:20',
+    avatar: 'ER',
     isOnline: false,
-    phone: "+33 6 56 78 90 12",
-    address: "La Ferme des Collines",
-    city: "Toulouse",
-    country: "France",
+    phone: '+33 6 56 78 90 12',
+    address: 'La Ferme des Collines',
+    city: 'Toulouse',
+    country: 'France',
     totalOrders: 31,
     totalSpent: 62300,
   },
   {
     id: 6,
-    name: "Lucas Petit",
-    email: "lucas.petit@client.com",
-    role: "Customer",
-    status: "Non vérifié",
-    registrationDate: "28/12/2025",
-    lastLogin: "05/01/2026 10:12",
-    avatar: "LP",
+    name: 'Lucas Petit',
+    email: 'lucas.petit@client.com',
+    role: 'Customer',
+    status: 'Non vérifié',
+    registrationDate: '28/12/2025',
+    lastLogin: '05/01/2026 10:12',
+    avatar: 'LP',
     isOnline: false,
-    phone: "+33 6 67 89 01 23",
-    address: "8 rue du Commerce",
-    city: "Marseille",
-    country: "France",
+    phone: '+33 6 67 89 01 23',
+    address: '8 rue du Commerce',
+    city: 'Marseille',
+    country: 'France',
     totalOrders: 2,
     totalSpent: 1200,
   },
   {
     id: 7,
-    name: "Julie Moreau",
-    email: "julie.moreau@AgroLogistic.fr",
-    role: "Admin",
-    status: "Actif",
-    registrationDate: "18/08/2025",
-    lastLogin: "10/01/2026 13:45",
-    avatar: "JM",
+    name: 'Julie Moreau',
+    email: 'julie.moreau@AgroLogistic.fr',
+    role: 'Admin',
+    status: 'Actif',
+    registrationDate: '18/08/2025',
+    lastLogin: '10/01/2026 13:45',
+    avatar: 'JM',
     isOnline: true,
-    phone: "+33 6 78 90 12 34",
-    address: "12 boulevard Haussmann",
-    city: "Paris",
-    country: "France",
+    phone: '+33 6 78 90 12 34',
+    address: '12 boulevard Haussmann',
+    city: 'Paris',
+    country: 'France',
     totalOrders: 0,
     totalSpent: 0,
   },
   {
     id: 8,
-    name: "Antoine Laurent",
-    email: "antoine.laurent@fermier.fr",
-    role: "Farmer",
-    status: "Inactif",
-    registrationDate: "22/10/2025",
-    lastLogin: "15/12/2025 18:30",
-    avatar: "AL",
+    name: 'Antoine Laurent',
+    email: 'antoine.laurent@fermier.fr',
+    role: 'Farmer',
+    status: 'Inactif',
+    registrationDate: '22/10/2025',
+    lastLogin: '15/12/2025 18:30',
+    avatar: 'AL',
     isOnline: false,
-    phone: "+33 6 89 01 23 45",
-    address: "Domaine Saint-Antoine",
-    city: "Nantes",
-    country: "France",
+    phone: '+33 6 89 01 23 45',
+    address: 'Domaine Saint-Antoine',
+    city: 'Nantes',
+    country: 'France',
     totalOrders: 8,
     totalSpent: 18900,
   },
   {
     id: 9,
-    name: "Chloé Bonnet",
-    email: "chloe.bonnet@client.com",
-    role: "Customer",
-    status: "Actif",
-    registrationDate: "14/11/2025",
-    lastLogin: "10/01/2026 07:55",
-    avatar: "CB2",
+    name: 'Chloé Bonnet',
+    email: 'chloe.bonnet@client.com',
+    role: 'Customer',
+    status: 'Actif',
+    registrationDate: '14/11/2025',
+    lastLogin: '10/01/2026 07:55',
+    avatar: 'CB2',
     isOnline: false,
-    phone: "+33 6 90 12 34 56",
-    address: "45 rue Voltaire",
-    city: "Strasbourg",
-    country: "France",
+    phone: '+33 6 90 12 34 56',
+    address: '45 rue Voltaire',
+    city: 'Strasbourg',
+    country: 'France',
     totalOrders: 18,
     totalSpent: 14320,
   },
   {
     id: 10,
-    name: "Pierre Garnier",
-    email: "pierre.garnier@logistique.fr",
-    role: "Logistics",
-    status: "Actif",
-    registrationDate: "03/12/2025",
-    lastLogin: "09/01/2026 19:12",
-    avatar: "PG",
+    name: 'Pierre Garnier',
+    email: 'pierre.garnier@logistique.fr',
+    role: 'Logistics',
+    status: 'Actif',
+    registrationDate: '03/12/2025',
+    lastLogin: '09/01/2026 19:12',
+    avatar: 'PG',
     isOnline: false,
-    phone: "+33 6 01 23 45 67",
-    address: "Parc logistique Sud",
-    city: "Montpellier",
-    country: "France",
+    phone: '+33 6 01 23 45 67',
+    address: 'Parc logistique Sud',
+    city: 'Montpellier',
+    country: 'France',
     totalOrders: 89,
     totalSpent: 0,
   },
@@ -233,28 +233,44 @@ const mockUsers: User[] = [
 
 const mockActivityLogs: Record<number, ActivityLog[]> = {
   1: [
-    { type: "login", description: "Connexion depuis Paris, France", timestamp: "10/01/2026 14:32" },
-    { type: "role_change", description: "Rôle modifié en Admin", timestamp: "12/08/2025 10:00" },
-    { type: "registration", description: "Inscription à la plateforme", timestamp: "12/08/2025 09:45" },
+    { type: 'login', description: 'Connexion depuis Paris, France', timestamp: '10/01/2026 14:32' },
+    { type: 'role_change', description: 'Rôle modifié en Admin', timestamp: '12/08/2025 10:00' },
+    {
+      type: 'registration',
+      description: 'Inscription à la plateforme',
+      timestamp: '12/08/2025 09:45',
+    },
   ],
   2: [
-    { type: "login", description: "Connexion depuis Bordeaux, France", timestamp: "09/01/2026 09:15" },
-    { type: "order", description: "Commande #2301 livrée", timestamp: "08/01/2026 14:20" },
-    { type: "order", description: "Nouvelle commande #2301 créée", timestamp: "05/01/2026 11:30" },
-    { type: "registration", description: "Inscription à la plateforme", timestamp: "15/09/2025 16:22" },
+    {
+      type: 'login',
+      description: 'Connexion depuis Bordeaux, France',
+      timestamp: '09/01/2026 09:15',
+    },
+    { type: 'order', description: 'Commande #2301 livrée', timestamp: '08/01/2026 14:20' },
+    { type: 'order', description: 'Nouvelle commande #2301 créée', timestamp: '05/01/2026 11:30' },
+    {
+      type: 'registration',
+      description: 'Inscription à la plateforme',
+      timestamp: '15/09/2025 16:22',
+    },
   ],
   3: [
-    { type: "login", description: "Connexion depuis Paris, France", timestamp: "10/01/2026 11:28" },
-    { type: "order", description: "Commande #1892 en cours", timestamp: "09/01/2026 15:40" },
-    { type: "order", description: "Commande #1756 livrée", timestamp: "03/01/2026 10:15" },
-    { type: "registration", description: "Inscription à la plateforme", timestamp: "02/10/2025 14:05" },
+    { type: 'login', description: 'Connexion depuis Paris, France', timestamp: '10/01/2026 11:28' },
+    { type: 'order', description: 'Commande #1892 en cours', timestamp: '09/01/2026 15:40' },
+    { type: 'order', description: 'Commande #1756 livrée', timestamp: '03/01/2026 10:15' },
+    {
+      type: 'registration',
+      description: 'Inscription à la plateforme',
+      timestamp: '02/10/2025 14:05',
+    },
   ],
 };
 
 export function UserManagement() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [roleFilter, setRoleFilter] = useState<string>("all");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [roleFilter, setRoleFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedUsers, setSelectedUsers] = useState<Set<number>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
@@ -268,7 +284,7 @@ export function UserManagement() {
   const [showReportModal, setShowReportModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [bulkAction, setBulkAction] = useState<string>("");
+  const [bulkAction, setBulkAction] = useState<string>('');
   const [importPreview, setImportPreview] = useState<any[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -279,8 +295,8 @@ export function UserManagement() {
       const matchesSearch =
         user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.email.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesRole = roleFilter === "all" || user.role === roleFilter;
-      const matchesStatus = statusFilter === "all" || user.status === statusFilter;
+      const matchesRole = roleFilter === 'all' || user.role === roleFilter;
+      const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
       return matchesSearch && matchesRole && matchesStatus;
     });
   }, [searchQuery, roleFilter, statusFilter]);
@@ -312,27 +328,27 @@ export function UserManagement() {
   };
 
   const handleResetFilters = () => {
-    setSearchQuery("");
-    setRoleFilter("all");
-    setStatusFilter("all");
-    toast.success("Filtres réinitialisés");
+    setSearchQuery('');
+    setRoleFilter('all');
+    setStatusFilter('all');
+    toast.success('Filtres réinitialisés');
   };
 
   const handleExportCSV = () => {
     const headers = [
-      "ID",
-      "Nom",
-      "Email",
-      "Rôle",
-      "Statut",
+      'ID',
+      'Nom',
+      'Email',
+      'Rôle',
+      'Statut',
       "Date d'inscription",
-      "Dernière connexion",
-      "Téléphone",
-      "Adresse",
-      "Ville",
-      "Pays",
-      "Commandes totales",
-      "Dépenses totales (€)",
+      'Dernière connexion',
+      'Téléphone',
+      'Adresse',
+      'Ville',
+      'Pays',
+      'Commandes totales',
+      'Dépenses totales (€)',
     ];
 
     const csvRows = filteredUsers.map((user) => [
@@ -343,17 +359,17 @@ export function UserManagement() {
       user.status,
       user.registrationDate,
       user.lastLogin,
-      user.phone || "",
-      user.address || "",
-      user.city || "",
-      user.country || "",
+      user.phone || '',
+      user.address || '',
+      user.city || '',
+      user.country || '',
       user.totalOrders || 0,
       user.totalSpent || 0,
     ]);
 
     const csvContent = toCsv(headers, csvRows);
-    const filename = `AgroLogistic_Utilisateurs_${new Date().toISOString().split("T")[0]}.csv`;
-    downloadTextFile(filename, csvContent, "text/csv;charset=utf-8;");
+    const filename = `AgroLogistic_Utilisateurs_${new Date().toISOString().split('T')[0]}.csv`;
+    downloadTextFile(filename, csvContent, 'text/csv;charset=utf-8;');
 
     toast.success(`Export CSV réussi : ${filteredUsers.length} utilisateur(s) exporté(s)`);
   };
@@ -364,13 +380,13 @@ export function UserManagement() {
 
     reader.onload = (e) => {
       try {
-        const data = (e.target?.result ?? "").toString();
+        const data = (e.target?.result ?? '').toString();
         const jsonData = parseCsvToObjects(data);
 
         setImportPreview(jsonData.slice(0, 10)); // Aperçu des 10 premières lignes
         toast.success(`${jsonData.length} utilisateur(s) détecté(s) dans le fichier`);
       } catch (error) {
-        toast.error("Erreur lors de la lecture du fichier");
+        toast.error('Erreur lors de la lecture du fichier');
       }
     };
 
@@ -406,47 +422,47 @@ export function UserManagement() {
   const handleGenerateReport = (reportType: string, format: string) => {
     const reportData = {
       title: `Rapport ${reportType} - AgroLogistic`,
-      generatedAt: new Date().toLocaleString("fr-FR"),
+      generatedAt: new Date().toLocaleString('fr-FR'),
       totalUsers: mockUsers.length,
-      activeUsers: mockUsers.filter((u) => u.status === "Actif").length,
-      inactiveUsers: mockUsers.filter((u) => u.status === "Inactif").length,
-      unverifiedUsers: mockUsers.filter((u) => u.status === "Non vérifié").length,
+      activeUsers: mockUsers.filter((u) => u.status === 'Actif').length,
+      inactiveUsers: mockUsers.filter((u) => u.status === 'Inactif').length,
+      unverifiedUsers: mockUsers.filter((u) => u.status === 'Non vérifié').length,
       usersByRole: {
-        Admin: mockUsers.filter((u) => u.role === "Admin").length,
-        Farmer: mockUsers.filter((u) => u.role === "Farmer").length,
-        Customer: mockUsers.filter((u) => u.role === "Customer").length,
-        Logistics: mockUsers.filter((u) => u.role === "Logistics").length,
+        Admin: mockUsers.filter((u) => u.role === 'Admin').length,
+        Farmer: mockUsers.filter((u) => u.role === 'Farmer').length,
+        Customer: mockUsers.filter((u) => u.role === 'Customer').length,
+        Logistics: mockUsers.filter((u) => u.role === 'Logistics').length,
       },
     };
 
-    if (format === "excel" || format === "csv") {
+    if (format === 'excel' || format === 'csv') {
       // Export CSV (remplace Excel pour réduire la surface d'attaque)
       const summaryRows: Array<Array<string | number | null>> = [
-        ["Rapport d'activité utilisateurs", ""],
-        ["Date de génération", reportData.generatedAt],
-        ["", ""],
-        ["Total utilisateurs", reportData.totalUsers],
-        ["Utilisateurs actifs", reportData.activeUsers],
-        ["Utilisateurs inactifs", reportData.inactiveUsers],
-        ["Utilisateurs non vérifiés", reportData.unverifiedUsers],
-        ["", ""],
-        ["Répartition par rôle", ""],
-        ["Admin", reportData.usersByRole.Admin],
-        ["Farmer", reportData.usersByRole.Farmer],
-        ["Customer", reportData.usersByRole.Customer],
-        ["Logistics", reportData.usersByRole.Logistics],
+        ["Rapport d'activité utilisateurs", ''],
+        ['Date de génération', reportData.generatedAt],
+        ['', ''],
+        ['Total utilisateurs', reportData.totalUsers],
+        ['Utilisateurs actifs', reportData.activeUsers],
+        ['Utilisateurs inactifs', reportData.inactiveUsers],
+        ['Utilisateurs non vérifiés', reportData.unverifiedUsers],
+        ['', ''],
+        ['Répartition par rôle', ''],
+        ['Admin', reportData.usersByRole.Admin],
+        ['Farmer', reportData.usersByRole.Farmer],
+        ['Customer', reportData.usersByRole.Customer],
+        ['Logistics', reportData.usersByRole.Logistics],
       ];
 
       const detailsHeaders = [
-        "ID",
-        "Nom",
-        "Email",
-        "Rôle",
-        "Statut",
+        'ID',
+        'Nom',
+        'Email',
+        'Rôle',
+        'Statut',
         "Date d'inscription",
-        "Dernière connexion",
-        "Commandes",
-        "Dépenses (€)",
+        'Dernière connexion',
+        'Commandes',
+        'Dépenses (€)',
       ];
       const detailsRows = mockUsers.map((user) => [
         user.id,
@@ -460,18 +476,18 @@ export function UserManagement() {
         user.totalSpent || 0,
       ]);
 
-      const summaryCsv = toCsv(["Champ", "Valeur"], summaryRows);
+      const summaryCsv = toCsv(['Champ', 'Valeur'], summaryRows);
       const detailsCsv = toCsv(detailsHeaders, detailsRows);
       const combined = `${summaryCsv}\n\n${detailsCsv}\n`;
 
-      const filename = `Rapport_AgroLogistic_${reportType}_${new Date()
-        .toISOString()
-        .split("T")[0]}.csv`;
-      downloadTextFile(filename, combined, "text/csv;charset=utf-8;");
+      const filename = `Rapport_AgroLogistic_${reportType}_${
+        new Date().toISOString().split('T')[0]
+      }.csv`;
+      downloadTextFile(filename, combined, 'text/csv;charset=utf-8;');
       toast.success(`Rapport CSV "${reportType}" généré avec succès`);
-    } else if (format === "pdf") {
+    } else if (format === 'pdf') {
       // Simuler la génération d'un PDF
-      toast.info("Génération du rapport PDF en cours...");
+      toast.info('Génération du rapport PDF en cours...');
       setTimeout(() => {
         toast.success(`Rapport PDF "${reportType}" généré avec succès`);
       }, 1500);
@@ -505,7 +521,7 @@ export function UserManagement() {
     toast.success(
       editingUser
         ? `Utilisateur ${editingUser.name} modifié avec succès`
-        : "Nouvel utilisateur créé avec succès"
+        : 'Nouvel utilisateur créé avec succès'
     );
     setShowAddUserModal(false);
     setShowEditUserModal(false);
@@ -514,29 +530,29 @@ export function UserManagement() {
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
-      case "Admin":
-        return "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400";
-      case "Farmer":
-        return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400";
-      case "Customer":
-        return "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400";
-      case "Logistics":
-        return "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400";
+      case 'Admin':
+        return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
+      case 'Farmer':
+        return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
+      case 'Customer':
+        return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400';
+      case 'Logistics':
+        return 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400';
       default:
-        return "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400";
+        return 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400';
     }
   };
 
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
-      case "Actif":
-        return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400";
-      case "Inactif":
-        return "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400";
-      case "Non vérifié":
-        return "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400";
+      case 'Actif':
+        return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
+      case 'Inactif':
+        return 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400';
+      case 'Non vérifié':
+        return 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400';
       default:
-        return "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400";
+        return 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400';
     }
   };
 
@@ -703,19 +719,19 @@ export function UserManagement() {
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => handleBulkAction("Désactiver")}
+                onClick={() => handleBulkAction('Désactiver')}
                 className="px-3 py-1.5 text-sm border border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-400 rounded hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
               >
                 Désactiver la sélection
               </button>
               <button
-                onClick={() => handleBulkAction("Attribuer un rôle")}
+                onClick={() => handleBulkAction('Attribuer un rôle')}
                 className="px-3 py-1.5 text-sm border border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-400 rounded hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
               >
                 Attribuer un rôle
               </button>
               <button
-                onClick={() => handleBulkAction("Exporter")}
+                onClick={() => handleBulkAction('Exporter')}
                 className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
               >
                 Exporter la sélection
@@ -813,10 +829,7 @@ export function UserManagement() {
                 </tr>
               ) : (
                 paginatedUsers.map((user) => (
-                  <tr
-                    key={user.id}
-                    className="hover:bg-muted/30 transition-colors"
-                  >
+                  <tr key={user.id} className="hover:bg-muted/30 transition-colors">
                     <td className="px-4 py-4">
                       <input
                         type="checkbox"
@@ -851,9 +864,7 @@ export function UserManagement() {
                       </span>
                     </td>
                     <td className="px-4 py-4 text-sm">{user.registrationDate}</td>
-                    <td className="px-4 py-4 text-sm text-muted-foreground">
-                      {user.lastLogin}
-                    </td>
+                    <td className="px-4 py-4 text-sm text-muted-foreground">{user.lastLogin}</td>
                     <td className="px-4 py-4">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeColor(
@@ -886,16 +897,20 @@ export function UserManagement() {
                           <div className="absolute right-0 top-full mt-1 w-48 bg-card border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
                             <button
                               onClick={() =>
-                                toast.info(`${user.name} ${user.status === "Actif" ? "désactivé" : "activé"}`)
+                                toast.info(
+                                  `${user.name} ${user.status === 'Actif' ? 'désactivé' : 'activé'}`
+                                )
                               }
                               className="w-full px-4 py-2 text-left text-sm hover:bg-muted flex items-center gap-2 rounded-t-lg"
                             >
                               <Power className="h-4 w-4" />
-                              {user.status === "Actif" ? "Désactiver" : "Activer"}
+                              {user.status === 'Actif' ? 'Désactiver' : 'Activer'}
                             </button>
-                            {user.status === "Non vérifié" && (
+                            {user.status === 'Non vérifié' && (
                               <button
-                                onClick={() => toast.success(`Email de vérification envoyé à ${user.email}`)}
+                                onClick={() =>
+                                  toast.success(`Email de vérification envoyé à ${user.email}`)
+                                }
                                 className="w-full px-4 py-2 text-left text-sm hover:bg-muted flex items-center gap-2"
                               >
                                 <Mail className="h-4 w-4" />
@@ -926,7 +941,7 @@ export function UserManagement() {
             <div className="flex items-center gap-4">
               <span className="text-sm text-muted-foreground">
                 {(currentPage - 1) * itemsPerPage + 1}-
-                {Math.min(currentPage * itemsPerPage, filteredUsers.length)} sur{" "}
+                {Math.min(currentPage * itemsPerPage, filteredUsers.length)} sur{' '}
                 {filteredUsers.length} utilisateurs
               </span>
               <select
@@ -968,9 +983,7 @@ export function UserManagement() {
                       key={pageNum}
                       onClick={() => setCurrentPage(pageNum)}
                       className={`px-3 py-1.5 rounded-lg transition-colors ${
-                        currentPage === pageNum
-                          ? "bg-[#2563eb] text-white"
-                          : "hover:bg-accent"
+                        currentPage === pageNum ? 'bg-[#2563eb] text-white' : 'hover:bg-accent'
                       }`}
                     >
                       {pageNum}
@@ -1007,27 +1020,23 @@ export function UserManagement() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            
+
             <div className="p-6 space-y-6">
               {/* Upload Area */}
               {importPreview.length === 0 ? (
                 <div
                   className={`border-2 border-dashed rounded-lg p-12 text-center transition-colors ${
                     isDragging
-                      ? "border-[#2563eb] bg-blue-50 dark:bg-blue-900/20"
-                      : "border-gray-300 dark:border-gray-700"
+                      ? 'border-[#2563eb] bg-blue-50 dark:bg-blue-900/20'
+                      : 'border-gray-300 dark:border-gray-700'
                   }`}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
                 >
                   <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">
-                    Glissez-déposez un fichier ici
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Format accepté : CSV
-                  </p>
+                  <h3 className="text-lg font-semibold mb-2">Glissez-déposez un fichier ici</h3>
+                  <p className="text-sm text-muted-foreground mb-4">Format accepté : CSV</p>
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -1049,9 +1058,7 @@ export function UserManagement() {
                 // Preview
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-semibold">
-                      Aperçu ({importPreview.length} utilisateurs)
-                    </h3>
+                    <h3 className="font-semibold">Aperçu ({importPreview.length} utilisateurs)</h3>
                     <button
                       onClick={() => setImportPreview([])}
                       className="text-sm text-muted-foreground hover:text-foreground"
@@ -1077,7 +1084,7 @@ export function UserManagement() {
                             <tr key={idx} className="hover:bg-muted/30">
                               {Object.values(row).map((value: any, vidx) => (
                                 <td key={vidx} className="px-4 py-2">
-                                  {value?.toString() || "-"}
+                                  {value?.toString() || '-'}
                                 </td>
                               ))}
                             </tr>
@@ -1089,8 +1096,8 @@ export function UserManagement() {
 
                   <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
                     <p className="text-sm text-blue-800 dark:text-blue-200">
-                      <strong>Note :</strong> Vérifiez que les données sont correctes avant d'importer.
-                      Les champs requis sont : Nom, Email, Rôle.
+                      <strong>Note :</strong> Vérifiez que les données sont correctes avant
+                      d'importer. Les champs requis sont : Nom, Email, Rôle.
                     </p>
                   </div>
                 </div>
@@ -1105,24 +1112,24 @@ export function UserManagement() {
                   onClick={() => {
                     const templateData = [
                       {
-                        Nom: "Jean Dupont",
-                        Email: "jean.dupont@example.com",
-                        Rôle: "Customer",
-                        Téléphone: "+33 6 12 34 56 78",
-                        Adresse: "123 rue Example",
-                        Ville: "Paris",
-                        Pays: "France",
+                        Nom: 'Jean Dupont',
+                        Email: 'jean.dupont@example.com',
+                        Rôle: 'Customer',
+                        Téléphone: '+33 6 12 34 56 78',
+                        Adresse: '123 rue Example',
+                        Ville: 'Paris',
+                        Pays: 'France',
                       },
                     ];
                     const headers = Object.keys(templateData[0]);
                     const rows = templateData.map((row) => headers.map((h) => (row as any)[h]));
                     const csv = toCsv(headers, rows);
                     downloadTextFile(
-                      "AgroLogistic_Template_Import.csv",
+                      'AgroLogistic_Template_Import.csv',
                       csv,
-                      "text/csv;charset=utf-8;"
+                      'text/csv;charset=utf-8;'
                     );
-                    toast.success("Template CSV téléchargé");
+                    toast.success('Template CSV téléchargé');
                   }}
                   className="text-sm text-[#2563eb] hover:underline flex items-center gap-1"
                 >
@@ -1168,7 +1175,7 @@ export function UserManagement() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            
+
             <div className="p-6 space-y-6">
               <div>
                 <label className="block text-sm font-medium mb-2">Type de rapport</label>
@@ -1184,7 +1191,9 @@ export function UserManagement() {
                 <label className="block text-sm font-medium mb-2">Période</label>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-muted-foreground mb-1">Date de début</label>
+                    <label className="block text-xs text-muted-foreground mb-1">
+                      Date de début
+                    </label>
                     <input
                       type="date"
                       className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
@@ -1206,20 +1215,24 @@ export function UserManagement() {
                 <label className="block text-sm font-medium mb-2">Format d'export</label>
                 <div className="grid grid-cols-2 gap-4">
                   <button
-                    onClick={() => handleGenerateReport("activite", "excel")}
+                    onClick={() => handleGenerateReport('activite', 'excel')}
                     className="p-4 border-2 rounded-lg hover:border-[#2563eb] hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors flex flex-col items-center gap-2"
                   >
                     <FileSpreadsheet className="h-8 w-8 text-green-600" />
                     <span className="font-medium">Excel (.xlsx)</span>
-                    <span className="text-xs text-muted-foreground">Avec graphiques et mise en forme</span>
+                    <span className="text-xs text-muted-foreground">
+                      Avec graphiques et mise en forme
+                    </span>
                   </button>
                   <button
-                    onClick={() => handleGenerateReport("activite", "pdf")}
+                    onClick={() => handleGenerateReport('activite', 'pdf')}
                     className="p-4 border-2 rounded-lg hover:border-[#2563eb] hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors flex flex-col items-center gap-2"
                   >
                     <FileText className="h-8 w-8 text-red-600" />
                     <span className="font-medium">PDF</span>
-                    <span className="text-xs text-muted-foreground">Document formaté et imprimable</span>
+                    <span className="text-xs text-muted-foreground">
+                      Document formaté et imprimable
+                    </span>
                   </button>
                 </div>
               </div>
@@ -1265,7 +1278,7 @@ export function UserManagement() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            
+
             <div className="p-6">
               <div className="flex gap-1 border-b mb-6">
                 <button className="px-4 py-2 border-b-2 border-[#2563eb] text-[#2563eb] font-medium">
@@ -1379,7 +1392,7 @@ export function UserManagement() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            
+
             <div className="p-6">
               <div className="flex gap-1 border-b mb-6">
                 <button className="px-4 py-2 border-b-2 border-[#2563eb] text-[#2563eb] font-medium">
@@ -1529,10 +1542,18 @@ export function UserManagement() {
                 <h3 className="text-xl font-bold mb-1">{selectedUser.name}</h3>
                 <p className="text-muted-foreground text-sm mb-3">{selectedUser.email}</p>
                 <div className="flex gap-2">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(selectedUser.role)}`}>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(
+                      selectedUser.role
+                    )}`}
+                  >
                     {selectedUser.role}
                   </span>
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(selectedUser.status)}`}>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(
+                      selectedUser.status
+                    )}`}
+                  >
                     {selectedUser.status}
                   </span>
                 </div>
@@ -1576,7 +1597,9 @@ export function UserManagement() {
                   <div className="p-3 bg-muted rounded-lg">
                     <p className="text-xs text-muted-foreground mb-1">Dépenses</p>
                     <p className="text-xl font-bold">
-                      {selectedUser.totalSpent ? `${(selectedUser.totalSpent / 1000).toFixed(1)}k€` : "0€"}
+                      {selectedUser.totalSpent
+                        ? `${(selectedUser.totalSpent / 1000).toFixed(1)}k€`
+                        : '0€'}
                     </p>
                   </div>
                 </div>
@@ -1591,16 +1614,29 @@ export function UserManagement() {
                   {(mockActivityLogs[selectedUser.id] || []).map((log, idx) => (
                     <div key={idx} className="flex gap-3">
                       <div className="flex-shrink-0">
-                        <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                          log.type === "login" ? "bg-blue-100 dark:bg-blue-900/30" :
-                          log.type === "order" ? "bg-green-100 dark:bg-green-900/30" :
-                          log.type === "role_change" ? "bg-purple-100 dark:bg-purple-900/30" :
-                          "bg-gray-100 dark:bg-gray-900/30"
-                        }`}>
-                          {log.type === "login" && <LogIn className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
-                          {log.type === "order" && <ShoppingCart className="h-4 w-4 text-green-600 dark:text-green-400" />}
-                          {log.type === "role_change" && <UserCog className="h-4 w-4 text-purple-600 dark:text-purple-400" />}
-                          {log.type === "registration" && <UserPlus className="h-4 w-4 text-gray-600 dark:text-gray-400" />}
+                        <div
+                          className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                            log.type === 'login'
+                              ? 'bg-blue-100 dark:bg-blue-900/30'
+                              : log.type === 'order'
+                              ? 'bg-green-100 dark:bg-green-900/30'
+                              : log.type === 'role_change'
+                              ? 'bg-purple-100 dark:bg-purple-900/30'
+                              : 'bg-gray-100 dark:bg-gray-900/30'
+                          }`}
+                        >
+                          {log.type === 'login' && (
+                            <LogIn className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                          )}
+                          {log.type === 'order' && (
+                            <ShoppingCart className="h-4 w-4 text-green-600 dark:text-green-400" />
+                          )}
+                          {log.type === 'role_change' && (
+                            <UserCog className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                          )}
+                          {log.type === 'registration' && (
+                            <UserPlus className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                          )}
                         </div>
                       </div>
                       <div className="flex-1">
@@ -1628,7 +1664,9 @@ export function UserManagement() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">ID Utilisateur</span>
-                    <span className="font-medium font-mono">#{selectedUser.id.toString().padStart(4, "0")}</span>
+                    <span className="font-medium font-mono">
+                      #{selectedUser.id.toString().padStart(4, '0')}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1650,27 +1688,63 @@ export function UserManagement() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            
+
             <div className="p-6 space-y-6">
               {[
-                { name: "Admin", color: "blue", permissions: ["Tous les accès", "Gestion utilisateurs", "Configuration système", "Rapports avancés"] },
-                { name: "Farmer", color: "green", permissions: ["Gérer les produits", "Voir les commandes", "Messagerie", "Statistiques de vente"] },
-                { name: "Customer", color: "purple", permissions: ["Passer des commandes", "Suivre les livraisons", "Messagerie", "Historique d'achat"] },
-                { name: "Logistics", color: "orange", permissions: ["Gérer les livraisons", "Voir les itinéraires", "Messagerie", "Rapports logistiques"] },
+                {
+                  name: 'Admin',
+                  color: 'blue',
+                  permissions: [
+                    'Tous les accès',
+                    'Gestion utilisateurs',
+                    'Configuration système',
+                    'Rapports avancés',
+                  ],
+                },
+                {
+                  name: 'Farmer',
+                  color: 'green',
+                  permissions: [
+                    'Gérer les produits',
+                    'Voir les commandes',
+                    'Messagerie',
+                    'Statistiques de vente',
+                  ],
+                },
+                {
+                  name: 'Customer',
+                  color: 'purple',
+                  permissions: [
+                    'Passer des commandes',
+                    'Suivre les livraisons',
+                    'Messagerie',
+                    "Historique d'achat",
+                  ],
+                },
+                {
+                  name: 'Logistics',
+                  color: 'orange',
+                  permissions: [
+                    'Gérer les livraisons',
+                    'Voir les itinéraires',
+                    'Messagerie',
+                    'Rapports logistiques',
+                  ],
+                },
               ].map((role) => (
                 <div key={role.name} className="border rounded-lg p-4">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium bg-${role.color}-100 text-${role.color}-700 dark:bg-${role.color}-900/30 dark:text-${role.color}-400`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium bg-${role.color}-100 text-${role.color}-700 dark:bg-${role.color}-900/30 dark:text-${role.color}-400`}
+                      >
                         {role.name}
                       </span>
                       <span className="text-sm text-muted-foreground">
-                        {mockUsers.filter(u => u.role === role.name).length} utilisateurs
+                        {mockUsers.filter((u) => u.role === role.name).length} utilisateurs
                       </span>
                     </div>
-                    <button className="text-sm text-[#2563eb] hover:underline">
-                      Éditer
-                    </button>
+                    <button className="text-sm text-[#2563eb] hover:underline">Éditer</button>
                   </div>
                   <div className="space-y-2">
                     <p className="text-sm font-medium">Permissions :</p>
@@ -1687,7 +1761,7 @@ export function UserManagement() {
               ))}
 
               <button
-                onClick={() => toast.success("Fonctionnalité de création de rôle à venir")}
+                onClick={() => toast.success('Fonctionnalité de création de rôle à venir')}
                 className="w-full py-3 border-2 border-dashed rounded-lg hover:border-[#2563eb] hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-colors flex items-center justify-center gap-2 text-muted-foreground hover:text-[#2563eb]"
               >
                 <Plus className="h-5 w-5" />
@@ -1704,7 +1778,7 @@ export function UserManagement() {
               </button>
               <button
                 onClick={() => {
-                  toast.success("Permissions enregistrées");
+                  toast.success('Permissions enregistrées');
                   setShowRoleManagementModal(false);
                 }}
                 className="px-4 py-2 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors"
@@ -1723,14 +1797,14 @@ export function UserManagement() {
             <div className="px-6 py-4 border-b">
               <h2 className="text-xl font-bold">Confirmer l'action</h2>
             </div>
-            
+
             <div className="p-6">
               <p className="text-muted-foreground">
-                Voulez-vous vraiment appliquer l'action <strong>"{bulkAction}"</strong> à{" "}
+                Voulez-vous vraiment appliquer l'action <strong>"{bulkAction}"</strong> à{' '}
                 <strong>{selectedUsers.size}</strong> utilisateur(s) sélectionné(s) ?
               </p>
-              
-              {bulkAction === "Attribuer un rôle" && (
+
+              {bulkAction === 'Attribuer un rôle' && (
                 <div className="mt-4">
                   <label className="block text-sm font-medium mb-2">Sélectionner un rôle</label>
                   <select className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background">

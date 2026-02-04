@@ -1,8 +1,13 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { rentalEquipmentData, type RentalEquipment, type EquipmentCategory, type EquipmentType } from '@/data/rental-equipment'
-import { EquipmentFormModal } from '@/components/admin/EquipmentFormModal'
+import { useState } from 'react';
+import {
+  rentalEquipmentData,
+  type RentalEquipment,
+  type EquipmentCategory,
+  type EquipmentType,
+} from '@/data/rental-equipment';
+import { EquipmentFormModal } from '@/components/admin/EquipmentFormModal';
 import {
   Package,
   Plus,
@@ -15,45 +20,47 @@ import {
   ShoppingCart,
   Wrench,
   Tag,
-  Eye
-} from 'lucide-react'
+  Eye,
+} from 'lucide-react';
 
 export default function LoueurManagerPage() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState<EquipmentCategory | 'ALL'>('ALL')
-  const [selectedType, setSelectedType] = useState<EquipmentType | 'ALL'>('ALL')
-  const [showEditModal, setShowEditModal] = useState(false)
-  const [currentEquipment, setCurrentEquipment] = useState<RentalEquipment | null>(null)
-  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<EquipmentCategory | 'ALL'>('ALL');
+  const [selectedType, setSelectedType] = useState<EquipmentType | 'ALL'>('ALL');
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [currentEquipment, setCurrentEquipment] = useState<RentalEquipment | null>(null);
+
   // Filter equipment
-  let filteredEquipment = rentalEquipmentData
-  
+  let filteredEquipment = rentalEquipmentData;
+
   if (selectedCategory !== 'ALL') {
-    filteredEquipment = filteredEquipment.filter(eq => eq.category === selectedCategory)
+    filteredEquipment = filteredEquipment.filter((eq) => eq.category === selectedCategory);
   }
-  
+
   if (selectedType !== 'ALL') {
-    filteredEquipment = filteredEquipment.filter(eq => 
-      eq.type === selectedType || eq.type === 'LOCATION_VENTE'
-    )
+    filteredEquipment = filteredEquipment.filter(
+      (eq) => eq.type === selectedType || eq.type === 'LOCATION_VENTE'
+    );
   }
-  
+
   if (searchQuery.trim()) {
-    const query = searchQuery.toLowerCase()
-    filteredEquipment = filteredEquipment.filter(eq =>
-      eq.name.toLowerCase().includes(query) ||
-      eq.specs.brand?.toLowerCase().includes(query)
-    )
+    const query = searchQuery.toLowerCase();
+    filteredEquipment = filteredEquipment.filter(
+      (eq) => eq.name.toLowerCase().includes(query) || eq.specs.brand?.toLowerCase().includes(query)
+    );
   }
-  
+
   // Stats
   const stats = {
     total: rentalEquipmentData.length,
-    location: rentalEquipmentData.filter(eq => eq.type === 'LOCATION' || eq.type === 'LOCATION_VENTE').length,
-    vente: rentalEquipmentData.filter(eq => eq.type === 'VENTE' || eq.type === 'LOCATION_VENTE').length,
-    disponible: rentalEquipmentData.filter(eq => eq.availability === 'DISPONIBLE').length
-  }
-  
+    location: rentalEquipmentData.filter(
+      (eq) => eq.type === 'LOCATION' || eq.type === 'LOCATION_VENTE'
+    ).length,
+    vente: rentalEquipmentData.filter((eq) => eq.type === 'VENTE' || eq.type === 'LOCATION_VENTE')
+      .length,
+    disponible: rentalEquipmentData.filter((eq) => eq.availability === 'DISPONIBLE').length,
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 p-8">
       <div className="max-w-[1600px] mx-auto">
@@ -68,11 +75,11 @@ export default function LoueurManagerPage() {
                 Gérez vos équipements de location et de vente
               </p>
             </div>
-            
+
             <button
               onClick={() => {
-                setCurrentEquipment(null)
-                setShowEditModal(true)
+                setCurrentEquipment(null);
+                setShowEditModal(true);
               }}
               className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 text-white font-black uppercase flex items-center gap-2 hover:shadow-2xl transition-all"
             >
@@ -80,7 +87,7 @@ export default function LoueurManagerPage() {
               Nouvel Équipement
             </button>
           </div>
-          
+
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="bg-white rounded-2xl p-6 border-2 border-slate-200 shadow-lg">
@@ -88,19 +95,19 @@ export default function LoueurManagerPage() {
               <p className="text-3xl font-black text-slate-900">{stats.total}</p>
               <p className="text-sm text-slate-600 font-bold uppercase">Total Équipements</p>
             </div>
-            
+
             <div className="bg-white rounded-2xl p-6 border-2 border-emerald-200 shadow-lg">
               <Wrench className="h-8 w-8 text-emerald-600 mb-3" />
               <p className="text-3xl font-black text-slate-900">{stats.location}</p>
               <p className="text-sm text-slate-600 font-bold uppercase">À Louer</p>
             </div>
-            
+
             <div className="bg-white rounded-2xl p-6 border-2 border-blue-200 shadow-lg">
               <ShoppingCart className="h-8 w-8 text-blue-600 mb-3" />
               <p className="text-3xl font-black text-slate-900">{stats.vente}</p>
               <p className="text-sm text-slate-600 font-bold uppercase">À Vendre</p>
             </div>
-            
+
             <div className="bg-white rounded-2xl p-6 border-2 border-green-200 shadow-lg">
               <TrendingUp className="h-8 w-8 text-green-600 mb-3" />
               <p className="text-3xl font-black text-slate-900">{stats.disponible}</p>
@@ -108,7 +115,7 @@ export default function LoueurManagerPage() {
             </div>
           </div>
         </div>
-        
+
         {/* Filters */}
         <div className="bg-white rounded-2xl p-6 border-2 border-slate-200 shadow-lg mb-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -124,7 +131,7 @@ export default function LoueurManagerPage() {
                 />
               </div>
             </div>
-            
+
             <div>
               <select
                 value={selectedCategory}
@@ -138,7 +145,7 @@ export default function LoueurManagerPage() {
                 <option value="MATERIAUX_CONSTRUCTION">Construction</option>
               </select>
             </div>
-            
+
             <div>
               <select
                 value={selectedType}
@@ -153,7 +160,7 @@ export default function LoueurManagerPage() {
             </div>
           </div>
         </div>
-        
+
         {/* Equipment Table */}
         <div className="bg-white rounded-2xl border-2 border-slate-200 shadow-lg overflow-hidden">
           <div className="overflow-x-auto">
@@ -165,7 +172,9 @@ export default function LoueurManagerPage() {
                   <th className="px-6 py-4 text-left font-black uppercase text-sm">Type</th>
                   <th className="px-6 py-4 text-left font-black uppercase text-sm">Prix/Tarif</th>
                   <th className="px-6 py-4 text-left font-black uppercase text-sm">Promo</th>
-                  <th className="px-6 py-4 text-left font-black uppercase text-sm">Disponibilité</th>
+                  <th className="px-6 py-4 text-left font-black uppercase text-sm">
+                    Disponibilité
+                  </th>
                   <th className="px-6 py-4 text-center font-black uppercase text-sm">Actions</th>
                 </tr>
               </thead>
@@ -185,7 +194,7 @@ export default function LoueurManagerPage() {
                         </div>
                       </div>
                     </td>
-                    
+
                     <td className="px-6 py-4">
                       <span className="px-3 py-1 rounded-lg bg-blue-100 text-blue-700 text-xs font-bold">
                         {equipment.category === 'TRACTEURS_ENGINS' && 'Tracteurs'}
@@ -194,7 +203,7 @@ export default function LoueurManagerPage() {
                         {equipment.category === 'MATERIAUX_CONSTRUCTION' && 'Construction'}
                       </span>
                     </td>
-                    
+
                     <td className="px-6 py-4">
                       <div className="flex flex-wrap gap-2">
                         {(equipment.type === 'LOCATION' || equipment.type === 'LOCATION_VENTE') && (
@@ -211,7 +220,7 @@ export default function LoueurManagerPage() {
                         )}
                       </div>
                     </td>
-                    
+
                     <td className="px-6 py-4">
                       <div className="font-bold text-sm">
                         {equipment.dailyRate && (
@@ -222,30 +231,31 @@ export default function LoueurManagerPage() {
                         )}
                       </div>
                     </td>
-                    
+
                     <td className="px-6 py-4">
                       {equipment.discount && equipment.discount > 0 ? (
                         <span className="px-3 py-1 rounded-lg bg-red-100 text-red-700 text-xs font-black flex items-center gap-1 w-fit">
-                          <Tag className="h-3 w-3" />
-                          -{equipment.discount}%
+                          <Tag className="h-3 w-3" />-{equipment.discount}%
                         </span>
                       ) : (
                         <span className="text-slate-400 text-sm">-</span>
                       )}
                     </td>
-                    
+
                     <td className="px-6 py-4">
-                      <span className={`
+                      <span
+                        className={`
                         px-3 py-1 rounded-lg text-xs font-black uppercase
                         ${equipment.availability === 'DISPONIBLE' ? 'bg-green-100 text-green-700' : ''}
                         ${equipment.availability === 'LOUE' ? 'bg-orange-100 text-orange-700' : ''}
                         ${equipment.availability === 'VENDU' ? 'bg-red-100 text-red-700' : ''}
                         ${equipment.availability === 'MAINTENANCE' ? 'bg-slate-100 text-slate-700' : ''}
-                      `}>
+                      `}
+                      >
                         {equipment.availability}
                       </span>
                     </td>
-                    
+
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-center gap-2">
                         <button
@@ -257,8 +267,8 @@ export default function LoueurManagerPage() {
                         </button>
                         <button
                           onClick={() => {
-                            setCurrentEquipment(equipment)
-                            setShowEditModal(true)
+                            setCurrentEquipment(equipment);
+                            setShowEditModal(true);
                           }}
                           className="p-2 rounded-lg bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition-colors"
                           title="Éditer"
@@ -267,9 +277,11 @@ export default function LoueurManagerPage() {
                         </button>
                         <button
                           onClick={() => {
-                            if (confirm(`Êtes-vous sûr de vouloir supprimer "${equipment.name}" ?`)) {
+                            if (
+                              confirm(`Êtes-vous sûr de vouloir supprimer "${equipment.name}" ?`)
+                            ) {
                               // TODO: Delete logic
-                              alert('Suppression à implémenter')
+                              alert('Suppression à implémenter');
                             }
                           }}
                           className="p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 transition-colors"
@@ -284,7 +296,7 @@ export default function LoueurManagerPage() {
               </tbody>
             </table>
           </div>
-          
+
           {filteredEquipment.length === 0 && (
             <div className="text-center py-16">
               <Package className="h-20 w-20 text-slate-300 mx-auto mb-4" />
@@ -293,25 +305,25 @@ export default function LoueurManagerPage() {
           )}
         </div>
       </div>
-      
+
       {/* Equipment Form Modal */}
       <EquipmentFormModal
         isOpen={showEditModal}
         onClose={() => {
-          setShowEditModal(false)
-          setCurrentEquipment(null)
+          setShowEditModal(false);
+          setCurrentEquipment(null);
         }}
         equipment={currentEquipment}
         onSave={(equipmentData) => {
           if (currentEquipment) {
-            console.log('Update equipment:', currentEquipment.id, equipmentData)
-            alert(`Équipement "${equipmentData.name}" mis à jour! (à implémenter avec backend)`)
+            console.log('Update equipment:', currentEquipment.id, equipmentData);
+            alert(`Équipement "${equipmentData.name}" mis à jour! (à implémenter avec backend)`);
           } else {
-            console.log('Create equipment:', equipmentData)
-            alert(`Équipement "${equipmentData.name}" créé! (à implémenter avec backend)`)
+            console.log('Create equipment:', equipmentData);
+            alert(`Équipement "${equipmentData.name}" créé! (à implémenter avec backend)`);
           }
         }}
       />
     </div>
-  )
+  );
 }

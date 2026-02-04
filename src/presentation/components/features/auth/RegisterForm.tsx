@@ -3,7 +3,13 @@ import { Button } from '@components/ui/button';
 import { Input } from '@components/ui/input';
 import { Label } from '@components/ui/label';
 import { Checkbox } from '@components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@components/ui/card';
 import { Progress } from '@components/ui/progress';
 import { UserRole } from '@domain/enums/user-role.enum';
@@ -60,7 +66,7 @@ export function RegisterForm({ onSuccess, onLogin }: RegisterFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (isLastStep) {
       try {
         await register();
@@ -80,7 +86,7 @@ export function RegisterForm({ onSuccess, onLogin }: RegisterFormProps) {
       case 2:
         return 'Informations personnelles';
       case 3:
-        return 'Conditions d\'utilisation';
+        return "Conditions d'utilisation";
       default:
         return '';
     }
@@ -123,7 +129,7 @@ export function RegisterForm({ onSuccess, onLogin }: RegisterFormProps) {
             </span>
           </div>
           <Progress value={(currentStep / 3) * 100} className="h-2" />
-          
+
           {/* Step indicators */}
           <div className="flex justify-between mt-3">
             {[1, 2, 3].map((step) => (
@@ -196,7 +202,7 @@ export function RegisterForm({ onSuccess, onLogin }: RegisterFormProps) {
                 Retour
               </Button>
             )}
-            
+
             <Button
               type="submit"
               disabled={!canGoNext || isLoading}
@@ -244,7 +250,14 @@ interface Step1FormProps {
   isLoading: boolean;
 }
 
-function Step1Form({ data, onChange, passwordStrength, getStrengthLabel, getStrengthColor, isLoading }: Step1FormProps) {
+function Step1Form({
+  data,
+  onChange,
+  passwordStrength,
+  getStrengthLabel,
+  getStrengthColor,
+  isLoading,
+}: Step1FormProps) {
   return (
     <>
       <div className="space-y-2">
@@ -358,7 +371,7 @@ function Step2Form({ data, onChange, isLoading }: Step2FormProps) {
     [LogisticsSpecialization.BULK]: 'Transport en Vrac',
     [LogisticsSpecialization.PERISHABLES]: 'Denrées Périssables',
     [LogisticsSpecialization.HAZMAT]: 'Matières Dangereuses',
-    [LogisticsSpecialization.LIVESTOCK_TRANSPORT]: 'Transport d\'Animaux',
+    [LogisticsSpecialization.LIVESTOCK_TRANSPORT]: "Transport d'Animaux",
     [LogisticsSpecialization.MULTIMODAL]: 'Transport Multimodal',
     [LogisticsSpecialization.OTHER]: 'Autre',
   };
@@ -419,7 +432,9 @@ function Step2Form({ data, onChange, isLoading }: Step2FormProps) {
           <SelectContent>
             <SelectItem value={UserRole.FARMER}>{accountTypeLabels[UserRole.FARMER]}</SelectItem>
             <SelectItem value={UserRole.BUYER}>{accountTypeLabels[UserRole.BUYER]}</SelectItem>
-            <SelectItem value={UserRole.TRANSPORTER}>{accountTypeLabels[UserRole.TRANSPORTER]}</SelectItem>
+            <SelectItem value={UserRole.TRANSPORTER}>
+              {accountTypeLabels[UserRole.TRANSPORTER]}
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -454,7 +469,9 @@ function Step2Form({ data, onChange, isLoading }: Step2FormProps) {
             <Label htmlFor="farmerSpecialization">Spécialisation principale</Label>
             <Select
               value={data.farmerSpecialization}
-              onValueChange={(value) => onChange({ farmerSpecialization: value as FarmerSpecialization })}
+              onValueChange={(value) =>
+                onChange({ farmerSpecialization: value as FarmerSpecialization })
+              }
               disabled={isLoading}
             >
               <SelectTrigger id="farmerSpecialization">
@@ -492,7 +509,9 @@ function Step2Form({ data, onChange, isLoading }: Step2FormProps) {
           <Label htmlFor="logisticsSpecialization">Spécialisation logistique *</Label>
           <Select
             value={data.logisticsSpecialization}
-            onValueChange={(value) => onChange({ logisticsSpecialization: value as LogisticsSpecialization })}
+            onValueChange={(value) =>
+              onChange({ logisticsSpecialization: value as LogisticsSpecialization })
+            }
             disabled={isLoading}
           >
             <SelectTrigger id="logisticsSpecialization">
@@ -525,7 +544,7 @@ function Step3Form({ data, onChange, isLoading, onLogin }: Step3FormProps) {
     <>
       <div className="space-y-4 p-4 bg-muted/30 rounded-lg">
         <h3 className="font-semibold text-sm">Conditions d'utilisation et préférences</h3>
-        
+
         <div className="flex items-start space-x-3">
           <Checkbox
             id="terms"
@@ -572,8 +591,8 @@ function Step3Form({ data, onChange, isLoading, onLogin }: Step3FormProps) {
         <p className="text-sm text-blue-800 dark:text-blue-200">
           <strong>🎉 Bienvenue dans la communauté AgroLogistic !</strong>
           <br />
-          En créant votre compte, vous rejoignez plus de 5 000 professionnels qui révolutionnent
-          la chaîne d'approvisionnement agricole.
+          En créant votre compte, vous rejoignez plus de 5 000 professionnels qui révolutionnent la
+          chaîne d'approvisionnement agricole.
         </p>
       </div>
     </>

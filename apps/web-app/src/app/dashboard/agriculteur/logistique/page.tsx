@@ -1,7 +1,7 @@
-"use client"
+'use client';
 
-import { AgriLinkLogisticsModule } from "@/components/dashboard/AgriLinkLogisticsModule"
+import { AgriLinkLogisticsModule } from '@/components/dashboard/AgriLinkLogisticsModule';
 
 export default function LogisticsPage() {
-  return <AgriLinkLogisticsModule />
+  return <AgriLinkLogisticsModule />;
 }

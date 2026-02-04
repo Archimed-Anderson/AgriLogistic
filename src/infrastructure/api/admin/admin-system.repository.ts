@@ -51,9 +51,7 @@ export class AdminSystemRepository {
     if (params.limit) queryParams.append('limit', params.limit.toString());
     if (params.level) queryParams.append('level', params.level);
 
-    return apiClient.get<LogEntry[]>(
-      `${this.basePath}/logs?${queryParams.toString()}`
-    );
+    return apiClient.get<LogEntry[]>(`${this.basePath}/logs?${queryParams.toString()}`);
   }
 
   /**

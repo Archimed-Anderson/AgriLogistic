@@ -57,10 +57,10 @@ export default function SystemPage() {
       lastCheck: new Date(Date.now() - 30000),
     },
   ];
-  
-  const healthyCount = services.filter(s => s.status === 'healthy').length;
+
+  const healthyCount = services.filter((s) => s.status === 'healthy').length;
   const totalCount = services.length;
-  
+
   const getStatusConfig = (status: ServiceHealth['status']) => {
     switch (status) {
       case 'healthy':
@@ -89,38 +89,34 @@ export default function SystemPage() {
         };
     }
   };
-  
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Monitoring Système
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Monitoring Système</h1>
         <p className="text-gray-600 dark:text-gray-400 mt-1">
           {healthyCount}/{totalCount} services opérationnels
         </p>
       </div>
-      
+
       {/* Services Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {services.map((service) => {
           const config = getStatusConfig(service.status);
           const Icon = config.icon;
-          
+
           return (
             <Card key={service.name}>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-gray-900 dark:text-white">
-                    {service.name}
-                  </h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">{service.name}</h3>
                   <Badge variant={config.color}>
                     <Icon className="w-3 h-3 mr-1" />
                     {config.label}
                   </Badge>
                 </div>
-                
+
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600 dark:text-gray-400">Uptime</span>
@@ -146,7 +142,7 @@ export default function SystemPage() {
           );
         })}
       </div>
-      
+
       {/* System Metrics */}
       <Card>
         <CardHeader>
@@ -163,7 +159,7 @@ export default function SystemPage() {
                 <div className="bg-blue-600 h-2 rounded-full" style={{ width: '78%' }} />
               </div>
             </div>
-            
+
             <div>
               <div className="flex justify-between mb-2">
                 <span className="text-sm text-gray-600 dark:text-gray-400">Memory</span>
@@ -173,7 +169,7 @@ export default function SystemPage() {
                 <div className="bg-green-600 h-2 rounded-full" style={{ width: '62%' }} />
               </div>
             </div>
-            
+
             <div>
               <div className="flex justify-between mb-2">
                 <span className="text-sm text-gray-600 dark:text-gray-400">Disk</span>
@@ -183,7 +179,7 @@ export default function SystemPage() {
                 <div className="bg-yellow-600 h-2 rounded-full" style={{ width: '45%' }} />
               </div>
             </div>
-            
+
             <div>
               <div className="flex justify-between mb-2">
                 <span className="text-sm text-gray-600 dark:text-gray-400">Network</span>
@@ -196,7 +192,7 @@ export default function SystemPage() {
           </div>
         </CardContent>
       </Card>
-      
+
       {/* Recent Logs */}
       <Card>
         <CardHeader>
@@ -215,7 +211,7 @@ export default function SystemPage() {
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3 p-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/10">
               <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5" />
               <div className="flex-1">
@@ -227,7 +223,7 @@ export default function SystemPage() {
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/10">
               <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5" />
               <div className="flex-1">

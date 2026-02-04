@@ -31,10 +31,10 @@ interface DiagnosticInfo {
   responseTime?: number;
 }
 
-export function BackendStatusIndicator({ 
-  checkInterval = 30000, 
+export function BackendStatusIndicator({
+  checkInterval = 30000,
   showDetails = false,
-  compact = false 
+  compact = false,
 }: BackendStatusIndicatorProps) {
   const [diagnostic, setDiagnostic] = useState<DiagnosticInfo>({
     status: 'checking',
@@ -46,19 +46,17 @@ export function BackendStatusIndicator({
     if (manual) {
       setIsManualCheck(true);
     }
-    
-    setDiagnostic(prev => ({ ...prev, status: 'checking' }));
-    
+
+    setDiagnostic((prev) => ({ ...prev, status: 'checking' }));
+
     const startTime = Date.now();
-    
+
     try {
       const result = await apiClient.diagnoseConnection();
       const responseTime = Date.now() - startTime;
-      
+
       setDiagnostic({
-        status: result.isReachable 
-          ? (responseTime > 2000 ? 'slow' : 'connected')
-          : 'disconnected',
+        status: result.isReachable ? (responseTime > 2000 ? 'slow' : 'connected') : 'disconnected',
         endpoint: result.endpoint,
         lastCheck: new Date(),
         error: result.error,
@@ -83,12 +81,12 @@ export function BackendStatusIndicator({
   useEffect(() => {
     // Initial check
     checkConnection();
-    
+
     // Set up periodic checks
     const intervalId = setInterval(() => {
       checkConnection();
     }, checkInterval);
-    
+
     return () => clearInterval(intervalId);
   }, [checkInterval]);
 
@@ -129,9 +127,7 @@ export function BackendStatusIndicator({
   };
 
   const getTooltipContent = () => {
-    const parts = [
-      `Endpoint: ${diagnostic.endpoint}`,
-    ];
+    const parts = [`Endpoint: ${diagnostic.endpoint}`];
 
     if (diagnostic.lastCheck) {
       parts.push(`Dernière vérification: ${diagnostic.lastCheck.toLocaleTimeString()}`);
@@ -165,9 +161,7 @@ export function BackendStatusIndicator({
             <p className="font-medium mb-1">État du backend</p>
             <p className="text-xs">{getTooltipContent()}</p>
             {diagnostic.suggestion && (
-              <p className="text-xs mt-2 text-muted-foreground">
-                {diagnostic.suggestion}
-              </p>
+              <p className="text-xs mt-2 text-muted-foreground">{diagnostic.suggestion}</p>
             )}
           </TooltipContent>
         </Tooltip>
@@ -182,19 +176,20 @@ export function BackendStatusIndicator({
           <span className="text-sm font-medium">Backend Status</span>
           {getStatusBadge()}
         </div>
-        
+
         {showDetails && (
           <div className="text-xs text-muted-foreground space-y-1">
-            <p>Endpoint: <code className="text-xs bg-muted px-1 py-0.5 rounded">{diagnostic.endpoint}</code></p>
+            <p>
+              Endpoint:{' '}
+              <code className="text-xs bg-muted px-1 py-0.5 rounded">{diagnostic.endpoint}</code>
+            </p>
             {diagnostic.responseTime !== undefined && (
               <p>Temps de réponse: {diagnostic.responseTime}ms</p>
             )}
             {diagnostic.lastCheck && (
               <p>Dernière vérification: {diagnostic.lastCheck.toLocaleTimeString()}</p>
             )}
-            {diagnostic.error && (
-              <p className="text-destructive">Erreur: {diagnostic.error}</p>
-            )}
+            {diagnostic.error && <p className="text-destructive">Erreur: {diagnostic.error}</p>}
             {diagnostic.suggestion && (
               <p className="text-yellow-600 mt-2 whitespace-pre-line text-xs">
                 {diagnostic.suggestion}
@@ -203,7 +198,7 @@ export function BackendStatusIndicator({
           </div>
         )}
       </div>
-      
+
       <Button
         size="sm"
         variant="outline"

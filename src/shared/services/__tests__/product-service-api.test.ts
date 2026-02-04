@@ -23,4 +23,3 @@ describe('product-service-api', () => {
     expect(calledUrl.startsWith('http://example.test/api/v1/products')).toBe(true);
   });
 });
-

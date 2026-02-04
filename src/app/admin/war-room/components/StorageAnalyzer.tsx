@@ -1,11 +1,5 @@
 import React from 'react';
-import { 
-  Database, 
-  FolderTree, 
-  ChevronRight, 
-  HardDrive,
-  Info
-} from 'lucide-react';
+import { Database, FolderTree, ChevronRight, HardDrive, Info } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { motion } from 'framer-motion';
 
@@ -35,8 +29,12 @@ export function StorageAnalyzer() {
             <Database className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <h3 className="text-[10px] font-black text-foreground uppercase tracking-tighter">Analyseur de Stockage</h3>
-            <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest">4 Systèmes de fichiers</p>
+            <h3 className="text-[10px] font-black text-foreground uppercase tracking-tighter">
+              Analyseur de Stockage
+            </h3>
+            <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest">
+              4 Systèmes de fichiers
+            </p>
           </div>
         </div>
         <div className="p-1.5 bg-foreground/5 rounded-lg border border-border">
@@ -50,64 +48,84 @@ export function StorageAnalyzer() {
           <div key={partition.mount} className="space-y-3 group">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={cn(
-                  "p-2 rounded-xl border transition-all duration-300",
-                  partition.percent > 80 ? 'bg-rose-500/10 border-rose-500/20 text-rose-500' : 'bg-foreground/5 border-border text-muted-foreground group-hover:bg-primary/5 group-hover:border-primary/20 group-hover:text-primary'
-                )}>
+                <div
+                  className={cn(
+                    'p-2 rounded-xl border transition-all duration-300',
+                    partition.percent > 80
+                      ? 'bg-rose-500/10 border-rose-500/20 text-rose-500'
+                      : 'bg-foreground/5 border-border text-muted-foreground group-hover:bg-primary/5 group-hover:border-primary/20 group-hover:text-primary'
+                  )}
+                >
                   <HardDrive className="w-4 h-4" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-[11px] font-bold text-foreground">{partition.mount}</span>
-                    <span className="text-[8px] bg-foreground/10 px-1.5 py-0.5 rounded text-muted-foreground font-mono uppercase">{partition.type}</span>
+                    <span className="text-[8px] bg-foreground/10 px-1.5 py-0.5 rounded text-muted-foreground font-mono uppercase">
+                      {partition.type}
+                    </span>
                   </div>
-                  <p className="text-[9px] text-muted-foreground font-mono truncate max-w-[150px]">{partition.device}</p>
+                  <p className="text-[9px] text-muted-foreground font-mono truncate max-w-[150px]">
+                    {partition.device}
+                  </p>
                 </div>
               </div>
               <div className="text-right">
-                <span className={cn(
-                  "text-[10px] font-black tracking-tight",
-                  partition.percent > 80 ? 'text-rose-500' : 'text-foreground'
-                )}>{partition.percent}%</span>
-                <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest leading-none mt-0.5">Utilisé</p>
+                <span
+                  className={cn(
+                    'text-[10px] font-black tracking-tight',
+                    partition.percent > 80 ? 'text-rose-500' : 'text-foreground'
+                  )}
+                >
+                  {partition.percent}%
+                </span>
+                <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest leading-none mt-0.5">
+                  Utilisé
+                </p>
               </div>
             </div>
 
             {/* Progress Bar Stack */}
             <div className="relative h-2 bg-foreground/5 rounded-full overflow-hidden">
-               <motion.div 
-                 initial={{ width: 0 }}
-                 animate={{ width: `${partition.percent}%` }}
-                 transition={{ duration: 0.8, delay: idx * 0.1 }}
-                 className={cn(
-                   "absolute top-0 left-0 h-full rounded-full shadow-[0_0_10px_rgba(0,0,0,0.2)]",
-                   partition.percent > 90 ? 'bg-rose-500' : 
-                   partition.percent > 70 ? 'bg-amber-500' : 'bg-primary'
-                 )}
-               />
-               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer" />
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${partition.percent}%` }}
+                transition={{ duration: 0.8, delay: idx * 0.1 }}
+                className={cn(
+                  'absolute top-0 left-0 h-full rounded-full shadow-[0_0_10px_rgba(0,0,0,0.2)]',
+                  partition.percent > 90
+                    ? 'bg-rose-500'
+                    : partition.percent > 70
+                    ? 'bg-amber-500'
+                    : 'bg-primary'
+                )}
+              />
+              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer" />
             </div>
 
             <div className="flex items-center justify-between text-[9px] font-bold text-muted-foreground uppercase tracking-wider tabular-nums">
-              <span>{partition.used} GB / {partition.total} GB</span>
-              <span>{(partition.total - partition.used)} GB Libres</span>
+              <span>
+                {partition.used} GB / {partition.total} GB
+              </span>
+              <span>{partition.total - partition.used} GB Libres</span>
             </div>
           </div>
         ))}
 
         {/* Diagnostic Tooltip Placeholder */}
         <div className="p-4 bg-primary/5 border border-primary/20 rounded-2xl flex items-start gap-3 mt-4 animate-in fade-in zoom-in duration-500">
-           <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-           <p className="text-[10px] text-foreground/80 leading-relaxed italic">
-             <strong>Note:</strong> L'intégrité du système de fichiers est vérifiée quotidiennement à 02:00. Aucun secteur défectueux détecté sur les disques NVMe.
-           </p>
+          <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+          <p className="text-[10px] text-foreground/80 leading-relaxed italic">
+            <strong>Note:</strong> L'intégrité du système de fichiers est vérifiée quotidiennement à
+            02:00. Aucun secteur défectueux détecté sur les disques NVMe.
+          </p>
         </div>
       </div>
 
       {/* Footer */}
       <button className="p-4 bg-foreground/5 border-t border-border flex items-center justify-center gap-2 text-[8px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] hover:text-primary hover:bg-foreground/10 transition-all group">
-         Générer un Rapport de Stockage Complet
-         <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+        Générer un Rapport de Stockage Complet
+        <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
       </button>
     </div>
   );

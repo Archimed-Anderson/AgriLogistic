@@ -31,15 +31,18 @@
 ## 📋 ACTIONS IMMÉDIATES
 
 ### Priorité 1 (Critique - 3 jours)
+
 1. Corriger la redirection par rôle
 2. Ajouter la sélection de rôle dans le formulaire
 3. Créer les routes dashboard manquantes
 
 ### Priorité 2 (Majeur - 2 jours)
+
 4. Créer le middleware de protection
 5. Implémenter la validation du token
 
 ### Priorité 3 (Amélioration - 2 jours)
+
 6. Créer les layouts spécifiques par rôle
 7. Améliorer le design du formulaire
 

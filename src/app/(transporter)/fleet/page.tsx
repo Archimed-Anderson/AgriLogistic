@@ -19,14 +19,14 @@ export default function FleetPage() {
     console.log('Clicked vehicle:', vehicle);
   };
 
-  const filteredVehicles = vehicles?.filter((v) => 
-    filterStatus === 'all' || v.status === filterStatus
+  const filteredVehicles = vehicles?.filter(
+    (v) => filterStatus === 'all' || v.status === filterStatus
   );
 
   // Extract all maintenance tasks
-  const maintenanceTasks = vehicles?.flatMap((v) => 
-    v.maintenanceSchedule.map((m) => ({ ...m, vehicleName: v.name }))
-  ) || [];
+  const maintenanceTasks =
+    vehicles?.flatMap((v) => v.maintenanceSchedule.map((m) => ({ ...m, vehicleName: v.name }))) ||
+    [];
 
   if (isLoading) {
     return (
@@ -43,9 +43,7 @@ export default function FleetPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                🚛 Gestion de Flotte
-              </h1>
+              <h1 className="text-2xl font-bold text-gray-900">🚛 Gestion de Flotte</h1>
               <p className="text-sm text-gray-600">
                 {vehicles?.length || 0} véhicules • {stats?.active || 0} en mission
               </p>
@@ -116,21 +114,20 @@ export default function FleetPage() {
             </div>
 
             {/* Vehicle List */}
-            <VehicleList
-              vehicles={filteredVehicles || []}
-              onVehicleClick={handleVehicleClick}
-            />
+            <VehicleList vehicles={filteredVehicles || []} onVehicleClick={handleVehicleClick} />
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
             <MaintenanceScheduler tasks={maintenanceTasks} />
-            
+
             {/* Quick Tips */}
             <div className="bg-blue-50 rounded-xl border border-blue-200 p-6">
               <h3 className="font-semibold text-blue-900 mb-2">Conseil d'entretien</h3>
               <p className="text-sm text-blue-700">
-                La maintenance préventive permet d'économiser jusqu'à 20% sur les coûts de réparation. Vérifiez régulièrement la pression des pneus pour optimiser la consommation de carburant.
+                La maintenance préventive permet d'économiser jusqu'à 20% sur les coûts de
+                réparation. Vérifiez régulièrement la pression des pneus pour optimiser la
+                consommation de carburant.
               </p>
             </div>
           </div>

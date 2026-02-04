@@ -31,8 +31,8 @@
     "infrastructure/api-gateway"
   ],
   "scripts": {
-    "dev": "turbo run dev",
-    "dev:host": "vite --host",
+    "dev": "turbo run dev --filter=!@agrologistic/auth-service",
+    "dev:host": "turbo run dev --filter=!@agrologistic/auth-service -- --host",
     "dev:web-app": "turbo run dev --filter=@agrologistic/web-app",
     "services:dev": "turbo run dev --filter=./services/*/*",
     "services:build": "turbo run build --filter=./services/*/*",
@@ -149,7 +149,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
     "@testing-library/user-event": "^14.6.1",
-    "@types/node": "20.10.0",
+    "@types/node": "^22.10.7",
     "@types/react": "18.2.43",
     "@types/react-dom": "18.2.17",
     "@types/react-window": "^1.8.8",

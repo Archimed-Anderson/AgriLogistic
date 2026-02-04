@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from 'react';
 import {
   Search,
   SlidersHorizontal,
@@ -42,12 +42,12 @@ import {
   CloudRain,
   Droplet,
   Wind,
-} from "lucide-react";
-import { toast } from "sonner";
-import { MarketplaceHero } from "./marketplace/hero/MarketplaceHero";
-import { ProductFilterSidebar } from "./marketplace/filters/ProductFilterSidebar";
-import type { PriceRange } from "./marketplace/filters/ProductFilterSidebar";
-import { ProductGrid } from "./marketplace/grid/ProductGrid";
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { MarketplaceHero } from './marketplace/hero/MarketplaceHero';
+import { ProductFilterSidebar } from './marketplace/filters/ProductFilterSidebar';
+import type { PriceRange } from './marketplace/filters/ProductFilterSidebar';
+import { ProductGrid } from './marketplace/grid/ProductGrid';
 
 type ProductHistoryChange = {
   field: keyof Product;
@@ -65,13 +65,13 @@ type ProductHistoryEntry = {
 type ProductMediaItem = {
   id: string;
   url: string;
-  type: "image" | "video";
+  type: 'image' | 'video';
   alt?: string;
   isPrimary?: boolean;
 };
 
 type ProductPromotion = {
-  type: "percentage" | "fixed";
+  type: 'percentage' | 'fixed';
   value: number;
   startsAt?: string;
   endsAt?: string;
@@ -93,7 +93,7 @@ interface Product {
     rating: number;
     totalSales: number;
   };
-  stock: "in-stock" | "limited" | "pre-order" | "out-of-stock";
+  stock: 'in-stock' | 'limited' | 'pre-order' | 'out-of-stock';
   rating: number;
   reviewCount: number;
   labels: string[];
@@ -131,10 +131,10 @@ const DEFAULT_PRICE_RANGE: PriceRange = [0, 100];
 const marketplaceWeatherData = {
   current: { temp: 22, humidity: 64, wind: 12, rain: 0 },
   forecast: [
-    { day: "Lun", temp: 24, rain: 10, icon: Sun },
-    { day: "Mar", temp: 23, rain: 20, icon: CloudRain },
-    { day: "Mer", temp: 21, rain: 40, icon: CloudRain },
-    { day: "Jeu", temp: 25, rain: 5, icon: Sun },
+    { day: 'Lun', temp: 24, rain: 10, icon: Sun },
+    { day: 'Mar', temp: 23, rain: 20, icon: CloudRain },
+    { day: 'Mer', temp: 21, rain: 40, icon: CloudRain },
+    { day: 'Jeu', temp: 25, rain: 5, icon: Sun },
   ],
 };
 
@@ -153,9 +153,9 @@ export function computePromotionPrice(
   if (!isPromotionActive(promotion, now)) return null;
   const value = promotion!.value;
   let discounted = basePrice;
-  if (promotion!.type === "percentage") {
+  if (promotion!.type === 'percentage') {
     discounted = basePrice * (1 - value / 100);
-  } else if (promotion!.type === "fixed") {
+  } else if (promotion!.type === 'fixed') {
     discounted = Math.max(0, basePrice - value);
   }
   const savings = basePrice > 0 ? ((basePrice - discounted) / basePrice) * 100 : 0;
@@ -165,16 +165,22 @@ export function computePromotionPrice(
   };
 }
 
-export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { adminMode?: boolean; onAdminModeChange?: (value: boolean) => void }) {
-  const [viewMode, setViewMode] = useState<"grid" | "list" | "map">("grid");
+export function MarketplaceModern({
+  adminMode = false,
+  onAdminModeChange,
+}: {
+  adminMode?: boolean;
+  onAdminModeChange?: (value: boolean) => void;
+}) {
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>('grid');
   const [showFilters, setShowFilters] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("relevance");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState('relevance');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [compareProducts, setCompareProducts] = useState<string[]>([]);
   const [cartItems, setCartItems] = useState<string[]>([]);
-  
+
   // Admin states
   const [isAdminMode, setIsAdminMode] = useState(adminMode);
   const [selectedForEdit, setSelectedForEdit] = useState<string[]>([]);
@@ -182,7 +188,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
   const [showArchiveConfirm, setShowArchiveConfirm] = useState<string | null>(null);
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
   const [categoryMenuOpen, setCategoryMenuOpen] = useState<string | null>(null);
-  
+
   // Filters
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<PriceRange>(DEFAULT_PRICE_RANGE);
@@ -197,46 +203,54 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
 
   // Smart Filters State
-  const [savedFilterPresets, setSavedFilterPresets] = useState<Array<{
-    id: string;
-    name: string;
-    filters: {
-      categories: string[];
-      priceRange: PriceRange;
-      maxDistance: number;
-      minRating: number;
-      labels: string[];
-    };
-  }>>([]);
+  const [savedFilterPresets, setSavedFilterPresets] = useState<
+    Array<{
+      id: string;
+      name: string;
+      filters: {
+        categories: string[];
+        priceRange: PriceRange;
+        maxDistance: number;
+        minRating: number;
+        labels: string[];
+      };
+    }>
+  >([]);
   const [showSaveFilterModal, setShowSaveFilterModal] = useState(false);
-  const [filterPresetName, setFilterPresetName] = useState("");
+  const [filterPresetName, setFilterPresetName] = useState('');
 
   // Price & Availability Alerts State
-  const [priceAlerts, setPriceAlerts] = useState<Array<{
-    id: string;
-    productId: string;
-    productName: string;
-    type: "price_drop" | "back_in_stock" | "price_target";
-    targetPrice?: number;
-    currentPrice: number;
-    createdAt: string;
-    active: boolean;
-  }>>([]);
+  const [priceAlerts, setPriceAlerts] = useState<
+    Array<{
+      id: string;
+      productId: string;
+      productName: string;
+      type: 'price_drop' | 'back_in_stock' | 'price_target';
+      targetPrice?: number;
+      currentPrice: number;
+      createdAt: string;
+      active: boolean;
+    }>
+  >([]);
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [alertProduct, setAlertProduct] = useState<Product | null>(null);
-  const [alertType, setAlertType] = useState<"price_drop" | "back_in_stock" | "price_target">("price_drop");
-  const [targetPrice, setTargetPrice] = useState("");
+  const [alertType, setAlertType] = useState<'price_drop' | 'back_in_stock' | 'price_target'>(
+    'price_drop'
+  );
+  const [targetPrice, setTargetPrice] = useState('');
   const [showAlertsPanel, setShowAlertsPanel] = useState(false);
 
   // Browse History & Recommendations State
-  const [browseHistory, setBrowseHistory] = useState<Array<{
-    productId: string;
-    productName: string;
-    category: string;
-    price: number;
-    viewedAt: string;
-    viewDuration?: number;
-  }>>([]);
+  const [browseHistory, setBrowseHistory] = useState<
+    Array<{
+      productId: string;
+      productName: string;
+      category: string;
+      price: number;
+      viewedAt: string;
+      viewDuration?: number;
+    }>
+  >([]);
   const [recommendations, setRecommendations] = useState<Product[]>([]);
   const [showRecommendations, setShowRecommendations] = useState(true);
 
@@ -268,24 +282,24 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
 
   // Load favorites from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem("AgroLogistic-favorites");
+    const saved = localStorage.getItem('AgroLogistic-favorites');
     if (saved) setFavorites(JSON.parse(saved));
-    
-    const savedSort = localStorage.getItem("AgroLogistic-sort-preference");
+
+    const savedSort = localStorage.getItem('AgroLogistic-sort-preference');
     if (savedSort) setSortBy(savedSort);
 
     // Load saved filter presets
-    const savedPresets = localStorage.getItem("AgroLogistic-filter-presets");
+    const savedPresets = localStorage.getItem('AgroLogistic-filter-presets');
     if (savedPresets) {
       try {
         setSavedFilterPresets(JSON.parse(savedPresets));
       } catch (e) {
-        console.error("Failed to parse filter presets", e);
+        console.error('Failed to parse filter presets', e);
       }
     }
 
     // Load last used filters
-    const lastFilters = localStorage.getItem("AgroLogistic-last-filters");
+    const lastFilters = localStorage.getItem('AgroLogistic-last-filters');
     if (lastFilters) {
       try {
         const filters = JSON.parse(lastFilters);
@@ -299,34 +313,34 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
         setMinRating(filters.minRating || 0);
         setSelectedLabels(filters.labels || []);
       } catch (e) {
-        console.error("Failed to parse last filters", e);
+        console.error('Failed to parse last filters', e);
       }
     }
 
     // Load saved price alerts
-    const savedAlerts = localStorage.getItem("AgroLogistic-price-alerts");
+    const savedAlerts = localStorage.getItem('AgroLogistic-price-alerts');
     if (savedAlerts) {
       try {
         setPriceAlerts(JSON.parse(savedAlerts));
       } catch (e) {
-        console.error("Failed to parse price alerts", e);
+        console.error('Failed to parse price alerts', e);
       }
     }
 
     // Load browse history
-    const savedHistory = localStorage.getItem("AgroLogistic-browse-history");
+    const savedHistory = localStorage.getItem('AgroLogistic-browse-history');
     if (savedHistory) {
       try {
         setBrowseHistory(JSON.parse(savedHistory));
       } catch (e) {
-        console.error("Failed to parse browse history", e);
+        console.error('Failed to parse browse history', e);
       }
     }
   }, []);
 
   // Save sort preference
   useEffect(() => {
-    localStorage.setItem("AgroLogistic-sort-preference", sortBy);
+    localStorage.setItem('AgroLogistic-sort-preference', sortBy);
   }, [sortBy]);
 
   // Auto-save current filters (debounced)
@@ -339,7 +353,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
         minRating,
         labels: selectedLabels,
       };
-      localStorage.setItem("AgroLogistic-last-filters", JSON.stringify(currentFilters));
+      localStorage.setItem('AgroLogistic-last-filters', JSON.stringify(currentFilters));
     }, 1000); // Save after 1 second of inactivity
 
     return () => clearTimeout(timer);
@@ -358,25 +372,29 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
         if (!product) return alert;
 
         let shouldTrigger = false;
-        let message = "";
+        let message = '';
 
         switch (alert.type) {
-          case "price_drop":
+          case 'price_drop':
             if (product.price < alert.currentPrice) {
               shouldTrigger = true;
-              message = `Le prix de "${product.name}" a baissé à ${product.price.toFixed(2)}€ (était ${alert.currentPrice.toFixed(2)}€)`;
+              message = `Le prix de "${product.name}" a baissé à ${product.price.toFixed(
+                2
+              )}€ (était ${alert.currentPrice.toFixed(2)}€)`;
             }
             break;
-          case "back_in_stock":
-            if (product.stock === "in-stock" && alert.currentPrice === 0) {
+          case 'back_in_stock':
+            if (product.stock === 'in-stock' && alert.currentPrice === 0) {
               shouldTrigger = true;
               message = `"${product.name}" est de nouveau en stock !`;
             }
             break;
-          case "price_target":
+          case 'price_target':
             if (alert.targetPrice && product.price <= alert.targetPrice) {
               shouldTrigger = true;
-              message = `"${product.name}" a atteint votre prix cible de ${alert.targetPrice.toFixed(2)}€ !`;
+              message = `"${
+                product.name
+              }" a atteint votre prix cible de ${alert.targetPrice.toFixed(2)}€ !`;
             }
             break;
         }
@@ -386,7 +404,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
           toast.success(message, {
             duration: 8000,
             action: {
-              label: "Voir",
+              label: 'Voir',
               onClick: () => setSelectedProduct(product),
             },
           });
@@ -399,7 +417,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
 
       if (triggeredAlerts.length > 0) {
         setPriceAlerts(updatedAlerts);
-        localStorage.setItem("AgroLogistic-price-alerts", JSON.stringify(updatedAlerts));
+        localStorage.setItem('AgroLogistic-price-alerts', JSON.stringify(updatedAlerts));
       }
     };
 
@@ -486,7 +504,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
         score += product.rating;
 
         // Stock availability
-        if (product.stock === "in-stock") score += 2;
+        if (product.stock === 'in-stock') score += 2;
 
         // Fast delivery bonus
         if (product.fastDelivery) score += 1;
@@ -505,7 +523,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
     .filter((product) => {
       // In admin mode, show archived if needed
       if (!isAdminMode && product.archived) return false;
-      
+
       const matchesSearch =
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.seller.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -529,13 +547,13 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
     })
     .sort((a, b) => {
       switch (sortBy) {
-        case "price-asc":
+        case 'price-asc':
           return a.price - b.price;
-        case "price-desc":
+        case 'price-desc':
           return b.price - a.price;
-        case "rating":
+        case 'rating':
           return b.rating - a.rating;
-        case "distance":
+        case 'distance':
           return a.seller.distance - b.seller.distance;
         default:
           return 0;
@@ -547,10 +565,8 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
       ? favorites.filter((id) => id !== productId)
       : [...favorites, productId];
     setFavorites(newFavorites);
-    localStorage.setItem("AgroLogistic-favorites", JSON.stringify(newFavorites));
-    toast.success(
-      favorites.includes(productId) ? "Retiré des favoris" : "Ajouté aux favoris"
-    );
+    localStorage.setItem('AgroLogistic-favorites', JSON.stringify(newFavorites));
+    toast.success(favorites.includes(productId) ? 'Retiré des favoris' : 'Ajouté aux favoris');
   };
 
   const [showCompareModal, setShowCompareModal] = useState(false);
@@ -558,31 +574,25 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
   const toggleCompare = (productId: string) => {
     if (compareProducts.includes(productId)) {
       setCompareProducts(compareProducts.filter((id) => id !== productId));
-      toast.success("Produit retiré de la comparaison");
+      toast.success('Produit retiré de la comparaison');
     } else if (compareProducts.length < 3) {
       setCompareProducts([...compareProducts, productId]);
-      toast.success("Produit ajouté à la comparaison");
+      toast.success('Produit ajouté à la comparaison');
     } else {
-      toast.error("Maximum 3 produits pour la comparaison");
+      toast.error('Maximum 3 produits pour la comparaison');
     }
   };
 
   const addToCart = (productId: string) => {
     setCartItems([...cartItems, productId]);
-    toast.success("✅ Produit ajouté au panier");
+    toast.success('✅ Produit ajouté au panier');
   };
 
   // Admin functions
   const handleArchiveProduct = (productId: string) => {
-    setProducts(
-      products.map((p) =>
-        p.id === productId ? { ...p, archived: !p.archived } : p
-      )
-    );
+    setProducts(products.map((p) => (p.id === productId ? { ...p, archived: !p.archived } : p)));
     const product = products.find((p) => p.id === productId);
-    toast.success(
-      `✅ "${product?.name}" ${product?.archived ? "restauré" : "archivé"}`
-    );
+    toast.success(`✅ "${product?.name}" ${product?.archived ? 'restauré' : 'archivé'}`);
     setShowArchiveConfirm(null);
   };
 
@@ -607,7 +617,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
           ? {
               id: `HIST-${Date.now()}`,
               timestamp: new Date().toISOString(),
-              author: "Admin",
+              author: 'Admin',
               changes,
             }
           : null;
@@ -619,7 +629,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
         };
       })
     );
-    toast.success("✅ Produit mis à jour avec succès");
+    toast.success('✅ Produit mis à jour avec succès');
   };
 
   const handleAddProduct = (newProduct: Partial<Product>) => {
@@ -627,40 +637,41 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
     const historyEntry: ProductHistoryEntry = {
       id: `HIST-${Date.now()}`,
       timestamp: new Date().toISOString(),
-      author: "Admin",
+      author: 'Admin',
       changes: [
         {
-          field: "name",
-          from: "",
-          to: newProduct.name || "Nouveau produit",
+          field: 'name',
+          from: '',
+          to: newProduct.name || 'Nouveau produit',
         },
       ],
     };
     const media = newProduct.media && newProduct.media.length > 0 ? newProduct.media : undefined;
-    const primaryMedia = media && media.length > 0 ? media.find((m) => m.isPrimary) || media[0] : undefined;
+    const primaryMedia =
+      media && media.length > 0 ? media.find((m) => m.isPrimary) || media[0] : undefined;
     const product: Product = {
       id: newProduct.id || baseId,
-      name: newProduct.name || "Nouveau produit",
-      category: newProduct.category || "Autres",
+      name: newProduct.name || 'Nouveau produit',
+      category: newProduct.category || 'Autres',
       price: newProduct.price || 0,
-      unit: newProduct.unit || "unité",
+      unit: newProduct.unit || 'unité',
       image:
         primaryMedia?.url ||
         newProduct.image ||
-        "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&h=400&fit=crop",
+        'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&h=400&fit=crop',
       seller: newProduct.seller || {
-        name: "Vendeur",
-        location: "France",
+        name: 'Vendeur',
+        location: 'France',
         distance: 10,
         rating: 4.5,
         totalSales: 0,
       },
-      stock: "in-stock",
+      stock: 'in-stock',
       rating: 0,
       reviewCount: 0,
       labels: newProduct.labels || [],
       fastDelivery: false,
-      description: newProduct.description || "",
+      description: newProduct.description || '',
       specifications: {},
       reviews: [],
       sku: newProduct.sku || `SKU-${Date.now()}`,
@@ -676,22 +687,20 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
     setShowAddProductModal(false);
   };
 
-  const handleBulkAction = (action: "archive" | "publish" | "move") => {
+  const handleBulkAction = (action: 'archive' | 'publish' | 'move') => {
     if (selectedForEdit.length === 0) {
-      toast.error("Sélectionnez au moins un produit");
+      toast.error('Sélectionnez au moins un produit');
       return;
     }
 
     switch (action) {
-      case "archive":
+      case 'archive':
         setProducts(
-          products.map((p) =>
-            selectedForEdit.includes(p.id) ? { ...p, archived: true } : p
-          )
+          products.map((p) => (selectedForEdit.includes(p.id) ? { ...p, archived: true } : p))
         );
         toast.success(`✅ ${selectedForEdit.length} produit(s) archivé(s)`);
         break;
-      case "publish":
+      case 'publish':
         setProducts(
           products.map((p) =>
             selectedForEdit.includes(p.id) ? { ...p, visible: true, archived: false } : p
@@ -699,8 +708,8 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
         );
         toast.success(`✅ ${selectedForEdit.length} produit(s) publié(s)`);
         break;
-      case "move":
-        toast.info("Fonctionnalité de déplacement (à implémenter)");
+      case 'move':
+        toast.info('Fonctionnalité de déplacement (à implémenter)');
         break;
     }
     setSelectedForEdit([]);
@@ -713,9 +722,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
   };
 
   const activeFilters = [
-    ...(selectedCategories.length > 0
-      ? [`Catégorie: ${selectedCategories.join(", ")}`]
-      : []),
+    ...(selectedCategories.length > 0 ? [`Catégorie: ${selectedCategories.join(', ')}`] : []),
     ...(priceRange[0] !== 0 || priceRange[1] !== 100
       ? [`Prix: ${priceRange[0]}€-${priceRange[1]}€`]
       : []),
@@ -730,13 +737,13 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
     setMaxDistance(50);
     setMinRating(0);
     setSelectedLabels([]);
-    toast.success("Filtres réinitialisés");
+    toast.success('Filtres réinitialisés');
   };
 
   // Filter Preset Management
   const saveCurrentFilters = () => {
     if (!filterPresetName.trim()) {
-      toast.error("Veuillez entrer un nom pour ce filtre");
+      toast.error('Veuillez entrer un nom pour ce filtre');
       return;
     }
 
@@ -754,14 +761,14 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
 
     const updatedPresets = [...savedFilterPresets, newPreset];
     setSavedFilterPresets(updatedPresets);
-    localStorage.setItem("AgroLogistic-filter-presets", JSON.stringify(updatedPresets));
-    
+    localStorage.setItem('AgroLogistic-filter-presets', JSON.stringify(updatedPresets));
+
     setShowSaveFilterModal(false);
-    setFilterPresetName("");
+    setFilterPresetName('');
     toast.success(`Filtre "${filterPresetName}" enregistré`);
   };
 
-  const loadFilterPreset = (preset: typeof savedFilterPresets[0]) => {
+  const loadFilterPreset = (preset: (typeof savedFilterPresets)[0]) => {
     setSelectedCategories(preset.filters.categories);
     setPriceRange(preset.filters.priceRange);
     setMaxDistance(preset.filters.maxDistance);
@@ -773,50 +780,50 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
   const deleteFilterPreset = (presetId: string) => {
     const updatedPresets = savedFilterPresets.filter((p) => p.id !== presetId);
     setSavedFilterPresets(updatedPresets);
-    localStorage.setItem("AgroLogistic-filter-presets", JSON.stringify(updatedPresets));
-    toast.success("Filtre supprimé");
+    localStorage.setItem('AgroLogistic-filter-presets', JSON.stringify(updatedPresets));
+    toast.success('Filtre supprimé');
   };
 
   // Quick Filter Presets
   const quickFilters = [
     {
-      id: "bio-local",
-      name: "Bio & Local",
+      id: 'bio-local',
+      name: 'Bio & Local',
       icon: Leaf,
-      description: "Produits bio et locaux",
+      description: 'Produits bio et locaux',
       apply: () => {
-        setSelectedLabels(["Bio", "Local"]);
+        setSelectedLabels(['Bio', 'Local']);
         setMaxDistance(20);
-        toast.success("Filtre Bio & Local appliqué");
+        toast.success('Filtre Bio & Local appliqué');
       },
     },
     {
-      id: "nearby",
-      name: "📍 À proximité",
-      description: "Moins de 10 km",
+      id: 'nearby',
+      name: '📍 À proximité',
+      description: 'Moins de 10 km',
       apply: () => {
         setMaxDistance(10);
-        toast.success("Filtre proximité appliqué");
+        toast.success('Filtre proximité appliqué');
       },
     },
     {
-      id: "best-rated",
-      name: "⭐ Meilleures notes",
-      description: "4 étoiles et plus",
+      id: 'best-rated',
+      name: '⭐ Meilleures notes',
+      description: '4 étoiles et plus',
       apply: () => {
         setMinRating(4);
-        setSortBy("rating");
-        toast.success("Filtre meilleures notes appliqué");
+        setSortBy('rating');
+        toast.success('Filtre meilleures notes appliqué');
       },
     },
     {
-      id: "budget",
-      name: "💰 Petit budget",
-      description: "Prix inférieur à 10€",
+      id: 'budget',
+      name: '💰 Petit budget',
+      description: 'Prix inférieur à 10€',
       apply: () => {
         setPriceRange([0, 10]);
-        setSortBy("price-asc");
-        toast.success("Filtre petit budget appliqué");
+        setSortBy('price-asc');
+        toast.success('Filtre petit budget appliqué');
       },
     },
   ];
@@ -826,14 +833,14 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
     if (!alertProduct) return;
 
     // Validate target price for price_target type
-    if (alertType === "price_target") {
+    if (alertType === 'price_target') {
       const price = parseFloat(targetPrice);
       if (isNaN(price) || price <= 0) {
-        toast.error("Veuillez entrer un prix valide");
+        toast.error('Veuillez entrer un prix valide');
         return;
       }
       if (price >= alertProduct.price) {
-        toast.error("Le prix cible doit être inférieur au prix actuel");
+        toast.error('Le prix cible doit être inférieur au prix actuel');
         return;
       }
     }
@@ -843,7 +850,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
       productId: alertProduct.id,
       productName: alertProduct.name,
       type: alertType,
-      targetPrice: alertType === "price_target" ? parseFloat(targetPrice) : undefined,
+      targetPrice: alertType === 'price_target' ? parseFloat(targetPrice) : undefined,
       currentPrice: alertProduct.price,
       createdAt: new Date().toISOString(),
       active: true,
@@ -851,16 +858,18 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
 
     const updatedAlerts = [...priceAlerts, newAlert];
     setPriceAlerts(updatedAlerts);
-    localStorage.setItem("AgroLogistic-price-alerts", JSON.stringify(updatedAlerts));
+    localStorage.setItem('AgroLogistic-price-alerts', JSON.stringify(updatedAlerts));
 
     setShowAlertModal(false);
     setAlertProduct(null);
-    setTargetPrice("");
+    setTargetPrice('');
 
     const alertTypeMessages = {
-      price_drop: "Vous serez alerté si le prix baisse",
-      back_in_stock: "Vous serez alerté quand le produit sera disponible",
-      price_target: `Vous serez alerté quand le prix atteindra ${parseFloat(targetPrice).toFixed(2)}€`,
+      price_drop: 'Vous serez alerté si le prix baisse',
+      back_in_stock: 'Vous serez alerté quand le produit sera disponible',
+      price_target: `Vous serez alerté quand le prix atteindra ${parseFloat(targetPrice).toFixed(
+        2
+      )}€`,
     };
 
     toast.success(alertTypeMessages[alertType]);
@@ -869,14 +878,14 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
   const deleteAlert = (alertId: string) => {
     const updatedAlerts = priceAlerts.filter((a) => a.id !== alertId);
     setPriceAlerts(updatedAlerts);
-    localStorage.setItem("AgroLogistic-price-alerts", JSON.stringify(updatedAlerts));
-    toast.success("Alerte supprimée");
+    localStorage.setItem('AgroLogistic-price-alerts', JSON.stringify(updatedAlerts));
+    toast.success('Alerte supprimée');
   };
 
   const openAlertModal = (product: Product, type: typeof alertType) => {
     setAlertProduct(product);
     setAlertType(type);
-    setTargetPrice("");
+    setTargetPrice('');
     setShowAlertModal(true);
   };
 
@@ -897,19 +906,19 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
     ].slice(0, 50); // Keep last 50 views
 
     setBrowseHistory(updatedHistory);
-    localStorage.setItem("AgroLogistic-browse-history", JSON.stringify(updatedHistory));
+    localStorage.setItem('AgroLogistic-browse-history', JSON.stringify(updatedHistory));
   };
 
   const clearBrowseHistory = () => {
     setBrowseHistory([]);
-    localStorage.removeItem("AgroLogistic-browse-history");
-    toast.success("Historique de navigation effacé");
+    localStorage.removeItem('AgroLogistic-browse-history');
+    toast.success('Historique de navigation effacé');
   };
 
   const removeFromHistory = (productId: string) => {
     const updatedHistory = browseHistory.filter((h) => h.productId !== productId);
     setBrowseHistory(updatedHistory);
-    localStorage.setItem("AgroLogistic-browse-history", JSON.stringify(updatedHistory));
+    localStorage.setItem('AgroLogistic-browse-history', JSON.stringify(updatedHistory));
     toast.success("Produit retiré de l'historique");
   };
 
@@ -941,7 +950,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
               Ajouter un produit
             </button>
             <button
-              onClick={() => toast.info("Ouverture de la gestion des catégories")}
+              onClick={() => toast.info('Ouverture de la gestion des catégories')}
               className="px-4 py-2 border border-[#2563eb] text-[#2563eb] rounded-lg hover:bg-[#2563eb]/10 transition-colors font-medium"
             >
               Gérer toutes les catégories
@@ -1030,14 +1039,10 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
                             </span>
                           </div>
                           <div className="flex flex-col">
-                            <span className="text-sm font-medium truncate">
-                              {product.name}
-                            </span>
+                            <span className="text-sm font-medium truncate">{product.name}</span>
                             <span className="text-xs text-muted-foreground flex items-center gap-1">
                               <MapPin className="h-3 w-3" />
-                              <span className="truncate">
-                                {product.seller.location}
-                              </span>
+                              <span className="truncate">{product.seller.location}</span>
                             </span>
                           </div>
                         </div>
@@ -1071,25 +1076,25 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
 
               <div className="flex border rounded-lg overflow-hidden">
                 <button
-                  onClick={() => setViewMode("grid")}
+                  onClick={() => setViewMode('grid')}
                   className={`p-2 transition-colors ${
-                    viewMode === "grid" ? "bg-[#2563eb] text-white" : "hover:bg-muted"
+                    viewMode === 'grid' ? 'bg-[#2563eb] text-white' : 'hover:bg-muted'
                   }`}
                 >
                   <Grid3x3 className="h-5 w-5" />
                 </button>
                 <button
-                  onClick={() => setViewMode("list")}
+                  onClick={() => setViewMode('list')}
                   className={`p-2 transition-colors ${
-                    viewMode === "list" ? "bg-[#2563eb] text-white" : "hover:bg-muted"
+                    viewMode === 'list' ? 'bg-[#2563eb] text-white' : 'hover:bg-muted'
                   }`}
                 >
                   <List className="h-5 w-5" />
                 </button>
                 <button
-                  onClick={() => setViewMode("map")}
+                  onClick={() => setViewMode('map')}
                   className={`p-2 transition-colors ${
-                    viewMode === "map" ? "bg-[#2563eb] text-white" : "hover:bg-muted"
+                    viewMode === 'map' ? 'bg-[#2563eb] text-white' : 'hover:bg-muted'
                   }`}
                 >
                   <MapPin className="h-5 w-5" />
@@ -1126,8 +1131,8 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
                   }}
                   className={`px-3 py-2 rounded-lg text-sm font-medium border ${
                     isAdminMode
-                      ? "bg-[#2563eb] text-white border-[#2563eb]"
-                      : "bg-background hover:bg-muted"
+                      ? 'bg-[#2563eb] text-white border-[#2563eb]'
+                      : 'bg-background hover:bg-muted'
                   }`}
                   data-testid="admin-toggle"
                 >
@@ -1144,16 +1149,16 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
                   <button
                     key={index}
                     onClick={() => {
-                      if (filter.startsWith("Catégorie:")) {
+                      if (filter.startsWith('Catégorie:')) {
                         setSelectedCategories([]);
-                      } else if (filter.startsWith("Prix:")) {
+                      } else if (filter.startsWith('Prix:')) {
                         setPriceRange([0, 100]);
-                      } else if (filter.startsWith("Distance:")) {
+                      } else if (filter.startsWith('Distance:')) {
                         setMaxDistance(50);
-                      } else if (filter.startsWith("Note:")) {
+                      } else if (filter.startsWith('Note:')) {
                         setMinRating(0);
-                      } else if (filter.startsWith("Label:")) {
-                        const label = filter.split(": ")[1];
+                      } else if (filter.startsWith('Label:')) {
+                        const label = filter.split(': ')[1];
                         setSelectedLabels(selectedLabels.filter((l) => l !== label));
                       }
                     }}
@@ -1173,7 +1178,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
             )}
 
             <div className="text-sm text-muted-foreground">
-              <span className="font-semibold text-foreground">{filteredProducts.length}</span>{" "}
+              <span className="font-semibold text-foreground">{filteredProducts.length}</span>{' '}
               produit(s) trouvé(s)
             </div>
           </div>
@@ -1192,9 +1197,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
                   <span className="text-xs text-muted-foreground">Aujourd'hui</span>
                 </div>
                 <div className="flex items-center gap-4 mb-3">
-                  <div className="text-3xl font-bold">
-                    {marketplaceWeatherData.current.temp}°C
-                  </div>
+                  <div className="text-3xl font-bold">{marketplaceWeatherData.current.temp}°C</div>
                   <div className="space-y-1 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Droplet className="h-3 w-3" />
@@ -1263,8 +1266,8 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
                 <div className="flex gap-2">
                   <button
                     onClick={() => {
-                      const historySection = document.getElementById("browse-history-section");
-                      historySection?.scrollIntoView({ behavior: "smooth" });
+                      const historySection = document.getElementById('browse-history-section');
+                      historySection?.scrollIntoView({ behavior: 'smooth' });
                     }}
                     className="px-4 py-2 border border-purple-600 text-purple-600 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors text-sm font-medium"
                   >
@@ -1371,7 +1374,10 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
                           <div className="font-medium text-sm line-clamp-2">{product.name}</div>
                         </div>
                         <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
-                          <span><Clock className="h-3 w-3 inline mr-1" />{timeSince()}</span>
+                          <span>
+                            <Clock className="h-3 w-3 inline mr-1" />
+                            {timeSince()}
+                          </span>
                           <span>{product.category}</span>
                         </div>
                         <div className="text-lg font-bold text-[#2563eb] text-center">
@@ -1415,27 +1421,24 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
           className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-card border-2 border-[#2563eb] rounded-lg shadow-xl p-4 flex items-center gap-4 z-40"
           data-testid="bulk-actions-menu"
         >
-          <span
-            className="font-semibold text-[#2563eb]"
-            data-testid="selection-counter"
-          >
+          <span className="font-semibold text-[#2563eb]" data-testid="selection-counter">
             {selectedForEdit.length} sélectionné(s)
           </span>
           <div className="flex gap-2">
             <button
-              onClick={() => handleBulkAction("publish")}
+              onClick={() => handleBulkAction('publish')}
               className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
             >
               Publier la sélection
             </button>
             <button
-              onClick={() => handleBulkAction("archive")}
+              onClick={() => handleBulkAction('archive')}
               className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium"
             >
               Archiver
             </button>
             <button
-              onClick={() => handleBulkAction("move")}
+              onClick={() => handleBulkAction('move')}
               className="px-4 py-2 border rounded-lg hover:bg-muted transition-colors text-sm font-medium"
             >
               Déplacer...
@@ -1511,7 +1514,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
                   value={filterPresetName}
                   onChange={(e) => setFilterPresetName(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") saveCurrentFilters();
+                    if (e.key === 'Enter') saveCurrentFilters();
                   }}
                   placeholder="Ex: Produits bio locaux"
                   autoFocus
@@ -1522,16 +1525,16 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
               <div className="bg-muted/50 rounded-lg p-4 space-y-2 text-sm">
                 <div className="font-medium">Filtres actuels :</div>
                 {selectedCategories.length > 0 && (
-                  <div>• Catégories : {selectedCategories.join(", ")}</div>
+                  <div>• Catégories : {selectedCategories.join(', ')}</div>
                 )}
                 {(priceRange[0] !== 0 || priceRange[1] !== 100) && (
-                  <div>• Prix : {priceRange[0]}€ - {priceRange[1]}€</div>
+                  <div>
+                    • Prix : {priceRange[0]}€ - {priceRange[1]}€
+                  </div>
                 )}
                 {maxDistance !== 50 && <div>• Distance : {maxDistance} km</div>}
                 {minRating > 0 && <div>• Note minimale : {minRating}⭐</div>}
-                {selectedLabels.length > 0 && (
-                  <div>• Labels : {selectedLabels.join(", ")}</div>
-                )}
+                {selectedLabels.length > 0 && <div>• Labels : {selectedLabels.join(', ')}</div>}
               </div>
             </div>
 
@@ -1539,7 +1542,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
               <button
                 onClick={() => {
                   setShowSaveFilterModal(false);
-                  setFilterPresetName("");
+                  setFilterPresetName('');
                 }}
                 className="px-4 py-2 border rounded-lg hover:bg-muted transition-colors"
               >
@@ -1583,11 +1586,11 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
                 <label className="block text-sm font-medium mb-3">Type d'alerte</label>
                 <div className="space-y-2">
                   <button
-                    onClick={() => setAlertType("price_drop")}
+                    onClick={() => setAlertType('price_drop')}
                     className={`w-full p-3 border rounded-lg text-left transition-all ${
-                      alertType === "price_drop"
-                        ? "border-[#2563eb] bg-[#2563eb]/10"
-                        : "hover:bg-muted"
+                      alertType === 'price_drop'
+                        ? 'border-[#2563eb] bg-[#2563eb]/10'
+                        : 'hover:bg-muted'
                     }`}
                   >
                     <div className="font-medium flex items-center gap-2">
@@ -1600,11 +1603,11 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
                   </button>
 
                   <button
-                    onClick={() => setAlertType("price_target")}
+                    onClick={() => setAlertType('price_target')}
                     className={`w-full p-3 border rounded-lg text-left transition-all ${
-                      alertType === "price_target"
-                        ? "border-[#2563eb] bg-[#2563eb]/10"
-                        : "hover:bg-muted"
+                      alertType === 'price_target'
+                        ? 'border-[#2563eb] bg-[#2563eb]/10'
+                        : 'hover:bg-muted'
                     }`}
                   >
                     <div className="font-medium flex items-center gap-2">
@@ -1616,13 +1619,13 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
                     </div>
                   </button>
 
-                  {alertProduct.stock === "out-of-stock" && (
+                  {alertProduct.stock === 'out-of-stock' && (
                     <button
-                      onClick={() => setAlertType("back_in_stock")}
+                      onClick={() => setAlertType('back_in_stock')}
                       className={`w-full p-3 border rounded-lg text-left transition-all ${
-                        alertType === "back_in_stock"
-                          ? "border-[#2563eb] bg-[#2563eb]/10"
-                          : "hover:bg-muted"
+                        alertType === 'back_in_stock'
+                          ? 'border-[#2563eb] bg-[#2563eb]/10'
+                          : 'hover:bg-muted'
                       }`}
                     >
                       <div className="font-medium flex items-center gap-2">
@@ -1637,11 +1640,9 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
                 </div>
               </div>
 
-              {alertType === "price_target" && (
+              {alertType === 'price_target' && (
                 <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Prix cible (€)
-                  </label>
+                  <label className="block text-sm font-medium mb-2">Prix cible (€)</label>
                   <input
                     type="number"
                     value={targetPrice}
@@ -1664,7 +1665,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
                 onClick={() => {
                   setShowAlertModal(false);
                   setAlertProduct(null);
-                  setTargetPrice("");
+                  setTargetPrice('');
                 }}
                 className="px-4 py-2 border rounded-lg hover:bg-muted transition-colors"
               >
@@ -1707,9 +1708,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
               {priceAlerts.length === 0 ? (
                 <div className="text-center py-12">
                   <AlertTriangle className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground">
-                    Vous n'avez pas encore d'alertes prix
-                  </p>
+                  <p className="text-muted-foreground">Vous n'avez pas encore d'alertes prix</p>
                   <p className="text-sm text-muted-foreground mt-2">
                     Créez des alertes depuis les pages produits
                   </p>
@@ -1721,14 +1720,10 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
                     return (
                       <div
                         key={alert.id}
-                        className={`border rounded-lg p-4 ${
-                          alert.active ? "" : "opacity-60"
-                        }`}
+                        className={`border rounded-lg p-4 ${alert.active ? '' : 'opacity-60'}`}
                       >
                         <div className="flex items-start gap-4">
-                          <div className="text-3xl">
-                            {product?.image || "📦"}
-                          </div>
+                          <div className="text-3xl">{product?.image || '📦'}</div>
                           <div className="flex-1">
                             <div className="font-medium">{alert.productName}</div>
                             <div className="flex items-center gap-4 mt-2 text-sm">
@@ -1738,7 +1733,7 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
                                   {product?.price.toFixed(2) || alert.currentPrice.toFixed(2)}€
                                 </span>
                               </div>
-                              {alert.type === "price_target" && alert.targetPrice && (
+                              {alert.type === 'price_target' && alert.targetPrice && (
                                 <div>
                                   <span className="text-muted-foreground">Prix cible:</span>
                                   <span className="font-bold text-orange-600 ml-1">
@@ -1751,16 +1746,16 @@ export function MarketplaceModern({ adminMode = false, onAdminModeChange }: { ad
                               <span
                                 className={`px-2 py-1 rounded-full text-xs font-medium ${
                                   alert.active
-                                    ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                                    : "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400"
+                                    ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                                    : 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400'
                                 }`}
                               >
-                                {alert.active ? "✅ Active" : "⏸️ Déclenchée"}
+                                {alert.active ? '✅ Active' : '⏸️ Déclenchée'}
                               </span>
                               <span className="px-2 py-1 bg-muted rounded-full text-xs">
-                                {alert.type === "price_drop" && "📉 Baisse de prix"}
-                                {alert.type === "price_target" && "🎯 Prix cible"}
-                                {alert.type === "back_in_stock" && (
+                                {alert.type === 'price_drop' && '📉 Baisse de prix'}
+                                {alert.type === 'price_target' && '🎯 Prix cible'}
+                                {alert.type === 'back_in_stock' && (
                                   <div className="flex items-center gap-2">
                                     <Package className="h-4 w-4" />
                                     <span>Retour stock</span>
@@ -1796,31 +1791,31 @@ function HeroSection() {
 
   const slides = [
     {
-      title: "Fruits de Saison",
-      subtitle: "Découvrez notre sélection de fruits frais",
-      color: "from-orange-500 to-red-500",
+      title: 'Fruits de Saison',
+      subtitle: 'Découvrez notre sélection de fruits frais',
+      color: 'from-orange-500 to-red-500',
       IconComponent: Apple,
     },
     {
-      title: "Nouveaux Producteurs",
-      subtitle: "Soutenez les agriculteurs locaux",
-      color: "from-green-500 to-emerald-500",
+      title: 'Nouveaux Producteurs',
+      subtitle: 'Soutenez les agriculteurs locaux',
+      color: 'from-green-500 to-emerald-500',
       IconComponent: Leaf,
     },
     {
-      title: "Produits Bio",
-      subtitle: "100% certifiés agriculture biologique",
-      color: "from-blue-500 to-cyan-500",
+      title: 'Produits Bio',
+      subtitle: '100% certifiés agriculture biologique',
+      color: 'from-blue-500 to-cyan-500',
       IconComponent: Sprout,
     },
   ];
 
   const categories = [
-    { name: "Légumes", IconComponent: Leaf, count: 45 },
-    { name: "Fruits", IconComponent: Apple, count: 38 },
-    { name: "Produits Laitiers", IconComponent: Milk, count: 22 },
-    { name: "Viandes", IconComponent: Beef, count: 18 },
-    { name: "Œufs", IconComponent: Egg, count: 12 },
+    { name: 'Légumes', IconComponent: Leaf, count: 45 },
+    { name: 'Fruits', IconComponent: Apple, count: 38 },
+    { name: 'Produits Laitiers', IconComponent: Milk, count: 22 },
+    { name: 'Viandes', IconComponent: Beef, count: 18 },
+    { name: 'Œufs', IconComponent: Egg, count: 12 },
   ];
 
   return (
@@ -1829,9 +1824,15 @@ function HeroSection() {
       <div className="relative h-80 bg-gradient-to-br from-[#2563eb] via-blue-500 to-cyan-400 rounded-2xl overflow-hidden shadow-2xl">
         {/* Animated Background Pattern */}
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.4"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }}></div>
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.4"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
+            }}
+          ></div>
         </div>
-        
+
         {/* Glassmorphism Content Container */}
         <div className="absolute inset-0 backdrop-blur-[2px]">
           <div className="absolute inset-0 flex items-center justify-center text-white px-8">
@@ -1840,10 +1841,12 @@ function HeroSection() {
               <div className="inline-flex p-6 bg-white/20 backdrop-blur-md rounded-3xl shadow-xl border border-white/30 hover:scale-110 transition-transform duration-300">
                 {(() => {
                   const Icon = slides[currentSlide].IconComponent;
-                  return <Icon className="h-24 w-24 text-white drop-shadow-2xl" strokeWidth={1.5} />;
+                  return (
+                    <Icon className="h-24 w-24 text-white drop-shadow-2xl" strokeWidth={1.5} />
+                  );
                 })()}
               </div>
-              
+
               {/* Modern Typography */}
               <div className="space-y-3">
                 <h2 className="text-5xl md:text-6xl font-bold tracking-tight drop-shadow-lg">
@@ -1853,7 +1856,7 @@ function HeroSection() {
                   {slides[currentSlide].subtitle}
                 </p>
               </div>
-              
+
               {/* Modern CTA Button */}
               <button className="group px-8 py-4 bg-white text-[#2563eb] rounded-full font-semibold text-lg hover:bg-opacity-95 transition-all duration-300 shadow-2xl hover:shadow-white/20 hover:scale-105 flex items-center gap-2 mx-auto">
                 Découvrir
@@ -1882,7 +1885,7 @@ function HeroSection() {
               key={index}
               onClick={() => setCurrentSlide(index)}
               className={`h-2 rounded-full transition-all ${
-                index === currentSlide ? "w-8 bg-white" : "w-2 bg-white/50"
+                index === currentSlide ? 'w-8 bg-white' : 'w-2 bg-white/50'
               }`}
             />
           ))}
@@ -1898,17 +1901,22 @@ function HeroSection() {
           >
             {/* Gradient Overlay on Hover */}
             <div className="absolute inset-0 bg-gradient-to-br from-[#2563eb]/0 to-blue-500/0 group-hover:from-[#2563eb]/5 group-hover:to-blue-500/5 transition-all duration-300 rounded-2xl"></div>
-            
+
             {/* Icon Container with Modern Animation */}
             <div className="relative mb-4">
               <div className="mx-auto w-20 h-20 bg-gradient-to-br from-[#2563eb]/10 via-blue-500/10 to-cyan-400/10 rounded-2xl flex items-center justify-center group-hover:from-[#2563eb]/20 group-hover:via-blue-500/20 group-hover:to-cyan-400/20 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-lg">
                 {(() => {
                   const Icon = category.IconComponent;
-                  return <Icon className="h-10 w-10 text-[#2563eb] group-hover:text-blue-600 transition-colors" strokeWidth={1.5} />;
+                  return (
+                    <Icon
+                      className="h-10 w-10 text-[#2563eb] group-hover:text-blue-600 transition-colors"
+                      strokeWidth={1.5}
+                    />
+                  );
                 })()}
               </div>
             </div>
-            
+
             {/* Text Content */}
             <div className="relative">
               <div className="font-semibold text-gray-900 dark:text-white text-base group-hover:text-[#2563eb] transition-colors">
@@ -1952,8 +1960,8 @@ function FiltersPanel({
   onDeletePreset,
   onSaveCurrentFilters,
 }: any) {
-  const labels = ["Bio", "Local", "Primeur", "Fermier", "AOP"];
-  const [categoryRename, setCategoryRename] = useState("");
+  const labels = ['Bio', 'Local', 'Primeur', 'Fermier', 'AOP'];
+  const [categoryRename, setCategoryRename] = useState('');
   const [showPresets, setShowPresets] = useState(false);
 
   const hasActiveFilters =
@@ -1981,10 +1989,7 @@ function FiltersPanel({
               <Plus className="h-4 w-4" />
             </button>
           )}
-          <button
-            onClick={onClearAll}
-            className="text-xs text-[#2563eb] hover:underline"
-          >
+          <button onClick={onClearAll} className="text-xs text-[#2563eb] hover:underline">
             Réinitialiser
           </button>
         </div>
@@ -2025,9 +2030,7 @@ function FiltersPanel({
               Mes filtres enregistrés ({savedFilterPresets.length})
             </span>
             <ChevronRight
-              className={`h-4 w-4 transition-transform ${
-                showPresets ? "rotate-90" : ""
-              }`}
+              className={`h-4 w-4 transition-transform ${showPresets ? 'rotate-90' : ''}`}
             />
           </button>
           {showPresets && (
@@ -2063,7 +2066,7 @@ function FiltersPanel({
           <label className="text-sm font-medium">Catégories</label>
           {isAdminMode && (
             <button
-              onClick={() => toast.info("Ajouter une catégorie")}
+              onClick={() => toast.info('Ajouter une catégorie')}
               className="p-1 text-[#2563eb] hover:bg-[#2563eb]/10 rounded transition-colors"
               title="Ajouter une catégorie"
             >
@@ -2106,7 +2109,7 @@ function FiltersPanel({
                       onEditCategory(null);
                     }}
                     onKeyDown={(e) => {
-                      if (e.key === "Enter") {
+                      if (e.key === 'Enter') {
                         if (categoryRename) {
                           onRenameCategory(category.id, categoryRename);
                         }
@@ -2133,9 +2136,7 @@ function FiltersPanel({
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      onCategoryMenuOpen(
-                        categoryMenuOpen === category.id ? null : category.id
-                      );
+                      onCategoryMenuOpen(categoryMenuOpen === category.id ? null : category.id);
                     }}
                     className="opacity-0 group-hover:opacity-100 p-1 hover:bg-muted rounded transition-all"
                   >
@@ -2149,7 +2150,7 @@ function FiltersPanel({
                 <div className="absolute right-0 top-8 bg-card border rounded-lg shadow-xl p-1 z-10 min-w-[180px]">
                   <button
                     onClick={() => {
-                      toast.info("Ajouter sous-catégorie");
+                      toast.info('Ajouter sous-catégorie');
                       onCategoryMenuOpen(null);
                     }}
                     className="w-full px-3 py-2 text-left hover:bg-muted rounded text-sm flex items-center gap-2"
@@ -2170,7 +2171,7 @@ function FiltersPanel({
                   </button>
                   <button
                     onClick={() => {
-                      toast.info("Déplacer catégorie");
+                      toast.info('Déplacer catégorie');
                       onCategoryMenuOpen(null);
                     }}
                     className="w-full px-3 py-2 text-left hover:bg-muted rounded text-sm flex items-center gap-2"
@@ -2180,7 +2181,7 @@ function FiltersPanel({
                   </button>
                   <button
                     onClick={() => {
-                      toast.success("Catégorie archivée");
+                      toast.success('Catégorie archivée');
                       onCategoryMenuOpen(null);
                     }}
                     className="w-full px-3 py-2 text-left hover:bg-muted rounded text-sm flex items-center gap-2 text-red-600"
@@ -2236,7 +2237,7 @@ function FiltersPanel({
               key={rating}
               onClick={() => onMinRatingChange(rating)}
               className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-colors text-sm ${
-                minRating === rating ? "bg-[#2563eb] text-white" : "hover:bg-muted"
+                minRating === rating ? 'bg-[#2563eb] text-white' : 'hover:bg-muted'
               }`}
             >
               <div className="flex">
@@ -2266,8 +2267,8 @@ function FiltersPanel({
               }}
               className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                 selectedLabels.includes(label)
-                  ? "bg-green-600 text-white"
-                  : "bg-muted hover:bg-muted/80"
+                  ? 'bg-green-600 text-white'
+                  : 'bg-muted hover:bg-muted/80'
               }`}
             >
               {label}
@@ -2314,21 +2315,21 @@ function ProductCard({
         </span>
       );
     }
-    
+
     switch (product.stock) {
-      case "in-stock":
+      case 'in-stock':
         return (
           <span className="px-2 py-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-xs font-medium rounded-full">
             En stock
           </span>
         );
-      case "limited":
+      case 'limited':
         return (
           <span className="px-2 py-1 bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 text-xs font-medium rounded-full">
             Stock limité
           </span>
         );
-      case "pre-order":
+      case 'pre-order':
         return (
           <span className="px-2 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 text-xs font-medium rounded-full">
             Pré-commande
@@ -2343,20 +2344,17 @@ function ProductCard({
     }
   };
 
-  if (viewMode === "list") {
+  if (viewMode === 'list') {
     return (
       <div
         onClick={onClick}
         className={`bg-card border rounded-lg p-4 hover:shadow-lg transition-all cursor-pointer flex gap-4 relative ${
-          product.archived ? "opacity-60" : ""
+          product.archived ? 'opacity-60' : ''
         }`}
       >
         {/* Admin Checkbox */}
         {isAdminMode && (
-          <div
-            className="absolute top-4 left-4 z-10"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="absolute top-4 left-4 z-10" onClick={(e) => e.stopPropagation()}>
             <input
               type="checkbox"
               checked={isSelected}
@@ -2367,11 +2365,7 @@ function ProductCard({
         )}
 
         <div className="relative h-24 w-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-lg flex items-center justify-center text-4xl flex-shrink-0 overflow-hidden">
-          <img
-            src={imageUrl}
-            alt={product.name}
-            className="w-full h-full object-cover"
-          />
+          <img src={imageUrl} alt={product.name} className="w-full h-full object-cover" />
         </div>
         <div className="flex-1">
           <div className="flex items-start justify-between mb-2">
@@ -2389,9 +2383,7 @@ function ProductCard({
             <div className="text-right">
               {promotionInfo ? (
                 <div className="space-y-1">
-                  <div className="text-xs font-semibold text-emerald-600">
-                    Promotion
-                  </div>
+                  <div className="text-xs font-semibold text-emerald-600">Promotion</div>
                   <div className="flex items-baseline gap-2 justify-end">
                     <div className="text-2xl font-bold text-emerald-600">
                       {promotionInfo.discountedPrice.toFixed(2)}€
@@ -2418,8 +2410,8 @@ function ProductCard({
                   key={i}
                   className={`h-4 w-4 ${
                     i < Math.floor(product.rating)
-                      ? "fill-yellow-400 text-yellow-400"
-                      : "text-gray-300"
+                      ? 'fill-yellow-400 text-yellow-400'
+                      : 'text-gray-300'
                   }`}
                 />
               ))}
@@ -2469,15 +2461,12 @@ function ProductCard({
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
       className={`group relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden hover:shadow-2xl hover:scale-[1.02] hover:border-[#2563eb] transition-all duration-300 cursor-pointer ${
-        product.archived ? "opacity-60" : ""
-      } ${isSelected ? "ring-2 ring-[#2563eb] shadow-lg" : ""}`}
+        product.archived ? 'opacity-60' : ''
+      } ${isSelected ? 'ring-2 ring-[#2563eb] shadow-lg' : ''}`}
     >
       {/* Admin Checkbox */}
       {isAdminMode && (
-        <div
-          className="absolute top-3 left-3 z-20"
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className="absolute top-3 left-3 z-20" onClick={(e) => e.stopPropagation()}>
           <input
             type="checkbox"
             checked={isSelected}
@@ -2492,18 +2481,21 @@ function ProductCard({
           src={imageUrl}
           alt={product.name}
           className={`w-full h-full object-cover transition-all duration-500 ${
-            isHovered ? "scale-110 brightness-105" : "scale-100"
+            isHovered ? 'scale-110 brightness-105' : 'scale-100'
           }`}
           onError={(e) => {
             // Fallback to placeholder if image fails to load
-            e.currentTarget.src = 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&h=400&fit=crop';
+            e.currentTarget.src =
+              'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&h=400&fit=crop';
           }}
         />
-        
+
         {/* Gradient Overlay on Hover */}
-        <div className={`absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent transition-opacity duration-300 ${
-          isHovered ? 'opacity-100' : 'opacity-0'
-        }`}></div>
+        <div
+          className={`absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent transition-opacity duration-300 ${
+            isHovered ? 'opacity-100' : 'opacity-0'
+          }`}
+        ></div>
 
         {/* Modern Top Badges with Glassmorphism */}
         <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
@@ -2597,7 +2589,9 @@ function ProductCard({
           >
             <Heart
               className={`h-5 w-5 transition-all ${
-                isFavorite ? "fill-red-500 text-red-500 scale-110" : "text-gray-600 dark:text-gray-400"
+                isFavorite
+                  ? 'fill-red-500 text-red-500 scale-110'
+                  : 'text-gray-600 dark:text-gray-400'
               }`}
             />
           </button>
@@ -2641,8 +2635,8 @@ function ProductCard({
                   key={i}
                   className={`h-4 w-4 ${
                     i < Math.floor(product.rating)
-                      ? "fill-yellow-400 text-yellow-400"
-                      : "fill-gray-200 text-gray-200 dark:fill-gray-700 dark:text-gray-700"
+                      ? 'fill-yellow-400 text-yellow-400'
+                      : 'fill-gray-200 text-gray-200 dark:fill-gray-700 dark:text-gray-700'
                   }`}
                 />
               ))}
@@ -2660,9 +2654,7 @@ function ProductCard({
           <div>
             {promotionInfo ? (
               <>
-                <div className="text-xs font-semibold text-emerald-600 mb-1">
-                  Promotion
-                </div>
+                <div className="text-xs font-semibold text-emerald-600 mb-1">Promotion</div>
                 <div className="flex items-baseline gap-2">
                   <div className="text-3xl font-bold text-emerald-600">
                     {promotionInfo.discountedPrice.toFixed(2)}€
@@ -2683,7 +2675,9 @@ function ProductCard({
                 <div className="text-3xl font-bold bg-gradient-to-r from-[#2563eb] to-blue-600 bg-clip-text text-transparent">
                   {product.price}€
                 </div>
-                <span className="text-sm font-medium text-gray-500 dark:text-gray-400">/{product.unit}</span>
+                <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  /{product.unit}
+                </span>
               </>
             )}
           </div>
@@ -2730,10 +2724,19 @@ function InspiredForYouSection({ products }: { products: Product[] }) {
   );
 }
 
-export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, onToggleFavorite, isAdminMode, onUpdate, onCreateAlert }: any) {
+export function ProductDetailPanel({
+  product,
+  onClose,
+  onAddToCart,
+  isFavorite,
+  onToggleFavorite,
+  isAdminMode,
+  onUpdate,
+  onCreateAlert,
+}: any) {
   const [selectedVariant, setSelectedVariant] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState("details");
+  const [activeTab, setActiveTab] = useState('details');
   const promotionInfo = useMemo(
     () => computePromotionPrice(product.price, product.promotion),
     [product.price, product.promotion]
@@ -2742,11 +2745,11 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
     product.media && product.media.length > 0
       ? product.media.find((m: ProductMediaItem) => m.isPrimary) || product.media[0]
       : null;
-  
+
   const [adminFields, setAdminFields] = useState({
     category: product.category,
     visible: product.visible !== false,
-    sku: product.sku || "",
+    sku: product.sku || '',
   });
   const [adminErrors, setAdminErrors] = useState<Record<string, string>>({});
   const [adminVariants, setAdminVariants] = useState<
@@ -2762,42 +2765,42 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
   const [adminMedia, setAdminMedia] = useState<ProductMediaItem[]>(product.media || []);
   const [draggedMediaIndex, setDraggedMediaIndex] = useState<number | null>(null);
   const initialPromotion = product.promotion || {
-    type: "percentage" as ProductPromotion["type"],
+    type: 'percentage' as ProductPromotion['type'],
     value: 0,
-    startsAt: "",
-    endsAt: "",
+    startsAt: '',
+    endsAt: '',
   };
   const [promotionEnabled, setPromotionEnabled] = useState(
     !!product.promotion && !!product.promotion.value
   );
   const [adminPromotion, setAdminPromotion] = useState<{
-    type: ProductPromotion["type"];
+    type: ProductPromotion['type'];
     value: number;
     startsAt: string;
     endsAt: string;
   }>({
     type: initialPromotion.type,
     value: initialPromotion.value,
-    startsAt: initialPromotion.startsAt || "",
-    endsAt: initialPromotion.endsAt || "",
+    startsAt: initialPromotion.startsAt || '',
+    endsAt: initialPromotion.endsAt || '',
   });
 
   const tabs = [
-    { id: "details", label: "Détails", icon: Package },
-    { id: "reviews", label: "Avis", icon: MessageCircle },
-    ...(isAdminMode ? [{ id: "admin", label: "Administration", icon: SettingsIcon }] : []),
+    { id: 'details', label: 'Détails', icon: Package },
+    { id: 'reviews', label: 'Avis', icon: MessageCircle },
+    ...(isAdminMode ? [{ id: 'admin', label: 'Administration', icon: SettingsIcon }] : []),
   ];
 
   const handleAdminSave = () => {
     const nextErrors: Record<string, string> = {};
-    if (!adminFields.category) nextErrors.category = "Catégorie obligatoire";
-    if (!adminFields.sku.trim()) nextErrors.sku = "SKU obligatoire";
+    if (!adminFields.category) nextErrors.category = 'Catégorie obligatoire';
+    if (!adminFields.sku.trim()) nextErrors.sku = 'SKU obligatoire';
     if (promotionEnabled && (!adminPromotion.value || adminPromotion.value <= 0)) {
-      nextErrors.promotion = "Valeur de promotion invalide";
+      nextErrors.promotion = 'Valeur de promotion invalide';
     }
     setAdminErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) {
-      toast.error("Veuillez corriger les erreurs du formulaire");
+      toast.error('Veuillez corriger les erreurs du formulaire');
       return;
     }
 
@@ -2842,12 +2845,9 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
         {/* Header */}
         <div className="sticky top-0 bg-card border-b p-6 flex items-center justify-between z-10">
           <h2 className="text-2xl font-bold">
-            {isAdminMode ? "Édition produit" : "Détails du produit"}
+            {isAdminMode ? 'Édition produit' : 'Détails du produit'}
           </h2>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-muted rounded-lg transition-colors"
-          >
+          <button onClick={onClose} className="p-2 hover:bg-muted rounded-lg transition-colors">
             <X className="h-6 w-6" />
           </button>
         </div>
@@ -2864,9 +2864,9 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                     onClick={() => setActiveTab(tab.id)}
                     className={`px-4 py-3 border-b-2 transition-colors text-sm font-medium flex items-center gap-2 ${
                       activeTab === tab.id
-                        ? "border-[#2563eb] text-[#2563eb]"
-                        : "border-transparent text-muted-foreground hover:text-foreground"
-                      }`}
+                        ? 'border-[#2563eb] text-[#2563eb]'
+                        : 'border-transparent text-muted-foreground hover:text-foreground'
+                    }`}
                     data-testid={`product-tab-${tab.id}`}
                   >
                     <Icon className="h-4 w-4" />
@@ -2880,7 +2880,7 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
 
         {/* Content */}
         <div className="p-6 space-y-6">
-          {activeTab === "details" && (
+          {activeTab === 'details' && (
             <>
               <div className="relative h-96 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-lg flex items-center justify-center overflow-hidden">
                 <img
@@ -2894,7 +2894,7 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                 >
                   <Heart
                     className={`h-6 w-6 ${
-                      isFavorite ? "fill-red-500 text-red-500" : "text-gray-600"
+                      isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-600'
                     }`}
                   />
                 </button>
@@ -2908,8 +2908,8 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                       alt={item.alt || product.name}
                       className={`h-16 w-16 rounded-lg object-cover border ${
                         primaryMedia && primaryMedia.id === item.id
-                          ? "border-[#2563eb]"
-                          : "border-transparent"
+                          ? 'border-[#2563eb]'
+                          : 'border-transparent'
                       }`}
                     />
                   ))}
@@ -2928,8 +2928,8 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                             key={i}
                             className={`h-5 w-5 ${
                               i < Math.floor(product.rating)
-                                ? "fill-yellow-400 text-yellow-400"
-                                : "text-gray-300"
+                                ? 'fill-yellow-400 text-yellow-400'
+                                : 'text-gray-300'
                             }`}
                           />
                         ))}
@@ -2954,25 +2954,26 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                           </div>
                         </div>
                         <div className="text-sm text-emerald-600">
-                          ~{Math.round(promotionInfo.savingsPercentage)}% de réduction /{product.unit}
+                          ~{Math.round(promotionInfo.savingsPercentage)}% de réduction /
+                          {product.unit}
                         </div>
-                        {product.promotion && (product.promotion.startsAt || product.promotion.endsAt) && (
-                          <div className="text-xs text-muted-foreground">
-                            {product.promotion.startsAt && (
-                              <span>
-                                Dès le{" "}
-                                {new Date(product.promotion.startsAt).toLocaleDateString()}
-                              </span>
-                            )}
-                            {product.promotion.startsAt && product.promotion.endsAt && " • "}
-                            {product.promotion.endsAt && (
-                              <span>
-                                Jusqu&apos;au{" "}
-                                {new Date(product.promotion.endsAt).toLocaleDateString()}
-                              </span>
-                            )}
-                          </div>
-                        )}
+                        {product.promotion &&
+                          (product.promotion.startsAt || product.promotion.endsAt) && (
+                            <div className="text-xs text-muted-foreground">
+                              {product.promotion.startsAt && (
+                                <span>
+                                  Dès le {new Date(product.promotion.startsAt).toLocaleDateString()}
+                                </span>
+                              )}
+                              {product.promotion.startsAt && product.promotion.endsAt && ' • '}
+                              {product.promotion.endsAt && (
+                                <span>
+                                  Jusqu&apos;au{' '}
+                                  {new Date(product.promotion.endsAt).toLocaleDateString()}
+                                </span>
+                              )}
+                            </div>
+                          )}
                       </div>
                     ) : (
                       <div className="text-4xl font-bold text-[#2563eb]">
@@ -3014,8 +3015,8 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                           onClick={() => setSelectedVariant(index)}
                           className={`px-4 py-2 border rounded-lg transition-colors ${
                             selectedVariant === index
-                              ? "border-[#2563eb] bg-[#2563eb]/10 text-[#2563eb]"
-                              : "hover:bg-muted"
+                              ? 'border-[#2563eb] bg-[#2563eb]/10 text-[#2563eb]'
+                              : 'hover:bg-muted'
                           }`}
                         >
                           <div className="font-medium">{variant.name}</div>
@@ -3060,21 +3061,22 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                       className="w-full px-6 py-4 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors font-semibold text-lg flex items-center justify-center gap-2"
                     >
                       <ShoppingCart className="h-6 w-6" />
-                      Ajouter au panier - {((promotionInfo?.discountedPrice ?? product.price) * quantity).toFixed(2)}€
+                      Ajouter au panier -{' '}
+                      {((promotionInfo?.discountedPrice ?? product.price) * quantity).toFixed(2)}€
                     </button>
 
                     {/* Price Alert Buttons */}
                     <div className="grid grid-cols-2 gap-3 mt-3">
                       <button
-                        onClick={() => onCreateAlert("price_drop")}
+                        onClick={() => onCreateAlert('price_drop')}
                         className="px-4 py-3 border border-orange-600 text-orange-600 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors font-medium text-sm flex items-center justify-center gap-2"
                       >
                         <AlertTriangle className="h-4 w-4" />
                         Alerter baisse prix
                       </button>
-                      {product.stock === "out-of-stock" ? (
+                      {product.stock === 'out-of-stock' ? (
                         <button
-                          onClick={() => onCreateAlert("back_in_stock")}
+                          onClick={() => onCreateAlert('back_in_stock')}
                           className="px-4 py-3 border border-orange-600 text-orange-600 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors font-medium text-sm flex items-center justify-center gap-2"
                         >
                           <Package className="h-4 w-4" />
@@ -3082,7 +3084,7 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                         </button>
                       ) : (
                         <button
-                          onClick={() => onCreateAlert("price_target")}
+                          onClick={() => onCreateAlert('price_target')}
                           className="px-4 py-3 border border-orange-600 text-orange-600 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors font-medium text-sm flex items-center justify-center gap-2"
                         >
                           <TrendingUp className="h-4 w-4" />
@@ -3123,7 +3125,7 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
             </>
           )}
 
-          {activeTab === "reviews" && (
+          {activeTab === 'reviews' && (
             <div className="border-t pt-6">
               <h3 className="font-semibold mb-4">Avis clients</h3>
               <div className="space-y-4">
@@ -3147,8 +3149,8 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                                 key={i}
                                 className={`h-4 w-4 ${
                                   i < review.rating
-                                    ? "fill-yellow-400 text-yellow-400"
-                                    : "text-gray-300"
+                                    ? 'fill-yellow-400 text-yellow-400'
+                                    : 'text-gray-300'
                                 }`}
                               />
                             ))}
@@ -3164,7 +3166,7 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
             </div>
           )}
 
-          {activeTab === "admin" && (
+          {activeTab === 'admin' && (
             <div className="space-y-6">
               <div className="space-y-6">
                 <div>
@@ -3182,7 +3184,7 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                           setAdminErrors((prev) => {
                             const next = { ...prev };
                             if (!value) {
-                              next.category = "Catégorie obligatoire";
+                              next.category = 'Catégorie obligatoire';
                             } else {
                               delete next.category;
                             }
@@ -3206,9 +3208,7 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-2">
-                        SKU / Référence *
-                      </label>
+                      <label className="block text-sm font-medium mb-2">SKU / Référence *</label>
                       <input
                         type="text"
                         value={adminFields.sku}
@@ -3218,7 +3218,7 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                           setAdminErrors((prev) => {
                             const next = { ...prev };
                             if (!value.trim()) {
-                              next.sku = "SKU obligatoire";
+                              next.sku = 'SKU obligatoire';
                             } else {
                               delete next.sku;
                             }
@@ -3267,7 +3267,7 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                           ...adminVariants,
                           {
                             id: `VAR-EDIT-${product.id}-${adminVariants.length}`,
-                            name: "",
+                            name: '',
                             price: product.price,
                             unit: product.unit,
                           },
@@ -3338,9 +3338,7 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                             <button
                               type="button"
                               onClick={() =>
-                                setAdminVariants(
-                                  adminVariants.filter((_, i) => i !== index)
-                                )
+                                setAdminVariants(adminVariants.filter((_, i) => i !== index))
                               }
                               className="px-2 py-1 text-xs text-red-600 hover:bg-red-50 rounded-lg"
                               data-testid={`admin-variant-remove-${index}`}
@@ -3374,7 +3372,7 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                         added.push({
                           id: `${file.name}-${file.size}-${file.lastModified}`,
                           url,
-                          type: "image",
+                          type: 'image',
                           alt: product.name || file.name,
                         });
                       });
@@ -3417,7 +3415,7 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                             src={item.url}
                             alt={item.alt}
                             className={`h-16 w-16 rounded-lg object-cover border shadow-sm ${
-                              item.isPrimary ? "border-[#2563eb]" : "border-transparent"
+                              item.isPrimary ? 'border-[#2563eb]' : 'border-transparent'
                             }`}
                           />
                           <div className="flex gap-1">
@@ -3475,7 +3473,7 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                           onChange={(e) =>
                             setAdminPromotion({
                               ...adminPromotion,
-                              type: e.target.value as ProductPromotion["type"],
+                              type: e.target.value as ProductPromotion['type'],
                             })
                           }
                           className="w-full px-3 py-2 border rounded-lg text-sm bg-background"
@@ -3498,9 +3496,7 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                           data-testid="admin-promo-value"
                         />
                         {adminErrors.promotion && (
-                          <p className="mt-1 text-xs text-red-600">
-                            {adminErrors.promotion}
-                          </p>
+                          <p className="mt-1 text-xs text-red-600">{adminErrors.promotion}</p>
                         )}
                       </div>
                       <div className="space-y-2">
@@ -3537,14 +3533,12 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <History className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-medium">
-                        Historique des modifications
-                      </span>
+                      <span className="text-sm font-medium">Historique des modifications</span>
                     </div>
                     <span className="text-xs text-muted-foreground">
                       {product.history && product.history.length > 0
                         ? `${product.history.length} événement(s)`
-                        : "Aucune modification enregistrée"}
+                        : 'Aucune modification enregistrée'}
                     </span>
                   </div>
                   <div
@@ -3569,10 +3563,10 @@ export function ProductDetailPanel({ product, onClose, onAddToCart, isFavorite, 
                             <ul className="space-y-0.5 text-muted-foreground">
                               {entry.changes.map((change, index) => (
                                 <li key={index}>
-                                  <span className="font-semibold">{change.field}:</span>{" "}
+                                  <span className="font-semibold">{change.field}:</span>{' '}
                                   <span className="line-through opacity-70">
                                     {String(change.from)}
-                                  </span>{" "}
+                                  </span>{' '}
                                   → <span>{String(change.to)}</span>
                                 </li>
                               ))}
@@ -3621,55 +3615,58 @@ function getCachedMediaUrl(file: File) {
 
 function AddProductModal({ onClose, onSave, categories }: any) {
   const [step, setStep] = useState(1);
-  const [productType, setProductType] = useState<"simple" | "advanced" | null>(null);
+  const [productType, setProductType] = useState<'simple' | 'advanced' | null>(null);
   const [formData, setFormData] = useState({
-    name: "",
-    category: "",
+    name: '',
+    category: '',
     price: 0,
-    unit: "kg",
-    image: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&h=400&fit=crop",
-    description: "",
+    unit: 'kg',
+    image: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&h=400&fit=crop',
+    description: '',
     labels: [] as string[],
-    sku: "",
+    sku: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [variants, setVariants] = useState<Array<{ id: string; name: string; price: number; unit: string }>>([]);
+  const [variants, setVariants] = useState<
+    Array<{ id: string; name: string; price: number; unit: string }>
+  >([]);
   const [media, setMedia] = useState<ProductMediaItem[]>([]);
   const [promotionEnabled, setPromotionEnabled] = useState(false);
   const [promotion, setPromotion] = useState<{
-    type: ProductPromotion["type"];
+    type: ProductPromotion['type'];
     value: number;
     startsAt: string;
     endsAt: string;
   }>({
-    type: "percentage",
+    type: 'percentage',
     value: 0,
-    startsAt: "",
-    endsAt: "",
+    startsAt: '',
+    endsAt: '',
   });
 
   const imageOptions = [
-    "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400&h=400&fit=crop", // Tomatoes
-    "https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=400&h=400&fit=crop", // Lettuce
-    "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400&h=400&fit=crop", // Apples
-    "https://images.unsplash.com/photo-1452195100486-9cc805987862?w=400&h=400&fit=crop", // Cheese
-    "https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=400&h=400&fit=crop", // Meat
-    "https://images.unsplash.com/photo-1582169296194-e4d644c48063?w=400&h=400&fit=crop", // Eggs
-    "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&h=400&fit=crop", // Package/Generic
+    'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400&h=400&fit=crop', // Tomatoes
+    'https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=400&h=400&fit=crop', // Lettuce
+    'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400&h=400&fit=crop', // Apples
+    'https://images.unsplash.com/photo-1452195100486-9cc805987862?w=400&h=400&fit=crop', // Cheese
+    'https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=400&h=400&fit=crop', // Meat
+    'https://images.unsplash.com/photo-1582169296194-e4d644c48063?w=400&h=400&fit=crop', // Eggs
+    'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&h=400&fit=crop', // Package/Generic
   ];
 
   const handleSubmit = () => {
     const nextErrors: Record<string, string> = {};
-    if (!formData.name.trim()) nextErrors.name = "Nom obligatoire";
-    if (!formData.category) nextErrors.category = "Catégorie obligatoire";
-    if (!formData.sku.trim()) nextErrors.sku = "SKU obligatoire";
-    if (!formData.price || formData.price <= 0) nextErrors.price = "Prix invalide";
+    if (!formData.name.trim()) nextErrors.name = 'Nom obligatoire';
+    if (!formData.category) nextErrors.category = 'Catégorie obligatoire';
+    if (!formData.sku.trim()) nextErrors.sku = 'SKU obligatoire';
+    if (!formData.price || formData.price <= 0) nextErrors.price = 'Prix invalide';
     if (promotionEnabled) {
-      if (!promotion.value || promotion.value <= 0) nextErrors.promotion = "Valeur de promotion invalide";
+      if (!promotion.value || promotion.value <= 0)
+        nextErrors.promotion = 'Valeur de promotion invalide';
     }
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) {
-      toast.error("Veuillez corriger les erreurs du formulaire");
+      toast.error('Veuillez corriger les erreurs du formulaire');
       return;
     }
     let promotionPayload: ProductPromotion | undefined;
@@ -3713,7 +3710,7 @@ function AddProductModal({ onClose, onSave, categories }: any) {
               <div className="grid grid-cols-2 gap-4">
                 <button
                   onClick={() => {
-                    setProductType("simple");
+                    setProductType('simple');
                     setStep(2);
                   }}
                   className="p-6 border-2 rounded-lg hover:border-[#2563eb] hover:bg-[#2563eb]/5 transition-all text-left"
@@ -3726,7 +3723,7 @@ function AddProductModal({ onClose, onSave, categories }: any) {
                 </button>
                 <button
                   onClick={() => {
-                    setProductType("advanced");
+                    setProductType('advanced');
                     setStep(2);
                   }}
                   className="p-6 border-2 rounded-lg hover:border-[#2563eb] hover:bg-[#2563eb]/5 transition-all text-left"
@@ -3754,7 +3751,7 @@ function AddProductModal({ onClose, onSave, categories }: any) {
                     setErrors((prev) => {
                       const next = { ...prev };
                       if (!value.trim()) {
-                        next.name = "Nom obligatoire";
+                        next.name = 'Nom obligatoire';
                       } else {
                         delete next.name;
                       }
@@ -3778,7 +3775,7 @@ function AddProductModal({ onClose, onSave, categories }: any) {
                       setErrors((prev) => {
                         const next = { ...prev };
                         if (!value) {
-                          next.category = "Catégorie obligatoire";
+                          next.category = 'Catégorie obligatoire';
                         } else {
                           delete next.category;
                         }
@@ -3807,7 +3804,7 @@ function AddProductModal({ onClose, onSave, categories }: any) {
                       setErrors((prev) => {
                         const next = { ...prev };
                         if (!value || value <= 0) {
-                          next.price = "Prix invalide";
+                          next.price = 'Prix invalide';
                         } else {
                           delete next.price;
                         }
@@ -3845,10 +3842,16 @@ function AddProductModal({ onClose, onSave, categories }: any) {
                       key={idx}
                       onClick={() => setFormData({ ...formData, image: imageUrl })}
                       className={`p-2 border-2 rounded-lg hover:border-[#2563eb] transition-colors ${
-                        formData.image === imageUrl ? "border-[#2563eb] bg-blue-50" : "border-gray-200"
+                        formData.image === imageUrl
+                          ? 'border-[#2563eb] bg-blue-50'
+                          : 'border-gray-200'
                       }`}
                     >
-                      <img src={imageUrl} alt="Option" className="w-full h-16 object-cover rounded" />
+                      <img
+                        src={imageUrl}
+                        alt="Option"
+                        className="w-full h-16 object-cover rounded"
+                      />
                     </button>
                   ))}
                 </div>
@@ -3883,7 +3886,7 @@ function AddProductModal({ onClose, onSave, categories }: any) {
                     setErrors((prev) => {
                       const next = { ...prev };
                       if (!value.trim()) {
-                        next.sku = "SKU obligatoire";
+                        next.sku = 'SKU obligatoire';
                       } else {
                         delete next.sku;
                       }
@@ -3896,7 +3899,7 @@ function AddProductModal({ onClose, onSave, categories }: any) {
                 {errors.sku && <p className="mt-1 text-xs text-red-600">{errors.sku}</p>}
               </div>
 
-              {productType === "advanced" && (
+              {productType === 'advanced' && (
                 <div className="space-y-6 pt-2 border-t">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
@@ -3906,7 +3909,12 @@ function AddProductModal({ onClose, onSave, categories }: any) {
                         onClick={() =>
                           setVariants([
                             ...variants,
-                            { id: `VAR-${Date.now()}-${variants.length}`, name: "", price: formData.price, unit: formData.unit },
+                            {
+                              id: `VAR-${Date.now()}-${variants.length}`,
+                              name: '',
+                              price: formData.price,
+                              unit: formData.unit,
+                            },
                           ])
                         }
                         className="px-3 py-1 text-xs rounded-lg border hover:bg-muted"
@@ -3924,9 +3932,7 @@ function AddProductModal({ onClose, onSave, categories }: any) {
                               onChange={(e) => {
                                 const value = e.target.value;
                                 setVariants(
-                                  variants.map((v, i) =>
-                                    i === index ? { ...v, name: value } : v
-                                  )
+                                  variants.map((v, i) => (i === index ? { ...v, name: value } : v))
                                 );
                               }}
                               placeholder="Nom"
@@ -3938,9 +3944,7 @@ function AddProductModal({ onClose, onSave, categories }: any) {
                               onChange={(e) => {
                                 const value = parseFloat(e.target.value) || 0;
                                 setVariants(
-                                  variants.map((v, i) =>
-                                    i === index ? { ...v, price: value } : v
-                                  )
+                                  variants.map((v, i) => (i === index ? { ...v, price: value } : v))
                                 );
                               }}
                               placeholder="Prix"
@@ -3966,9 +3970,7 @@ function AddProductModal({ onClose, onSave, categories }: any) {
                               </select>
                               <button
                                 type="button"
-                                onClick={() =>
-                                  setVariants(variants.filter((_, i) => i !== index))
-                                }
+                                onClick={() => setVariants(variants.filter((_, i) => i !== index))}
                                 className="px-2 py-1 text-xs text-red-600 hover:bg-red-50 rounded-lg"
                               >
                                 Supprimer
@@ -3995,7 +3997,7 @@ function AddProductModal({ onClose, onSave, categories }: any) {
                           added.push({
                             id: `${file.name}-${file.size}-${file.lastModified}`,
                             url,
-                            type: "image",
+                            type: 'image',
                             alt: formData.name || file.name,
                           });
                         });
@@ -4017,7 +4019,7 @@ function AddProductModal({ onClose, onSave, categories }: any) {
                               src={item.url}
                               alt={item.alt}
                               className={`h-16 w-16 rounded-lg object-cover border ${
-                                item.isPrimary ? "border-[#2563eb]" : "border-transparent"
+                                item.isPrimary ? 'border-[#2563eb]' : 'border-transparent'
                               }`}
                             />
                             <div className="flex gap-1">
@@ -4072,7 +4074,10 @@ function AddProductModal({ onClose, onSave, categories }: any) {
                           <select
                             value={promotion.type}
                             onChange={(e) =>
-                              setPromotion({ ...promotion, type: e.target.value as ProductPromotion["type"] })
+                              setPromotion({
+                                ...promotion,
+                                type: e.target.value as ProductPromotion['type'],
+                              })
                             }
                             className="w-full px-3 py-2 border rounded-lg text-sm"
                           >
@@ -4107,9 +4112,7 @@ function AddProductModal({ onClose, onSave, categories }: any) {
                           <input
                             type="date"
                             value={promotion.endsAt}
-                            onChange={(e) =>
-                              setPromotion({ ...promotion, endsAt: e.target.value })
-                            }
+                            onChange={(e) => setPromotion({ ...promotion, endsAt: e.target.value })}
                             className="w-full px-3 py-2 border rounded-lg text-sm"
                           />
                         </div>
@@ -4181,7 +4184,12 @@ function ArchiveConfirmModal({ product, onConfirm, onCancel }: any) {
 }
 
 // Product Comparison Modal
-function ProductComparisonModal({ products, onClose, onRemoveProduct, onAddToCart }: {
+function ProductComparisonModal({
+  products,
+  onClose,
+  onRemoveProduct,
+  onAddToCart,
+}: {
   products: Product[];
   onClose: () => void;
   onRemoveProduct: (productId: string) => void;
@@ -4198,13 +4206,11 @@ function ProductComparisonModal({ products, onClose, onRemoveProduct, onAddToCar
               Comparaison de produits
             </h2>
             <p className="text-sm opacity-90 mt-1">
-              {products.length} produit{products.length > 1 ? 's' : ''} sélectionné{products.length > 1 ? 's' : ''}
+              {products.length} produit{products.length > 1 ? 's' : ''} sélectionné
+              {products.length > 1 ? 's' : ''}
             </p>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-          >
+          <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-lg transition-colors">
             <X className="h-6 w-6" />
           </button>
         </div>
@@ -4221,8 +4227,8 @@ function ProductComparisonModal({ products, onClose, onRemoveProduct, onAddToCar
                   <th key={product.id} className="p-4 text-center min-w-[250px]">
                     <div className="space-y-3">
                       <div className="relative w-full h-24 bg-gray-100 rounded-lg overflow-hidden">
-                        <img 
-                          src={product.image} 
+                        <img
+                          src={product.image}
                           alt={product.name}
                           className="w-full h-full object-cover"
                         />
@@ -4231,7 +4237,9 @@ function ProductComparisonModal({ products, onClose, onRemoveProduct, onAddToCar
                       <div className="flex items-center justify-center gap-2">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                         <span className="font-medium">{product.rating}</span>
-                        <span className="text-muted-foreground text-sm">({product.reviewCount})</span>
+                        <span className="text-muted-foreground text-sm">
+                          ({product.reviewCount})
+                        </span>
                       </div>
                       <button
                         onClick={() => onRemoveProduct(product.id)}
@@ -4292,16 +4300,24 @@ function ProductComparisonModal({ products, onClose, onRemoveProduct, onAddToCar
                 <td className="p-4 font-medium bg-muted/50 sticky left-0 z-10">Disponibilité</td>
                 {products.map((product) => (
                   <td key={product.id} className="p-4 text-center">
-                    <span className={`px-3 py-1 rounded-full text-sm ${
-                      product.stock === 'in-stock' ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400' :
-                      product.stock === 'limited' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400' :
-                      product.stock === 'pre-order' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400' :
-                      'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'
-                    }`}>
-                      {product.stock === 'in-stock' ? 'En stock' :
-                       product.stock === 'limited' ? 'Stock limité' :
-                       product.stock === 'pre-order' ? 'Pré-commande' :
-                       'Rupture'}
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm ${
+                        product.stock === 'in-stock'
+                          ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                          : product.stock === 'limited'
+                          ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400'
+                          : product.stock === 'pre-order'
+                          ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'
+                          : 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'
+                      }`}
+                    >
+                      {product.stock === 'in-stock'
+                        ? 'En stock'
+                        : product.stock === 'limited'
+                        ? 'Stock limité'
+                        : product.stock === 'pre-order'
+                        ? 'Pré-commande'
+                        : 'Rupture'}
                     </span>
                   </td>
                 ))}
@@ -4314,7 +4330,10 @@ function ProductComparisonModal({ products, onClose, onRemoveProduct, onAddToCar
                   <td key={product.id} className="p-4">
                     <div className="flex flex-wrap gap-1 justify-center">
                       {product.labels.map((label, idx) => (
-                        <span key={idx} className="px-2 py-1 bg-emerald-100 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 rounded text-xs">
+                        <span
+                          key={idx}
+                          className="px-2 py-1 bg-emerald-100 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 rounded text-xs"
+                        >
                           {label}
                         </span>
                       ))}
@@ -4359,7 +4378,11 @@ function ProductComparisonModal({ products, onClose, onRemoveProduct, onAddToCar
                     <div className="font-semibold text-lg mb-3">Spécifications techniques</div>
                     <div className="space-y-2">
                       {Object.keys(products[0].specifications).map((specKey) => (
-                        <div key={specKey} className="grid" style={{ gridTemplateColumns: `200px repeat(${products.length}, 1fr)` }}>
+                        <div
+                          key={specKey}
+                          className="grid"
+                          style={{ gridTemplateColumns: `200px repeat(${products.length}, 1fr)` }}
+                        >
                           <div className="p-2 font-medium bg-muted/50">{specKey}</div>
                           {products.map((product) => (
                             <div key={product.id} className="p-2 text-center">
@@ -4378,7 +4401,10 @@ function ProductComparisonModal({ products, onClose, onRemoveProduct, onAddToCar
 
         {/* Footer with Actions */}
         <div className="px-6 py-4 border-t bg-muted/30">
-          <div className="grid gap-3" style={{ gridTemplateColumns: `200px repeat(${products.length}, 1fr)` }}>
+          <div
+            className="grid gap-3"
+            style={{ gridTemplateColumns: `200px repeat(${products.length}, 1fr)` }}
+          >
             <div className="p-2 font-semibold">Actions</div>
             {products.map((product) => (
               <div key={product.id} className="p-2">
@@ -4403,490 +4429,490 @@ function ProductComparisonModal({ products, onClose, onRemoveProduct, onAddToCar
 
 // Initial data
 const initialCategories: Category[] = [
-  { id: "CAT-001", name: "Légumes", icon: "Leaf" },
-  { id: "CAT-002", name: "Fruits", icon: "Apple" },
-  { id: "CAT-003", name: "Produits Laitiers", icon: "Milk" },
-  { id: "CAT-004", name: "Viandes", icon: "Beef" },
-  { id: "CAT-005", name: "Œufs", icon: "Egg" },
-  { id: "CAT-006", name: "Autres", icon: "PackageBox" },
+  { id: 'CAT-001', name: 'Légumes', icon: 'Leaf' },
+  { id: 'CAT-002', name: 'Fruits', icon: 'Apple' },
+  { id: 'CAT-003', name: 'Produits Laitiers', icon: 'Milk' },
+  { id: 'CAT-004', name: 'Viandes', icon: 'Beef' },
+  { id: 'CAT-005', name: 'Œufs', icon: 'Egg' },
+  { id: 'CAT-006', name: 'Autres', icon: 'PackageBox' },
 ];
 
 const initialProducts: Product[] = [
   {
-    id: "PROD-001",
-    name: "Tomates Bio",
-    category: "Légumes",
-    subcategory: "Tomates",
+    id: 'PROD-001',
+    name: 'Tomates Bio',
+    category: 'Légumes',
+    subcategory: 'Tomates',
     price: 4.5,
-    unit: "kg",
-    image: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400&h=400&fit=crop",
+    unit: 'kg',
+    image: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400&h=400&fit=crop',
     seller: {
-      name: "Ferme du Soleil Levant",
-      location: "Lyon, Rhône",
+      name: 'Ferme du Soleil Levant',
+      location: 'Lyon, Rhône',
       distance: 8.5,
       rating: 4.9,
       totalSales: 245,
     },
-    stock: "in-stock",
+    stock: 'in-stock',
     rating: 4.8,
     reviewCount: 34,
-    labels: ["Bio", "Local"],
+    labels: ['Bio', 'Local'],
     fastDelivery: true,
     description:
-      "Tomates cerises cultivées en plein air, récoltées à maturité. Saveur sucrée et parfumée.",
+      'Tomates cerises cultivées en plein air, récoltées à maturité. Saveur sucrée et parfumée.',
     variants: [
-      { name: "500g", price: 2.5, unit: "sachet" },
-      { name: "1kg", price: 4.5, unit: "kg" },
-      { name: "2kg", price: 8.5, unit: "caisse" },
+      { name: '500g', price: 2.5, unit: 'sachet' },
+      { name: '1kg', price: 4.5, unit: 'kg' },
+      { name: '2kg', price: 8.5, unit: 'caisse' },
     ],
     specifications: {
-      Origine: "France - Rhône",
-      Calibre: "Petit",
-      Conservation: "3-5 jours",
+      Origine: 'France - Rhône',
+      Calibre: 'Petit',
+      Conservation: '3-5 jours',
     },
     reviews: [
       {
-        id: "R1",
-        author: "Marie D.",
+        id: 'R1',
+        author: 'Marie D.',
         rating: 5,
-        date: "Il y a 3 jours",
-        comment: "Tomates délicieuses, vraiment goûteuses ! Je recommande.",
+        date: 'Il y a 3 jours',
+        comment: 'Tomates délicieuses, vraiment goûteuses ! Je recommande.',
         verified: true,
       },
       {
-        id: "R2",
-        author: "Pierre M.",
+        id: 'R2',
+        author: 'Pierre M.',
         rating: 4,
-        date: "Il y a 1 semaine",
-        comment: "Bonne qualité, livrées rapidement.",
+        date: 'Il y a 1 semaine',
+        comment: 'Bonne qualité, livrées rapidement.',
         verified: true,
       },
     ],
-    sku: "TOM-BIO-001",
+    sku: 'TOM-BIO-001',
     visible: true,
   },
   {
-    id: "PROD-002",
-    name: "Laitue Batavia",
-    category: "Légumes",
+    id: 'PROD-002',
+    name: 'Laitue Batavia',
+    category: 'Légumes',
     price: 2.2,
-    unit: "pièce",
-    image: "https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=400&h=400&fit=crop",
+    unit: 'pièce',
+    image: 'https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=400&h=400&fit=crop',
     seller: {
-      name: "Les Jardins de Provence",
-      location: "Marseille, Bouches-du-Rhône",
+      name: 'Les Jardins de Provence',
+      location: 'Marseille, Bouches-du-Rhône',
       distance: 15.2,
       rating: 4.7,
       totalSales: 189,
     },
-    stock: "in-stock",
+    stock: 'in-stock',
     rating: 4.6,
     reviewCount: 22,
-    labels: ["Bio", "Primeur"],
+    labels: ['Bio', 'Primeur'],
     fastDelivery: false,
-    description: "Laitue fraîche et croquante, cultivée sans pesticides.",
+    description: 'Laitue fraîche et croquante, cultivée sans pesticides.',
     specifications: {
-      Origine: "France - Provence",
-      Variété: "Batavia",
+      Origine: 'France - Provence',
+      Variété: 'Batavia',
     },
     reviews: [
       {
-        id: "R3",
-        author: "Sophie L.",
+        id: 'R3',
+        author: 'Sophie L.',
         rating: 5,
-        date: "Il y a 2 jours",
-        comment: "Très fraîche, parfaite pour mes salades !",
+        date: 'Il y a 2 jours',
+        comment: 'Très fraîche, parfaite pour mes salades !',
         verified: true,
       },
     ],
-    sku: "LAI-BAT-001",
+    sku: 'LAI-BAT-001',
     visible: true,
   },
   {
-    id: "PROD-003",
-    name: "Pommes Golden",
-    category: "Fruits",
+    id: 'PROD-003',
+    name: 'Pommes Golden',
+    category: 'Fruits',
     price: 3.8,
-    unit: "kg",
-    image: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400&h=400&fit=crop",
+    unit: 'kg',
+    image: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400&h=400&fit=crop',
     seller: {
-      name: "Verger des Alpes",
-      location: "Grenoble, Isère",
+      name: 'Verger des Alpes',
+      location: 'Grenoble, Isère',
       distance: 12.0,
       rating: 4.8,
       totalSales: 312,
     },
-    stock: "in-stock",
+    stock: 'in-stock',
     rating: 4.9,
     reviewCount: 67,
-    labels: ["Local", "Fermier"],
+    labels: ['Local', 'Fermier'],
     fastDelivery: true,
-    description: "Pommes Golden croquantes et sucrées, idéales pour le goûter.",
+    description: 'Pommes Golden croquantes et sucrées, idéales pour le goûter.',
     specifications: {
-      Origine: "France - Savoie",
-      Calibre: "Moyen",
-      Conservation: "2 semaines",
+      Origine: 'France - Savoie',
+      Calibre: 'Moyen',
+      Conservation: '2 semaines',
     },
     reviews: [
       {
-        id: "R4",
-        author: "Jean C.",
+        id: 'R4',
+        author: 'Jean C.',
         rating: 5,
-        date: "Il y a 5 jours",
-        comment: "Excellentes pommes, très sucrées et juteuses !",
+        date: 'Il y a 5 jours',
+        comment: 'Excellentes pommes, très sucrées et juteuses !',
         verified: true,
       },
     ],
-    sku: "POM-GOL-001",
+    sku: 'POM-GOL-001',
     visible: true,
   },
   {
-    id: "PROD-004",
-    name: "Fromage de Chèvre",
-    category: "Produits Laitiers",
+    id: 'PROD-004',
+    name: 'Fromage de Chèvre',
+    category: 'Produits Laitiers',
     price: 6.5,
-    unit: "pièce",
-    image: "https://images.unsplash.com/photo-1452195100486-9cc805987862?w=400&h=400&fit=crop",
+    unit: 'pièce',
+    image: 'https://images.unsplash.com/photo-1452195100486-9cc805987862?w=400&h=400&fit=crop',
     seller: {
-      name: "Chèvrerie du Mont Blanc",
-      location: "Annecy, Haute-Savoie",
+      name: 'Chèvrerie du Mont Blanc',
+      location: 'Annecy, Haute-Savoie',
       distance: 22.5,
       rating: 4.9,
       totalSales: 156,
     },
-    stock: "limited",
+    stock: 'limited',
     rating: 5.0,
     reviewCount: 45,
-    labels: ["Bio", "AOP", "Fermier"],
+    labels: ['Bio', 'AOP', 'Fermier'],
     fastDelivery: false,
-    description: "Fromage de chèvre au lait cru, affiné 3 semaines. Texture fondante.",
+    description: 'Fromage de chèvre au lait cru, affiné 3 semaines. Texture fondante.',
     specifications: {
-      Lait: "Chèvre - cru",
-      Affinage: "3 semaines",
-      Poids: "200g",
+      Lait: 'Chèvre - cru',
+      Affinage: '3 semaines',
+      Poids: '200g',
     },
     reviews: [
       {
-        id: "R5",
-        author: "Claire B.",
+        id: 'R5',
+        author: 'Claire B.',
         rating: 5,
-        date: "Il y a 1 semaine",
-        comment: "Un délice ! Texture parfaite et goût authentique.",
+        date: 'Il y a 1 semaine',
+        comment: 'Un délice ! Texture parfaite et goût authentique.',
         verified: true,
       },
     ],
-    sku: "FRO-CHE-001",
+    sku: 'FRO-CHE-001',
     visible: true,
   },
   {
-    id: "PROD-005",
-    name: "Steak Haché Pur Bœuf",
-    category: "Viandes",
+    id: 'PROD-005',
+    name: 'Steak Haché Pur Bœuf',
+    category: 'Viandes',
     price: 12.9,
-    unit: "kg",
-    image: "https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=400&h=400&fit=crop",
+    unit: 'kg',
+    image: 'https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=400&h=400&fit=crop',
     seller: {
-      name: "Boucherie Traditionnelle Dupont",
-      location: "Lyon, Rhône",
+      name: 'Boucherie Traditionnelle Dupont',
+      location: 'Lyon, Rhône',
       distance: 5.8,
       rating: 4.8,
       totalSales: 278,
     },
-    stock: "in-stock",
+    stock: 'in-stock',
     rating: 4.7,
     reviewCount: 89,
-    labels: ["Local", "Fermier"],
+    labels: ['Local', 'Fermier'],
     fastDelivery: true,
-    description: "Steaks hachés 100% pur bœuf, viande française. Haché du jour.",
+    description: 'Steaks hachés 100% pur bœuf, viande française. Haché du jour.',
     variants: [
-      { name: "5% MG", price: 13.9, unit: "kg" },
-      { name: "15% MG", price: 12.9, unit: "kg" },
+      { name: '5% MG', price: 13.9, unit: 'kg' },
+      { name: '15% MG', price: 12.9, unit: 'kg' },
     ],
     specifications: {
-      Origine: "France - Charolais",
-      "Matière grasse": "15%",
-      Conservation: "2-3 jours",
+      Origine: 'France - Charolais',
+      'Matière grasse': '15%',
+      Conservation: '2-3 jours',
     },
     reviews: [
       {
-        id: "R6",
-        author: "Thomas R.",
+        id: 'R6',
+        author: 'Thomas R.',
         rating: 5,
-        date: "Il y a 4 jours",
-        comment: "Viande de qualité, très tendre !",
+        date: 'Il y a 4 jours',
+        comment: 'Viande de qualité, très tendre !',
         verified: true,
       },
     ],
-    sku: "VIA-BOE-001",
+    sku: 'VIA-BOE-001',
     visible: true,
   },
   {
-    id: "PROD-006",
-    name: "Œufs Fermiers Bio",
-    category: "Œufs",
+    id: 'PROD-006',
+    name: 'Œufs Fermiers Bio',
+    category: 'Œufs',
     price: 4.2,
-    unit: "boîte de 6",
-    image: "https://images.unsplash.com/photo-1582169296194-e4d644c48063?w=400&h=400&fit=crop",
+    unit: 'boîte de 6',
+    image: 'https://images.unsplash.com/photo-1582169296194-e4d644c48063?w=400&h=400&fit=crop',
     seller: {
-      name: "Ferme Avicole des Monts",
-      location: "Chambéry, Savoie",
+      name: 'Ferme Avicole des Monts',
+      location: 'Chambéry, Savoie',
       distance: 18.3,
       rating: 4.9,
       totalSales: 423,
     },
-    stock: "in-stock",
+    stock: 'in-stock',
     rating: 4.9,
     reviewCount: 112,
-    labels: ["Bio", "Fermier"],
+    labels: ['Bio', 'Fermier'],
     fastDelivery: true,
-    description: "Œufs extra-frais de poules élevées en plein air. Jaune orangé.",
+    description: 'Œufs extra-frais de poules élevées en plein air. Jaune orangé.',
     variants: [
-      { name: "Boîte de 6", price: 4.2, unit: "boîte" },
-      { name: "Boîte de 12", price: 7.9, unit: "boîte" },
+      { name: 'Boîte de 6', price: 4.2, unit: 'boîte' },
+      { name: 'Boîte de 12', price: 7.9, unit: 'boîte' },
     ],
     specifications: {
-      Catégorie: "Code 0 (Bio)",
-      Calibre: "Moyen",
-      Fraîcheur: "Extra-frais",
+      Catégorie: 'Code 0 (Bio)',
+      Calibre: 'Moyen',
+      Fraîcheur: 'Extra-frais',
     },
     reviews: [
       {
-        id: "R7",
-        author: "Anne F.",
+        id: 'R7',
+        author: 'Anne F.',
         rating: 5,
-        date: "Il y a 2 jours",
+        date: 'Il y a 2 jours',
         comment: "Meilleurs œufs que j'ai mangés ! Jaunes magnifiques.",
         verified: true,
       },
     ],
-    sku: "OEU-FER-001",
+    sku: 'OEU-FER-001',
     visible: true,
   },
   {
-    id: "PROD-007",
-    name: "Fraises Gariguette",
-    category: "Fruits",
+    id: 'PROD-007',
+    name: 'Fraises Gariguette',
+    category: 'Fruits',
     price: 8.5,
-    unit: "barquette 500g",
-    image: "https://images.unsplash.com/photo-1464226066583-1bc946947204?w=400&h=400&fit=crop",
+    unit: 'barquette 500g',
+    image: 'https://images.unsplash.com/photo-1464226066583-1bc946947204?w=400&h=400&fit=crop',
     seller: {
-      name: "Maraîchers de Provence",
-      location: "Avignon, Vaucluse",
+      name: 'Maraîchers de Provence',
+      location: 'Avignon, Vaucluse',
       distance: 35.0,
       rating: 4.6,
       totalSales: 198,
     },
-    stock: "limited",
+    stock: 'limited',
     rating: 4.7,
     reviewCount: 56,
-    labels: ["Primeur", "Local"],
+    labels: ['Primeur', 'Local'],
     fastDelivery: false,
-    description: "Fraises Gariguette parfumées, cueillies le matin même.",
+    description: 'Fraises Gariguette parfumées, cueillies le matin même.',
     specifications: {
-      Origine: "France - Provence",
-      Variété: "Gariguette",
-      Conservation: "2-3 jours",
+      Origine: 'France - Provence',
+      Variété: 'Gariguette',
+      Conservation: '2-3 jours',
     },
     reviews: [
       {
-        id: "R8",
-        author: "Lucie M.",
+        id: 'R8',
+        author: 'Lucie M.',
         rating: 5,
-        date: "Il y a 3 jours",
-        comment: "Fraises incroyablement parfumées et sucrées !",
+        date: 'Il y a 3 jours',
+        comment: 'Fraises incroyablement parfumées et sucrées !',
         verified: true,
       },
     ],
-    sku: "FRU-FRA-001",
+    sku: 'FRU-FRA-001',
     visible: true,
   },
   {
-    id: "PROD-008",
-    name: "Miel de Lavande",
-    category: "Autres",
+    id: 'PROD-008',
+    name: 'Miel de Lavande',
+    category: 'Autres',
     price: 9.8,
-    unit: "pot 250g",
-    image: "https://images.unsplash.com/photo-1587049352846-4a222e784f3c?w=400&h=400&fit=crop",
+    unit: 'pot 250g',
+    image: 'https://images.unsplash.com/photo-1587049352846-4a222e784f3c?w=400&h=400&fit=crop',
     seller: {
-      name: "Rucher des Hautes Alpes",
-      location: "Gap, Hautes-Alpes",
+      name: 'Rucher des Hautes Alpes',
+      location: 'Gap, Hautes-Alpes',
       distance: 42.0,
       rating: 5.0,
       totalSales: 89,
     },
-    stock: "in-stock",
+    stock: 'in-stock',
     rating: 5.0,
     reviewCount: 38,
-    labels: ["Bio", "Fermier"],
+    labels: ['Bio', 'Fermier'],
     fastDelivery: false,
-    description: "Miel de lavande pur, récolté en altitude. Cristallisation naturelle.",
+    description: 'Miel de lavande pur, récolté en altitude. Cristallisation naturelle.',
     specifications: {
-      Origine: "France - Alpes",
-      Type: "Lavande",
-      Récolte: "2025",
+      Origine: 'France - Alpes',
+      Type: 'Lavande',
+      Récolte: '2025',
     },
     reviews: [
       {
-        id: "R9",
-        author: "David L.",
+        id: 'R9',
+        author: 'David L.',
         rating: 5,
-        date: "Il y a 1 semaine",
-        comment: "Miel exceptionnel, parfum subtil de lavande.",
+        date: 'Il y a 1 semaine',
+        comment: 'Miel exceptionnel, parfum subtil de lavande.',
         verified: true,
       },
     ],
-    sku: "MIE-LAV-001",
+    sku: 'MIE-LAV-001',
     visible: true,
   },
   {
-    id: "PROD-009",
-    name: "Carottes Bio",
-    category: "Légumes",
+    id: 'PROD-009',
+    name: 'Carottes Bio',
+    category: 'Légumes',
     price: 2.9,
-    unit: "kg",
-    image: "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=400&h=400&fit=crop",
+    unit: 'kg',
+    image: 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=400&h=400&fit=crop',
     seller: {
-      name: "Bio Terre Aquitaine",
-      location: "Bordeaux, Gironde",
+      name: 'Bio Terre Aquitaine',
+      location: 'Bordeaux, Gironde',
       distance: 28.0,
       rating: 4.7,
       totalSales: 267,
     },
-    stock: "in-stock",
+    stock: 'in-stock',
     rating: 4.6,
     reviewCount: 41,
-    labels: ["Bio", "Local"],
+    labels: ['Bio', 'Local'],
     fastDelivery: true,
-    description: "Carottes bio croquantes et sucrées, cultivées sans pesticides.",
+    description: 'Carottes bio croquantes et sucrées, cultivées sans pesticides.',
     specifications: {
-      Origine: "France - Nouvelle-Aquitaine",
-      Conservation: "1 semaine",
+      Origine: 'France - Nouvelle-Aquitaine',
+      Conservation: '1 semaine',
     },
     reviews: [
       {
-        id: "R10",
-        author: "Emma D.",
+        id: 'R10',
+        author: 'Emma D.',
         rating: 4,
-        date: "Il y a 6 jours",
-        comment: "Bonnes carottes, bien croquantes.",
+        date: 'Il y a 6 jours',
+        comment: 'Bonnes carottes, bien croquantes.',
         verified: true,
       },
     ],
-    sku: "LEG-CAR-001",
+    sku: 'LEG-CAR-001',
     visible: true,
   },
   {
-    id: "PROD-010",
-    name: "Pain au Levain",
-    category: "Autres",
+    id: 'PROD-010',
+    name: 'Pain au Levain',
+    category: 'Autres',
     price: 5.2,
-    unit: "pièce",
-    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&h=400&fit=crop",
+    unit: 'pièce',
+    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&h=400&fit=crop',
     seller: {
-      name: "Boulangerie Artisanale Martin",
-      location: "Lyon, Rhône",
+      name: 'Boulangerie Artisanale Martin',
+      location: 'Lyon, Rhône',
       distance: 6.2,
       rating: 4.9,
       totalSales: 534,
     },
-    stock: "in-stock",
+    stock: 'in-stock',
     rating: 4.9,
     reviewCount: 156,
-    labels: ["Fermier"],
+    labels: ['Fermier'],
     fastDelivery: true,
-    description: "Pain au levain naturel, cuit au feu de bois. Croûte épaisse.",
+    description: 'Pain au levain naturel, cuit au feu de bois. Croûte épaisse.',
     specifications: {
-      Poids: "800g",
-      Cuisson: "Feu de bois",
-      Conservation: "3-4 jours",
+      Poids: '800g',
+      Cuisson: 'Feu de bois',
+      Conservation: '3-4 jours',
     },
     reviews: [
       {
-        id: "R11",
-        author: "François B.",
+        id: 'R11',
+        author: 'François B.',
         rating: 5,
-        date: "Il y a 1 jour",
-        comment: "Meilleur pain de Lyon ! Croûte parfaite.",
+        date: 'Il y a 1 jour',
+        comment: 'Meilleur pain de Lyon ! Croûte parfaite.',
         verified: true,
       },
     ],
-    sku: "PAI-LEV-001",
+    sku: 'PAI-LEV-001',
     visible: true,
   },
   {
-    id: "PROD-011",
-    name: "Yaourt Nature Fermier",
-    category: "Produits Laitiers",
+    id: 'PROD-011',
+    name: 'Yaourt Nature Fermier',
+    category: 'Produits Laitiers',
     price: 3.8,
-    unit: "pot 500g",
-    image: "🥛",
+    unit: 'pot 500g',
+    image: '🥛',
     seller: {
-      name: "Ferme Laitière du Vercors",
-      location: "Grenoble, Isère",
+      name: 'Ferme Laitière du Vercors',
+      location: 'Grenoble, Isère',
       distance: 14.5,
       rating: 4.8,
       totalSales: 398,
     },
-    stock: "in-stock",
+    stock: 'in-stock',
     rating: 4.8,
     reviewCount: 78,
-    labels: ["Bio", "Fermier"],
+    labels: ['Bio', 'Fermier'],
     fastDelivery: true,
-    description: "Yaourt au lait entier, texture onctueuse. Fabrication artisanale.",
+    description: 'Yaourt au lait entier, texture onctueuse. Fabrication artisanale.',
     specifications: {
-      Lait: "Vache - entier",
-      "Matière grasse": "3.5%",
-      Conservation: "15 jours",
+      Lait: 'Vache - entier',
+      'Matière grasse': '3.5%',
+      Conservation: '15 jours',
     },
     reviews: [
       {
-        id: "R12",
-        author: "Isabelle P.",
+        id: 'R12',
+        author: 'Isabelle P.',
         rating: 5,
-        date: "Il y a 2 jours",
-        comment: "Yaourt délicieux, très onctueux !",
+        date: 'Il y a 2 jours',
+        comment: 'Yaourt délicieux, très onctueux !',
         verified: true,
       },
     ],
-    sku: "LAI-YAO-001",
+    sku: 'LAI-YAO-001',
     visible: true,
   },
   {
-    id: "PROD-012",
-    name: "Poulet Fermier Label Rouge",
-    category: "Viandes",
+    id: 'PROD-012',
+    name: 'Poulet Fermier Label Rouge',
+    category: 'Viandes',
     price: 14.5,
-    unit: "kg",
-    image: "🍗",
+    unit: 'kg',
+    image: '🍗',
     seller: {
-      name: "Élevage de la Plaine",
-      location: "Valence, Drôme",
+      name: 'Élevage de la Plaine',
+      location: 'Valence, Drôme',
       distance: 25.8,
       rating: 4.9,
       totalSales: 187,
     },
-    stock: "pre-order",
+    stock: 'pre-order',
     rating: 4.9,
     reviewCount: 93,
-    labels: ["Fermier", "Label Rouge"],
+    labels: ['Fermier', 'Label Rouge'],
     fastDelivery: false,
-    description: "Poulet élevé en plein air pendant 81 jours minimum. Chair ferme et savoureuse.",
+    description: 'Poulet élevé en plein air pendant 81 jours minimum. Chair ferme et savoureuse.',
     specifications: {
-      Label: "Label Rouge",
-      Élevage: "Plein air",
-      "Âge abattage": "81 jours minimum",
+      Label: 'Label Rouge',
+      Élevage: 'Plein air',
+      'Âge abattage': '81 jours minimum',
     },
     reviews: [
       {
-        id: "R13",
-        author: "Michel T.",
+        id: 'R13',
+        author: 'Michel T.',
         rating: 5,
-        date: "Il y a 1 semaine",
-        comment: "Poulet exceptionnel, vrai goût de poulet fermier !",
+        date: 'Il y a 1 semaine',
+        comment: 'Poulet exceptionnel, vrai goût de poulet fermier !',
         verified: true,
       },
     ],
-    sku: "VIA-POU-001",
+    sku: 'VIA-POU-001',
     visible: true,
   },
 ];

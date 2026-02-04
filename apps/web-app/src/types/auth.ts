@@ -2,23 +2,23 @@
  * Rôles utilisateurs strictement définis
  */
 export enum UserRole {
-  ADMIN = 'admin',
-  FARMER = 'farmer',
-  BUYER = 'buyer',
-  TRANSPORTER = 'transporter'
+  ADMIN = 'Admin',
+  FARMER = 'Farmer',
+  BUYER = 'Buyer',
+  TRANSPORTER = 'Transporter',
 }
 
 /**
  * Interface utilisateur de base
  */
 export interface User {
-  id: string
-  email: string
-  role: UserRole
-  name?: string
+  id: string;
+  email: string;
+  role: UserRole;
+  name?: string;
 }
 
 /**
  * Type pour les chemins de dashboard
  */
-export type DashboardPath = `/dashboard/${UserRole}`
+export type DashboardPath = `/dashboard/${UserRole}`;

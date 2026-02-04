@@ -37,7 +37,8 @@ export function ConsentBanner() {
           <div className="text-sm text-gray-700">
             <p className="font-semibold text-gray-900">Cookies & mesure d’audience</p>
             <p className="mt-1">
-              Nous utilisons Google Analytics uniquement avec votre consentement, afin d’améliorer l’expérience.
+              Nous utilisons Google Analytics uniquement avec votre consentement, afin d’améliorer
+              l’expérience.
             </p>
           </div>
 
@@ -62,4 +63,3 @@ export function ConsentBanner() {
     </div>
   );
 }
-

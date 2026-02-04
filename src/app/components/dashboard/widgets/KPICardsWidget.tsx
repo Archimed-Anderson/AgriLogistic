@@ -1,5 +1,13 @@
 import { getCurrentKPIs } from '@/data/mockDashboardData';
-import { TrendingUp, TrendingDown, ShoppingCart, Package, Users, DollarSign, LucideIcon } from 'lucide-react';
+import {
+  TrendingUp,
+  TrendingDown,
+  ShoppingCart,
+  Package,
+  Users,
+  DollarSign,
+  LucideIcon,
+} from 'lucide-react';
 
 const iconMap: Record<string, LucideIcon> = {
   TrendingUp: TrendingUp,
@@ -23,10 +31,18 @@ export function KPICardsWidget() {
             className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isPositive ? 'bg-green-100' : 'bg-red-100'}`}>
+              <div
+                className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                  isPositive ? 'bg-green-100' : 'bg-red-100'
+                }`}
+              >
                 <Icon className={`w-6 h-6 ${isPositive ? 'text-green-600' : 'text-red-600'}`} />
               </div>
-              <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${isPositive ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+              <div
+                className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${
+                  isPositive ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+                }`}
+              >
                 {isPositive ? (
                   <TrendingUp className="w-3 h-3" />
                 ) : (

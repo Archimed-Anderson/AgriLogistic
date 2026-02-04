@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Search,
   BookOpen,
@@ -27,13 +27,13 @@ import {
   Droplet,
   Sun,
   Calendar,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 export function AcademyPortal({ onNavigate }: { onNavigate: (route: string) => void }) {
-  const [selectedRegion, setSelectedRegion] = useState("all");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Stats
   const stats = {
@@ -45,67 +45,67 @@ export function AcademyPortal({ onNavigate }: { onNavigate: (route: string) => v
 
   // Regions
   const regions = [
-    { id: "all", name: "Toutes les régions", icon: Globe, count: 50 },
-    { id: "africa", name: "Afrique Sub-Saharienne", icon: MapPin, count: 28, featured: true },
-    { id: "asia", name: "Asie du Sud-Est", icon: MapPin, count: 12 },
-    { id: "latin-america", name: "Amérique Latine", icon: MapPin, count: 8 },
-    { id: "europe", name: "Europe", icon: MapPin, count: 2 },
+    { id: 'all', name: 'Toutes les régions', icon: Globe, count: 50 },
+    { id: 'africa', name: 'Afrique Sub-Saharienne', icon: MapPin, count: 28, featured: true },
+    { id: 'asia', name: 'Asie du Sud-Est', icon: MapPin, count: 12 },
+    { id: 'latin-america', name: 'Amérique Latine', icon: MapPin, count: 8 },
+    { id: 'europe', name: 'Europe', icon: MapPin, count: 2 },
   ];
 
   // Culture categories
   const categories = [
     {
-      id: "roots",
-      name: "Racines & Tubercules",
+      id: 'roots',
+      name: 'Racines & Tubercules',
       icon: Sprout,
-      color: "brown",
+      color: 'brown',
       count: 8,
-      cultures: ["Manioc", "Patate douce", "Igname", "Taro"],
-      description: "Cultures de base alimentaire tropicale",
+      cultures: ['Manioc', 'Patate douce', 'Igname', 'Taro'],
+      description: 'Cultures de base alimentaire tropicale',
     },
     {
-      id: "cereals",
-      name: "Céréales",
+      id: 'cereals',
+      name: 'Céréales',
       icon: Wheat,
-      color: "yellow",
+      color: 'yellow',
       count: 12,
-      cultures: ["Maïs", "Riz", "Blé", "Sorgho", "Mil"],
-      description: "Cultures vivrières et commerciales",
+      cultures: ['Maïs', 'Riz', 'Blé', 'Sorgho', 'Mil'],
+      description: 'Cultures vivrières et commerciales',
     },
     {
-      id: "legumes",
-      name: "Légumineuses",
+      id: 'legumes',
+      name: 'Légumineuses',
       icon: Leaf,
-      color: "green",
+      color: 'green',
       count: 8,
-      cultures: ["Haricot", "Pois", "Arachide", "Soja"],
-      description: "Protéines végétales et azote",
+      cultures: ['Haricot', 'Pois', 'Arachide', 'Soja'],
+      description: 'Protéines végétales et azote',
     },
     {
-      id: "vegetables",
-      name: "Légumes",
+      id: 'vegetables',
+      name: 'Légumes',
       icon: Sprout,
-      color: "emerald",
+      color: 'emerald',
       count: 10,
-      cultures: ["Concombre", "Tomate", "Oignon", "Chou"],
-      description: "Maraîchage et nutrition",
+      cultures: ['Concombre', 'Tomate', 'Oignon', 'Chou'],
+      description: 'Maraîchage et nutrition',
     },
     {
-      id: "fruits",
-      name: "Fruits",
+      id: 'fruits',
+      name: 'Fruits',
       icon: Apple,
-      color: "red",
+      color: 'red',
       count: 8,
-      cultures: ["Banane", "Manguier", "Agrumes", "Avocat"],
-      description: "Arboriculture fruitière",
+      cultures: ['Banane', 'Manguier', 'Agrumes', 'Avocat'],
+      description: 'Arboriculture fruitière',
     },
     {
-      id: "cash-crops",
-      name: "Cultures de Rente",
+      id: 'cash-crops',
+      name: 'Cultures de Rente',
       icon: Coffee,
-      color: "orange",
+      color: 'orange',
       count: 4,
-      cultures: ["Café", "Cacao", "Coton", "Palmier à huile"],
+      cultures: ['Café', 'Cacao', 'Coton', 'Palmier à huile'],
       description: "Cultures d'exportation et transformation",
     },
   ];
@@ -113,125 +113,125 @@ export function AcademyPortal({ onNavigate }: { onNavigate: (route: string) => v
   // Featured cultures
   const featuredCultures = [
     {
-      id: "maize",
-      name: "Maïs",
-      scientificName: "Zea mays",
-      icon: "🌽",
-      category: "Céréales",
-      region: "Afrique Sub-Saharienne",
+      id: 'maize',
+      name: 'Maïs',
+      scientificName: 'Zea mays',
+      icon: '🌽',
+      category: 'Céréales',
+      region: 'Afrique Sub-Saharienne',
       popularity: 98,
-      yield: "5-12 t/ha",
-      cycle: "90-120 jours",
+      yield: '5-12 t/ha',
+      cycle: '90-120 jours',
       learners: 3240,
       lessons: 45,
-      difficulty: "Intermédiaire",
-      climate: "Tropical à tempéré",
+      difficulty: 'Intermédiaire',
+      climate: 'Tropical à tempéré',
     },
     {
-      id: "cassava",
-      name: "Manioc",
-      scientificName: "Manihot esculenta",
-      icon: "🥔",
-      category: "Racines",
-      region: "Afrique Centrale",
+      id: 'cassava',
+      name: 'Manioc',
+      scientificName: 'Manihot esculenta',
+      icon: '🥔',
+      category: 'Racines',
+      region: 'Afrique Centrale',
       popularity: 95,
-      yield: "15-40 t/ha",
-      cycle: "8-24 mois",
+      yield: '15-40 t/ha',
+      cycle: '8-24 mois',
       learners: 2890,
       lessons: 38,
-      difficulty: "Débutant",
-      climate: "Tropical humide",
+      difficulty: 'Débutant',
+      climate: 'Tropical humide',
     },
     {
-      id: "cocoa",
-      name: "Cacao",
-      scientificName: "Theobroma cacao",
-      icon: "🍫",
-      category: "Cultures de rente",
+      id: 'cocoa',
+      name: 'Cacao',
+      scientificName: 'Theobroma cacao',
+      icon: '🍫',
+      category: 'Cultures de rente',
       region: "Afrique de l'Ouest",
       popularity: 92,
-      yield: "0.8-2.5 t/ha",
-      cycle: "3-5 ans",
+      yield: '0.8-2.5 t/ha',
+      cycle: '3-5 ans',
       learners: 2650,
       lessons: 52,
-      difficulty: "Avancé",
-      climate: "Équatorial",
+      difficulty: 'Avancé',
+      climate: 'Équatorial',
     },
   ];
 
   // Popular courses
   const popularCourses = [
     {
-      id: "1",
+      id: '1',
       title: "Maîtriser l'irrigation du maïs",
-      culture: "Maïs",
-      duration: "2h 30min",
+      culture: 'Maïs',
+      duration: '2h 30min',
       lessons: 12,
-      level: "Intermédiaire",
+      level: 'Intermédiaire',
       enrolled: 1240,
       rating: 4.8,
-      type: "video",
+      type: 'video',
     },
     {
-      id: "2",
-      title: "Protection intégrée du manioc",
-      culture: "Manioc",
-      duration: "1h 45min",
+      id: '2',
+      title: 'Protection intégrée du manioc',
+      culture: 'Manioc',
+      duration: '1h 45min',
       lessons: 8,
-      level: "Débutant",
+      level: 'Débutant',
       enrolled: 890,
       rating: 4.9,
-      type: "interactive",
+      type: 'interactive',
     },
     {
-      id: "3",
-      title: "Agroforesterie avec cacao",
-      culture: "Cacao",
-      duration: "3h 15min",
+      id: '3',
+      title: 'Agroforesterie avec cacao',
+      culture: 'Cacao',
+      duration: '3h 15min',
       lessons: 15,
-      level: "Avancé",
+      level: 'Avancé',
       enrolled: 670,
       rating: 4.7,
-      type: "practical",
+      type: 'practical',
     },
   ];
 
   // Success stories
   const successStories = [
     {
-      id: "1",
-      name: "Jean-Baptiste K.",
-      country: "Burkina Faso",
-      culture: "Maïs",
-      achievement: "+45% rendement en 1 saison",
-      image: "👨‍🌾",
+      id: '1',
+      name: 'Jean-Baptiste K.',
+      country: 'Burkina Faso',
+      culture: 'Maïs',
+      achievement: '+45% rendement en 1 saison',
+      image: '👨‍🌾',
     },
     {
-      id: "2",
-      name: "Amina M.",
+      id: '2',
+      name: 'Amina M.',
       country: "Côte d'Ivoire",
-      culture: "Cacao",
-      achievement: "Certification bio obtenue",
-      image: "👩‍🌾",
+      culture: 'Cacao',
+      achievement: 'Certification bio obtenue',
+      image: '👩‍🌾',
     },
     {
-      id: "3",
-      name: "Pierre L.",
-      country: "RDC",
-      culture: "Manioc",
-      achievement: "Stockage: 0% pertes",
-      image: "👨‍🌾",
+      id: '3',
+      name: 'Pierre L.',
+      country: 'RDC',
+      culture: 'Manioc',
+      achievement: 'Stockage: 0% pertes',
+      image: '👨‍🌾',
     },
   ];
 
   const getCategoryColor = (color: string) => {
     const colors: { [key: string]: string } = {
-      brown: "from-amber-700 to-amber-900",
-      yellow: "from-yellow-500 to-orange-600",
-      green: "from-green-600 to-emerald-700",
-      emerald: "from-emerald-500 to-teal-600",
-      red: "from-red-500 to-pink-600",
-      orange: "from-orange-500 to-red-600",
+      brown: 'from-amber-700 to-amber-900',
+      yellow: 'from-yellow-500 to-orange-600',
+      green: 'from-green-600 to-emerald-700',
+      emerald: 'from-emerald-500 to-teal-600',
+      red: 'from-red-500 to-pink-600',
+      orange: 'from-orange-500 to-red-600',
     };
     return colors[color] || colors.green;
   };
@@ -308,9 +308,9 @@ export function AcademyPortal({ onNavigate }: { onNavigate: (route: string) => v
                 onClick={() => setSelectedRegion(region.id)}
                 className={`p-4 rounded-xl border-2 transition-all ${
                   selectedRegion === region.id
-                    ? "border-[#1A5D1A] bg-green-50 dark:bg-green-900/20"
-                    : "border-transparent hover:border-gray-300"
-                } ${region.featured ? "ring-2 ring-orange-400" : ""}`}
+                    ? 'border-[#1A5D1A] bg-green-50 dark:bg-green-900/20'
+                    : 'border-transparent hover:border-gray-300'
+                } ${region.featured ? 'ring-2 ring-orange-400' : ''}`}
               >
                 {region.featured && (
                   <div className="text-xs text-orange-600 font-semibold mb-2">⭐ PRIORITAIRE</div>
@@ -337,7 +337,11 @@ export function AcademyPortal({ onNavigate }: { onNavigate: (route: string) => v
                 key={category.id}
                 className="bg-card border rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
               >
-                <div className={`h-32 bg-gradient-to-br ${getCategoryColor(category.color)} p-6 flex items-center justify-between text-white`}>
+                <div
+                  className={`h-32 bg-gradient-to-br ${getCategoryColor(
+                    category.color
+                  )} p-6 flex items-center justify-between text-white`}
+                >
                   <div>
                     <h3 className="text-2xl font-bold mb-1">{category.name}</h3>
                     <p className="text-sm opacity-90">{category.count} cultures</p>
@@ -399,9 +403,7 @@ export function AcademyPortal({ onNavigate }: { onNavigate: (route: string) => v
                     <h3 className="text-xl font-bold group-hover:text-[#1A5D1A] transition-colors">
                       {culture.name}
                     </h3>
-                    <p className="text-sm text-muted-foreground italic">
-                      {culture.scientificName}
-                    </p>
+                    <p className="text-sm text-muted-foreground italic">{culture.scientificName}</p>
                   </div>
                   <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 text-xs rounded">
                     {culture.difficulty}
@@ -467,9 +469,9 @@ export function AcademyPortal({ onNavigate }: { onNavigate: (route: string) => v
                 className="flex gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
               >
                 <div className="flex-shrink-0 w-20 h-20 bg-gradient-to-br from-[#1A5D1A] to-[#2D7A2D] rounded-lg flex items-center justify-center text-white">
-                  {course.type === "video" && <Video className="h-8 w-8" />}
-                  {course.type === "interactive" && <Zap className="h-8 w-8" />}
-                  {course.type === "practical" && <Target className="h-8 w-8" />}
+                  {course.type === 'video' && <Video className="h-8 w-8" />}
+                  {course.type === 'interactive' && <Zap className="h-8 w-8" />}
+                  {course.type === 'practical' && <Target className="h-8 w-8" />}
                 </div>
 
                 <div className="flex-1">
@@ -548,27 +550,27 @@ export function AcademyPortal({ onNavigate }: { onNavigate: (route: string) => v
           {[
             {
               icon: Calculator,
-              title: "Calculateurs",
-              description: "Rendement, irrigation, fertilisation",
-              color: "blue",
+              title: 'Calculateurs',
+              description: 'Rendement, irrigation, fertilisation',
+              color: 'blue',
             },
             {
               icon: Droplet,
-              title: "Simulateurs",
-              description: "Climat, eau, économie",
-              color: "cyan",
+              title: 'Simulateurs',
+              description: 'Climat, eau, économie',
+              color: 'cyan',
             },
             {
               icon: Shield,
-              title: "Diagnostic IA",
-              description: "Maladies et ravageurs",
-              color: "red",
+              title: 'Diagnostic IA',
+              description: 'Maladies et ravageurs',
+              color: 'red',
             },
             {
               icon: Calendar,
-              title: "Planificateurs",
-              description: "Saison, rotations, tâches",
-              color: "green",
+              title: 'Planificateurs',
+              description: 'Saison, rotations, tâches',
+              color: 'green',
             },
           ].map((tool, index) => {
             const Icon = tool.icon;
@@ -597,8 +599,8 @@ export function AcademyPortal({ onNavigate }: { onNavigate: (route: string) => v
           <button className="px-8 py-4 bg-white text-[#1A5D1A] rounded-lg font-semibold hover:bg-gray-100 transition-colors">
             Commencer gratuitement
           </button>
-          <button 
-            onClick={() => onNavigate("/academy/vision")}
+          <button
+            onClick={() => onNavigate('/academy/vision')}
             className="px-8 py-4 border-2 border-white rounded-lg font-semibold hover:bg-white/10 transition-colors"
           >
             Découvrir notre vision

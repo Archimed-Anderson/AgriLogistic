@@ -23,7 +23,7 @@ import {
   QrCode,
   Download,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
 } from 'lucide-react';
 import type { TraceabilityStepType } from '@/types/buyer';
 
@@ -128,7 +128,7 @@ export default function BuyerTraceabilityPage() {
             <FileSearch className="w-5 h-5 text-amber-500" />
             Parcours du produit
           </h2>
-          
+
           <div className="space-y-4">
             {journey.map((step, index) => {
               const Icon = stepIcons[step.type];
@@ -139,16 +139,16 @@ export default function BuyerTraceabilityPage() {
               return (
                 <div key={step.id} className="relative">
                   {/* Connector Line */}
-                  {!isLast && (
-                    <div className="absolute left-7 top-14 w-0.5 h-full bg-slate-200" />
-                  )}
+                  {!isLast && <div className="absolute left-7 top-14 w-0.5 h-full bg-slate-200" />}
 
                   <div
                     onClick={() => setExpandedStep(isExpanded ? null : step.id)}
                     className="flex gap-4 cursor-pointer group"
                   >
                     {/* Icon */}
-                    <div className={`relative z-10 w-14 h-14 rounded-xl border-2 flex items-center justify-center flex-shrink-0 ${colorClass}`}>
+                    <div
+                      className={`relative z-10 w-14 h-14 rounded-xl border-2 flex items-center justify-center flex-shrink-0 ${colorClass}`}
+                    >
                       <Icon className="w-6 h-6" />
                     </div>
 
@@ -158,7 +158,9 @@ export default function BuyerTraceabilityPage() {
                         <div className="flex items-start justify-between">
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="font-semibold text-slate-900">{stepLabels[step.type]}</span>
+                              <span className="font-semibold text-slate-900">
+                                {stepLabels[step.type]}
+                              </span>
                               {step.verified && (
                                 <CheckCircle className="w-4 h-4 text-emerald-500" />
                               )}
@@ -192,10 +194,16 @@ export default function BuyerTraceabilityPage() {
                             </div>
                             {step.documents && step.documents.length > 0 && (
                               <div>
-                                <p className="text-xs font-medium text-slate-500 uppercase mb-2">Documents</p>
+                                <p className="text-xs font-medium text-slate-500 uppercase mb-2">
+                                  Documents
+                                </p>
                                 <div className="flex gap-2">
                                   {step.documents.map((doc, i) => (
-                                    <a key={i} href="#" className="flex items-center gap-1 text-sm text-amber-600 hover:underline">
+                                    <a
+                                      key={i}
+                                      href="#"
+                                      className="flex items-center gap-1 text-sm text-amber-600 hover:underline"
+                                    >
                                       <ExternalLink className="w-3 h-3" />
                                       {doc}
                                     </a>
@@ -204,7 +212,9 @@ export default function BuyerTraceabilityPage() {
                               </div>
                             )}
                             <div>
-                              <p className="text-xs font-medium text-slate-500 uppercase">Coordonnées GPS</p>
+                              <p className="text-xs font-medium text-slate-500 uppercase">
+                                Coordonnées GPS
+                              </p>
                               <p className="text-sm text-slate-600 font-mono">
                                 {step.coordinates[0].toFixed(4)}, {step.coordinates[1].toFixed(4)}
                               </p>
@@ -230,7 +240,10 @@ export default function BuyerTraceabilityPage() {
             </h2>
             <div className="space-y-3">
               {certificates.map((cert) => (
-                <div key={cert.id} className="flex items-center justify-between p-3 bg-emerald-50 rounded-xl">
+                <div
+                  key={cert.id}
+                  className="flex items-center justify-between p-3 bg-emerald-50 rounded-xl"
+                >
                   <div className="flex items-center gap-3">
                     <Leaf className="w-5 h-5 text-emerald-600" />
                     <div>
@@ -238,9 +251,7 @@ export default function BuyerTraceabilityPage() {
                       <p className="text-xs text-slate-500">{cert.issuer}</p>
                     </div>
                   </div>
-                  {cert.verified && (
-                    <CheckCircle className="w-5 h-5 text-emerald-500" />
-                  )}
+                  {cert.verified && <CheckCircle className="w-5 h-5 text-emerald-500" />}
                 </div>
               ))}
             </div>
@@ -254,17 +265,28 @@ export default function BuyerTraceabilityPage() {
                 <div key={test.id} className="p-3 bg-slate-50 rounded-xl">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium text-slate-900">{test.type}</span>
-                    <span className={`px-2 py-1 text-xs font-medium rounded-lg ${
-                      test.result === 'pass' ? 'bg-emerald-100 text-emerald-700' :
-                      test.result === 'warning' ? 'bg-amber-100 text-amber-700' :
-                      'bg-red-100 text-red-700'
-                    }`}>
-                      {test.result === 'pass' ? 'Conforme' : test.result === 'warning' ? 'Attention' : 'Non-conforme'}
+                    <span
+                      className={`px-2 py-1 text-xs font-medium rounded-lg ${
+                        test.result === 'pass'
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : test.result === 'warning'
+                          ? 'bg-amber-100 text-amber-700'
+                          : 'bg-red-100 text-red-700'
+                      }`}
+                    >
+                      {test.result === 'pass'
+                        ? 'Conforme'
+                        : test.result === 'warning'
+                        ? 'Attention'
+                        : 'Non-conforme'}
                     </span>
                   </div>
                   {test.value !== undefined && (
                     <p className="text-sm text-slate-600">
-                      Valeur: <span className="font-mono">{test.value} {test.unit}</span>
+                      Valeur:{' '}
+                      <span className="font-mono">
+                        {test.value} {test.unit}
+                      </span>
                     </p>
                   )}
                   <p className="text-xs text-slate-500 mt-1">

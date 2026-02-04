@@ -1,6 +1,12 @@
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { AdminRole } from '@/domain/admin/permissions';
 
 interface UserFiltersProps {
@@ -26,12 +32,9 @@ export function UserFilters({ filters, onChange }: UserFiltersProps) {
           className="pl-10"
         />
       </div>
-      
+
       {/* Role filter */}
-      <Select
-        value={filters.role}
-        onValueChange={(value) => onChange({ ...filters, role: value })}
-      >
+      <Select value={filters.role} onValueChange={(value) => onChange({ ...filters, role: value })}>
         <SelectTrigger>
           <SelectValue placeholder="Tous les rôles" />
         </SelectTrigger>
@@ -43,7 +46,7 @@ export function UserFilters({ filters, onChange }: UserFiltersProps) {
           <SelectItem value={AdminRole.SUPPORT}>Support</SelectItem>
         </SelectContent>
       </Select>
-      
+
       {/* Status filter */}
       <Select
         value={filters.status}

@@ -19,7 +19,8 @@ class APIClient {
 
   constructor(config?: Partial<APIClientConfig>) {
     // TEMPORARY: Bypass Kong Gateway (Kong routing issue) - Point directly to auth-service
-    this.baseURL = config?.baseURL || import.meta.env.VITE_API_GATEWAY_URL || 'http://localhost:3001/api/v1';
+    this.baseURL =
+      config?.baseURL || import.meta.env.VITE_API_GATEWAY_URL || 'http://localhost:3001/api/v1';
     this.timeout = config?.timeout || 30000;
   }
 
@@ -55,7 +56,7 @@ class APIClient {
    */
   private async handleUnauthorized(): Promise<boolean> {
     const refreshToken = localStorage.getItem('refreshToken');
-    
+
     if (!refreshToken) {
       return false;
     }
@@ -97,7 +98,7 @@ class APIClient {
    */
   private buildURL(url: string, params?: Record<string, string>): string {
     const fullURL = url.startsWith('http') ? url : `${this.baseURL}${url}`;
-    
+
     if (!params) return fullURL;
 
     const queryString = new URLSearchParams(params).toString();
@@ -152,11 +153,11 @@ class APIClient {
       return response.json();
     } catch (error: any) {
       clearTimeout(timeoutId);
-      
+
       if (error.name === 'AbortError') {
         throw new Error('Request timeout');
       }
-      
+
       throw error;
     }
   }

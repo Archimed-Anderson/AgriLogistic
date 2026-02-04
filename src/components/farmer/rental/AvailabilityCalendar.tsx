@@ -37,9 +37,9 @@ export function AvailabilityCalendar({ equipment, rentals, isLoading }: Availabi
 
   const isDateRented = (day: number) => {
     if (!selectedEquipment) return false;
-    
+
     const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-    return rentals.some(rental => {
+    return rentals.some((rental) => {
       if (rental.equipmentId !== selectedEquipment) return false;
       const start = new Date(rental.startDate);
       const end = new Date(rental.endDate);
@@ -96,10 +96,7 @@ export function AvailabilityCalendar({ equipment, rentals, isLoading }: Availabi
           <ChevronLeft className="w-5 h-5" />
         </button>
         <h3 className="text-lg font-semibold text-gray-900 capitalize">{monthName}</h3>
-        <button
-          onClick={nextMonth}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-        >
+        <button onClick={nextMonth} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
           <ChevronRight className="w-5 h-5" />
         </button>
       </div>
@@ -122,7 +119,7 @@ export function AvailabilityCalendar({ equipment, rentals, isLoading }: Availabi
         {Array.from({ length: daysInMonth }).map((_, index) => {
           const day = index + 1;
           const isRented = isDateRented(day);
-          const isToday = 
+          const isToday =
             day === new Date().getDate() &&
             month === new Date().getMonth() &&
             year === new Date().getFullYear();
@@ -164,14 +161,20 @@ export function AvailabilityCalendar({ equipment, rentals, isLoading }: Availabi
           <h4 className="text-sm font-medium text-gray-700 mb-3">Locations à venir</h4>
           <div className="space-y-2">
             {rentals
-              .filter(r => r.equipmentId === selectedEquipment && new Date(r.endDate) >= new Date())
+              .filter(
+                (r) => r.equipmentId === selectedEquipment && new Date(r.endDate) >= new Date()
+              )
               .slice(0, 3)
               .map((rental) => (
-                <div key={rental.id} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                <div
+                  key={rental.id}
+                  className="flex items-center justify-between p-3 bg-blue-50 rounded-lg"
+                >
                   <div>
                     <p className="font-medium text-gray-900 text-sm">{rental.renter.name}</p>
                     <p className="text-xs text-gray-600">
-                      {new Date(rental.startDate).toLocaleDateString('fr-FR')} - {new Date(rental.endDate).toLocaleDateString('fr-FR')}
+                      {new Date(rental.startDate).toLocaleDateString('fr-FR')} -{' '}
+                      {new Date(rental.endDate).toLocaleDateString('fr-FR')}
                     </p>
                   </div>
                   <span className="text-sm font-semibold text-blue-700">

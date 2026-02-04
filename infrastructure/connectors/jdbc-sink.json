@@ -1,0 +1,18 @@
+{
+  "name": "jdbc-sink-replication",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+    "tasks.max": "2",
+    "topics": "order.events,user.events",
+    "connection.url": "jdbc:postgresql://postgres:5432/AgriLogistic",
+    "connection.user": "AgriLogistic",
+    "connection.password": "${DB_PASSWORD:-AgriLogistic_secure_2026}",
+    "auto.create": "false",
+    "insert.mode": "insert",
+    "pk.mode": "record_value",
+    "pk.fields": "eventId",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false"
+  }
+}

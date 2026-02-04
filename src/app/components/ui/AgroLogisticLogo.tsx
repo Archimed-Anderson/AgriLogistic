@@ -67,9 +67,7 @@ export const AgroLogisticLogo = memo(function AgroLogisticLogo({
 
       {/* Optional Text */}
       {showText && (
-        <span className={`font-bold text-gray-800 ${textSizeClasses[size]}`}>
-          AgroLogistic
-        </span>
+        <span className={`font-bold text-gray-800 ${textSizeClasses[size]}`}>AgroLogistic</span>
       )}
     </div>
   );

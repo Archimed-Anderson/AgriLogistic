@@ -9,7 +9,7 @@ const CSRF_TOKEN_EXPIRY = 24 * 60 * 60 * 1000; // 24 heures
 function generateCSRFToken(): string {
   const array = new Uint32Array(4);
   crypto.getRandomValues(array);
-  return Array.from(array, val => val.toString(16)).join('');
+  return Array.from(array, (val) => val.toString(16)).join('');
 }
 
 /**
@@ -32,11 +32,11 @@ function getCSRFToken(): string | null {
   try {
     const token = sessionStorage.getItem(CSRF_TOKEN_KEY);
     const expiryStr = sessionStorage.getItem(`${CSRF_TOKEN_KEY}_expiry`);
-    
+
     if (!token || !expiryStr) {
       return null;
     }
-    
+
     const expiry = parseInt(expiryStr, 10);
     if (Date.now() > expiry) {
       // Token expiré, le supprimer
@@ -44,7 +44,7 @@ function getCSRFToken(): string | null {
       sessionStorage.removeItem(`${CSRF_TOKEN_KEY}_expiry`);
       return null;
     }
-    
+
     return token;
   } catch (error) {
     console.error('Erreur lors de la récupération du token CSRF:', error);
@@ -61,12 +61,12 @@ export function useCSRFToken() {
   // Initialiser ou récupérer le token
   useEffect(() => {
     let csrfToken = getCSRFToken();
-    
+
     if (!csrfToken) {
       csrfToken = generateCSRFToken();
       storeCSRFToken(csrfToken);
     }
-    
+
     setToken(csrfToken);
   }, []);
 
@@ -83,9 +83,12 @@ export function useCSRFToken() {
   /**
    * Valide un token CSRF
    */
-  const validateToken = useCallback((tokenToValidate: string): boolean => {
-    return token !== null && token === tokenToValidate;
-  }, [token]);
+  const validateToken = useCallback(
+    (tokenToValidate: string): boolean => {
+      return token !== null && token === tokenToValidate;
+    },
+    [token]
+  );
 
   /**
    * Supprime le token CSRF

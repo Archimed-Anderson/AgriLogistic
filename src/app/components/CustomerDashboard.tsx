@@ -1,7 +1,7 @@
-import { Package, TruckIcon, CheckCircle, Clock } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Button } from "./ui/button";
-import { orders } from "../data/mockData";
+import { Package, TruckIcon, CheckCircle, Clock } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Button } from './ui/button';
+import { orders } from '../data/mockData';
 
 interface CustomerDashboardProps {
   onNavigate: (route: string) => void;
@@ -20,7 +20,10 @@ export function CustomerDashboard({ onNavigate }: CustomerDashboardProps) {
 
       {/* Quick Actions */}
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="transition-all hover:shadow-md cursor-pointer" onClick={() => onNavigate("/market")}>
+        <Card
+          className="transition-all hover:shadow-md cursor-pointer"
+          onClick={() => onNavigate('/market')}
+        >
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
@@ -34,7 +37,10 @@ export function CustomerDashboard({ onNavigate }: CustomerDashboardProps) {
           </CardContent>
         </Card>
 
-        <Card className="transition-all hover:shadow-md cursor-pointer" onClick={() => onNavigate("/customer/tracking")}>
+        <Card
+          className="transition-all hover:shadow-md cursor-pointer"
+          onClick={() => onNavigate('/customer/tracking')}
+        >
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
@@ -48,7 +54,10 @@ export function CustomerDashboard({ onNavigate }: CustomerDashboardProps) {
           </CardContent>
         </Card>
 
-        <Card className="transition-all hover:shadow-md cursor-pointer" onClick={() => onNavigate("/chat")}>
+        <Card
+          className="transition-all hover:shadow-md cursor-pointer"
+          onClick={() => onNavigate('/chat')}
+        >
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100">
@@ -67,7 +76,9 @@ export function CustomerDashboard({ onNavigate }: CustomerDashboardProps) {
       <Card className="transition-all hover:shadow-md">
         <CardHeader>
           <CardTitle>Order Status</CardTitle>
-          <p className="text-sm text-muted-foreground">Your recent orders and their current status</p>
+          <p className="text-sm text-muted-foreground">
+            Your recent orders and their current status
+          </p>
         </CardHeader>
         <CardContent className="space-y-4">
           {orders.slice(0, 3).map((order) => (
@@ -78,16 +89,16 @@ export function CustomerDashboard({ onNavigate }: CustomerDashboardProps) {
               <div className="flex items-center gap-4">
                 <div
                   className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                    order.status === "Delivered"
-                      ? "bg-green-100"
-                      : order.status === "In Transit"
-                      ? "bg-blue-100"
-                      : "bg-yellow-100"
+                    order.status === 'Delivered'
+                      ? 'bg-green-100'
+                      : order.status === 'In Transit'
+                      ? 'bg-blue-100'
+                      : 'bg-yellow-100'
                   }`}
                 >
-                  {order.status === "Delivered" ? (
+                  {order.status === 'Delivered' ? (
                     <CheckCircle className="h-5 w-5 text-green-600" />
-                  ) : order.status === "In Transit" ? (
+                  ) : order.status === 'In Transit' ? (
                     <TruckIcon className="h-5 w-5 text-blue-600" />
                   ) : (
                     <Clock className="h-5 w-5 text-yellow-600" />
@@ -103,11 +114,11 @@ export function CustomerDashboard({ onNavigate }: CustomerDashboardProps) {
               <div className="text-right">
                 <span
                   className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    order.status === "Delivered"
-                      ? "bg-green-100 text-green-800"
-                      : order.status === "In Transit"
-                      ? "bg-blue-100 text-blue-800"
-                      : "bg-yellow-100 text-yellow-800"
+                    order.status === 'Delivered'
+                      ? 'bg-green-100 text-green-800'
+                      : order.status === 'In Transit'
+                      ? 'bg-blue-100 text-blue-800'
+                      : 'bg-yellow-100 text-yellow-800'
                   }`}
                 >
                   {order.status}
@@ -128,13 +139,15 @@ export function CustomerDashboard({ onNavigate }: CustomerDashboardProps) {
         <CardContent>
           <div className="space-y-6">
             {orders
-              .filter((o) => o.status === "In Transit")
+              .filter((o) => o.status === 'In Transit')
               .map((order) => (
                 <div key={order.id} className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">{order.id}</p>
-                      <p className="text-sm text-muted-foreground">Tracking: {order.trackingNumber}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Tracking: {order.trackingNumber}
+                      </p>
                     </div>
                     <Button variant="outline" size="sm">
                       View Details
@@ -149,7 +162,9 @@ export function CustomerDashboard({ onNavigate }: CustomerDashboardProps) {
                         </div>
                         <div className="flex-1">
                           <p className="font-medium text-sm">In Transit</p>
-                          <p className="text-xs text-muted-foreground">Expected delivery: Tomorrow</p>
+                          <p className="text-xs text-muted-foreground">
+                            Expected delivery: Tomorrow
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-start gap-4">

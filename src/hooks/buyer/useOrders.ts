@@ -50,7 +50,12 @@ const mockOrders: Order[] = [
     updatedAt: new Date('2026-01-22T10:00:00'),
     paymentStatus: 'pending',
     timeline: [
-      { id: 'e-1', type: 'created', timestamp: new Date('2026-01-22T10:00:00'), description: 'Commande créée' },
+      {
+        id: 'e-1',
+        type: 'created',
+        timestamp: new Date('2026-01-22T10:00:00'),
+        description: 'Commande créée',
+      },
     ],
   },
   {
@@ -96,9 +101,24 @@ const mockOrders: Order[] = [
     updatedAt: new Date('2026-01-22T08:00:00'),
     paymentStatus: 'paid',
     timeline: [
-      { id: 'e-1', type: 'created', timestamp: new Date('2026-01-21T14:00:00'), description: 'Commande créée' },
-      { id: 'e-2', type: 'payment_received', timestamp: new Date('2026-01-21T14:30:00'), description: 'Paiement reçu' },
-      { id: 'e-3', type: 'confirmed', timestamp: new Date('2026-01-22T08:00:00'), description: 'Confirmée par le fournisseur' },
+      {
+        id: 'e-1',
+        type: 'created',
+        timestamp: new Date('2026-01-21T14:00:00'),
+        description: 'Commande créée',
+      },
+      {
+        id: 'e-2',
+        type: 'payment_received',
+        timestamp: new Date('2026-01-21T14:30:00'),
+        description: 'Paiement reçu',
+      },
+      {
+        id: 'e-3',
+        type: 'confirmed',
+        timestamp: new Date('2026-01-22T08:00:00'),
+        description: 'Confirmée par le fournisseur',
+      },
     ],
   },
   {
@@ -144,11 +164,36 @@ const mockOrders: Order[] = [
     updatedAt: new Date('2026-01-22T11:00:00'),
     paymentStatus: 'paid',
     timeline: [
-      { id: 'e-1', type: 'created', timestamp: new Date('2026-01-20T09:00:00'), description: 'Commande créée' },
-      { id: 'e-2', type: 'payment_received', timestamp: new Date('2026-01-20T09:30:00'), description: 'Paiement reçu' },
-      { id: 'e-3', type: 'confirmed', timestamp: new Date('2026-01-20T14:00:00'), description: 'Confirmée' },
-      { id: 'e-4', type: 'preparing', timestamp: new Date('2026-01-22T08:00:00'), description: 'En préparation' },
-      { id: 'e-5', type: 'quality_check', timestamp: new Date('2026-01-22T11:00:00'), description: 'Contrôle qualité en cours' },
+      {
+        id: 'e-1',
+        type: 'created',
+        timestamp: new Date('2026-01-20T09:00:00'),
+        description: 'Commande créée',
+      },
+      {
+        id: 'e-2',
+        type: 'payment_received',
+        timestamp: new Date('2026-01-20T09:30:00'),
+        description: 'Paiement reçu',
+      },
+      {
+        id: 'e-3',
+        type: 'confirmed',
+        timestamp: new Date('2026-01-20T14:00:00'),
+        description: 'Confirmée',
+      },
+      {
+        id: 'e-4',
+        type: 'preparing',
+        timestamp: new Date('2026-01-22T08:00:00'),
+        description: 'En préparation',
+      },
+      {
+        id: 'e-5',
+        type: 'quality_check',
+        timestamp: new Date('2026-01-22T11:00:00'),
+        description: 'Contrôle qualité en cours',
+      },
     ],
   },
   {
@@ -194,11 +239,36 @@ const mockOrders: Order[] = [
     updatedAt: new Date('2026-01-22T07:00:00'),
     paymentStatus: 'paid',
     timeline: [
-      { id: 'e-1', type: 'created', timestamp: new Date('2026-01-19T16:00:00'), description: 'Commande créée' },
-      { id: 'e-2', type: 'confirmed', timestamp: new Date('2026-01-19T18:00:00'), description: 'Confirmée' },
-      { id: 'e-3', type: 'preparing', timestamp: new Date('2026-01-21T08:00:00'), description: 'En préparation' },
-      { id: 'e-4', type: 'shipped', timestamp: new Date('2026-01-22T07:00:00'), description: 'Expédiée' },
-      { id: 'e-5', type: 'in_transit', timestamp: new Date('2026-01-22T07:30:00'), description: 'En transit vers Dakar' },
+      {
+        id: 'e-1',
+        type: 'created',
+        timestamp: new Date('2026-01-19T16:00:00'),
+        description: 'Commande créée',
+      },
+      {
+        id: 'e-2',
+        type: 'confirmed',
+        timestamp: new Date('2026-01-19T18:00:00'),
+        description: 'Confirmée',
+      },
+      {
+        id: 'e-3',
+        type: 'preparing',
+        timestamp: new Date('2026-01-21T08:00:00'),
+        description: 'En préparation',
+      },
+      {
+        id: 'e-4',
+        type: 'shipped',
+        timestamp: new Date('2026-01-22T07:00:00'),
+        description: 'Expédiée',
+      },
+      {
+        id: 'e-5',
+        type: 'in_transit',
+        timestamp: new Date('2026-01-22T07:30:00'),
+        description: 'En transit vers Dakar',
+      },
     ],
   },
   {
@@ -244,10 +314,30 @@ const mockOrders: Order[] = [
     updatedAt: new Date('2026-01-21T14:00:00'),
     paymentStatus: 'paid',
     timeline: [
-      { id: 'e-1', type: 'created', timestamp: new Date('2026-01-18T10:00:00'), description: 'Commande créée' },
-      { id: 'e-2', type: 'confirmed', timestamp: new Date('2026-01-18T12:00:00'), description: 'Confirmée' },
-      { id: 'e-3', type: 'shipped', timestamp: new Date('2026-01-21T08:00:00'), description: 'Expédiée' },
-      { id: 'e-4', type: 'delivered', timestamp: new Date('2026-01-21T14:00:00'), description: 'Livrée' },
+      {
+        id: 'e-1',
+        type: 'created',
+        timestamp: new Date('2026-01-18T10:00:00'),
+        description: 'Commande créée',
+      },
+      {
+        id: 'e-2',
+        type: 'confirmed',
+        timestamp: new Date('2026-01-18T12:00:00'),
+        description: 'Confirmée',
+      },
+      {
+        id: 'e-3',
+        type: 'shipped',
+        timestamp: new Date('2026-01-21T08:00:00'),
+        description: 'Expédiée',
+      },
+      {
+        id: 'e-4',
+        type: 'delivered',
+        timestamp: new Date('2026-01-21T14:00:00'),
+        description: 'Livrée',
+      },
     ],
   },
 ];
@@ -255,21 +345,25 @@ const mockOrders: Order[] = [
 export function useOrders() {
   const queryClient = useQueryClient();
 
-  const { data: orders, isLoading, error } = useQuery({
+  const {
+    data: orders,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['buyer', 'orders'],
     queryFn: async () => {
-      await new Promise(resolve => setTimeout(resolve, 600));
+      await new Promise((resolve) => setTimeout(resolve, 600));
       return mockOrders;
     },
   });
 
   const getOrdersByStatus = (status: OrderStatus) => {
-    return orders?.filter(o => o.status === status) || [];
+    return orders?.filter((o) => o.status === status) || [];
   };
 
   const updateOrderStatus = useMutation({
     mutationFn: async ({ orderId, status }: { orderId: string; status: OrderStatus }) => {
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       return { orderId, status };
     },
     onSuccess: () => {

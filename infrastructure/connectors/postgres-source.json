@@ -1,0 +1,18 @@
+{
+  "name": "postgres-source-agrilogistic",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
+    "tasks.max": "2",
+    "connection.url": "jdbc:postgresql://postgres:5432/AgriLogistic",
+    "connection.user": "AgriLogistic",
+    "connection.password": "${DB_PASSWORD:-AgriLogistic_secure_2026}",
+    "topic.prefix": "pg.",
+    "mode": "incrementing",
+    "incrementing.column.name": "id",
+    "table.whitelist": "users,orders",
+    "poll.interval.ms": "60000",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false"
+  }
+}

@@ -65,11 +65,7 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-          <XAxis
-            dataKey="date"
-            stroke="#6b7280"
-            style={{ fontSize: '12px' }}
-          />
+          <XAxis dataKey="date" stroke="#6b7280" style={{ fontSize: '12px' }} />
           <YAxis
             stroke="#6b7280"
             style={{ fontSize: '12px' }}
@@ -84,10 +80,7 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
             }}
             formatter={(value: number) => [`${value.toFixed(1)}K XOF`, '']}
           />
-          <Legend
-            wrapperStyle={{ paddingTop: '20px' }}
-            iconType="circle"
-          />
+          <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
           <Line
             type="monotone"
             dataKey="Marketplace"

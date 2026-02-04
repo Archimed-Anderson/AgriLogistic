@@ -1,22 +1,22 @@
-import { Bell, Package, CreditCard, TruckIcon, Settings, Check } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
-import { notifications as mockNotifications } from "../data/mockData";
-import { useState } from "react";
+import { Bell, Package, CreditCard, TruckIcon, Settings, Check } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Button } from './ui/button';
+import { Badge } from './ui/badge';
+import { notifications as mockNotifications } from '../data/mockData';
+import { useState } from 'react';
 
 export function NotificationsPage() {
   const [notifications, setNotifications] = useState(mockNotifications);
 
   const getIcon = (type: string) => {
     switch (type) {
-      case "order":
+      case 'order':
         return Package;
-      case "payment":
+      case 'payment':
         return CreditCard;
-      case "shipping":
+      case 'shipping':
         return TruckIcon;
-      case "system":
+      case 'system':
         return Settings;
       default:
         return Bell;
@@ -25,30 +25,28 @@ export function NotificationsPage() {
 
   const getIconColor = (type: string) => {
     switch (type) {
-      case "order":
-        return "bg-blue-100 text-blue-600";
-      case "payment":
-        return "bg-green-100 text-green-600";
-      case "shipping":
-        return "bg-purple-100 text-purple-600";
-      case "system":
-        return "bg-orange-100 text-orange-600";
+      case 'order':
+        return 'bg-blue-100 text-blue-600';
+      case 'payment':
+        return 'bg-green-100 text-green-600';
+      case 'shipping':
+        return 'bg-purple-100 text-purple-600';
+      case 'system':
+        return 'bg-orange-100 text-orange-600';
       default:
-        return "bg-gray-100 text-gray-600";
+        return 'bg-gray-100 text-gray-600';
     }
   };
 
   const markAsRead = (id: number) => {
-    setNotifications(notifications.map(n =>
-      n.id === id ? { ...n, read: true } : n
-    ));
+    setNotifications(notifications.map((n) => (n.id === id ? { ...n, read: true } : n)));
   };
 
   const markAllAsRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, read: true })));
+    setNotifications(notifications.map((n) => ({ ...n, read: true })));
   };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
     <div className="space-y-6">
@@ -56,9 +54,7 @@ export function NotificationsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Notifications</h1>
-          <p className="text-muted-foreground mt-2">
-            Stay updated with your latest activities
-          </p>
+          <p className="text-muted-foreground mt-2">Stay updated with your latest activities</p>
         </div>
         {unreadCount > 0 && (
           <Button onClick={markAllAsRead} variant="outline">
@@ -125,10 +121,12 @@ export function NotificationsPage() {
               <div
                 key={notification.id}
                 className={`flex items-start gap-4 p-4 rounded-lg border transition-all hover:shadow-sm ${
-                  notification.read ? "bg-background" : "bg-blue-50/50 border-blue-200"
+                  notification.read ? 'bg-background' : 'bg-blue-50/50 border-blue-200'
                 }`}
               >
-                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${iconColor}`}>
+                <div
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${iconColor}`}
+                >
                   <Icon className="h-5 w-5" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -136,9 +134,7 @@ export function NotificationsPage() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <h4 className="font-semibold">{notification.title}</h4>
-                        {!notification.read && (
-                          <Badge className="bg-[#2563eb] h-5">New</Badge>
-                        )}
+                        {!notification.read && <Badge className="bg-[#2563eb] h-5">New</Badge>}
                       </div>
                       <p className="text-sm text-muted-foreground">{notification.message}</p>
                       <p className="text-xs text-muted-foreground mt-2">{notification.timestamp}</p>

@@ -1,0 +1,27 @@
+# =============================================================================
+# PostgreSQL - pg_hba.conf (exemple production)
+# =============================================================================
+# Contrôle d'accès : qui peut se connecter et comment.
+# Copier vers pg_hba.conf et adapter ; recharger : pg_ctl reload
+# =============================================================================
+
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+
+# Local
+local   all             postgres                                peer
+local   all             all                                     scram-sha-256
+
+# Réplication (streaming) - primaire → réplicas
+host    replication     replicator      10.0.0.0/8              scram-sha-256
+host    replication     replicator      172.16.0.0/12            scram-sha-256
+
+# Réseau interne (applications, même serveur)
+host    all             agrilogistic    127.0.0.1/32             scram-sha-256
+host    all             agrilogistic    10.0.0.0/8               scram-sha-256
+host    all             agrilogistic    172.16.0.0/12            scram-sha-256
+
+# Lecture seule sur réplicas (optionnel)
+# host    all             readuser        10.0.0.0/8               scram-sha-256
+
+# Refuser le reste par défaut (à la fin)
+host    all             all             0.0.0.0/0                reject

@@ -208,7 +208,7 @@ describe('useRegister', () => {
       });
     });
 
-     await act(async () => {
+    await act(async () => {
       await expect(result.current.register()).rejects.toThrow();
     });
 

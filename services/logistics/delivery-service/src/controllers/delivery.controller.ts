@@ -38,7 +38,7 @@ export class DeliveryController {
 
     try {
       let query = 'SELECT * FROM deliveries WHERE 1=1';
-      const params: any[] = [];
+      const params: (string | number | boolean | null | undefined)[] = [];
 
       if (status) { params.push(status); query += ` AND status = $${params.length}`; }
       if (driverId) { params.push(driverId); query += ` AND driver_id = $${params.length}`; }

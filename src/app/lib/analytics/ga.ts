@@ -77,4 +77,3 @@ export function trackEvent(
 
   window.gtag('event', name, params || {});
 }
-

@@ -79,9 +79,7 @@ export function VehicleList({ vehicles, onVehicleClick }: VehicleListProps) {
                 <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
                   <div
                     className={`h-full ${
-                      (vehicle.iotDevice?.data.fuelLevel || 0) < 20
-                        ? 'bg-red-500'
-                        : 'bg-green-500'
+                      (vehicle.iotDevice?.data.fuelLevel || 0) < 20 ? 'bg-red-500' : 'bg-green-500'
                     }`}
                     style={{ width: `${vehicle.iotDevice?.data.fuelLevel || 0}%` }}
                   />
@@ -113,9 +111,7 @@ export function VehicleList({ vehicles, onVehicleClick }: VehicleListProps) {
             {vehicle.nextMaintenance && (
               <div
                 className={`flex items-center gap-1 ${
-                  new Date(vehicle.nextMaintenance) < new Date()
-                    ? 'text-red-600'
-                    : 'text-gray-600'
+                  new Date(vehicle.nextMaintenance) < new Date() ? 'text-red-600' : 'text-gray-600'
                 }`}
               >
                 <Wrench className="w-3 h-3" />

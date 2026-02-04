@@ -58,15 +58,14 @@ export function EquipmentInventory({ equipment, isLoading }: EquipmentInventoryP
     return icons[type];
   };
 
-  const filteredEquipment = filterStatus === 'all'
-    ? equipment
-    : equipment.filter(e => e.status === filterStatus);
+  const filteredEquipment =
+    filterStatus === 'all' ? equipment : equipment.filter((e) => e.status === filterStatus);
 
   const statusCounts = {
     all: equipment.length,
-    available: equipment.filter(e => e.status === 'available').length,
-    rented: equipment.filter(e => e.status === 'rented').length,
-    maintenance: equipment.filter(e => e.status === 'maintenance').length,
+    available: equipment.filter((e) => e.status === 'available').length,
+    rented: equipment.filter((e) => e.status === 'rented').length,
+    maintenance: equipment.filter((e) => e.status === 'maintenance').length,
   };
 
   return (
@@ -95,7 +94,11 @@ export function EquipmentInventory({ equipment, isLoading }: EquipmentInventoryP
           >
             {status === 'all' ? 'Tout' : getStatusConfig(status as Equipment['status']).label}
             <span className="ml-2 font-semibold">
-              ({status === 'all' ? statusCounts.all : statusCounts[status as keyof typeof statusCounts]})
+              (
+              {status === 'all'
+                ? statusCounts.all
+                : statusCounts[status as keyof typeof statusCounts]}
+              )
             </span>
           </button>
         ))}
@@ -111,7 +114,8 @@ export function EquipmentInventory({ equipment, isLoading }: EquipmentInventoryP
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredEquipment.map((eq) => {
             const statusConfig = getStatusConfig(eq.status);
-            const hoursUntilService = eq.usage.serviceInterval - (eq.usage.totalHours % eq.usage.serviceInterval);
+            const hoursUntilService =
+              eq.usage.serviceInterval - (eq.usage.totalHours % eq.usage.serviceInterval);
 
             return (
               <div
@@ -124,7 +128,9 @@ export function EquipmentInventory({ equipment, isLoading }: EquipmentInventoryP
                     {getTypeIcon(eq.type)}
                   </div>
                   <div className="absolute top-3 right-3">
-                    <span className={`px-3 py-1 text-xs font-medium rounded-full ${statusConfig.color}`}>
+                    <span
+                      className={`px-3 py-1 text-xs font-medium rounded-full ${statusConfig.color}`}
+                    >
                       {statusConfig.icon} {statusConfig.label}
                     </span>
                   </div>
@@ -168,7 +174,11 @@ export function EquipmentInventory({ equipment, isLoading }: EquipmentInventoryP
                   <div className="flex items-center justify-between mb-3 pb-3 border-b">
                     <div>
                       <p className="text-xs text-gray-600">État</p>
-                      <p className={`text-sm font-semibold capitalize ${getConditionColor(eq.condition)}`}>
+                      <p
+                        className={`text-sm font-semibold capitalize ${getConditionColor(
+                          eq.condition
+                        )}`}
+                      >
                         {eq.condition}
                       </p>
                     </div>
@@ -187,11 +197,15 @@ export function EquipmentInventory({ equipment, isLoading }: EquipmentInventoryP
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div>
                         <span className="text-gray-600">Jour:</span>
-                        <span className="ml-1 font-semibold">{(eq.pricing.daily / 1000).toFixed(0)}K</span>
+                        <span className="ml-1 font-semibold">
+                          {(eq.pricing.daily / 1000).toFixed(0)}K
+                        </span>
                       </div>
                       <div>
                         <span className="text-gray-600">Semaine:</span>
-                        <span className="ml-1 font-semibold">{(eq.pricing.weekly / 1000).toFixed(0)}K</span>
+                        <span className="ml-1 font-semibold">
+                          {(eq.pricing.weekly / 1000).toFixed(0)}K
+                        </span>
                       </div>
                     </div>
                   </div>

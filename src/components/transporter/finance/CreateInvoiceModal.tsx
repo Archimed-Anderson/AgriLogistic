@@ -42,9 +42,7 @@ export function CreateInvoiceModal({ isOpen, onClose, onSubmit }: CreateInvoiceM
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Client
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Client</label>
               <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 <option>Sélectionner un client</option>
                 <option>Ferme Bio Dakar</option>
@@ -66,11 +64,14 @@ export function CreateInvoiceModal({ isOpen, onClose, onSubmit }: CreateInvoiceM
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-medium text-gray-900">Articles</h3>
-              <button type="button" className="text-sm text-blue-600 font-medium hover:text-blue-700 flex items-center gap-1">
+              <button
+                type="button"
+                className="text-sm text-blue-600 font-medium hover:text-blue-700 flex items-center gap-1"
+              >
                 <Plus className="w-4 h-4" /> Ajouter
               </button>
             </div>
-            
+
             <div className="flex gap-4">
               <div className="flex-1">
                 <input

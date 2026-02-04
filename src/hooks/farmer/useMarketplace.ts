@@ -198,6 +198,7 @@ export function useMarketplace() {
     reviews,
     marketAnalysis,
     flashSales,
-    isLoading: productsLoading || ordersLoading || reviewsLoading || analysisLoading || flashSalesLoading,
+    isLoading:
+      productsLoading || ordersLoading || reviewsLoading || analysisLoading || flashSalesLoading,
   };
 }

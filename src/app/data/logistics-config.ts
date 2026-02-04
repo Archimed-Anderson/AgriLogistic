@@ -9,12 +9,12 @@
  * Poids des facteurs dans le calcul du score AI (total = 100%)
  */
 export const MATCH_SCORE_WEIGHTS = {
-  CAPACITY: 25,           // Correspondance de capacité
-  LOCATION: 20,           // Proximité géographique
-  TIME: 20,               // Disponibilité temporelle
-  REQUIREMENTS: 15,       // Exigences spéciales
-  PRICE: 10,              // Compatibilité prix
-  DRIVER_RATING: 10,      // Note du conducteur
+  CAPACITY: 25, // Correspondance de capacité
+  LOCATION: 20, // Proximité géographique
+  TIME: 20, // Disponibilité temporelle
+  REQUIREMENTS: 15, // Exigences spéciales
+  PRICE: 10, // Compatibilité prix
+  DRIVER_RATING: 10, // Note du conducteur
 } as const;
 
 // ==================== DISTANCE THRESHOLDS ====================
@@ -23,10 +23,10 @@ export const MATCH_SCORE_WEIGHTS = {
  * Seuils de distance pour le scoring de proximité (en km)
  */
 export const DISTANCE_THRESHOLDS = {
-  VERY_CLOSE: 50,         // < 50 km : score maximal
-  CLOSE: 150,             // 50-150 km : score élevé
-  MEDIUM: 300,            // 150-300 km : score moyen
-  FAR: Infinity,          // > 300 km : score faible
+  VERY_CLOSE: 50, // < 50 km : score maximal
+  CLOSE: 150, // 50-150 km : score élevé
+  MEDIUM: 300, // 150-300 km : score moyen
+  FAR: Infinity, // > 300 km : score faible
 } as const;
 
 /**
@@ -45,10 +45,10 @@ export const DISTANCE_SCORES = {
  * Seuils de temps pour le scoring de disponibilité (en jours)
  */
 export const TIME_THRESHOLDS = {
-  IMMEDIATE: 1,           // ≤ 1 jour : score maximal
-  SOON: 3,                // 1-3 jours : score élevé
-  NEAR: 7,                // 3-7 jours : score moyen
-  LATER: Infinity,        // > 7 jours : score faible
+  IMMEDIATE: 1, // ≤ 1 jour : score maximal
+  SOON: 3, // 1-3 jours : score élevé
+  NEAR: 7, // 3-7 jours : score moyen
+  LATER: Infinity, // > 7 jours : score faible
 } as const;
 
 /**
@@ -67,19 +67,19 @@ export const TIME_SCORES = {
  * Ratios de capacité optimaux (charge / capacité camion)
  */
 export const CAPACITY_RATIOS = {
-  OPTIMAL_MIN: 0.7,       // 70% minimum pour ratio optimal
-  OPTIMAL_MAX: 1.0,       // 100% maximum (pas de surcharge)
-  ACCEPTABLE_MIN: 0.5,    // 50% minimum acceptable
+  OPTIMAL_MIN: 0.7, // 70% minimum pour ratio optimal
+  OPTIMAL_MAX: 1.0, // 100% maximum (pas de surcharge)
+  ACCEPTABLE_MIN: 0.5, // 50% minimum acceptable
 } as const;
 
 /**
  * Scores attribués selon le ratio de capacité
  */
 export const CAPACITY_SCORES = {
-  OPTIMAL: 25,            // 70-100% : score maximal
-  ACCEPTABLE: 20,         // 50-70% : score acceptable
-  SUBOPTIMAL: 15,         // < 50% : score faible
-  OVERLOAD: 0,            // > 100% : impossible
+  OPTIMAL: 25, // 70-100% : score maximal
+  ACCEPTABLE: 20, // 50-70% : score acceptable
+  SUBOPTIMAL: 15, // < 50% : score faible
+  OVERLOAD: 0, // > 100% : impossible
 } as const;
 
 // ==================== PRICE THRESHOLDS ====================
@@ -88,10 +88,10 @@ export const CAPACITY_SCORES = {
  * Ratios de prix (prix offert / coût estimé)
  */
 export const PRICE_RATIOS = {
-  EXCELLENT: 1.2,         // ≥ 120% : excellent
-  GOOD: 1.0,              // 100-120% : bon
-  ACCEPTABLE: 0.8,        // 80-100% : acceptable
-  LOW: 0,                 // < 80% : faible
+  EXCELLENT: 1.2, // ≥ 120% : excellent
+  GOOD: 1.0, // 100-120% : bon
+  ACCEPTABLE: 0.8, // 80-100% : acceptable
+  LOW: 0, // < 80% : faible
 } as const;
 
 /**
@@ -110,12 +110,12 @@ export const PRICE_SCORES = {
  * Tarification par défaut
  */
 export const PRICING = {
-  BASE_RATE_PER_KM: 150,          // FCFA par km
-  BASE_RATE_PER_TONNE: 50,        // FCFA par tonne
-  FUEL_SURCHARGE: 0.15,           // 15% de surcharge carburant
-  INSURANCE_RATE: 0.02,           // 2% pour assurance
-  REFRIGERATION_SURCHARGE: 0.25,  // 25% pour réfrigération
-  EXPRESS_SURCHARGE: 0.30,        // 30% pour livraison express
+  BASE_RATE_PER_KM: 150, // FCFA par km
+  BASE_RATE_PER_TONNE: 50, // FCFA par tonne
+  FUEL_SURCHARGE: 0.15, // 15% de surcharge carburant
+  INSURANCE_RATE: 0.02, // 2% pour assurance
+  REFRIGERATION_SURCHARGE: 0.25, // 25% pour réfrigération
+  EXPRESS_SURCHARGE: 0.3, // 30% pour livraison express
 } as const;
 
 // ==================== TRUCK TYPES ====================
@@ -292,11 +292,11 @@ export const MATCH_STATUSES = {
  * Délais et limites
  */
 export const LIMITS = {
-  MATCH_EXPIRY_HOURS: 24,         // Expiration des matches après 24h
-  MAX_MATCHES_PER_LOAD: 5,        // Maximum 5 matches par chargement
-  MIN_MATCH_SCORE: 50,            // Score minimum pour suggérer un match
-  REFRESH_INTERVAL_MS: 30000,     // Rafraîchissement toutes les 30s
-  MAX_SEARCH_RADIUS_KM: 500,      // Rayon de recherche maximum
+  MATCH_EXPIRY_HOURS: 24, // Expiration des matches après 24h
+  MAX_MATCHES_PER_LOAD: 5, // Maximum 5 matches par chargement
+  MIN_MATCH_SCORE: 50, // Score minimum pour suggérer un match
+  REFRESH_INTERVAL_MS: 30000, // Rafraîchissement toutes les 30s
+  MAX_SEARCH_RADIUS_KM: 500, // Rayon de recherche maximum
 } as const;
 
 // ==================== NOTIFICATIONS ====================
@@ -305,10 +305,10 @@ export const LIMITS = {
  * Configuration des notifications
  */
 export const NOTIFICATIONS = {
-  NEW_MATCH_THRESHOLD: 80,        // Notifier si score > 80%
-  PRICE_ALERT_THRESHOLD: 1.5,     // Alerter si prix > 150% du coût estimé
-  DISTANCE_ALERT_KM: 400,         // Alerter si distance > 400 km
-  EXPIRY_WARNING_HOURS: 6,        // Avertir 6h avant expiration
+  NEW_MATCH_THRESHOLD: 80, // Notifier si score > 80%
+  PRICE_ALERT_THRESHOLD: 1.5, // Alerter si prix > 150% du coût estimé
+  DISTANCE_ALERT_KM: 400, // Alerter si distance > 400 km
+  EXPIRY_WARNING_HOURS: 6, // Avertir 6h avant expiration
 } as const;
 
 // ==================== ANALYTICS ====================
@@ -317,10 +317,10 @@ export const NOTIFICATIONS = {
  * Configuration des analytics
  */
 export const ANALYTICS = {
-  DEFAULT_TIME_RANGE: '7d',       // Période par défaut : 7 jours
-  CHART_REFRESH_MS: 60000,        // Rafraîchir les graphiques toutes les 60s
-  TOP_ITEMS_COUNT: 5,             // Nombre d'items dans les tops
-  PERFORMANCE_THRESHOLD: 85,      // Seuil de performance (%)
+  DEFAULT_TIME_RANGE: '7d', // Période par défaut : 7 jours
+  CHART_REFRESH_MS: 60000, // Rafraîchir les graphiques toutes les 60s
+  TOP_ITEMS_COUNT: 5, // Nombre d'items dans les tops
+  PERFORMANCE_THRESHOLD: 85, // Seuil de performance (%)
 } as const;
 
 // ==================== GEOLOCATION ====================
@@ -329,10 +329,10 @@ export const ANALYTICS = {
  * Configuration de géolocalisation
  */
 export const GEOLOCATION = {
-  DEFAULT_ZOOM: 7,                // Zoom par défaut sur la carte
-  MARKER_CLUSTER_RADIUS: 80,      // Rayon de clustering des marqueurs
-  UPDATE_INTERVAL_MS: 10000,      // Mise à jour position toutes les 10s
-  ACCURACY_THRESHOLD_M: 100,      // Précision minimale : 100m
+  DEFAULT_ZOOM: 7, // Zoom par défaut sur la carte
+  MARKER_CLUSTER_RADIUS: 80, // Rayon de clustering des marqueurs
+  UPDATE_INTERVAL_MS: 10000, // Mise à jour position toutes les 10s
+  ACCURACY_THRESHOLD_M: 100, // Précision minimale : 100m
 } as const;
 
 // ==================== VALIDATION ====================
@@ -341,12 +341,12 @@ export const GEOLOCATION = {
  * Règles de validation
  */
 export const VALIDATION = {
-  MIN_QUANTITY_TONNES: 0.5,       // Quantité minimale : 500 kg
-  MAX_QUANTITY_TONNES: 50,        // Quantité maximale : 50 tonnes
-  MIN_PRICE_FCFA: 10000,          // Prix minimum : 10 000 FCFA
-  MAX_PRICE_FCFA: 50000000,       // Prix maximum : 50 M FCFA
-  MIN_DRIVER_RATING: 0,           // Note minimale
-  MAX_DRIVER_RATING: 5,           // Note maximale
+  MIN_QUANTITY_TONNES: 0.5, // Quantité minimale : 500 kg
+  MAX_QUANTITY_TONNES: 50, // Quantité maximale : 50 tonnes
+  MIN_PRICE_FCFA: 10000, // Prix minimum : 10 000 FCFA
+  MAX_PRICE_FCFA: 50000000, // Prix maximum : 50 M FCFA
+  MIN_DRIVER_RATING: 0, // Note minimale
+  MAX_DRIVER_RATING: 5, // Note maximale
   PHONE_REGEX: /^\+225\s?\d{8,10}$/, // Format téléphone ivoirien
 } as const;
 

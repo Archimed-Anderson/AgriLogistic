@@ -16,7 +16,7 @@ interface AdminUsersState {
   };
   isLoading: boolean;
   error: string | null;
-  
+
   // Actions
   setUsers: (users: AdminUser[]) => void;
   setSelectedUser: (user: AdminUser | null) => void;
@@ -46,25 +46,25 @@ const initialState = {
 
 export const useAdminUsersStore = create<AdminUsersState>((set) => ({
   ...initialState,
-  
+
   setUsers: (users) => set({ users }),
-  
+
   setSelectedUser: (user) => set({ selectedUser: user }),
-  
+
   setFilters: (filters) =>
     set((state) => ({
       filters: { ...state.filters, ...filters },
       pagination: { ...state.pagination, page: 1 }, // Reset to page 1 on filter change
     })),
-  
+
   setPagination: (pagination) =>
     set((state) => ({
       pagination: { ...state.pagination, ...pagination },
     })),
-  
+
   setLoading: (isLoading) => set({ isLoading }),
-  
+
   setError: (error) => set({ error }),
-  
+
   reset: () => set(initialState),
 }));

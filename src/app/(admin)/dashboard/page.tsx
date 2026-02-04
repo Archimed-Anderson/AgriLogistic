@@ -1,14 +1,11 @@
-import { 
-  Users, 
-  ShoppingCart, 
-  DollarSign, 
-  TrendingUp,
-  TrendingDown,
-  UserCheck
-} from 'lucide-react';
+import { Users, ShoppingCart, DollarSign, TrendingUp, TrendingDown, UserCheck } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useAdminDashboardMetrics, useSystemAlerts, useDismissAlert } from '@/application/hooks/admin/useAdminDashboard';
+import {
+  useAdminDashboardMetrics,
+  useSystemAlerts,
+  useDismissAlert,
+} from '@/application/hooks/admin/useAdminDashboard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
@@ -30,16 +27,14 @@ function KPICard({ label, value, change, icon: Icon, color }: KPICardProps) {
     purple: 'bg-purple-100 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400',
     orange: 'bg-orange-100 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400',
   };
-  
+
   return (
     <Card>
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div className="flex-1">
             <p className="text-sm text-gray-600 dark:text-gray-400">{label}</p>
-            <p className="text-3xl font-bold mt-2 text-gray-900 dark:text-white">
-              {value}
-            </p>
+            <p className="text-3xl font-bold mt-2 text-gray-900 dark:text-white">{value}</p>
             {change !== undefined && (
               <div className="flex items-center gap-1 mt-2">
                 {change >= 0 ? (
@@ -47,14 +42,15 @@ function KPICard({ label, value, change, icon: Icon, color }: KPICardProps) {
                 ) : (
                   <TrendingDown className="w-4 h-4 text-red-600" />
                 )}
-                <span className={`text-sm font-medium ${
-                  change >= 0 ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {change >= 0 ? '+' : ''}{change}%
+                <span
+                  className={`text-sm font-medium ${
+                    change >= 0 ? 'text-green-600' : 'text-red-600'
+                  }`}
+                >
+                  {change >= 0 ? '+' : ''}
+                  {change}%
                 </span>
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  vs mois dernier
-                </span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">vs mois dernier</span>
               </div>
             )}
           </div>
@@ -71,7 +67,7 @@ export default function AdminDashboardPage() {
   const { data: metrics, isLoading: metricsLoading } = useAdminDashboardMetrics();
   const { data: alerts } = useSystemAlerts();
   const dismissAlert = useDismissAlert();
-  
+
   if (metricsLoading) {
     return (
       <div className="space-y-6">
@@ -87,19 +83,15 @@ export default function AdminDashboardPage() {
       </div>
     );
   }
-  
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Dashboard Admin
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-1">
-          Vue d'ensemble de la plateforme
-        </p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard Admin</h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-1">Vue d'ensemble de la plateforme</p>
       </div>
-      
+
       {/* Alerts */}
       {alerts && alerts.length > 0 && (
         <div className="space-y-2">
@@ -120,7 +112,7 @@ export default function AdminDashboardPage() {
           ))}
         </div>
       )}
-      
+
       {/* KPIs Grid */}
       {metrics && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -153,7 +145,7 @@ export default function AdminDashboardPage() {
           />
         </div>
       )}
-      
+
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
@@ -170,7 +162,7 @@ export default function AdminDashboardPage() {
             )}
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader>
             <CardTitle>Revenus (30 jours)</CardTitle>
@@ -186,7 +178,7 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
       </div>
-      
+
       {/* Recent Activity - TODO */}
       <Card>
         <CardHeader>

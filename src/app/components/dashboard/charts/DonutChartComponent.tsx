@@ -45,9 +45,7 @@ export function DonutChartComponent({ data, title, centerText }: DonutChartCompo
 
   return (
     <div className="w-full h-full flex flex-col">
-      {title && (
-        <h3 className="text-lg font-semibold text-slate-900 mb-4">{title}</h3>
-      )}
+      {title && <h3 className="text-lg font-semibold text-slate-900 mb-4">{title}</h3>}
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
@@ -79,9 +77,7 @@ export function DonutChartComponent({ data, title, centerText }: DonutChartCompo
             verticalAlign="bottom"
             height={36}
             iconType="circle"
-            formatter={(value) => (
-              <span className="text-sm text-slate-600">{value}</span>
-            )}
+            formatter={(value) => <span className="text-sm text-slate-600">{value}</span>}
           />
         </PieChart>
       </ResponsiveContainer>

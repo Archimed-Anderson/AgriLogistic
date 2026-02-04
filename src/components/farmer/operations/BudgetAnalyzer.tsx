@@ -22,22 +22,25 @@ export function BudgetAnalyzer({ budget, isLoading }: BudgetAnalyzerProps) {
   }
 
   const totalExpenses = budget
-    .filter(b => b.type === 'expense')
+    .filter((b) => b.type === 'expense')
     .reduce((sum, b) => sum + b.amount, 0);
 
   const totalIncome = budget
-    .filter(b => b.type === 'income')
+    .filter((b) => b.type === 'income')
     .reduce((sum, b) => sum + b.amount, 0);
 
   const balance = totalIncome - totalExpenses;
 
   // Group by category
   const expensesByCategory = budget
-    .filter(b => b.type === 'expense')
-    .reduce((acc, b) => {
-      acc[b.category] = (acc[b.category] || 0) + b.amount;
-      return acc;
-    }, {} as Record<string, number>);
+    .filter((b) => b.type === 'expense')
+    .reduce(
+      (acc, b) => {
+        acc[b.category] = (acc[b.category] || 0) + b.amount;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
   const chartData = Object.entries(expensesByCategory).map(([category, amount]) => ({
     name: category,
@@ -94,13 +97,20 @@ export function BudgetAnalyzer({ budget, isLoading }: BudgetAnalyzerProps) {
 
         <div className={`rounded-lg p-4 ${balance >= 0 ? 'bg-blue-50' : 'bg-orange-50'}`}>
           <div className="flex items-center gap-2 mb-1">
-            <DollarSign className={`w-4 h-4 ${balance >= 0 ? 'text-blue-600' : 'text-orange-600'}`} />
-            <span className={`text-sm font-medium ${balance >= 0 ? 'text-blue-700' : 'text-orange-700'}`}>
+            <DollarSign
+              className={`w-4 h-4 ${balance >= 0 ? 'text-blue-600' : 'text-orange-600'}`}
+            />
+            <span
+              className={`text-sm font-medium ${
+                balance >= 0 ? 'text-blue-700' : 'text-orange-700'
+              }`}
+            >
               Balance
             </span>
           </div>
           <p className={`text-2xl font-bold ${balance >= 0 ? 'text-blue-900' : 'text-orange-900'}`}>
-            {balance >= 0 ? '+' : ''}{(balance / 1000).toFixed(0)}K XOF
+            {balance >= 0 ? '+' : ''}
+            {(balance / 1000).toFixed(0)}K XOF
           </p>
         </div>
       </div>

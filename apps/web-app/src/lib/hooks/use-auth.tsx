@@ -1,3 +1,3 @@
-"use client"
+'use client';
 
-export { useAuth, AuthProvider } from "@/context/AuthContext"
+export { useAuth, AuthProvider } from '@/context/AuthContext';

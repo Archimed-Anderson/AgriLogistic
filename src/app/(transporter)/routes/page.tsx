@@ -112,7 +112,7 @@ export default function RouteOptimizerPage() {
 
   const handleExportGPX = () => {
     if (!optimizedRoute) return;
-    
+
     const gpx = exportToGPX(optimizedRoute);
     const blob = new Blob([gpx], { type: 'application/gpx+xml' });
     const url = URL.createObjectURL(blob);
@@ -125,7 +125,7 @@ export default function RouteOptimizerPage() {
 
   const handleExportGoogleMaps = () => {
     if (!optimizedRoute) return;
-    
+
     const url = exportToGoogleMaps(optimizedRoute);
     window.open(url, '_blank');
   };
@@ -150,9 +150,7 @@ export default function RouteOptimizerPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                🗺️ Optimiseur de Routes
-              </h1>
+              <h1 className="text-2xl font-bold text-gray-900">🗺️ Optimiseur de Routes</h1>
               <p className="text-sm text-gray-600">
                 Algorithme VRP • {waypoints.length} points • {distance.toFixed(1)} km
               </p>
@@ -203,9 +201,8 @@ export default function RouteOptimizerPage() {
                 <h3 className="font-medium text-green-900">Route optimisée !</h3>
                 <p className="text-sm text-green-700 mt-1">
                   Distance réduite de{' '}
-                  {((1 - optimizedRoute.totalDistance / distance) * 100).toFixed(1)}% •
-                  Économie estimée:{' '}
-                  {(cost.total - optimizedRoute.estimatedCost.total).toLocaleString()} XOF
+                  {((1 - optimizedRoute.totalDistance / distance) * 100).toFixed(1)}% • Économie
+                  estimée: {(cost.total - optimizedRoute.estimatedCost.total).toLocaleString()} XOF
                 </p>
               </div>
             </div>
@@ -233,9 +230,7 @@ export default function RouteOptimizerPage() {
           <div className="space-y-6">
             {/* Optimization Settings */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Paramètres
-              </h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Paramètres</h2>
               <div className="space-y-4">
                 <label className="flex items-center gap-3">
                   <input
@@ -261,11 +256,7 @@ export default function RouteOptimizerPage() {
               </div>
             </div>
 
-            <CostCalculator
-              cost={cost}
-              distance={distance}
-              duration={duration}
-            />
+            <CostCalculator cost={cost} distance={distance} duration={duration} />
 
             <ExportPanel
               route={currentRoute}

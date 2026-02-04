@@ -12,7 +12,7 @@ describe('Product Entity', () => {
       currentStock: 100,
       reorderPoint: 20,
       maxStock: 200,
-      price: new Price(3.50, 'EUR'),
+      price: new Price(3.5, 'EUR'),
     });
 
     expect(product.name).toBe('Tomates Bio');
@@ -34,7 +34,7 @@ describe('Product Entity', () => {
     product.updateStock(-5);
     expect(product.currentStock).toBe(5);
     expect(product.isLowStock()).toBe(true);
-    
+
     product.updateStock(-5);
     expect(product.currentStock).toBe(0);
     expect(product.isOutOfStock()).toBe(true);
@@ -53,9 +53,9 @@ describe('Product Entity', () => {
       price: new Price(10),
     });
 
-    const newPrice = new Price(12.50);
+    const newPrice = new Price(12.5);
     product.updatePrice(newPrice);
-    
-    expect(product.price.amount).toBe(12.50);
+
+    expect(product.price.amount).toBe(12.5);
   });
 });

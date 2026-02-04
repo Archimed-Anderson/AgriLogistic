@@ -1,23 +1,25 @@
-import { AdminSidebar } from "@/components/admin/AdminSidebar"
-import { AdminNavbar } from "@/components/admin/AdminNavbar"
+import { AdminSidebar } from '@/components/admin/AdminSidebar';
+import { AdminNavbar } from '@/components/admin/AdminNavbar';
+import { ThemeProvider } from '@/context/ThemeContext';
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-slate-50/50">
-      {/* Fixed Sidebar */}
-      <AdminSidebar />
+    <ThemeProvider>
+      <div
+        className="flex min-h-screen transition-colors duration-500"
+        style={{ backgroundColor: 'var(--admin-bg)', color: 'var(--admin-text)' }}
+      >
+        {/* Fixed Sidebar */}
+        <AdminSidebar />
 
-      {/* Main Content Area */}
-      <div className="flex flex-1 flex-col">
-        <AdminNavbar />
-        <main className="flex-1 p-6 md:p-8 overflow-y-auto">
-          {children}
-        </main>
+        {/* Main Content Area */}
+        <div className="flex flex-1 flex-col overflow-hidden">
+          <AdminNavbar />
+          <main className="flex-1 overflow-y-auto custom-scrollbar">
+            <div className="container mx-auto p-4 md:p-8">{children}</div>
+          </main>
+        </div>
       </div>
-    </div>
-  )
+    </ThemeProvider>
+  );
 }

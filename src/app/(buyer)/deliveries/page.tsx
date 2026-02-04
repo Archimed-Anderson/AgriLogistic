@@ -17,19 +17,40 @@ import {
   Navigation,
   X,
   Phone,
-  ChevronRight
+  ChevronRight,
 } from 'lucide-react';
 
 const statusConfig = {
-  scheduled: { label: 'Planifiée', color: 'bg-slate-100 text-slate-700 border-slate-200', dotColor: 'bg-slate-400' },
-  in_transit: { label: 'En transit', color: 'bg-blue-100 text-blue-700 border-blue-200', dotColor: 'bg-blue-500' },
-  arriving: { label: 'Arrivée imminente', color: 'bg-amber-100 text-amber-700 border-amber-200', dotColor: 'bg-amber-500' },
-  delivered: { label: 'Livrée', color: 'bg-emerald-100 text-emerald-700 border-emerald-200', dotColor: 'bg-emerald-500' },
-  delayed: { label: 'Retardée', color: 'bg-red-100 text-red-700 border-red-200', dotColor: 'bg-red-500' },
+  scheduled: {
+    label: 'Planifiée',
+    color: 'bg-slate-100 text-slate-700 border-slate-200',
+    dotColor: 'bg-slate-400',
+  },
+  in_transit: {
+    label: 'En transit',
+    color: 'bg-blue-100 text-blue-700 border-blue-200',
+    dotColor: 'bg-blue-500',
+  },
+  arriving: {
+    label: 'Arrivée imminente',
+    color: 'bg-amber-100 text-amber-700 border-amber-200',
+    dotColor: 'bg-amber-500',
+  },
+  delivered: {
+    label: 'Livrée',
+    color: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+    dotColor: 'bg-emerald-500',
+  },
+  delayed: {
+    label: 'Retardée',
+    color: 'bg-red-100 text-red-700 border-red-200',
+    dotColor: 'bg-red-500',
+  },
 };
 
 export default function BuyerDeliveriesPage() {
-  const { deliveries, todayDeliveries, inTransitDeliveries, delayedDeliveries, isLoading } = useDeliveries();
+  const { deliveries, todayDeliveries, inTransitDeliveries, delayedDeliveries, isLoading } =
+    useDeliveries();
   const [selectedDelivery, setSelectedDelivery] = useState<Delivery | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>('all');
 
@@ -50,8 +71,8 @@ export default function BuyerDeliveriesPage() {
     }).format(amount);
   };
 
-  const filteredDeliveries = deliveries.filter(d =>
-    filterStatus === 'all' || d.status === filterStatus
+  const filteredDeliveries = deliveries.filter(
+    (d) => filterStatus === 'all' || d.status === filterStatus
   );
 
   if (isLoading) {
@@ -101,7 +122,7 @@ export default function BuyerDeliveriesPage() {
             <CheckCircle className="w-5 h-5 text-emerald-500" />
           </div>
           <p className="text-2xl font-bold text-emerald-600">
-            {deliveries.filter(d => d.status === 'delivered').length}
+            {deliveries.filter((d) => d.status === 'delivered').length}
           </p>
         </div>
       </div>
@@ -114,9 +135,11 @@ export default function BuyerDeliveriesPage() {
             <span className="font-semibold text-red-800">Livraisons retardées</span>
           </div>
           <div className="space-y-2">
-            {delayedDeliveries.map(d => (
+            {delayedDeliveries.map((d) => (
               <div key={d.id} className="flex items-center justify-between text-sm">
-                <span className="text-red-700">{d.orderNumber} - {d.supplierName}</span>
+                <span className="text-red-700">
+                  {d.orderNumber} - {d.supplierName}
+                </span>
                 <span className="text-red-600">{d.notes}</span>
               </div>
             ))}
@@ -154,13 +177,17 @@ export default function BuyerDeliveriesPage() {
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${config.color}`}>
+                  <div
+                    className={`w-12 h-12 rounded-xl flex items-center justify-center ${config.color}`}
+                  >
                     <Truck className="w-6 h-6" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-semibold text-slate-900">{delivery.orderNumber}</h3>
-                      <span className={`px-2 py-1 text-xs font-medium rounded-lg border ${config.color}`}>
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-lg border ${config.color}`}
+                      >
                         {config.label}
                       </span>
                     </div>
@@ -181,7 +208,9 @@ export default function BuyerDeliveriesPage() {
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <p className="font-semibold text-slate-900">{formatCurrency(delivery.totalValue)}</p>
+                    <p className="font-semibold text-slate-900">
+                      {formatCurrency(delivery.totalValue)}
+                    </p>
                     <p className="text-sm text-slate-500">{delivery.items.length} produit(s)</p>
                   </div>
                   <ChevronRight className="w-5 h-5 text-slate-400" />
@@ -202,7 +231,9 @@ export default function BuyerDeliveriesPage() {
                   <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all ${
-                        delivery.status === 'arriving' ? 'bg-amber-500 w-[90%]' : 'bg-blue-500 w-[60%]'
+                        delivery.status === 'arriving'
+                          ? 'bg-amber-500 w-[90%]'
+                          : 'bg-blue-500 w-[60%]'
                       }`}
                     />
                   </div>
@@ -220,15 +251,24 @@ export default function BuyerDeliveriesPage() {
             <div className="p-6 border-b border-slate-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${statusConfig[selectedDelivery.status].color}`}>
+                  <div
+                    className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                      statusConfig[selectedDelivery.status].color
+                    }`}
+                  >
                     <Truck className="w-6 h-6" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-slate-900">{selectedDelivery.orderNumber}</h2>
+                    <h2 className="text-xl font-bold text-slate-900">
+                      {selectedDelivery.orderNumber}
+                    </h2>
                     <p className="text-slate-500">{selectedDelivery.supplierName}</p>
                   </div>
                 </div>
-                <button onClick={() => setSelectedDelivery(null)} className="p-2 hover:bg-slate-100 rounded-lg">
+                <button
+                  onClick={() => setSelectedDelivery(null)}
+                  className="p-2 hover:bg-slate-100 rounded-lg"
+                >
                   <X className="w-5 h-5 text-slate-500" />
                 </button>
               </div>
@@ -237,7 +277,11 @@ export default function BuyerDeliveriesPage() {
             <div className="p-6 space-y-6">
               {/* Status Badge */}
               <div className="flex items-center justify-center">
-                <span className={`px-4 py-2 text-sm font-medium rounded-xl border ${statusConfig[selectedDelivery.status].color}`}>
+                <span
+                  className={`px-4 py-2 text-sm font-medium rounded-xl border ${
+                    statusConfig[selectedDelivery.status].color
+                  }`}
+                >
                   {statusConfig[selectedDelivery.status].label}
                 </span>
               </div>
@@ -245,7 +289,9 @@ export default function BuyerDeliveriesPage() {
               {/* Tracking */}
               <div className="bg-slate-50 rounded-xl p-4">
                 <p className="text-sm text-slate-500 mb-1">Code de suivi</p>
-                <p className="font-mono text-lg font-semibold text-slate-900">{selectedDelivery.trackingCode}</p>
+                <p className="font-mono text-lg font-semibold text-slate-900">
+                  {selectedDelivery.trackingCode}
+                </p>
               </div>
 
               {/* Current Location */}
@@ -263,12 +309,16 @@ export default function BuyerDeliveriesPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-slate-50 rounded-xl p-4">
                   <p className="text-sm text-slate-500">Date prévue</p>
-                  <p className="font-semibold text-slate-900">{formatDate(selectedDelivery.scheduledDate)}</p>
+                  <p className="font-semibold text-slate-900">
+                    {formatDate(selectedDelivery.scheduledDate)}
+                  </p>
                 </div>
                 {selectedDelivery.estimatedArrival && (
                   <div className="bg-slate-50 rounded-xl p-4">
                     <p className="text-sm text-slate-500">Arrivée estimée</p>
-                    <p className="font-semibold text-slate-900">{formatDate(selectedDelivery.estimatedArrival)}</p>
+                    <p className="font-semibold text-slate-900">
+                      {formatDate(selectedDelivery.estimatedArrival)}
+                    </p>
                   </div>
                 )}
               </div>
@@ -278,9 +328,14 @@ export default function BuyerDeliveriesPage() {
                 <h3 className="font-semibold text-slate-900 mb-3">Produits</h3>
                 <div className="space-y-2">
                   {selectedDelivery.items.map((item, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                    <div
+                      key={i}
+                      className="flex items-center justify-between p-3 bg-slate-50 rounded-xl"
+                    >
                       <span className="text-slate-700">{item.name}</span>
-                      <span className="font-mono text-slate-900">{item.quantity} {item.unit}</span>
+                      <span className="font-mono text-slate-900">
+                        {item.quantity} {item.unit}
+                      </span>
                     </div>
                   ))}
                 </div>

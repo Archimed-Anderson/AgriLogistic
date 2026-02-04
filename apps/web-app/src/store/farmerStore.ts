@@ -34,16 +34,13 @@ export const useFarmerStore = create<FarmerStore>((set) => ({
   setParcels: (parcels) => set({ parcels }),
   updateParcelHealth: (id, score) =>
     set((state) => ({
-      parcels: state.parcels.map((p) =>
-        p.id === id ? { ...p, healthScore: score } : p
-      ),
+      parcels: state.parcels.map((p) => (p.id === id ? { ...p, healthScore: score } : p)),
     })),
 
   // Harvest Slice
   harvests: [],
   pendingHarvests: [],
-  addHarvest: (harvest) =>
-    set((state) => ({ harvests: [...state.harvests, harvest] })),
+  addHarvest: (harvest) => set((state) => ({ harvests: [...state.harvests, harvest] })),
   addPendingHarvest: (harvest) =>
     set((state) => ({ pendingHarvests: [...state.pendingHarvests, harvest] })),
   clearPendingHarvests: () => set({ pendingHarvests: [] }),
@@ -51,11 +48,10 @@ export const useFarmerStore = create<FarmerStore>((set) => ({
   // UI Slice
   isSidebarOpen: true,
   toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
-  activeTab: "overview",
+  activeTab: 'overview',
   setActiveTab: (tab) => set({ activeTab: tab }),
   notifications: [],
-  addNotification: (notif) =>
-    set((state) => ({ notifications: [notif, ...state.notifications] })),
+  addNotification: (notif) => set((state) => ({ notifications: [notif, ...state.notifications] })),
   weather: null,
   setWeather: (weather) => set({ weather }),
 }));

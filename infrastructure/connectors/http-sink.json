@@ -1,0 +1,14 @@
+{
+  "name": "http-sink-webhooks",
+  "config": {
+    "connector.class": "io.confluent.connect.http.HttpSinkConnector",
+    "tasks.max": "2",
+    "topics": "order.events,payment.events,logistics.events",
+    "http.api.url": "https://webhook.site/placeholder",
+    "request.method": "POST",
+    "headers": "Content-Type: application/json",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false"
+  }
+}

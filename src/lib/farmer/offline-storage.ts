@@ -2,6 +2,7 @@
  * Offline Storage using IndexedDB
  */
 
+import React from 'react';
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
 
 interface FarmerDB extends DBSchema {
@@ -94,7 +95,11 @@ class OfflineStorage {
   }
 
   // Sync queue operations
-  async addToSyncQueue(action: 'create' | 'update' | 'delete', entity: string, data: any): Promise<void> {
+  async addToSyncQueue(
+    action: 'create' | 'update' | 'delete',
+    entity: string,
+    data: any
+  ): Promise<void> {
     const id = `${entity}-${Date.now()}-${Math.random()}`;
     await this.set('syncQueue', id, {
       id,

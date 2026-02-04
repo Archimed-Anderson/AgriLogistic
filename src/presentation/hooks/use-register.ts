@@ -142,7 +142,12 @@ export function useRegister() {
         return true;
       }
       case 2: {
-        if (!step2Data.firstName || !step2Data.lastName || !step2Data.phone || !step2Data.accountType) {
+        if (
+          !step2Data.firstName ||
+          !step2Data.lastName ||
+          !step2Data.phone ||
+          !step2Data.accountType
+        ) {
           return false;
         }
         if (step2Data.accountType === UserRole.FARMER && !step2Data.businessType) {
@@ -189,16 +194,16 @@ export function useRegister() {
    */
   const updateStepData = (step: RegistrationStep, data: Partial<RegistrationFormData>) => {
     setError(null);
-    
+
     switch (step) {
       case 1:
-        setStep1Data((prev) => ({ ...prev, ...data as Partial<Step1Data> }));
+        setStep1Data((prev) => ({ ...prev, ...(data as Partial<Step1Data>) }));
         break;
       case 2:
-        setStep2Data((prev) => ({ ...prev, ...data as Partial<Step2Data> }));
+        setStep2Data((prev) => ({ ...prev, ...(data as Partial<Step2Data>) }));
         break;
       case 3:
-        setStep3Data((prev) => ({ ...prev, ...data as Partial<Step3Data> }));
+        setStep3Data((prev) => ({ ...prev, ...(data as Partial<Step3Data>) }));
         break;
     }
   };
@@ -232,25 +237,28 @@ export function useRegister() {
       sessionStorage.setItem('pending_verification_email', response.email);
 
       toast.success('Compte créé. Vérifiez votre email.', {
-        description: "Un lien de vérification a été envoyé. En dev, vous pouvez utiliser le token affiché.",
+        description:
+          'Un lien de vérification a été envoyé. En dev, vous pouvez utiliser le token affiché.',
         duration: 5000,
       });
-      
+
       return response;
     } catch (err) {
       // Use enhanced error handler
       const friendlyError = ErrorHandler.toUserFriendly(err);
       setError(friendlyError.message);
-      
+
       toast.error(friendlyError.title, {
         description: `${friendlyError.message}\n${friendlyError.actionable}`,
         duration: 5000,
-        action: friendlyError.canRetry ? {
-          label: 'Réessayer',
-          onClick: () => register(),
-        } : undefined,
+        action: friendlyError.canRetry
+          ? {
+              label: 'Réessayer',
+              onClick: () => register(),
+            }
+          : undefined,
       });
-      
+
       throw err;
     } finally {
       setIsLoading(false);
@@ -278,26 +286,26 @@ export function useRegister() {
     currentStep,
     isLoading: isLoading || authLoading,
     error,
-    
+
     // Step data
     step1Data,
     step2Data,
     step3Data,
-    
+
     // Navigation
     nextStep,
     previousStep,
-    
+
     // Data management
     updateStepData,
-    
+
     // Validation
     isValidStep,
-    
+
     // Actions
     register,
     reset,
-    
+
     // Computed properties
     canGoNext: isValidStep(currentStep),
     canGoPrevious: currentStep > 1,

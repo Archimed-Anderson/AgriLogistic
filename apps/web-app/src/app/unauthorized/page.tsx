@@ -1,8 +1,8 @@
-"use client"
+'use client';
 
-import { ShieldAlert, ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
+import { ShieldAlert, ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function UnauthorizedPage() {
   return (
@@ -13,11 +13,14 @@ export default function UnauthorizedPage() {
             <ShieldAlert size={48} />
           </div>
         </div>
-        
+
         <div className="space-y-2">
-          <h1 className="text-3xl font-black text-[#1B4D3E] uppercase tracking-tighter italic">ACCÈS RESTREINT</h1>
+          <h1 className="text-3xl font-black text-[#1B4D3E] uppercase tracking-tighter italic">
+            ACCÈS RESTREINT
+          </h1>
           <p className="text-slate-500 font-bold text-sm uppercase px-12 leading-relaxed">
-            Votre profil ne dispose pas des autorisations nécessaires pour accéder à cette zone sécurisée.
+            Votre profil ne dispose pas des autorisations nécessaires pour accéder à cette zone
+            sécurisée.
           </p>
         </div>
 
@@ -29,8 +32,10 @@ export default function UnauthorizedPage() {
           </Link>
         </div>
 
-        <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em]">Code Erreur: SEC_AUTH_ROLE_MISMATCH</p>
+        <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em]">
+          Code Erreur: SEC_AUTH_ROLE_MISMATCH
+        </p>
       </div>
     </div>
-  )
+  );
 }

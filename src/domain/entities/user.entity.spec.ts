@@ -7,7 +7,7 @@ describe('User Entity', () => {
   it('should create a valid user', () => {
     const emailStr = 'test@example.com';
     const email = new Email(emailStr);
-    
+
     const user = User.create({
       firstName: 'John',
       lastName: 'Doe',
@@ -28,7 +28,7 @@ describe('User Entity', () => {
       firstName: 'John',
       lastName: 'Doe',
       email: new Email('john@test.com'),
-      role: UserRole.BUYER
+      role: UserRole.BUYER,
     });
 
     user.updateProfile('Jane', 'Smith', 'New bio');

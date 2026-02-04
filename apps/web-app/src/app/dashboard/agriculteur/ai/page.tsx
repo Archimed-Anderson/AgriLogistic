@@ -1,7 +1,7 @@
-"use client"
+'use client';
 
-import { AIIntelligenceModule } from "@/components/dashboard/AIIntelligenceModule"
+import { AIIntelligenceModule } from '@/components/dashboard/AIIntelligenceModule';
 
 export default function AIPage() {
-  return <AIIntelligenceModule />
+  return <AIIntelligenceModule />;
 }

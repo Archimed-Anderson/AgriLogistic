@@ -1,4 +1,4 @@
-﻿# Script de demarrage complet de AgriLogistic
+# Script de demarrage complet de AgriLogistic
 # Demarre Docker Desktop, l'infrastructure et le service auth
 
 $ErrorActionPreference = "Stop"
@@ -153,7 +153,7 @@ host    all             all             0.0.0.0/0               md5
 EOF
 " | Out-Null
     
-    docker exec AgriLogistic-postgres psql -U AgriLogistic -d AgriLogistic -c "ALTER USER AgriLogistic WITH PASSWORD 'AgriLogistic_secure_2026';" | Out-Null
+    docker exec AgriLogistic-postgres psql -U AgriLogistic -d AgriLogistic -c "ALTER USER \"AgriLogistic\" WITH PASSWORD 'AgriLogistic_secure_2026';" | Out-Null
     docker restart AgriLogistic-postgres | Out-Null
     Start-Sleep -Seconds 10
     

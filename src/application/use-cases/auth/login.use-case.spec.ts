@@ -30,7 +30,7 @@ describe('LoginUseCase', () => {
     };
 
     const useCase = new LoginUseCase(mockAuthPort);
-    
+
     const result = await useCase.execute({
       email: 'test@test.com',
       password: 'password123',
@@ -45,9 +45,11 @@ describe('LoginUseCase', () => {
     const mockAuthPort = {} as AuthPort; // Not needed
     const useCase = new LoginUseCase(mockAuthPort);
 
-    await expect(useCase.execute({
-      email: '',
-      password: '123'
-    })).rejects.toThrow('Email and password are required');
+    await expect(
+      useCase.execute({
+        email: '',
+        password: '123',
+      })
+    ).rejects.toThrow('Email and password are required');
   });
 });

@@ -15,7 +15,7 @@ export class UsersService {
     const limit = params.limit || 20;
     const offset = (page - 1) * limit;
 
-    const where: any = {};
+    const where: import('sequelize').WhereOptions = {};
 
     if (params.search) {
       where[Op.or] = [

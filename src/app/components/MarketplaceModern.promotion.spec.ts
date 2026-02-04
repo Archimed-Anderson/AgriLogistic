@@ -1,15 +1,15 @@
-import { describe, it, expect } from "vitest";
-import { isPromotionActive, computePromotionPrice } from "./MarketplaceModern";
+import { describe, it, expect } from 'vitest';
+import { isPromotionActive, computePromotionPrice } from './MarketplaceModern';
 
-describe("MarketplaceModern promotions helpers", () => {
-  describe("isPromotionActive", () => {
-    it("returns false when promotion is undefined or has no value", () => {
-      const now = new Date("2024-01-10T12:00:00Z");
+describe('MarketplaceModern promotions helpers', () => {
+  describe('isPromotionActive', () => {
+    it('returns false when promotion is undefined or has no value', () => {
+      const now = new Date('2024-01-10T12:00:00Z');
       expect(isPromotionActive(undefined, now)).toBe(false);
       expect(
         isPromotionActive(
           {
-            type: "percentage",
+            type: 'percentage',
             value: 0,
           },
           now
@@ -17,10 +17,10 @@ describe("MarketplaceModern promotions helpers", () => {
       ).toBe(false);
     });
 
-    it("respects start and end dates", () => {
-      const now = new Date("2024-01-10T12:00:00Z");
+    it('respects start and end dates', () => {
+      const now = new Date('2024-01-10T12:00:00Z');
       const base = {
-        type: "percentage" as const,
+        type: 'percentage' as const,
         value: 10,
       };
 
@@ -28,7 +28,7 @@ describe("MarketplaceModern promotions helpers", () => {
         isPromotionActive(
           {
             ...base,
-            startsAt: "2024-01-11T00:00:00Z",
+            startsAt: '2024-01-11T00:00:00Z',
           },
           now
         )
@@ -38,8 +38,8 @@ describe("MarketplaceModern promotions helpers", () => {
         isPromotionActive(
           {
             ...base,
-            startsAt: "2024-01-09T00:00:00Z",
-            endsAt: "2024-01-09T23:59:59Z",
+            startsAt: '2024-01-09T00:00:00Z',
+            endsAt: '2024-01-09T23:59:59Z',
           },
           now
         )
@@ -49,8 +49,8 @@ describe("MarketplaceModern promotions helpers", () => {
         isPromotionActive(
           {
             ...base,
-            startsAt: "2024-01-09T00:00:00Z",
-            endsAt: "2024-01-11T00:00:00Z",
+            startsAt: '2024-01-09T00:00:00Z',
+            endsAt: '2024-01-11T00:00:00Z',
           },
           now
         )
@@ -58,13 +58,13 @@ describe("MarketplaceModern promotions helpers", () => {
     });
   });
 
-  describe("computePromotionPrice", () => {
-    it("returns null when promotion is not active", () => {
-      const now = new Date("2024-01-10T12:00:00Z");
+  describe('computePromotionPrice', () => {
+    it('returns null when promotion is not active', () => {
+      const now = new Date('2024-01-10T12:00:00Z');
       const result = computePromotionPrice(
         100,
         {
-          type: "percentage",
+          type: 'percentage',
           value: 0,
         },
         now
@@ -72,15 +72,15 @@ describe("MarketplaceModern promotions helpers", () => {
       expect(result).toBeNull();
     });
 
-    it("applies percentage discount correctly", () => {
-      const now = new Date("2024-01-10T12:00:00Z");
+    it('applies percentage discount correctly', () => {
+      const now = new Date('2024-01-10T12:00:00Z');
       const result = computePromotionPrice(
         100,
         {
-          type: "percentage",
+          type: 'percentage',
           value: 20,
-          startsAt: "2024-01-01T00:00:00Z",
-          endsAt: "2024-02-01T00:00:00Z",
+          startsAt: '2024-01-01T00:00:00Z',
+          endsAt: '2024-02-01T00:00:00Z',
         },
         now
       );
@@ -89,15 +89,15 @@ describe("MarketplaceModern promotions helpers", () => {
       expect(result!.savingsPercentage).toBeCloseTo(20);
     });
 
-    it("applies fixed discount correctly and never goes below zero", () => {
-      const now = new Date("2024-01-10T12:00:00Z");
+    it('applies fixed discount correctly and never goes below zero', () => {
+      const now = new Date('2024-01-10T12:00:00Z');
       const result = computePromotionPrice(
         50,
         {
-          type: "fixed",
+          type: 'fixed',
           value: 10,
-          startsAt: "2024-01-01T00:00:00Z",
-          endsAt: "2024-02-01T00:00:00Z",
+          startsAt: '2024-01-01T00:00:00Z',
+          endsAt: '2024-02-01T00:00:00Z',
         },
         now
       );
@@ -108,10 +108,10 @@ describe("MarketplaceModern promotions helpers", () => {
       const zeroResult = computePromotionPrice(
         5,
         {
-          type: "fixed",
+          type: 'fixed',
           value: 10,
-          startsAt: "2024-01-01T00:00:00Z",
-          endsAt: "2024-02-01T00:00:00Z",
+          startsAt: '2024-01-01T00:00:00Z',
+          endsAt: '2024-02-01T00:00:00Z',
         },
         now
       );
@@ -120,4 +120,3 @@ describe("MarketplaceModern promotions helpers", () => {
     });
   });
 });
-

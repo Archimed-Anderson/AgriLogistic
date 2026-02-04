@@ -97,7 +97,8 @@ export function DashboardStats({ kpis, isLoading }: DashboardStatsProps) {
                         isPositive ? 'text-green-600' : 'text-red-600'
                       }`}
                     >
-                      {isPositive ? '+' : ''}{stat.change.toFixed(1)}%
+                      {isPositive ? '+' : ''}
+                      {stat.change.toFixed(1)}%
                     </span>
                     <span className="text-xs text-gray-500">vs mois dernier</span>
                   </div>

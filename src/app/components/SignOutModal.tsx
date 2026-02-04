@@ -1,5 +1,13 @@
-import { useState, useEffect } from "react";
-import { LogOut, AlertTriangle, CheckCircle, Download, Smartphone, Shield, Clock } from "lucide-react";
+import { useState, useEffect } from 'react';
+import {
+  LogOut,
+  AlertTriangle,
+  CheckCircle,
+  Download,
+  Smartphone,
+  Shield,
+  Clock,
+} from 'lucide-react';
 
 interface SignOutModalProps {
   onClose: () => void;
@@ -7,42 +15,44 @@ interface SignOutModalProps {
   userRole?: string;
 }
 
-export function SignOutModal({ onClose, onConfirm, userRole = "user" }: SignOutModalProps) {
+export function SignOutModal({ onClose, onConfirm, userRole = 'user' }: SignOutModalProps) {
   const [signOutAll, setSignOutAll] = useState(false);
   const [clearData, setClearData] = useState(false);
-  const [redirectTo, setRedirectTo] = useState("home");
+  const [redirectTo, setRedirectTo] = useState('home');
   const [autoSignOut, setAutoSignOut] = useState(false);
   const [countdown, setCountdown] = useState(30);
 
   // Check for pending actions
   const pendingDownloads = 3;
-  const isAdmin = userRole === "admin";
+  const isAdmin = userRole === 'admin';
   const otherAdminsOnline = 0;
 
   const getContextualMessage = () => {
     if (pendingDownloads > 0) {
       return {
         icon: <AlertTriangle className="h-6 w-6 text-orange-600" />,
-        type: "warning",
-        message: `⚠️ Vous avez ${pendingDownloads} téléchargement${pendingDownloads > 1 ? "s" : ""} en cours`,
-        color: "orange",
+        type: 'warning',
+        message: `⚠️ Vous avez ${pendingDownloads} téléchargement${
+          pendingDownloads > 1 ? 's' : ''
+        } en cours`,
+        color: 'orange',
       };
     }
 
     if (isAdmin && otherAdminsOnline === 0) {
       return {
         icon: <AlertTriangle className="h-6 w-6 text-red-600" />,
-        type: "warning",
+        type: 'warning',
         message: "⚠️ Aucun autre admin n'est connecté",
-        color: "red",
+        color: 'red',
       };
     }
 
     return {
       icon: <CheckCircle className="h-6 w-6 text-green-600" />,
-      type: "success",
-      message: "✅ Prêt à vous déconnecter",
-      color: "green",
+      type: 'success',
+      message: '✅ Prêt à vous déconnecter',
+      color: 'green',
     };
   };
 
@@ -99,22 +109,22 @@ export function SignOutModal({ onClose, onConfirm, userRole = "user" }: SignOutM
           {/* Contextual Message */}
           <div
             className={`flex items-start gap-3 p-4 rounded-lg ${
-              contextMessage.type === "warning"
-                ? contextMessage.color === "orange"
-                  ? "bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800"
-                  : "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
-                : "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
+              contextMessage.type === 'warning'
+                ? contextMessage.color === 'orange'
+                  ? 'bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800'
+                  : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
+                : 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
             }`}
           >
             {contextMessage.icon}
             <div className="flex-1">
               <p
                 className={`text-sm ${
-                  contextMessage.type === "warning"
-                    ? contextMessage.color === "orange"
-                      ? "text-orange-800 dark:text-orange-200"
-                      : "text-red-800 dark:text-red-200"
-                    : "text-green-800 dark:text-green-200"
+                  contextMessage.type === 'warning'
+                    ? contextMessage.color === 'orange'
+                      ? 'text-orange-800 dark:text-orange-200'
+                      : 'text-red-800 dark:text-red-200'
+                    : 'text-green-800 dark:text-green-200'
                 }`}
               >
                 {contextMessage.message}
@@ -227,7 +237,8 @@ export function SignOutModal({ onClose, onConfirm, userRole = "user" }: SignOutM
             <div className="flex items-start gap-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
               <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
               <p className="text-xs text-yellow-800 dark:text-yellow-200">
-                <strong>Attention :</strong> Vous êtes le seul administrateur connecté. Assurez-vous qu'un autre admin peut prendre le relais.
+                <strong>Attention :</strong> Vous êtes le seul administrateur connecté. Assurez-vous
+                qu'un autre admin peut prendre le relais.
               </p>
             </div>
           )}

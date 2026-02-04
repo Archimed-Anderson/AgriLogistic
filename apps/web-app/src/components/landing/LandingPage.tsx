@@ -1,13 +1,13 @@
-import { Navbar } from "@/components/layout/Navbar"
-import { Footer } from "@/components/layout/Footer"
-import { HeroSection } from "./HeroSection"
-import { SolutionsGrid } from "./SolutionsGrid"
-import { ProductsShowcase } from "./ProductsShowcase"
-import { SocialProof } from "./SocialProof"
-import { BentoFeatures } from "./BentoFeatures"
-import { PerformanceInnovation } from "./PerformanceInnovation"
-import { ProfileTabs } from "./ProfileTabs"
-import { FAQSection } from "./FAQSection"
+import { Navbar } from '@/components/layout/Navbar';
+import { Footer } from '@/components/layout/Footer';
+import { HeroSection } from './HeroSection';
+import { SolutionsGrid } from './SolutionsGrid';
+import { ProductsShowcase } from './ProductsShowcase';
+import { SocialProof } from './SocialProof';
+import { BentoFeatures } from './BentoFeatures';
+import { PerformanceInnovation } from './PerformanceInnovation';
+import { ProfileTabs } from './ProfileTabs';
+import { FAQSection } from './FAQSection';
 
 export function LandingPage() {
   return (
@@ -27,5 +27,5 @@ export function LandingPage() {
 
       <Footer />
     </div>
-  )
+  );
 }

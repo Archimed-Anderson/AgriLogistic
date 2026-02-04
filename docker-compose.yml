@@ -1,4 +1,4 @@
-﻿services:
+services:
   # =============================================================================
   # CORE APPLICATION
   # =============================================================================
@@ -100,15 +100,16 @@
       POSTGRES_DB: AgriLogistic
       POSTGRES_USER: AgriLogistic
       POSTGRES_PASSWORD: ${DB_PASSWORD:-AgriLogistic_secure_2026}
-      POSTGRES_MULTIPLE_DATABASES: AgriLogistic_auth,AgriLogistic_products,AgriLogistic_orders,AgriLogistic_payments
+      POSTGRES_MULTIPLE_DATABASES: AgriLogistic_auth,AgriLogistic_products,AgriLogistic_orders,AgriLogistic_payments,admin_db,productions_db
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./scripts/init-multiple-dbs.sh:/docker-entrypoint-initdb.d/init-multiple-dbs.sh:ro
       - ./scripts/zz_auth_schema.sql:/docker-entrypoint-initdb.d/zz_auth_schema.sql:ro
+      - ./scripts/zz_productions_schema.sql:/docker-entrypoint-initdb.d/zz_productions_schema.sql:ro
     # Map to a configurable host port to avoid conflicts with a local Postgres install.
     # Internal port remains 5432 for other containers.
     ports:
-      - "${POSTGRES_PORT:-5433}:5432"
+      - "${POSTGRES_PORT:-5435}:5432"
     networks:
       - AgriLogistic-network
     restart: unless-stopped
@@ -476,6 +477,24 @@
       timeout: 10s
       retries: 5
 
+  # VRP Engine (Neural Route Optimization)
+  vrp-engine:
+    build:
+      context: ./services/logistics/vrp-engine
+      dockerfile: ../../../Dockerfile.python # I assume there is a generic python dockerfile or I will create one
+    container_name: AgriLogistic-vrp-engine
+    ports:
+      - "8081:8080"
+    environment:
+      - APP_ENV=development
+      - DATABASE_URL=postgresql://AgriLogistic:${DB_PASSWORD:-AgriLogistic_secure_2026}@postgres:5432/AgriLogistic
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - AgriLogistic-network
+    restart: unless-stopped
+
   # =============================================================================
   # MESSAGE QUEUE
   # =============================================================================
@@ -517,6 +536,231 @@
       interval: 10s
       timeout: 5s
       retries: 5
+
+  # =============================================================================
+  # IoT STACK (Telemetry & Sensors)
+  # =============================================================================
+
+  # MQTT Broker (IoT Gateway)
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: AgriLogistic-mosquitto
+    ports:
+      - "1883:1883"
+      - "9002:9001"
+    volumes:
+      - mosquitto-data:/mosquitto/data
+      - mosquitto-log:/mosquitto/log
+      # - ./infrastructure/iot/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    networks:
+      - AgriLogistic-network
+    restart: unless-stopped
+
+  # InfluxDB (Time-series database)
+  influxdb:
+    image: influxdb:2.7-alpine
+    container_name: AgriLogistic-influxdb
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=AgriLogistic
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD:-influx_secure_2026}
+      - DOCKER_INFLUXDB_INIT_ORG=AgroDeep
+      - DOCKER_INFLUXDB_INIT_BUCKET=telemetry
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+    ports:
+      - "8086:8086"
+    networks:
+      - AgriLogistic-network
+    restart: unless-stopped
+
+  # Telegraf (Collection agent)
+  telegraf:
+    image: telegraf:1.28-alpine
+    container_name: AgriLogistic-telegraf
+    # volumes:
+    #   - ./infrastructure/iot/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    depends_on:
+      - influxdb
+      - mosquitto
+    networks:
+      - AgriLogistic-network
+    restart: unless-stopped
+
+  # IoT Management Service
+  iot-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: "@agrologistic/iot-service"
+    container_name: AgriLogistic-iot-service
+    ports:
+      - "3008:3008"
+    environment:
+      - NODE_ENV=development
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN:-}
+      - MQTT_URL=mqtt://mosquitto:1883
+    depends_on:
+      - influxdb
+      - mosquitto
+    networks:
+      - AgriLogistic-network
+    restart: unless-stopped
+
+  # Finance Supervision Service
+  finance-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: "@agrologistic/finance-service"
+    container_name: AgriLogistic-finance-service
+    ports:
+      - "3010:3010"
+    environment:
+      - NODE_ENV=development
+      - PORT=3010
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - REDIS_HOST=redis
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - AgriLogistic-network
+    restart: unless-stopped
+
+  # Blockchain & Escrow Service
+  blockchain-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: "@agrologistic/blockchain-service"
+    container_name: AgriLogistic-blockchain-service
+    ports:
+      - "3011:3011"
+    environment:
+      - NODE_ENV=development
+      - PORT=3011
+      - FABRIC_ENABLED=false
+      - FABRIC_CHANNEL=AgroLogistic-channel
+    networks:
+      - AgriLogistic-network
+    restart: unless-stopped
+
+  # Dynamic Pricing Engine
+  pricing-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: "@agrologistic/pricing-service"
+    container_name: AgriLogistic-pricing-service
+    ports:
+      - "3012:3012"
+    environment:
+      - NODE_ENV=development
+      - PORT=3012
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+    networks:
+      - AgriLogistic-network
+    restart: unless-stopped
+
+  # Admin Service - Quick Actions, Audit, Workflows
+  admin-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: "@agrologistic/admin-service"
+    container_name: AgriLogistic-admin-service
+    ports:
+      - "5005:5005"
+    environment:
+      - NODE_ENV=development
+      - PORT=5005
+      - DATABASE_URL=postgresql://AgriLogistic:${DB_PASSWORD:-AgriLogistic_secure_2026}@postgres:5432/admin_db
+      - JWT_PUBLIC_KEY_PATH=keys/public.pem
+      - CORS_ORIGIN=http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - AgriLogistic-network
+    restart: unless-stopped
+
+  # Production Service - Suivi Récoltes, Télémétrie, Irrigation
+  production-service:
+    build:
+      context: ./services/logistics/production-service
+      dockerfile: Dockerfile
+    container_name: AgriLogistic-production-service
+    ports:
+      - "${PRODUCTION_SERVICE_PORT:-3018}:3018"
+    environment:
+      - NODE_ENV=development
+      - PORT=3018
+      - DATABASE_URL=postgresql://AgriLogistic:${DB_PASSWORD:-AgriLogistic_secure_2026}@postgres:5432/productions_db
+      - CORS_ORIGIN=http://localhost:3000
+      - OPENWEATHERMAP_API_KEY=${OPENWEATHERMAP_API_KEY:-}
+      - PRODUCT_SERVICE_URL=http://product-service:3002
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - AgriLogistic-network
+    restart: unless-stopped
+
+  # Yield Prediction Service (Python) - IA prédictions rendement/qualité
+  yield-prediction-service:
+    build:
+      context: ./services/intelligence/yield-prediction-service
+      dockerfile: Dockerfile
+    container_name: AgriLogistic-yield-prediction
+    ports:
+      - "5020:5020"
+    networks:
+      - AgriLogistic-network
+    restart: unless-stopped
+
+  # Incident Service (War Room - API + Kafka + Redis Pub/Sub + Socket.io)
+  incident-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: "@agrologistic/incident-service"
+    container_name: AgriLogistic-incident-service
+    ports:
+      - "3015:3015"
+    environment:
+      - NODE_ENV=development
+      - PORT=3015
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=AgriLogistic_orders
+      - DB_USER=AgriLogistic
+      - DB_PASSWORD=${DB_PASSWORD:-AgriLogistic_secure_2026}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis_secure_2026}
+      - KAFKA_BROKERS=kafka:9092
+      - CORS_ORIGIN=http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    networks:
+      - AgriLogistic-network
+    restart: unless-stopped
 
   # =============================================================================
   # EXPORTERS FOR MONITORING
@@ -592,4 +836,6 @@ volumes:
   zookeeper-data:
   zookeeper-logs:
   kafka-data:
-
+  mosquitto-data:
+  mosquitto-log:
+  influxdb-data:

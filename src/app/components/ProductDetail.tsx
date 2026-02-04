@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { ArrowLeft, Star, ShoppingCart, Heart, Minus, Plus } from "lucide-react";
-import { Button } from "./ui/button";
-import { Card, CardContent } from "./ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { Badge } from "./ui/badge";
-import { products } from "../data/mockData";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { ArrowLeft, Star, ShoppingCart, Heart, Minus, Plus } from 'lucide-react';
+import { Button } from './ui/button';
+import { Card, CardContent } from './ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Badge } from './ui/badge';
+import { products } from '../data/mockData';
+import { toast } from 'sonner';
 
 interface ProductDetailProps {
   productId: number;
@@ -17,14 +17,16 @@ export function ProductDetail({ productId, onNavigate }: ProductDetailProps) {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
 
-  const relatedProducts = products.filter((p) => p.id !== productId && p.category === product.category).slice(0, 3);
+  const relatedProducts = products
+    .filter((p) => p.id !== productId && p.category === product.category)
+    .slice(0, 3);
 
   const handleAddToCart = () => {
     toast.success(`${quantity} x ${product.name} added to cart!`);
   };
 
   const handleBuyNow = () => {
-    toast.success("Redirecting to checkout...");
+    toast.success('Redirecting to checkout...');
   };
 
   return (
@@ -32,7 +34,7 @@ export function ProductDetail({ productId, onNavigate }: ProductDetailProps) {
       {/* Back Button */}
       <Button
         variant="ghost"
-        onClick={() => onNavigate("/market")}
+        onClick={() => onNavigate('/market')}
         className="flex items-center gap-2"
       >
         <ArrowLeft className="h-4 w-4" />
@@ -45,11 +47,7 @@ export function ProductDetail({ productId, onNavigate }: ProductDetailProps) {
         <div className="space-y-4">
           <Card className="overflow-hidden">
             <div className="aspect-square bg-gray-100">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="h-full w-full object-cover"
-              />
+              <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
             </div>
           </Card>
           <div className="grid grid-cols-4 gap-2">
@@ -58,7 +56,9 @@ export function ProductDetail({ productId, onNavigate }: ProductDetailProps) {
                 key={i}
                 onClick={() => setSelectedImage(i)}
                 className={`aspect-square rounded-lg border-2 overflow-hidden transition-all ${
-                  selectedImage === i ? "border-[#2563eb]" : "border-transparent hover:border-gray-300"
+                  selectedImage === i
+                    ? 'border-[#2563eb]'
+                    : 'border-transparent hover:border-gray-300'
                 }`}
               >
                 <img
@@ -83,8 +83,8 @@ export function ProductDetail({ productId, onNavigate }: ProductDetailProps) {
                     key={i}
                     className={`h-5 w-5 ${
                       i < Math.floor(product.rating)
-                        ? "fill-yellow-400 text-yellow-400"
-                        : "fill-gray-200 text-gray-200"
+                        ? 'fill-yellow-400 text-yellow-400'
+                        : 'fill-gray-200 text-gray-200'
                     }`}
                   />
                 ))}
@@ -140,16 +140,16 @@ export function ProductDetail({ productId, onNavigate }: ProductDetailProps) {
                   </Button>
                 </div>
                 <span className="text-sm text-muted-foreground">
-                  Total: <span className="font-medium text-foreground">${(product.price * quantity).toFixed(2)}</span>
+                  Total:{' '}
+                  <span className="font-medium text-foreground">
+                    ${(product.price * quantity).toFixed(2)}
+                  </span>
                 </span>
               </div>
             </div>
 
             <div className="flex gap-3">
-              <Button
-                onClick={handleAddToCart}
-                className="flex-1 bg-[#2563eb] hover:bg-[#1d4ed8]"
-              >
+              <Button onClick={handleAddToCart} className="flex-1 bg-[#2563eb] hover:bg-[#1d4ed8]">
                 <ShoppingCart className="h-4 w-4 mr-2" />
                 Add to Cart
               </Button>
@@ -193,7 +193,9 @@ export function ProductDetail({ productId, onNavigate }: ProductDetailProps) {
               <dl className="space-y-3">
                 {Object.entries(product.specifications).map(([key, value]) => (
                   <div key={key} className="flex justify-between py-2 border-b last:border-0">
-                    <dt className="font-medium capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}:</dt>
+                    <dt className="font-medium capitalize">
+                      {key.replace(/([A-Z])/g, ' $1').trim()}:
+                    </dt>
                     <dd className="text-muted-foreground">{value}</dd>
                   </div>
                 ))}
@@ -209,17 +211,15 @@ export function ProductDetail({ productId, onNavigate }: ProductDetailProps) {
                   <div className="flex items-center gap-2">
                     <div className="flex">
                       {[...Array(5)].map((_, j) => (
-                        <Star
-                          key={j}
-                          className="h-4 w-4 fill-yellow-400 text-yellow-400"
-                        />
+                        <Star key={j} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                       ))}
                     </div>
                     <span className="font-medium">John Doe</span>
                     <span className="text-sm text-muted-foreground">• 2 days ago</span>
                   </div>
                   <p className="text-muted-foreground">
-                    Excellent quality product! Fresh and exactly as described. Would definitely order again.
+                    Excellent quality product! Fresh and exactly as described. Would definitely
+                    order again.
                   </p>
                 </div>
               ))}
@@ -236,7 +236,7 @@ export function ProductDetail({ productId, onNavigate }: ProductDetailProps) {
             <Card
               key={relatedProduct.id}
               className="cursor-pointer transition-all hover:shadow-lg"
-              onClick={() => onNavigate("/market/product", relatedProduct.id)}
+              onClick={() => onNavigate('/market/product', relatedProduct.id)}
             >
               <div className="aspect-square overflow-hidden bg-gray-100">
                 <img

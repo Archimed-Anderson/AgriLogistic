@@ -4,12 +4,12 @@
  */
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import type { 
-  Product, 
-  MarketplaceFilters, 
+import type {
+  Product,
+  MarketplaceFilters,
   MarketplaceSearchResult,
   Supplier,
-  ProductCategory
+  ProductCategory,
 } from '@/types/buyer';
 
 // Mock suppliers
@@ -33,7 +33,7 @@ const mockSuppliers: Supplier[] = [
     id: 's-002',
     name: 'Coopérative Niayes',
     location: 'Thiès, Sénégal',
-    coordinates: [-16.9260, 14.7886],
+    coordinates: [-16.926, 14.7886],
     rating: 4.6,
     totalOrders: 189,
     reliabilityScore: 92,
@@ -62,7 +62,16 @@ const mockProducts: Product[] = [
     supplierId: 's-001',
     supplier: mockSuppliers[0],
     origin: 'Casamance, Sénégal',
-    certifications: [{ id: 'c-1', type: 'organic', name: 'Bio', issuer: 'Ecocert', issuedAt: new Date(), verified: true }],
+    certifications: [
+      {
+        id: 'c-1',
+        type: 'organic',
+        name: 'Bio',
+        issuer: 'Ecocert',
+        issuedAt: new Date(),
+        verified: true,
+      },
+    ],
     qualityScore: 4.8,
     seasonality: [5, 6, 7, 8, 9, 10],
     isOrganic: true,
@@ -162,7 +171,16 @@ const mockProducts: Product[] = [
     supplierId: 's-001',
     supplier: mockSuppliers[0],
     origin: 'Casamance, Sénégal',
-    certifications: [{ id: 'c-2', type: 'organic', name: 'Bio', issuer: 'Ecocert', issuedAt: new Date(), verified: true }],
+    certifications: [
+      {
+        id: 'c-2',
+        type: 'organic',
+        name: 'Bio',
+        issuer: 'Ecocert',
+        issuedAt: new Date(),
+        verified: true,
+      },
+    ],
     qualityScore: 4.8,
     seasonality: [11, 12, 1, 2, 3, 4],
     isOrganic: true,
@@ -176,32 +194,32 @@ export function useMarketplaceSearch() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['buyer', 'marketplace', 'search', filters],
     queryFn: async (): Promise<MarketplaceSearchResult> => {
-      await new Promise(resolve => setTimeout(resolve, 600));
+      await new Promise((resolve) => setTimeout(resolve, 600));
 
       let filtered = [...mockProducts];
 
       // Apply filters
       if (filters.query) {
         const q = filters.query.toLowerCase();
-        filtered = filtered.filter(p => 
-          p.name.toLowerCase().includes(q) ||
-          p.description.toLowerCase().includes(q) ||
-          p.origin.toLowerCase().includes(q)
+        filtered = filtered.filter(
+          (p) =>
+            p.name.toLowerCase().includes(q) ||
+            p.description.toLowerCase().includes(q) ||
+            p.origin.toLowerCase().includes(q)
         );
       }
 
       if (filters.categories?.length) {
-        filtered = filtered.filter(p => filters.categories!.includes(p.category));
+        filtered = filtered.filter((p) => filters.categories!.includes(p.category));
       }
 
       if (filters.isOrganic !== undefined) {
-        filtered = filtered.filter(p => p.isOrganic === filters.isOrganic);
+        filtered = filtered.filter((p) => p.isOrganic === filters.isOrganic);
       }
 
       if (filters.priceRange) {
-        filtered = filtered.filter(p => 
-          p.pricePerKg >= filters.priceRange![0] && 
-          p.pricePerKg <= filters.priceRange![1]
+        filtered = filtered.filter(
+          (p) => p.pricePerKg >= filters.priceRange![0] && p.pricePerKg <= filters.priceRange![1]
         );
       }
 
@@ -210,9 +228,13 @@ export function useMarketplaceSearch() {
         filtered.sort((a, b) => {
           switch (filters.sortBy) {
             case 'price':
-              return filters.sortOrder === 'desc' ? b.pricePerKg - a.pricePerKg : a.pricePerKg - b.pricePerKg;
+              return filters.sortOrder === 'desc'
+                ? b.pricePerKg - a.pricePerKg
+                : a.pricePerKg - b.pricePerKg;
             case 'rating':
-              return filters.sortOrder === 'desc' ? b.qualityScore - a.qualityScore : a.qualityScore - b.qualityScore;
+              return filters.sortOrder === 'desc'
+                ? b.qualityScore - a.qualityScore
+                : a.qualityScore - b.qualityScore;
             default:
               return 0;
           }
@@ -226,16 +248,22 @@ export function useMarketplaceSearch() {
         pageSize: 20,
         facets: {
           categories: [
-            { value: 'vegetables', label: 'Légumes', count: mockProducts.filter(p => p.category === 'vegetables').length },
-            { value: 'fruits', label: 'Fruits', count: mockProducts.filter(p => p.category === 'fruits').length },
+            {
+              value: 'vegetables',
+              label: 'Légumes',
+              count: mockProducts.filter((p) => p.category === 'vegetables').length,
+            },
+            {
+              value: 'fruits',
+              label: 'Fruits',
+              count: mockProducts.filter((p) => p.category === 'fruits').length,
+            },
           ],
           origins: [
             { value: 'casamance', label: 'Casamance', count: 4 },
             { value: 'niayes', label: 'Niayes', count: 2 },
           ],
-          certifications: [
-            { value: 'organic', label: 'Bio', count: 2 },
-          ],
+          certifications: [{ value: 'organic', label: 'Bio', count: 2 }],
           priceRanges: [
             { value: '0-1000', label: '< 1000 FCFA', count: 2 },
             { value: '1000-2000', label: '1000-2000 FCFA', count: 3 },
@@ -247,7 +275,7 @@ export function useMarketplaceSearch() {
   });
 
   const updateFilters = (newFilters: Partial<MarketplaceFilters>) => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
+    setFilters((prev) => ({ ...prev, ...newFilters }));
   };
 
   const resetFilters = () => {

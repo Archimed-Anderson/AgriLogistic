@@ -1,4 +1,4 @@
-﻿{
+{
     "name":  "@agrologistic/user-service",
     "version":  "1.0.0",
     "description":  "User Service for AgroLogistic - profiles and basic user management",
@@ -16,7 +16,12 @@
                          "helmet":  "^7.1.0",
                          "joi":  "^17.11.0",
                          "pg":  "^8.11.3",
-                         "uuid":  "^9.0.1"
+                         "uuid":  "^9.0.1",
+                         "@opentelemetry/sdk-node": "^0.52.1",
+                         "@opentelemetry/exporter-trace-otlp-http": "^0.52.1",
+                         "@opentelemetry/auto-instrumentations-node": "^0.69.0",
+                         "@opentelemetry/resources": "^1.22.0",
+                         "@opentelemetry/semantic-conventions": "^1.22.0"
                      },
     "devDependencies":  {
                             "@types/cors":  "^2.8.17",

@@ -1,3 +1,4 @@
+import './tracing';
 import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';

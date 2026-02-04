@@ -35,10 +35,7 @@ export class User extends Entity<UserProps> {
     super(props, id);
   }
 
-  public static create(
-    props: Omit<UserProps, 'createdAt' | 'updatedAt'>,
-    id?: string
-  ): User {
+  public static create(props: Omit<UserProps, 'createdAt' | 'updatedAt'>, id?: string): User {
     return new User(
       {
         ...props,
@@ -112,12 +109,8 @@ export class User extends Entity<UserProps> {
   get permissions(): Permissions {
     return Permissions.forRole(this.props.role);
   }
-  
-  public updateProfile(
-    firstName: string,
-    lastName: string,
-    bio?: string
-  ): void {
+
+  public updateProfile(firstName: string, lastName: string, bio?: string): void {
     this.props.firstName = firstName;
     this.props.lastName = lastName;
     if (bio !== undefined) this.props.bio = bio;
@@ -146,14 +139,14 @@ export class User extends Entity<UserProps> {
   ): void {
     this.props.businessType = businessType;
     if (farmSize !== undefined) this.props.farmSize = farmSize;
-    
+
     // Type-safe specialization assignment based on role
     if (this.props.role === UserRole.FARMER && specialization) {
       this.props.farmerSpecialization = specialization as FarmerSpecialization;
     } else if (this.props.role === UserRole.TRANSPORTER && specialization) {
       this.props.logisticsSpecialization = specialization as LogisticsSpecialization;
     }
-    
+
     this.props.updatedAt = new Date();
   }
 

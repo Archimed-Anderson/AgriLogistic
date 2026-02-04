@@ -1,5 +1,10 @@
-import { AdminModulePlaceholder } from "@/components/admin/AdminModulePlaceholder"
+import { AdminModulePlaceholder } from '@/components/admin/AdminModulePlaceholder';
 
 export default function TaskManagementPage() {
-  return <AdminModulePlaceholder title="Gestion des tâches" description="Planification et suivi des opérations agricoles au quotidien." />
+  return (
+    <AdminModulePlaceholder
+      title="Gestion des tâches"
+      description="Planification et suivi des opérations agricoles au quotidien."
+    />
+  );
 }

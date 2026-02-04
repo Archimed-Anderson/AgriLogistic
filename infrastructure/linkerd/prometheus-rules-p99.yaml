@@ -1,0 +1,27 @@
+# Alerting sur latence p99 > 500ms (Cahier Service Mesh Linkerd)
+# OPTIONNEL : nécessite Prometheus Operator (CRD monitoring.coreos.com/v1).
+# Si le CRD n'est pas installé : utiliser prometheus-rule-fragment-p99.yaml dans rule_files.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: linkerd-p99-latency
+  namespace: linkerd-viz
+  labels:
+    app: linkerd-viz
+    release: prometheus
+spec:
+  groups:
+    - name: linkerd-latency
+      rules:
+        - alert: LinkerdP99LatencyHigh
+          expr: |
+            histogram_quantile(0.99,
+              sum(rate(response_latency_ms_bucket[5m])) by (le, dst)
+            ) > 500
+          for: 5m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "Latence p99 > 500ms (Linkerd)"
+            description: "La latence p99 vers {{ $labels.dst }} dépasse 500 ms (valeur: {{ $value | humanize }} ms)."

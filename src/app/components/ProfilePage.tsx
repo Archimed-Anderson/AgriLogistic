@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef } from 'react';
 import {
   User,
   Mail,
@@ -20,8 +20,8 @@ import {
   Users,
   Heart,
   AlertTriangle,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 export function ProfilePage() {
   const [avatar, setAvatar] = useState<string | null>(null);
@@ -29,27 +29,27 @@ export function ProfilePage() {
   const [isUploading, setIsUploading] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Form data
   const [formData, setFormData] = useState({
-    firstName: "Admin",
-    lastName: "User",
-    username: "admin_AgroLogistic",
-    email: "admin@AgroLogistic.fr",
-    phone: "+33 6 12 34 56 78",
+    firstName: 'Admin',
+    lastName: 'User',
+    username: 'admin_AgroLogistic',
+    email: 'admin@AgroLogistic.fr',
+    phone: '+33 6 12 34 56 78',
     address: "123 Rue de l'Agriculture, 69000 Lyon",
     bio: "Passionné d'agriculture depuis 10 ans. Spécialisé dans la gestion de la chaîne d'approvisionnement.",
   });
 
   // Preferences
-  const [theme, setTheme] = useState<"light" | "dark" | "auto">("auto");
-  const [language, setLanguage] = useState("fr");
+  const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>('auto');
+  const [language, setLanguage] = useState('fr');
   const [visibility, setVisibility] = useState({
-    email: "private",
-    phone: "private",
-    address: "private",
+    email: 'private',
+    phone: 'private',
+    address: 'private',
   });
 
   // Stats (mock data)
@@ -70,7 +70,7 @@ export function ProfilePage() {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith("image/")) {
+    if (file && file.type.startsWith('image/')) {
       simulateUpload(file);
     }
   };
@@ -78,23 +78,23 @@ export function ProfilePage() {
   const simulateUpload = (file: File) => {
     setIsUploading(true);
     setUploadProgress(0);
-    
+
     const reader = new FileReader();
     reader.onload = (e) => {
       const result = e.target?.result as string;
-      
+
       // Simulate upload progress
       let progress = 0;
       const interval = setInterval(() => {
         progress += 10;
         setUploadProgress(progress);
-        
+
         if (progress >= 100) {
           clearInterval(interval);
           setAvatar(result);
           setIsUploading(false);
           setHasChanges(true);
-          toast.success("Photo de profil mise à jour");
+          toast.success('Photo de profil mise à jour');
         }
       }, 100);
     };
@@ -104,7 +104,7 @@ export function ProfilePage() {
   const handleDeleteAvatar = () => {
     setAvatar(null);
     setHasChanges(true);
-    toast.success("Photo de profil supprimée");
+    toast.success('Photo de profil supprimée');
   };
 
   const handleFieldChange = (field: string, value: string) => {
@@ -113,7 +113,7 @@ export function ProfilePage() {
   };
 
   const handleSave = () => {
-    toast.success("Profil enregistré avec succès");
+    toast.success('Profil enregistré avec succès');
     setHasChanges(false);
   };
 
@@ -127,11 +127,11 @@ export function ProfilePage() {
     // Reset form
     setShowCancelModal(false);
     setHasChanges(false);
-    toast.info("Modifications annulées");
+    toast.info('Modifications annulées');
   };
 
   const handleExportData = () => {
-    toast.success("Export de vos données en cours...");
+    toast.success('Export de vos données en cours...');
   };
 
   const maxBioLength = 500;
@@ -152,7 +152,7 @@ export function ProfilePage() {
           {/* Avatar Upload Section */}
           <div className="bg-card border rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-6">Photo de profil</h2>
-            
+
             <div className="flex items-start gap-6">
               {/* Avatar Preview */}
               <div className="relative">
@@ -185,9 +185,7 @@ export function ProfilePage() {
                   <p className="text-sm font-medium mb-1">
                     Glissez-déposez une image ou cliquez pour parcourir
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    PNG, JPG jusqu'à 5MB
-                  </p>
+                  <p className="text-xs text-muted-foreground">PNG, JPG jusqu'à 5MB</p>
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -222,7 +220,7 @@ export function ProfilePage() {
               <User className="h-5 w-5 text-[#2563eb]" />
               Identité
             </h2>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-2">Prénom *</label>
@@ -230,7 +228,7 @@ export function ProfilePage() {
                   <input
                     type="text"
                     value={formData.firstName}
-                    onChange={(e) => handleFieldChange("firstName", e.target.value)}
+                    onChange={(e) => handleFieldChange('firstName', e.target.value)}
                     className="w-full px-4 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
                   />
                   {formData.firstName && (
@@ -245,7 +243,7 @@ export function ProfilePage() {
                   <input
                     type="text"
                     value={formData.lastName}
-                    onChange={(e) => handleFieldChange("lastName", e.target.value)}
+                    onChange={(e) => handleFieldChange('lastName', e.target.value)}
                     className="w-full px-4 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
                   />
                   {formData.lastName && (
@@ -260,7 +258,7 @@ export function ProfilePage() {
                   <input
                     type="text"
                     value={formData.username}
-                    onChange={(e) => handleFieldChange("username", e.target.value)}
+                    onChange={(e) => handleFieldChange('username', e.target.value)}
                     className="w-full px-4 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
                   />
                   {formData.username && (
@@ -277,7 +275,7 @@ export function ProfilePage() {
               <Mail className="h-5 w-5 text-[#2563eb]" />
               Contact
             </h2>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2">Email *</label>
@@ -285,10 +283,10 @@ export function ProfilePage() {
                   <input
                     type="email"
                     value={formData.email}
-                    onChange={(e) => handleFieldChange("email", e.target.value)}
+                    onChange={(e) => handleFieldChange('email', e.target.value)}
                     className="w-full px-4 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
                   />
-                  {formData.email.includes("@") && (
+                  {formData.email.includes('@') && (
                     <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500" />
                   )}
                 </div>
@@ -299,7 +297,7 @@ export function ProfilePage() {
                 <input
                   type="tel"
                   value={formData.phone}
-                  onChange={(e) => handleFieldChange("phone", e.target.value)}
+                  onChange={(e) => handleFieldChange('phone', e.target.value)}
                   className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
                 />
               </div>
@@ -309,7 +307,7 @@ export function ProfilePage() {
                 <input
                   type="text"
                   value={formData.address}
-                  onChange={(e) => handleFieldChange("address", e.target.value)}
+                  onChange={(e) => handleFieldChange('address', e.target.value)}
                   placeholder="Commence à taper pour l'autocomplétion..."
                   className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
                 />
@@ -320,11 +318,11 @@ export function ProfilePage() {
           {/* Bio Section */}
           <div className="bg-card border rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-6">Biographie</h2>
-            
+
             <div>
               <textarea
                 value={formData.bio}
-                onChange={(e) => handleFieldChange("bio", e.target.value)}
+                onChange={(e) => handleFieldChange('bio', e.target.value)}
                 maxLength={maxBioLength}
                 rows={5}
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background resize-none"
@@ -334,7 +332,13 @@ export function ProfilePage() {
                 <span className="text-muted-foreground">
                   Décrivez votre expertise et votre activité
                 </span>
-                <span className={`${formData.bio.length > maxBioLength * 0.9 ? "text-orange-600" : "text-muted-foreground"}`}>
+                <span
+                  className={`${
+                    formData.bio.length > maxBioLength * 0.9
+                      ? 'text-orange-600'
+                      : 'text-muted-foreground'
+                  }`}
+                >
                   {formData.bio.length}/{maxBioLength}
                 </span>
               </div>
@@ -347,16 +351,16 @@ export function ProfilePage() {
           {/* Preferences Widget */}
           <div className="bg-card border rounded-lg p-6">
             <h2 className="text-lg font-semibold mb-6">Préférences</h2>
-            
+
             <div className="space-y-6">
               {/* Theme */}
               <div>
                 <label className="block text-sm font-medium mb-3">Thème d'affichage</label>
                 <div className="grid grid-cols-3 gap-2">
                   {[
-                    { value: "light", icon: Sun, label: "Clair" },
-                    { value: "dark", icon: Moon, label: "Sombre" },
-                    { value: "auto", icon: Monitor, label: "Auto" },
+                    { value: 'light', icon: Sun, label: 'Clair' },
+                    { value: 'dark', icon: Moon, label: 'Sombre' },
+                    { value: 'auto', icon: Monitor, label: 'Auto' },
                   ].map((option) => {
                     const Icon = option.icon;
                     return (
@@ -368,8 +372,8 @@ export function ProfilePage() {
                         }}
                         className={`p-3 border rounded-lg transition-all ${
                           theme === option.value
-                            ? "border-[#2563eb] bg-[#2563eb]/10"
-                            : "hover:bg-muted"
+                            ? 'border-[#2563eb] bg-[#2563eb]/10'
+                            : 'hover:bg-muted'
                         }`}
                       >
                         <Icon className="h-5 w-5 mx-auto mb-1" />
@@ -403,13 +407,16 @@ export function ProfilePage() {
                 <label className="block text-sm font-medium mb-3">Visibilité</label>
                 <div className="space-y-2">
                   {[
-                    { key: "email", label: "Email", icon: Mail },
-                    { key: "phone", label: "Téléphone", icon: Phone },
-                    { key: "address", label: "Adresse", icon: MapPin },
+                    { key: 'email', label: 'Email', icon: Mail },
+                    { key: 'phone', label: 'Téléphone', icon: Phone },
+                    { key: 'address', label: 'Adresse', icon: MapPin },
                   ].map((item) => {
                     const Icon = item.icon;
                     return (
-                      <div key={item.key} className="flex items-center justify-between p-2 hover:bg-muted rounded">
+                      <div
+                        key={item.key}
+                        className="flex items-center justify-between p-2 hover:bg-muted rounded"
+                      >
                         <div className="flex items-center gap-2">
                           <Icon className="h-4 w-4 text-muted-foreground" />
                           <span className="text-sm">{item.label}</span>
@@ -436,7 +443,7 @@ export function ProfilePage() {
           {/* Statistics Widget */}
           <div className="bg-card border rounded-lg p-6">
             <h2 className="text-lg font-semibold mb-6">Statistiques</h2>
-            
+
             {/* Metrics */}
             <div className="grid grid-cols-3 gap-4 mb-6">
               <div className="text-center">
@@ -511,7 +518,8 @@ export function ProfilePage() {
 
             <div className="p-6">
               <p className="text-muted-foreground">
-                Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir les abandonner ?
+                Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir les
+                abandonner ?
               </p>
             </div>
 

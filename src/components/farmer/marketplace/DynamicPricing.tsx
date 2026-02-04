@@ -6,7 +6,16 @@
 
 import React from 'react';
 import { Sparkles, TrendingUp, TrendingDown, DollarSign, Target } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from 'recharts';
 import type { Product, MarketAnalysis } from '@/types/farmer/marketplace';
 
 interface DynamicPricingProps {
@@ -108,7 +117,10 @@ export function DynamicPricing({ product, analysis, isLoading }: DynamicPricingP
             {product.price !== analysis.priceRecommendation.optimal && (
               <button className="mt-3 w-full px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700">
                 Appliquer le prix optimal (+
-                {(((analysis.priceRecommendation.optimal - product.price) / product.price) * 100).toFixed(0)}
+                {(
+                  ((analysis.priceRecommendation.optimal - product.price) / product.price) *
+                  100
+                ).toFixed(0)}
                 % de revenus)
               </button>
             )}
@@ -152,18 +164,16 @@ export function DynamicPricing({ product, analysis, isLoading }: DynamicPricingP
                 <p className="font-medium text-gray-900 text-sm">{comp.seller}</p>
                 <div className="flex items-center gap-3 mt-1 text-xs text-gray-600">
                   <span>Stock: {comp.stock} kg</span>
-                  <span className="flex items-center gap-1">
-                    ⭐ {comp.rating}
-                  </span>
+                  <span className="flex items-center gap-1">⭐ {comp.rating}</span>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-lg font-bold text-gray-900">
-                  {(comp.price / 1000).toFixed(1)}K
-                </p>
-                <p className={`text-xs ${
-                  comp.price > product.price ? 'text-green-600' : 'text-red-600'
-                }`}>
+                <p className="text-lg font-bold text-gray-900">{(comp.price / 1000).toFixed(1)}K</p>
+                <p
+                  className={`text-xs ${
+                    comp.price > product.price ? 'text-green-600' : 'text-red-600'
+                  }`}
+                >
                   {comp.price > product.price ? '+' : ''}
                   {(((comp.price - product.price) / product.price) * 100).toFixed(0)}%
                 </p>
@@ -182,7 +192,9 @@ export function DynamicPricing({ product, analysis, isLoading }: DynamicPricingP
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis
                 dataKey="date"
-                tickFormatter={(date) => new Date(date).toLocaleDateString('fr-FR', { month: 'short' })}
+                tickFormatter={(date) =>
+                  new Date(date).toLocaleDateString('fr-FR', { month: 'short' })
+                }
                 stroke="#9ca3af"
                 style={{ fontSize: '12px' }}
               />

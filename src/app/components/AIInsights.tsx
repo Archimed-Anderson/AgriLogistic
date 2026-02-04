@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Brain,
   TrendingUp,
@@ -31,14 +31,14 @@ import {
   Rocket,
   ChevronRight,
   XCircle,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 interface AIModel {
   id: string;
   name: string;
-  type: "yield" | "disease" | "weather" | "market" | "soil";
-  status: "production" | "staging" | "development";
+  type: 'yield' | 'disease' | 'weather' | 'market' | 'soil';
+  status: 'production' | 'staging' | 'development';
   accuracy: number;
   precision: number;
   recall: number;
@@ -49,7 +49,7 @@ interface AIModel {
 
 interface Recommendation {
   id: string;
-  category: "urgent" | "improvement" | "opportunity";
+  category: 'urgent' | 'improvement' | 'opportunity';
   title: string;
   description: string;
   impact: number;
@@ -58,7 +58,12 @@ interface Recommendation {
   estimatedValue: string;
   // AI-Powered fields
   aiGenerated: boolean;
-  recommendationType: "crop_suggestion" | "yield_optimization" | "market_timing" | "resource_allocation" | "risk_mitigation";
+  recommendationType:
+    | 'crop_suggestion'
+    | 'yield_optimization'
+    | 'market_timing'
+    | 'resource_allocation'
+    | 'risk_mitigation';
   actionSteps?: string[];
   expectedROI?: number;
   timeframe?: string;
@@ -67,9 +72,11 @@ interface Recommendation {
 }
 
 export function AIInsights() {
-  const [activeView, setActiveView] = useState<"overview" | "models" | "patterns" | "recommendations" | "optimization">("overview");
+  const [activeView, setActiveView] = useState<
+    'overview' | 'models' | 'patterns' | 'recommendations' | 'optimization'
+  >('overview');
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
-  
+
   // AI Recommendations Engine State
   const [showRecommendationDetails, setShowRecommendationDetails] = useState(false);
   const [selectedRecommendation, setSelectedRecommendation] = useState<Recommendation | null>(null);
@@ -85,95 +92,95 @@ export function AIInsights() {
   // KPIs Data
   const kpis = [
     {
-      id: "models",
-      label: "Modèles Actifs",
-      value: "12",
+      id: 'models',
+      label: 'Modèles Actifs',
+      value: '12',
       change: 2,
       icon: Brain,
-      color: "purple",
-      trend: "up",
-      subtitle: "En production",
+      color: 'purple',
+      trend: 'up',
+      subtitle: 'En production',
     },
     {
-      id: "accuracy",
-      label: "Précision Moyenne",
-      value: "94.3%",
+      id: 'accuracy',
+      label: 'Précision Moyenne',
+      value: '94.3%',
       change: 1.5,
       icon: Target,
-      color: "blue",
-      trend: "up",
-      subtitle: "Sur tous les modèles",
+      color: 'blue',
+      trend: 'up',
+      subtitle: 'Sur tous les modèles',
     },
     {
-      id: "response",
-      label: "Temps Réponse",
-      value: "0.8s",
+      id: 'response',
+      label: 'Temps Réponse',
+      value: '0.8s',
       change: -12,
       icon: Zap,
-      color: "green",
-      trend: "down",
-      subtitle: "Moyenne",
+      color: 'green',
+      trend: 'down',
+      subtitle: 'Moyenne',
     },
     {
-      id: "recommendations",
-      label: "Recommandations",
-      value: "347",
+      id: 'recommendations',
+      label: 'Recommandations',
+      value: '347',
       change: 23,
       icon: Lightbulb,
-      color: "orange",
-      trend: "up",
-      subtitle: "Appliquées",
+      color: 'orange',
+      trend: 'up',
+      subtitle: 'Appliquées',
     },
   ];
 
   // AI Models Data
   const models: AIModel[] = [
     {
-      id: "M001",
-      name: "Prédiction de Rendement - Maïs",
-      type: "yield",
-      status: "production",
+      id: 'M001',
+      name: 'Prédiction de Rendement - Maïs',
+      type: 'yield',
+      status: 'production',
       accuracy: 96.2,
       precision: 94.8,
       recall: 95.5,
       f1Score: 95.1,
-      lastTrained: "Il y a 3 jours",
+      lastTrained: 'Il y a 3 jours',
       predictions: 1247,
     },
     {
-      id: "M002",
-      name: "Détection Maladies - Multi-cultures",
-      type: "disease",
-      status: "production",
+      id: 'M002',
+      name: 'Détection Maladies - Multi-cultures',
+      type: 'disease',
+      status: 'production',
       accuracy: 92.7,
       precision: 91.3,
       recall: 93.8,
       f1Score: 92.5,
-      lastTrained: "Il y a 1 semaine",
+      lastTrained: 'Il y a 1 semaine',
       predictions: 856,
     },
     {
-      id: "M003",
-      name: "Prévision Météo Hyper-locale",
-      type: "weather",
-      status: "production",
+      id: 'M003',
+      name: 'Prévision Météo Hyper-locale',
+      type: 'weather',
+      status: 'production',
       accuracy: 89.5,
       precision: 88.2,
       recall: 90.1,
       f1Score: 89.1,
-      lastTrained: "Il y a 2 jours",
+      lastTrained: 'Il y a 2 jours',
       predictions: 2134,
     },
     {
-      id: "M004",
-      name: "Analyse Prix Marché",
-      type: "market",
-      status: "staging",
+      id: 'M004',
+      name: 'Analyse Prix Marché',
+      type: 'market',
+      status: 'staging',
       accuracy: 85.3,
       precision: 84.1,
       recall: 86.2,
       f1Score: 85.1,
-      lastTrained: "Il y a 5 jours",
+      lastTrained: 'Il y a 5 jours',
       predictions: 432,
     },
   ];
@@ -181,81 +188,157 @@ export function AIInsights() {
   // Recommendations Data
   const recommendations: Recommendation[] = [
     {
-      id: "R001",
-      category: "urgent",
-      title: "Ajuster irrigation Parcelle Nord B",
-      description: "Le modèle détecte un stress hydrique précoce. Augmenter l'irrigation de 15% dans les 24h.",
+      id: 'R001',
+      category: 'urgent',
+      title: 'Ajuster irrigation Parcelle Nord B',
+      description:
+        "Le modèle détecte un stress hydrique précoce. Augmenter l'irrigation de 15% dans les 24h.",
       impact: 92,
       confidence: 96,
       adoptionRate: 0,
-      estimatedValue: "+2,400€",
+      estimatedValue: '+2,400€',
       aiGenerated: true,
-      recommendationType: "resource_allocation",
-      actionSteps: ["Vérifier système d'irrigation", "Augmenter débit 15%", "Surveiller humidité 48h"],
+      recommendationType: 'resource_allocation',
+      actionSteps: [
+        "Vérifier système d'irrigation",
+        'Augmenter débit 15%',
+        'Surveiller humidité 48h',
+      ],
       expectedROI: 4.2,
-      timeframe: "24 heures",
+      timeframe: '24 heures',
       historicalSuccess: 94,
     },
     {
-      id: "R002",
-      category: "improvement",
-      title: "Optimiser rotation cultures",
-      description: "La rotation actuelle pourrait être améliorée pour maximiser le rendement du sol.",
+      id: 'R002',
+      category: 'improvement',
+      title: 'Optimiser rotation cultures',
+      description:
+        'La rotation actuelle pourrait être améliorée pour maximiser le rendement du sol.',
       impact: 78,
       confidence: 88,
       adoptionRate: 45,
-      estimatedValue: "+8,500€/an",
+      estimatedValue: '+8,500€/an',
       aiGenerated: true,
-      recommendationType: "crop_suggestion",
-      actionSteps: ["Analyser historique parcelles", "Planifier rotation maïs-soja-blé", "Préparer sol pour prochaine saison"],
+      recommendationType: 'crop_suggestion',
+      actionSteps: [
+        'Analyser historique parcelles',
+        'Planifier rotation maïs-soja-blé',
+        'Préparer sol pour prochaine saison',
+      ],
       expectedROI: 3.8,
-      timeframe: "1 saison",
-      dependencies: ["Analyse sol complète", "Conditions météo favorables"],
+      timeframe: '1 saison',
+      dependencies: ['Analyse sol complète', 'Conditions météo favorables'],
       historicalSuccess: 87,
     },
     {
-      id: "R003",
-      category: "opportunity",
-      title: "Fenêtre optimale plantation soja",
-      description: "Les conditions météo seront idéales du 18 au 22 janvier pour la plantation.",
+      id: 'R003',
+      category: 'opportunity',
+      title: 'Fenêtre optimale plantation soja',
+      description: 'Les conditions météo seront idéales du 18 au 22 janvier pour la plantation.',
       impact: 65,
       confidence: 82,
       adoptionRate: 0,
-      estimatedValue: "+12%",
+      estimatedValue: '+12%',
       aiGenerated: true,
-      recommendationType: "market_timing",
-      actionSteps: ["Préparer semences", "Vérifier équipement plantation", "Planifier main d'œuvre"],
+      recommendationType: 'market_timing',
+      actionSteps: [
+        'Préparer semences',
+        'Vérifier équipement plantation',
+        "Planifier main d'œuvre",
+      ],
       expectedROI: 2.5,
-      timeframe: "4 jours",
+      timeframe: '4 jours',
       historicalSuccess: 91,
     },
   ];
 
   const getModelTypeConfig = (type: string) => {
-    const configs: { [key: string]: { icon: any; label: string; color: string; bgColor: string } } = {
-      yield: { icon: TrendingUp, label: "Rendement", color: "text-green-700", bgColor: "bg-green-100 dark:bg-green-900/20" },
-      disease: { icon: AlertCircle, label: "Maladies", color: "text-red-700", bgColor: "bg-red-100 dark:bg-red-900/20" },
-      weather: { icon: Activity, label: "Météo", color: "text-blue-700", bgColor: "bg-blue-100 dark:bg-blue-900/20" },
-      market: { icon: BarChart3, label: "Marché", color: "text-purple-700", bgColor: "bg-purple-100 dark:bg-purple-900/20" },
-      soil: { icon: Database, label: "Sol", color: "text-orange-700", bgColor: "bg-orange-100 dark:bg-orange-900/20" },
-    };
+    const configs: { [key: string]: { icon: any; label: string; color: string; bgColor: string } } =
+      {
+        yield: {
+          icon: TrendingUp,
+          label: 'Rendement',
+          color: 'text-green-700',
+          bgColor: 'bg-green-100 dark:bg-green-900/20',
+        },
+        disease: {
+          icon: AlertCircle,
+          label: 'Maladies',
+          color: 'text-red-700',
+          bgColor: 'bg-red-100 dark:bg-red-900/20',
+        },
+        weather: {
+          icon: Activity,
+          label: 'Météo',
+          color: 'text-blue-700',
+          bgColor: 'bg-blue-100 dark:bg-blue-900/20',
+        },
+        market: {
+          icon: BarChart3,
+          label: 'Marché',
+          color: 'text-purple-700',
+          bgColor: 'bg-purple-100 dark:bg-purple-900/20',
+        },
+        soil: {
+          icon: Database,
+          label: 'Sol',
+          color: 'text-orange-700',
+          bgColor: 'bg-orange-100 dark:bg-orange-900/20',
+        },
+      };
     return configs[type] || configs.yield;
   };
 
   const getStatusConfig = (status: string) => {
-    const configs: { [key: string]: { icon: any; label: string; color: string; bgColor: string } } = {
-      production: { icon: CheckCircle, label: "Production", color: "text-green-700", bgColor: "bg-green-100 dark:bg-green-900/20" },
-      staging: { icon: Clock, label: "Test", color: "text-orange-700", bgColor: "bg-orange-100 dark:bg-orange-900/20" },
-      development: { icon: Settings, label: "Développement", color: "text-gray-700", bgColor: "bg-gray-100 dark:bg-gray-800" },
-    };
+    const configs: { [key: string]: { icon: any; label: string; color: string; bgColor: string } } =
+      {
+        production: {
+          icon: CheckCircle,
+          label: 'Production',
+          color: 'text-green-700',
+          bgColor: 'bg-green-100 dark:bg-green-900/20',
+        },
+        staging: {
+          icon: Clock,
+          label: 'Test',
+          color: 'text-orange-700',
+          bgColor: 'bg-orange-100 dark:bg-orange-900/20',
+        },
+        development: {
+          icon: Settings,
+          label: 'Développement',
+          color: 'text-gray-700',
+          bgColor: 'bg-gray-100 dark:bg-gray-800',
+        },
+      };
     return configs[status];
   };
 
   const getCategoryConfig = (category: string) => {
-    const configs: { [key: string]: { icon: any; label: string; color: string; bgColor: string; border: string } } = {
-      urgent: { icon: AlertCircle, label: "Urgent", color: "text-red-700", bgColor: "bg-red-100 dark:bg-red-900/20", border: "border-red-500" },
-      improvement: { icon: TrendingUp, label: "Amélioration", color: "text-blue-700", bgColor: "bg-blue-100 dark:bg-blue-900/20", border: "border-blue-500" },
-      opportunity: { icon: Sparkles, label: "Opportunité", color: "text-purple-700", bgColor: "bg-purple-100 dark:bg-purple-900/20", border: "border-purple-500" },
+    const configs: {
+      [key: string]: { icon: any; label: string; color: string; bgColor: string; border: string };
+    } = {
+      urgent: {
+        icon: AlertCircle,
+        label: 'Urgent',
+        color: 'text-red-700',
+        bgColor: 'bg-red-100 dark:bg-red-900/20',
+        border: 'border-red-500',
+      },
+      improvement: {
+        icon: TrendingUp,
+        label: 'Amélioration',
+        color: 'text-blue-700',
+        bgColor: 'bg-blue-100 dark:bg-blue-900/20',
+        border: 'border-blue-500',
+      },
+      opportunity: {
+        icon: Sparkles,
+        label: 'Opportunité',
+        color: 'text-purple-700',
+        bgColor: 'bg-purple-100 dark:bg-purple-900/20',
+        border: 'border-purple-500',
+      },
     };
     return configs[category];
   };
@@ -263,7 +346,7 @@ export function AIInsights() {
   // AI Recommendations Engine Functions
   const generateAIRecommendations = async () => {
     setGeneratingRecommendations(true);
-    toast.info("Génération de nouvelles recommandations IA...");
+    toast.info('Génération de nouvelles recommandations IA...');
 
     // Simulate AI processing time
     await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -272,63 +355,66 @@ export function AIInsights() {
     const newRecommendations = [
       {
         id: `R${Date.now()}-1`,
-        category: "improvement" as const,
-        title: "Optimiser densité de plantation maïs",
-        description: "L'analyse historique suggère d'augmenter la densité de plantation de 5% pour maximiser le rendement dans les conditions actuelles.",
+        category: 'improvement' as const,
+        title: 'Optimiser densité de plantation maïs',
+        description:
+          "L'analyse historique suggère d'augmenter la densité de plantation de 5% pour maximiser le rendement dans les conditions actuelles.",
         impact: 82,
         confidence: 91,
         adoptionRate: 0,
-        estimatedValue: "+5,200€",
+        estimatedValue: '+5,200€',
         aiGenerated: true,
-        recommendationType: "yield_optimization" as const,
+        recommendationType: 'yield_optimization' as const,
         actionSteps: [
-          "Calculer nouvelle densité optimale (85k plants/ha)",
-          "Ajuster paramètres semoir",
-          "Monitorer émergence 14 jours"
+          'Calculer nouvelle densité optimale (85k plants/ha)',
+          'Ajuster paramètres semoir',
+          'Monitorer émergence 14 jours',
         ],
         expectedROI: 3.2,
-        timeframe: "Prochaine saison",
+        timeframe: 'Prochaine saison',
         historicalSuccess: 89,
       },
       {
         id: `R${Date.now()}-2`,
-        category: "opportunity" as const,
-        title: "Moment optimal pour vente blé",
-        description: "Les modèles prédictifs de marché indiquent une hausse de prix de 8-12% dans les 3 prochaines semaines.",
+        category: 'opportunity' as const,
+        title: 'Moment optimal pour vente blé',
+        description:
+          'Les modèles prédictifs de marché indiquent une hausse de prix de 8-12% dans les 3 prochaines semaines.',
         impact: 75,
         confidence: 84,
         adoptionRate: 0,
-        estimatedValue: "+14,800€",
+        estimatedValue: '+14,800€',
         aiGenerated: true,
-        recommendationType: "market_timing" as const,
+        recommendationType: 'market_timing' as const,
         actionSteps: [
-          "Préparer stock pour vente (245 tonnes)",
-          "Surveiller cours quotidiens",
-          "Contacter acheteurs potentiels"
+          'Préparer stock pour vente (245 tonnes)',
+          'Surveiller cours quotidiens',
+          'Contacter acheteurs potentiels',
         ],
         expectedROI: 4.7,
-        timeframe: "3 semaines",
-        dependencies: ["Conditions de stockage optimales", "Transport disponible"],
+        timeframe: '3 semaines',
+        dependencies: ['Conditions de stockage optimales', 'Transport disponible'],
         historicalSuccess: 92,
       },
       {
         id: `R${Date.now()}-3`,
-        category: "urgent" as const,
-        title: "Risque de carence azotée détecté",
-        description: "Les capteurs IoT et l'analyse d'images satellite révèlent une possible carence en azote sur Parcelle Ouest.",
+        category: 'urgent' as const,
+        title: 'Risque de carence azotée détecté',
+        description:
+          "Les capteurs IoT et l'analyse d'images satellite révèlent une possible carence en azote sur Parcelle Ouest.",
         impact: 88,
         confidence: 93,
         adoptionRate: 0,
-        estimatedValue: "+3,100€",
+        estimatedValue: '+3,100€',
         aiGenerated: true,
-        recommendationType: "risk_mitigation" as const,
+        recommendationType: 'risk_mitigation' as const,
         actionSteps: [
-          "Prélever échantillons sol",
-          "Appliquer engrais azoté (120 kg/ha)",
-          "Réévaluer dans 10 jours"
+          'Prélever échantillons sol',
+          'Appliquer engrais azoté (120 kg/ha)',
+          'Réévaluer dans 10 jours',
         ],
         expectedROI: 5.1,
-        timeframe: "7 jours",
+        timeframe: '7 jours',
         historicalSuccess: 96,
       },
     ];
@@ -358,18 +444,22 @@ export function AIInsights() {
 
   const getRecommendationTypeLabel = (type: string) => {
     const labels: { [key: string]: string } = {
-      crop_suggestion: "ǰ Suggestion Culture",
-      yield_optimization: "🌾 Optimisation Rendement",
-      market_timing: "📊 Timing Marché",
-      resource_allocation: "💧 Allocation Ressources",
-      risk_mitigation: "⚠️ Mitigation Risque",
+      crop_suggestion: 'ǰ Suggestion Culture',
+      yield_optimization: '🌾 Optimisation Rendement',
+      market_timing: '📊 Timing Marché',
+      resource_allocation: '💧 Allocation Ressources',
+      risk_mitigation: '⚠️ Mitigation Risque',
     };
     return labels[type] || type;
   };
 
   const filteredRecommendations = recommendations.filter((rec) => {
-    const matchesType = recommendationFilters.types.length === 0 || recommendationFilters.types.includes(rec.recommendationType);
-    const matchesCategory = recommendationFilters.categories.length === 0 || recommendationFilters.categories.includes(rec.category);
+    const matchesType =
+      recommendationFilters.types.length === 0 ||
+      recommendationFilters.types.includes(rec.recommendationType);
+    const matchesCategory =
+      recommendationFilters.categories.length === 0 ||
+      recommendationFilters.categories.includes(rec.category);
     const matchesConfidence = rec.confidence >= recommendationFilters.minConfidence;
     const matchesImpact = rec.impact >= recommendationFilters.minImpact;
     return matchesType && matchesCategory && matchesConfidence && matchesImpact;
@@ -392,12 +482,13 @@ export function AIInsights() {
                 </div>
                 <div
                   className={`flex items-center gap-1 text-xs font-semibold ${
-                    (kpi.trend === "up" && kpi.id !== "response") || (kpi.trend === "down" && kpi.id === "response")
-                      ? "text-green-600"
-                      : "text-red-600"
+                    (kpi.trend === 'up' && kpi.id !== 'response') ||
+                    (kpi.trend === 'down' && kpi.id === 'response')
+                      ? 'text-green-600'
+                      : 'text-red-600'
                   }`}
                 >
-                  {kpi.trend === "up" ? (
+                  {kpi.trend === 'up' ? (
                     <TrendingUp className="h-3 w-3" />
                   ) : (
                     <TrendingDown className="h-3 w-3" />
@@ -454,18 +545,16 @@ export function AIInsights() {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <button
-          onClick={() => setActiveView("models")}
+          onClick={() => setActiveView('models')}
           className="p-6 bg-card border-2 border-dashed rounded-xl hover:border-[#9B59B6] hover:bg-purple-50 dark:hover:bg-purple-900/10 transition-all group text-left"
         >
           <Brain className="h-10 w-10 text-[#9B59B6] mb-3 group-hover:scale-110 transition-transform" />
           <h3 className="font-semibold text-lg mb-2">Gérer les Modèles</h3>
-          <p className="text-sm text-muted-foreground">
-            Entraînez et optimisez vos modèles d'IA
-          </p>
+          <p className="text-sm text-muted-foreground">Entraînez et optimisez vos modèles d'IA</p>
         </button>
 
         <button
-          onClick={() => setActiveView("patterns")}
+          onClick={() => setActiveView('patterns')}
           className="p-6 bg-card border-2 border-dashed rounded-xl hover:border-[#9B59B6] hover:bg-purple-50 dark:hover:bg-purple-900/10 transition-all group text-left"
         >
           <GitBranch className="h-10 w-10 text-[#9B59B6] mb-3 group-hover:scale-110 transition-transform" />
@@ -476,14 +565,12 @@ export function AIInsights() {
         </button>
 
         <button
-          onClick={() => setActiveView("recommendations")}
+          onClick={() => setActiveView('recommendations')}
           className="p-6 bg-card border-2 border-dashed rounded-xl hover:border-[#9B59B6] hover:bg-purple-50 dark:hover:bg-purple-900/10 transition-all group text-left"
         >
           <Lightbulb className="h-10 w-10 text-[#9B59B6] mb-3 group-hover:scale-110 transition-transform" />
           <h3 className="font-semibold text-lg mb-2">Recommandations</h3>
-          <p className="text-sm text-muted-foreground">
-            Actions prioritaires basées sur l'IA
-          </p>
+          <p className="text-sm text-muted-foreground">Actions prioritaires basées sur l'IA</p>
         </button>
       </div>
 
@@ -493,34 +580,37 @@ export function AIInsights() {
         <div className="space-y-3">
           {[
             {
-              time: "Il y a 5 min",
-              insight: "Anomalie détectée dans la croissance Parcelle Est",
-              type: "warning",
+              time: 'Il y a 5 min',
+              insight: 'Anomalie détectée dans la croissance Parcelle Est',
+              type: 'warning',
             },
             {
-              time: "Il y a 1h",
-              insight: "Nouvelle corrélation découverte: Température/Rendement",
-              type: "info",
+              time: 'Il y a 1h',
+              insight: 'Nouvelle corrélation découverte: Température/Rendement',
+              type: 'info',
             },
             {
-              time: "Il y a 3h",
-              insight: "Modèle Rendement atteint 96% de précision",
-              type: "success",
+              time: 'Il y a 3h',
+              insight: 'Modèle Rendement atteint 96% de précision',
+              type: 'success',
             },
             {
-              time: "Il y a 5h",
+              time: 'Il y a 5h',
               insight: "Recommandation d'irrigation acceptée par 3 agriculteurs",
-              type: "success",
+              type: 'success',
             },
           ].map((item, index) => (
-            <div key={index} className="flex items-start gap-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors">
+            <div
+              key={index}
+              className="flex items-start gap-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors"
+            >
               <div
                 className={`w-2 h-2 rounded-full mt-2 ${
-                  item.type === "success"
-                    ? "bg-green-500"
-                    : item.type === "warning"
-                    ? "bg-orange-500"
-                    : "bg-blue-500"
+                  item.type === 'success'
+                    ? 'bg-green-500'
+                    : item.type === 'warning'
+                    ? 'bg-orange-500'
+                    : 'bg-blue-500'
                 }`}
               />
               <div className="flex-1">
@@ -560,7 +650,7 @@ export function AIInsights() {
               key={model.id}
               onClick={() => setSelectedModel(model.id)}
               className={`bg-card border-2 rounded-xl p-6 hover:shadow-lg transition-all cursor-pointer ${
-                selectedModel === model.id ? "border-[#9B59B6]" : "border-transparent"
+                selectedModel === model.id ? 'border-[#9B59B6]' : 'border-transparent'
               }`}
             >
               <div className="flex items-start justify-between mb-4">
@@ -660,7 +750,7 @@ export function AIInsights() {
       <div className="bg-card border rounded-xl p-6">
         <h3 className="text-lg font-semibold mb-6">Matrice de Corrélations</h3>
         <div className="grid grid-cols-5 gap-2">
-          {["Température", "Humidité", "pH Sol", "Rendement", "Pluie"].map((label, i) => (
+          {['Température', 'Humidité', 'pH Sol', 'Rendement', 'Pluie'].map((label, i) => (
             <div key={i} className="text-center">
               <div className="text-xs font-medium mb-2 truncate" title={label}>
                 {label}
@@ -693,35 +783,38 @@ export function AIInsights() {
         <div className="space-y-4">
           {[
             {
-              pattern: "Température > 28°C → Rendement -15%",
+              pattern: 'Température > 28°C → Rendement -15%',
               confidence: 94,
               occurrences: 23,
-              impact: "high",
+              impact: 'high',
             },
             {
-              pattern: "Irrigation +20% → Croissance +12%",
+              pattern: 'Irrigation +20% → Croissance +12%',
               confidence: 88,
               occurrences: 45,
-              impact: "medium",
+              impact: 'medium',
             },
             {
-              pattern: "pH 6.5-7.0 → Qualité optimale",
+              pattern: 'pH 6.5-7.0 → Qualité optimale',
               confidence: 96,
               occurrences: 78,
-              impact: "high",
+              impact: 'high',
             },
           ].map((item, index) => (
-            <div key={index} className="p-4 border-2 border-dashed rounded-lg hover:border-[#9B59B6] transition-colors">
+            <div
+              key={index}
+              className="p-4 border-2 border-dashed rounded-lg hover:border-[#9B59B6] transition-colors"
+            >
               <div className="flex items-start justify-between mb-2">
                 <div className="font-semibold">{item.pattern}</div>
                 <span
                   className={`px-2 py-1 rounded text-xs font-bold ${
-                    item.impact === "high"
-                      ? "bg-red-100 dark:bg-red-900/20 text-red-700"
-                      : "bg-orange-100 dark:bg-orange-900/20 text-orange-700"
+                    item.impact === 'high'
+                      ? 'bg-red-100 dark:bg-red-900/20 text-red-700'
+                      : 'bg-orange-100 dark:bg-orange-900/20 text-orange-700'
                   }`}
                 >
-                  Impact {item.impact === "high" ? "Élevé" : "Moyen"}
+                  Impact {item.impact === 'high' ? 'Élevé' : 'Moyen'}
                 </span>
               </div>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -739,10 +832,18 @@ export function AIInsights() {
         <h3 className="text-lg font-semibold mb-4">Anomalies Détectées</h3>
         <div className="space-y-3">
           {[
-            { field: "Parcelle Est", metric: "Croissance", deviation: "+25%", severity: "warning" },
-            { field: "Parcelle Nord B", metric: "Consommation eau", deviation: "-18%", severity: "info" },
+            { field: 'Parcelle Est', metric: 'Croissance', deviation: '+25%', severity: 'warning' },
+            {
+              field: 'Parcelle Nord B',
+              metric: 'Consommation eau',
+              deviation: '-18%',
+              severity: 'info',
+            },
           ].map((anomaly, index) => (
-            <div key={index} className="p-4 bg-orange-50 dark:bg-orange-900/20 border-l-4 border-orange-500 rounded">
+            <div
+              key={index}
+              className="p-4 bg-orange-50 dark:bg-orange-900/20 border-l-4 border-orange-500 rounded"
+            >
               <div className="flex items-start gap-3">
                 <AlertCircle className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
                 <div>
@@ -767,7 +868,9 @@ export function AIInsights() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Recommandations IA</h2>
-          <p className="text-muted-foreground">Actions prioritaires basées sur l'intelligence artificielle</p>
+          <p className="text-muted-foreground">
+            Actions prioritaires basées sur l'intelligence artificielle
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -804,7 +907,8 @@ export function AIInsights() {
             <div>
               <h3 className="font-bold text-lg mb-1">Moteur IA Actif</h3>
               <p className="text-sm text-muted-foreground">
-                Analyse continue de {filteredRecommendations.length} recommandations | {filteredRecommendations.filter(r => r.aiGenerated).length} générées par IA
+                Analyse continue de {filteredRecommendations.length} recommandations |{' '}
+                {filteredRecommendations.filter((r) => r.aiGenerated).length} générées par IA
               </p>
             </div>
           </div>
@@ -813,11 +917,11 @@ export function AIInsights() {
               onClick={() => setAiInsightsEnabled(!aiInsightsEnabled)}
               className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
                 aiInsightsEnabled
-                  ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                  : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400"
+                  ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                  : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400'
               }`}
             >
-              {aiInsightsEnabled ? "Activé" : "Désactivé"}
+              {aiInsightsEnabled ? 'Activé' : 'Désactivé'}
             </button>
           </div>
         </div>
@@ -860,7 +964,7 @@ export function AIInsights() {
                         </span>
                       </div>
                       <p className="text-sm text-muted-foreground mb-3">{rec.description}</p>
-                      
+
                       {/* Action Steps */}
                       {rec.actionSteps && rec.actionSteps.length > 0 && (
                         <div className="mb-3">
@@ -886,24 +990,32 @@ export function AIInsights() {
                         {rec.expectedROI && (
                           <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
                             <div className="text-xs text-muted-foreground">ROI Estimé</div>
-                            <div className="font-bold text-green-700 dark:text-green-400">{rec.expectedROI}x</div>
+                            <div className="font-bold text-green-700 dark:text-green-400">
+                              {rec.expectedROI}x
+                            </div>
                           </div>
                         )}
                         {rec.timeframe && (
                           <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                             <div className="text-xs text-muted-foreground">Délai</div>
-                            <div className="font-bold text-blue-700 dark:text-blue-400">{rec.timeframe}</div>
+                            <div className="font-bold text-blue-700 dark:text-blue-400">
+                              {rec.timeframe}
+                            </div>
                           </div>
                         )}
                         {rec.historicalSuccess && (
                           <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
                             <div className="text-xs text-muted-foreground">Succès Historique</div>
-                            <div className="font-bold text-purple-700 dark:text-purple-400">{rec.historicalSuccess}%</div>
+                            <div className="font-bold text-purple-700 dark:text-purple-400">
+                              {rec.historicalSuccess}%
+                            </div>
                           </div>
                         )}
                         <div className="p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
                           <div className="text-xs text-muted-foreground">Gain Potentiel</div>
-                          <div className="font-bold text-orange-700 dark:text-orange-400">{rec.estimatedValue}</div>
+                          <div className="font-bold text-orange-700 dark:text-orange-400">
+                            {rec.estimatedValue}
+                          </div>
                         </div>
                       </div>
 
@@ -913,9 +1025,11 @@ export function AIInsights() {
                           <div className="flex items-start gap-2">
                             <AlertCircle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
                             <div>
-                              <div className="text-xs font-semibold text-amber-900 dark:text-amber-200 mb-1">Dépendances:</div>
+                              <div className="text-xs font-semibold text-amber-900 dark:text-amber-200 mb-1">
+                                Dépendances:
+                              </div>
                               <div className="text-xs text-amber-800 dark:text-amber-300">
-                                {rec.dependencies.join(" • ")}
+                                {rec.dependencies.join(' • ')}
                               </div>
                             </div>
                           </div>
@@ -1009,9 +1123,9 @@ export function AIInsights() {
         <h3 className="text-lg font-semibold mb-6">Objectifs Multi-Critères</h3>
         <div className="space-y-4">
           {[
-            { objective: "Maximiser le rendement", weight: 70, unit: "t/ha" },
-            { objective: "Minimiser les coûts", weight: 50, unit: "€" },
-            { objective: "Réduire impact environnemental", weight: 60, unit: "score" },
+            { objective: 'Maximiser le rendement', weight: 70, unit: 't/ha' },
+            { objective: 'Minimiser les coûts', weight: 50, unit: '€' },
+            { objective: 'Réduire impact environnemental', weight: 60, unit: 'score' },
           ].map((obj, index) => (
             <div key={index}>
               <div className="flex items-center justify-between mb-2">
@@ -1035,16 +1149,16 @@ export function AIInsights() {
         <h3 className="text-lg font-semibold mb-6">Simulation de Scénarios</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {[
-            { name: "Scénario Conservateur", yield: 7.2, cost: 3200, env: 85 },
-            { name: "Scénario Équilibré", yield: 8.1, cost: 3800, env: 78 },
-            { name: "Scénario Intensif", yield: 9.3, cost: 4500, env: 65 },
+            { name: 'Scénario Conservateur', yield: 7.2, cost: 3200, env: 85 },
+            { name: 'Scénario Équilibré', yield: 8.1, cost: 3800, env: 78 },
+            { name: 'Scénario Intensif', yield: 9.3, cost: 4500, env: 65 },
           ].map((scenario, index) => (
             <div
               key={index}
               className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
                 index === 1
-                  ? "border-[#9B59B6] bg-purple-50 dark:bg-purple-900/10"
-                  : "border-gray-200 hover:border-[#9B59B6]"
+                  ? 'border-[#9B59B6] bg-purple-50 dark:bg-purple-900/10'
+                  : 'border-gray-200 hover:border-[#9B59B6]'
               }`}
             >
               <div className="font-semibold mb-3">{scenario.name}</div>
@@ -1077,18 +1191,30 @@ export function AIInsights() {
         <h3 className="text-lg font-semibold mb-4">Plan d'Action Généré</h3>
         <div className="space-y-3">
           {[
-            { action: "Ajuster irrigation à 85% de la capacité", priority: "high", deadline: "Demain" },
-            { action: "Appliquer engrais NPK 15-15-15", priority: "medium", deadline: "Dans 3 jours" },
-            { action: "Planifier rotation avec légumineuses", priority: "low", deadline: "Prochaine saison" },
+            {
+              action: 'Ajuster irrigation à 85% de la capacité',
+              priority: 'high',
+              deadline: 'Demain',
+            },
+            {
+              action: 'Appliquer engrais NPK 15-15-15',
+              priority: 'medium',
+              deadline: 'Dans 3 jours',
+            },
+            {
+              action: 'Planifier rotation avec légumineuses',
+              priority: 'low',
+              deadline: 'Prochaine saison',
+            },
           ].map((item, index) => (
             <div key={index} className="flex items-center gap-3 p-3 border rounded-lg">
               <div
                 className={`w-2 h-2 rounded-full ${
-                  item.priority === "high"
-                    ? "bg-red-500"
-                    : item.priority === "medium"
-                    ? "bg-orange-500"
-                    : "bg-blue-500"
+                  item.priority === 'high'
+                    ? 'bg-red-500'
+                    : item.priority === 'medium'
+                    ? 'bg-orange-500'
+                    : 'bg-blue-500'
                 }`}
               />
               <div className="flex-1">
@@ -1123,7 +1249,9 @@ export function AIInsights() {
       <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-3xl font-bold tracking-tight">Intelligence Artificielle AgroLogistic</h1>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Intelligence Artificielle AgroLogistic
+            </h1>
             <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 text-xs font-bold rounded-full flex items-center gap-1">
               <Brain className="h-3 w-3" />
               IA AVANCÉE
@@ -1150,11 +1278,11 @@ export function AIInsights() {
       {/* Navigation Tabs */}
       <div className="bg-card border rounded-xl p-2 flex gap-2 overflow-x-auto">
         {[
-          { id: "overview", label: "Vue d'ensemble", icon: Brain },
-          { id: "models", label: "Modèles", icon: Cpu },
-          { id: "patterns", label: "Patterns", icon: GitBranch },
-          { id: "recommendations", label: "Recommandations", icon: Lightbulb },
-          { id: "optimization", label: "Optimisation", icon: Target },
+          { id: 'overview', label: "Vue d'ensemble", icon: Brain },
+          { id: 'models', label: 'Modèles', icon: Cpu },
+          { id: 'patterns', label: 'Patterns', icon: GitBranch },
+          { id: 'recommendations', label: 'Recommandations', icon: Lightbulb },
+          { id: 'optimization', label: 'Optimisation', icon: Target },
         ].map((tab) => {
           const Icon = tab.icon;
           return (
@@ -1162,9 +1290,7 @@ export function AIInsights() {
               key={tab.id}
               onClick={() => setActiveView(tab.id as any)}
               className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all whitespace-nowrap ${
-                activeView === tab.id
-                  ? "bg-[#9B59B6] text-white"
-                  : "hover:bg-muted"
+                activeView === tab.id ? 'bg-[#9B59B6] text-white' : 'hover:bg-muted'
               }`}
             >
               <Icon className="h-4 w-4" />
@@ -1175,11 +1301,11 @@ export function AIInsights() {
       </div>
 
       {/* Content */}
-      {activeView === "overview" && renderOverview()}
-      {activeView === "models" && renderModels()}
-      {activeView === "patterns" && renderPatterns()}
-      {activeView === "recommendations" && renderRecommendations()}
-      {activeView === "optimization" && renderOptimization()}
+      {activeView === 'overview' && renderOverview()}
+      {activeView === 'models' && renderModels()}
+      {activeView === 'patterns' && renderPatterns()}
+      {activeView === 'recommendations' && renderRecommendations()}
+      {activeView === 'optimization' && renderOptimization()}
     </div>
   );
 }

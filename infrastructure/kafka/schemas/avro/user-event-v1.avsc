@@ -1,0 +1,58 @@
+{
+  "namespace": "com.agrilogistic.events.user",
+  "type": "record",
+  "name": "UserEvent",
+  "doc": "Event sourcing user events - Cahier des charges 1.2",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": "string",
+      "doc": "Unique event identifier (UUID)"
+    },
+    {
+      "name": "userId",
+      "type": ["string", "null"],
+      "doc": "User identifier, null for anonymous"
+    },
+    {
+      "name": "sessionId",
+      "type": ["string", "null"],
+      "doc": "Session identifier"
+    },
+    {
+      "name": "type",
+      "type": "string",
+      "doc": "Event type: user_registered, user_updated, user_login, user_logout, profile_updated, etc."
+    },
+    {
+      "name": "data",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "doc": "Additional event payload"
+    },
+    {
+      "name": "pageUrl",
+      "type": ["string", "null"],
+      "doc": "Page URL when event occurred"
+    },
+    {
+      "name": "referrer",
+      "type": ["string", "null"]
+    },
+    {
+      "name": "userAgent",
+      "type": ["string", "null"]
+    },
+    {
+      "name": "ipAddress",
+      "type": ["string", "null"]
+    },
+    {
+      "name": "timestamp",
+      "type": "string",
+      "doc": "ISO-8601 timestamp"
+    }
+  ]
+}

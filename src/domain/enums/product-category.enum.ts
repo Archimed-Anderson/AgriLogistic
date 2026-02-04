@@ -5,5 +5,5 @@ export enum ProductCategory {
   MEAT = 'Viandes',
   EGGS = 'Œufs',
   CEREALS = 'Céréales',
-  OTHER = 'Autres'
+  OTHER = 'Autres',
 }

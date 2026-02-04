@@ -1,9 +1,9 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { AdminModulePlaceholder } from "@/components/admin/AdminModulePlaceholder"
-import { AgriLogisticLink } from "@/components/admin/logistics/AgriLogisticLink"
-import { Truck, Package } from "lucide-react"
+import { useState } from 'react';
+import { AdminModulePlaceholder } from '@/components/admin/AdminModulePlaceholder';
+import { AgriLogisticLink } from '@/components/admin/logistics/AgriLogisticLink';
+import { Truck, Package } from 'lucide-react';
 
 export default function ProductsPage() {
   const [activeTab, setActiveTab] = useState<'inventory' | 'logistics'>('inventory');
@@ -22,8 +22,8 @@ export default function ProductsPage() {
             onClick={() => setActiveTab('inventory')}
             className={`pb-3 px-1 border-b-2 transition-colors flex items-center gap-2 ${
               activeTab === 'inventory'
-                ? "border-primary text-primary font-medium"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+                ? 'border-primary text-primary font-medium'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             <Package className="h-4 w-4" />
@@ -33,8 +33,8 @@ export default function ProductsPage() {
             onClick={() => setActiveTab('logistics')}
             className={`pb-3 px-1 border-b-2 transition-colors flex items-center gap-2 ${
               activeTab === 'logistics'
-                ? "border-primary text-primary font-medium"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+                ? 'border-primary text-primary font-medium'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             <Truck className="h-4 w-4" />
@@ -45,15 +45,13 @@ export default function ProductsPage() {
 
       <div className="py-4">
         {activeTab === 'inventory' && (
-          <AdminModulePlaceholder 
-            title="Inventaire des Produits" 
-            description="Gérez votre catalogue d'intrants, semences et récoltes. (Module en cours de développement)" 
+          <AdminModulePlaceholder
+            title="Inventaire des Produits"
+            description="Gérez votre catalogue d'intrants, semences et récoltes. (Module en cours de développement)"
           />
         )}
-        {activeTab === 'logistics' && (
-          <AgriLogisticLink />
-        )}
+        {activeTab === 'logistics' && <AgriLogisticLink />}
       </div>
     </div>
-  )
+  );
 }

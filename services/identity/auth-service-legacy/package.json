@@ -1,4 +1,4 @@
-﻿{
+{
     "name":  "@agrologistic/auth-service",
     "version":  "1.0.0",
     "description":  "AgroLogistic Authentication Service with JWT and OAuth2",
@@ -10,7 +10,7 @@
                     "test":  "jest",
                     "test:watch":  "jest --watch",
                     "test:coverage":  "jest --coverage",
-                    "lint":  "eslint src --ext .ts",
+                    "lint":  "eslint . --ext .ts --ignore-pattern \"migrations/*\"",
                     "format":  "prettier --write \"src/**/*.ts\"",
                     "seed:admin":  "ts-node scripts/init-admin.ts",
                     "docker:build":  "docker build -t AgroLogistic/auth-service:latest .",

@@ -1,0 +1,40 @@
+# ServiceMonitors pour Prometheus Operator (Prompt 3.2)
+# Prérequis : Prometheus Operator installé (release: prometheus)
+# Les pods doivent avoir les annotations : prometheus.io/scrape: "true", prometheus.io/port, prometheus.io/path
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: agrilogistic-backend
+  namespace: agrilogistic
+  labels:
+    release: prometheus
+    app: agrilogistic
+spec:
+  selector:
+    matchLabels:
+      prometheus.io/scrape: "true"
+  namespaceSelector:
+    matchNames:
+      - agrilogistic
+  endpoints:
+    - interval: 15s
+      path: /metrics
+      port: http
+      relabelings:
+        - sourceLabels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+          action: replace
+          targetLabel: __metrics_path__
+          regex: (.+)
+        - sourceLabels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+          action: replace
+          regex: ([^:]+)(?::\d+)?;(\d+)
+          replacement: $1:$2
+          targetLabel: __address__
+        - action: labelmap
+          regex: __meta_kubernetes_pod_label_(.+)
+        - sourceLabels: [__meta_kubernetes_namespace]
+          action: replace
+          targetLabel: namespace
+        - sourceLabels: [__meta_kubernetes_pod_name]
+          action: replace
+          targetLabel: pod

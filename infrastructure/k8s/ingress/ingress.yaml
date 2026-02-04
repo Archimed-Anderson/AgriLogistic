@@ -1,0 +1,49 @@
+# Ingress NGINX avec cert-manager (Let's Encrypt) - Prompt 3.2
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: agrilogistic-ingress
+  namespace: agrilogistic
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+spec:
+  tls:
+    - hosts:
+        - api.agrilogistic.com
+        - app.agrilogistic.com
+        - grafana.agrilogistic.com
+      secretName: agrilogistic-tls
+  rules:
+    - host: app.agrilogistic.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-app
+                port:
+                  number: 3000
+    - host: api.agrilogistic.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kong-proxy
+                port:
+                  number: 8000
+    - host: grafana.agrilogistic.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 3000

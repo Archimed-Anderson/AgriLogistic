@@ -3,7 +3,15 @@
  * Displays detailed cost breakdown for the route
  */
 import React from 'react';
-import { DollarSign, Fuel, Navigation, Wrench, Clock, TrendingDown, TrendingUp } from 'lucide-react';
+import {
+  DollarSign,
+  Fuel,
+  Navigation,
+  Wrench,
+  Clock,
+  TrendingDown,
+  TrendingUp,
+} from 'lucide-react';
 import type { RouteCost } from '@/types/transporter';
 
 interface CostCalculatorProps {
@@ -53,7 +61,7 @@ export function CostCalculator({ cost, distance, duration, isLoading }: CostCalc
       percentage: (cost.wear / cost.total) * 100,
     },
     {
-      label: 'Main d\'œuvre',
+      label: "Main d'œuvre",
       value: cost.labor,
       icon: Clock,
       color: 'text-green-600',
@@ -88,7 +96,9 @@ export function CostCalculator({ cost, distance, duration, isLoading }: CostCalc
           const Icon = item.icon;
           return (
             <div key={item.label} className="flex items-center gap-3">
-              <div className={`flex-shrink-0 w-10 h-10 ${item.bgColor} rounded-lg flex items-center justify-center`}>
+              <div
+                className={`flex-shrink-0 w-10 h-10 ${item.bgColor} rounded-lg flex items-center justify-center`}
+              >
                 <Icon className={`w-5 h-5 ${item.color}`} />
               </div>
               <div className="flex-1 min-w-0">
@@ -142,7 +152,8 @@ export function CostCalculator({ cost, distance, duration, isLoading }: CostCalc
           <div>
             <h3 className="font-medium text-blue-900 text-sm">Conseil d'optimisation</h3>
             <p className="text-sm text-blue-700 mt-1">
-              Réorganisez les points d'arrêt pour réduire la distance et économiser jusqu'à 15% sur les coûts.
+              Réorganisez les points d'arrêt pour réduire la distance et économiser jusqu'à 15% sur
+              les coûts.
             </p>
           </div>
         </div>

@@ -4,14 +4,8 @@ import AuditLog, { AuditStatus } from '../models/AuditLog';
 
 export function auditMiddleware(action: string, resource: string) {
   return async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
-    const originalSend = res.send;
-    let responseBody: any;
 
-    // Intercept response
-    res.send = function (body: any): Response {
-      responseBody = body;
-      return originalSend.call(this, body);
-    };
+
 
     // Continue with request
     res.on('finish', async () => {

@@ -2,7 +2,14 @@
  * Farm Operations Data Hook
  */
 import { useQuery } from '@tanstack/react-query';
-import type { FarmField, IoTSensor, CropRotationPlan, InventoryItem, BudgetEntry, CropProfitability } from '@/types/farmer/operations';
+import type {
+  FarmField,
+  IoTSensor,
+  CropRotationPlan,
+  InventoryItem,
+  BudgetEntry,
+  CropProfitability,
+} from '@/types/farmer/operations';
 
 // Mock data
 const mockFields: FarmField[] = [
@@ -204,7 +211,7 @@ const mockProfitability: CropProfitability[] = [
     costBreakdown: [
       { category: 'Semences', amount: 45000, percentage: 14 },
       { category: 'Engrais', amount: 125000, percentage: 39 },
-      { category: 'Main d\'œuvre', amount: 95000, percentage: 30 },
+      { category: "Main d'œuvre", amount: 95000, percentage: 30 },
       { category: 'Irrigation', amount: 35000, percentage: 11 },
       { category: 'Autres', amount: 20000, percentage: 6 },
     ],
@@ -256,6 +263,12 @@ export function useFarmOperations() {
     inventory,
     budget,
     profitability,
-    isLoading: fieldsLoading || sensorsLoading || rotationLoading || inventoryLoading || budgetLoading || profitabilityLoading,
+    isLoading:
+      fieldsLoading ||
+      sensorsLoading ||
+      rotationLoading ||
+      inventoryLoading ||
+      budgetLoading ||
+      profitabilityLoading,
   };
 }

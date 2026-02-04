@@ -44,7 +44,7 @@ export function DeliveryTracker({ deliveries, isLoading }: DeliveryTrackerProps)
     return colors[priority];
   };
 
-  const currentDelivery = deliveries.find(d => d.id === selectedDelivery);
+  const currentDelivery = deliveries.find((d) => d.id === selectedDelivery);
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -54,7 +54,7 @@ export function DeliveryTracker({ deliveries, isLoading }: DeliveryTrackerProps)
           <h2 className="text-lg font-semibold text-gray-900">Suivi des Livraisons</h2>
         </div>
         <span className="text-sm text-gray-600">
-          {deliveries.filter(d => d.status === 'in_transit').length} en cours
+          {deliveries.filter((d) => d.status === 'in_transit').length} en cours
         </span>
       </div>
 
@@ -86,8 +86,11 @@ export function DeliveryTracker({ deliveries, isLoading }: DeliveryTrackerProps)
                 </div>
                 <div className="flex items-center justify-between text-xs">
                   <span className={`font-medium ${getPriorityColor(delivery.priority)}`}>
-                    {delivery.priority === 'urgent' ? '🔥 Urgent' : 
-                     delivery.priority === 'high' ? '⚡ Prioritaire' : 'Normal'}
+                    {delivery.priority === 'urgent'
+                      ? '🔥 Urgent'
+                      : delivery.priority === 'high'
+                      ? '⚡ Prioritaire'
+                      : 'Normal'}
                   </span>
                   {delivery.tracking.progress !== undefined && (
                     <span className="text-gray-600">{delivery.tracking.progress}%</span>
@@ -117,7 +120,8 @@ export function DeliveryTracker({ deliveries, isLoading }: DeliveryTrackerProps)
                     <span className="text-sm font-medium text-gray-900">Position actuelle</span>
                   </div>
                   <p className="text-xs text-gray-600">
-                    {currentDelivery.tracking.currentLocation[0].toFixed(4)}, {currentDelivery.tracking.currentLocation[1].toFixed(4)}
+                    {currentDelivery.tracking.currentLocation[0].toFixed(4)},{' '}
+                    {currentDelivery.tracking.currentLocation[1].toFixed(4)}
                   </p>
                 </div>
               )}
@@ -141,7 +145,8 @@ export function DeliveryTracker({ deliveries, isLoading }: DeliveryTrackerProps)
                 <div className="flex items-center gap-2 mt-2 text-xs text-gray-600">
                   <Clock className="w-3 h-3" />
                   <span>
-                    ETA: {new Date(currentDelivery.tracking.eta).toLocaleTimeString('fr-FR', {
+                    ETA:{' '}
+                    {new Date(currentDelivery.tracking.eta).toLocaleTimeString('fr-FR', {
                       hour: '2-digit',
                       minute: '2-digit',
                     })}
@@ -226,11 +231,15 @@ export function DeliveryTracker({ deliveries, isLoading }: DeliveryTrackerProps)
                   </div>
                   <div>
                     <p className="text-gray-600">Véhicule</p>
-                    <p className="font-medium text-gray-900">{currentDelivery.carrier.vehicleType}</p>
+                    <p className="font-medium text-gray-900">
+                      {currentDelivery.carrier.vehicleType}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-600">Immatriculation</p>
-                    <p className="font-medium text-gray-900">{currentDelivery.carrier.licensePlate}</p>
+                    <p className="font-medium text-gray-900">
+                      {currentDelivery.carrier.licensePlate}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-600">Contact</p>
@@ -242,7 +251,9 @@ export function DeliveryTracker({ deliveries, isLoading }: DeliveryTrackerProps)
 
             {/* Items */}
             <div className="bg-gray-50 rounded-lg p-4">
-              <h3 className="font-semibold text-gray-900 mb-3">Articles ({currentDelivery.items.length})</h3>
+              <h3 className="font-semibold text-gray-900 mb-3">
+                Articles ({currentDelivery.items.length})
+              </h3>
               <div className="space-y-2">
                 {currentDelivery.items.map((item, index) => (
                   <div key={index} className="flex items-center justify-between text-sm">

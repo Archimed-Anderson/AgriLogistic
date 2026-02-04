@@ -14,15 +14,8 @@ import { ArrowLeft, Download, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function FarmOperationsPage() {
-  const {
-    fields,
-    sensors,
-    rotationPlans,
-    inventory,
-    budget,
-    profitability,
-    isLoading,
-  } = useFarmOperations();
+  const { fields, sensors, rotationPlans, inventory, budget, profitability, isLoading } =
+    useFarmOperations();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -41,9 +34,7 @@ export default function FarmOperationsPage() {
                 <h1 className="text-2xl font-bold text-gray-900">
                   🌾 Gestion des Opérations Agricoles
                 </h1>
-                <p className="text-sm text-gray-600">
-                  Vue complète de votre exploitation
-                </p>
+                <p className="text-sm text-gray-600">Vue complète de votre exploitation</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -64,11 +55,7 @@ export default function FarmOperationsPage() {
         <div className="space-y-6">
           {/* Farm Map */}
           <section>
-            <FarmMap
-              fields={fields || []}
-              sensors={sensors || []}
-              isLoading={isLoading}
-            />
+            <FarmMap fields={fields || []} sensors={sensors || []} isLoading={isLoading} />
           </section>
 
           {/* IoT Monitoring */}
@@ -80,20 +67,14 @@ export default function FarmOperationsPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Left Column */}
             <div className="space-y-6">
-              <CropRotationPlanner
-                plans={rotationPlans || []}
-                isLoading={isLoading}
-              />
+              <CropRotationPlanner plans={rotationPlans || []} isLoading={isLoading} />
               <BudgetAnalyzer budget={budget || []} isLoading={isLoading} />
             </div>
 
             {/* Right Column */}
             <div className="space-y-6">
               <InventoryTracker inventory={inventory || []} isLoading={isLoading} />
-              <ProfitabilityMatrix
-                profitability={profitability || []}
-                isLoading={isLoading}
-              />
+              <ProfitabilityMatrix profitability={profitability || []} isLoading={isLoading} />
             </div>
           </div>
 

@@ -131,21 +131,20 @@ export function RouteOptimizer({ routes, isLoading }: RouteOptimizerProps) {
                 <h4 className="text-sm font-medium text-gray-700 mb-3">Points de passage</h4>
                 <div className="space-y-2">
                   {route.waypoints.map((waypoint, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
-                    >
+                    <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                       <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold text-sm">
                         {waypoint.sequence}
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <p className="font-medium text-gray-900 text-sm">{waypoint.address}</p>
-                          <span className={`text-xs px-2 py-0.5 rounded-full ${
-                            waypoint.type === 'pickup'
-                              ? 'bg-blue-100 text-blue-700'
-                              : 'bg-green-100 text-green-700'
-                          }`}>
+                          <span
+                            className={`text-xs px-2 py-0.5 rounded-full ${
+                              waypoint.type === 'pickup'
+                                ? 'bg-blue-100 text-blue-700'
+                                : 'bg-green-100 text-green-700'
+                            }`}
+                          >
                             {waypoint.type === 'pickup' ? '📦 Enlèvement' : '🏠 Livraison'}
                           </span>
                         </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   TrendingUp,
   TrendingDown,
@@ -36,20 +36,22 @@ import {
   Sprout,
   Bug,
   ShoppingCart,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 export function AnalyticsDashboard() {
-  const [selectedPeriod, setSelectedPeriod] = useState("30d");
-  const [selectedParcels, setSelectedParcels] = useState<string[]>(["P1", "P2"]);
-  const [activeLayer, setActiveLayer] = useState("ndvi");
+  const [selectedPeriod, setSelectedPeriod] = useState('30d');
+  const [selectedParcels, setSelectedParcels] = useState<string[]>(['P1', 'P2']);
+  const [activeLayer, setActiveLayer] = useState('ndvi');
   const [showExportModal, setShowExportModal] = useState(false);
   const [showAlertConfig, setShowAlertConfig] = useState(false);
   const [expandedWidget, setExpandedWidget] = useState<string | null>(null);
   const [selectedVariables, setSelectedVariables] = useState<string[]>([]);
-  const [forecastHorizon, setForecastHorizon] = useState<"3m" | "6m" | "12m">("6m");
+  const [forecastHorizon, setForecastHorizon] = useState<'3m' | '6m' | '12m'>('6m');
   const [showForecastDetails, setShowForecastDetails] = useState(false);
-  const [selectedExportFormat, setSelectedExportFormat] = useState<"pdf" | "excel" | "csv" | "ppt" | null>(null);
+  const [selectedExportFormat, setSelectedExportFormat] = useState<
+    'pdf' | 'excel' | 'csv' | 'ppt' | null
+  >(null);
   const [exportContent, setExportContent] = useState({
     kpis: true,
     map: true,
@@ -64,254 +66,301 @@ export function AnalyticsDashboard() {
   const [dashboardLayout, setDashboardLayout] = useState<{
     widgets: Array<{
       id: string;
-      type: "kpi" | "forecast" | "weather" | "sensors" | "map" | "economic" | "alerts";
+      type: 'kpi' | 'forecast' | 'weather' | 'sensors' | 'map' | 'economic' | 'alerts';
       title: string;
       visible: boolean;
       position: { x: number; y: number; w: number; h: number };
     }>;
   }>(() => {
     // Load saved layout from localStorage or use default
-    const saved = localStorage.getItem("AgroLogistic-dashboard-layout");
+    const saved = localStorage.getItem('AgroLogistic-dashboard-layout');
     if (saved) {
       try {
         return JSON.parse(saved);
       } catch (e) {
-        console.error("Failed to parse dashboard layout", e);
+        console.error('Failed to parse dashboard layout', e);
       }
     }
     // Default layout
     return {
       widgets: [
-        { id: "w1", type: "kpi", title: "KPIs Principaux", visible: true, position: { x: 0, y: 0, w: 12, h: 2 } },
-        { id: "w2", type: "forecast", title: "Prévisions IA", visible: true, position: { x: 0, y: 2, w: 8, h: 4 } },
-        { id: "w3", type: "weather", title: "Météo", visible: true, position: { x: 8, y: 2, w: 4, h: 4 } },
-        { id: "w4", type: "sensors", title: "Capteurs IoT", visible: true, position: { x: 0, y: 6, w: 6, h: 3 } },
-        { id: "w5", type: "map", title: "Carte Parcelles", visible: true, position: { x: 6, y: 6, w: 6, h: 3 } },
-        { id: "w6", type: "economic", title: "Analyse ROI", visible: false, position: { x: 0, y: 9, w: 12, h: 3 } },
-        { id: "w7", type: "alerts", title: "Alertes Actives", visible: false, position: { x: 0, y: 12, w: 12, h: 2 } },
+        {
+          id: 'w1',
+          type: 'kpi',
+          title: 'KPIs Principaux',
+          visible: true,
+          position: { x: 0, y: 0, w: 12, h: 2 },
+        },
+        {
+          id: 'w2',
+          type: 'forecast',
+          title: 'Prévisions IA',
+          visible: true,
+          position: { x: 0, y: 2, w: 8, h: 4 },
+        },
+        {
+          id: 'w3',
+          type: 'weather',
+          title: 'Météo',
+          visible: true,
+          position: { x: 8, y: 2, w: 4, h: 4 },
+        },
+        {
+          id: 'w4',
+          type: 'sensors',
+          title: 'Capteurs IoT',
+          visible: true,
+          position: { x: 0, y: 6, w: 6, h: 3 },
+        },
+        {
+          id: 'w5',
+          type: 'map',
+          title: 'Carte Parcelles',
+          visible: true,
+          position: { x: 6, y: 6, w: 6, h: 3 },
+        },
+        {
+          id: 'w6',
+          type: 'economic',
+          title: 'Analyse ROI',
+          visible: false,
+          position: { x: 0, y: 9, w: 12, h: 3 },
+        },
+        {
+          id: 'w7',
+          type: 'alerts',
+          title: 'Alertes Actives',
+          visible: false,
+          position: { x: 0, y: 12, w: 12, h: 2 },
+        },
       ],
     };
   });
   const [isEditMode, setIsEditMode] = useState(false);
-  const [activeAlerts, setActiveAlerts] = useState<Array<{
-    id: string;
-    type: "critical" | "warning" | "info";
-    title: string;
-    message: string;
-    timestamp: string;
-    threshold: { metric: string; value: number; actual: number };
-    read: boolean;
-    dismissed: boolean;
-  }>>([]);
+  const [activeAlerts, setActiveAlerts] = useState<
+    Array<{
+      id: string;
+      type: 'critical' | 'warning' | 'info';
+      title: string;
+      message: string;
+      timestamp: string;
+      threshold: { metric: string; value: number; actual: number };
+      read: boolean;
+      dismissed: boolean;
+    }>
+  >([]);
   const [alertThresholds, setAlertThresholds] = useState(() => {
-    const saved = localStorage.getItem("AgroLogistic-alert-thresholds");
+    const saved = localStorage.getItem('AgroLogistic-alert-thresholds');
     if (saved) {
       try {
         return JSON.parse(saved);
       } catch (e) {
-        console.error("Failed to parse alert thresholds", e);
+        console.error('Failed to parse alert thresholds', e);
       }
     }
     return {
-      stressHydrique: { enabled: true, value: 30, unit: "%" },
-      temperatureCritique: { enabled: true, value: 35, unit: "°C" },
-      risqueMaladie: { enabled: true, value: 7, unit: "/10" },
-      ndviFaible: { enabled: true, value: 0.6, unit: "" },
+      stressHydrique: { enabled: true, value: 30, unit: '%' },
+      temperatureCritique: { enabled: true, value: 35, unit: '°C' },
+      risqueMaladie: { enabled: true, value: 7, unit: '/10' },
+      ndviFaible: { enabled: true, value: 0.6, unit: '' },
     };
   });
   const [showNotificationsPanel, setShowNotificationsPanel] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
 
   // Current date and time
-  const currentDate = new Date().toLocaleDateString("fr-FR", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+  const currentDate = new Date().toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   });
-  const currentTime = new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  const currentTime = new Date().toLocaleTimeString('fr-FR', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 
   // KPI Data
   const kpis = [
     {
-      id: "yield",
-      label: "Rendement Estimé",
-      value: "68,4",
-      unit: "t/ha",
+      id: 'yield',
+      label: 'Rendement Estimé',
+      value: '68,4',
+      unit: 't/ha',
       trend: 12.5,
       positive: true,
       icon: Leaf,
-      color: "green",
+      color: 'green',
     },
     {
-      id: "cost",
-      label: "Coût de Production",
-      value: "1.240",
-      unit: "€/ha",
+      id: 'cost',
+      label: 'Coût de Production',
+      value: '1.240',
+      unit: '€/ha',
       trend: -3.2,
       positive: true,
       icon: DollarSign,
-      color: "blue",
+      color: 'blue',
     },
     {
-      id: "margin",
-      label: "Marge Brute",
-      value: "3.450",
-      unit: "€/ha",
+      id: 'margin',
+      label: 'Marge Brute',
+      value: '3.450',
+      unit: '€/ha',
       trend: 8.4,
       positive: true,
       icon: TrendingUp,
-      color: "emerald",
+      color: 'emerald',
     },
     {
-      id: "health",
-      label: "Indice de Santé",
-      value: "92",
-      unit: "/100",
+      id: 'health',
+      label: 'Indice de Santé',
+      value: '92',
+      unit: '/100',
       trend: 2.1,
       positive: true,
       icon: Activity,
-      color: "green",
+      color: 'green',
     },
     {
-      id: "carbon",
-      label: "GES Économisés",
-      value: "4,2",
-      unit: "t CO2e",
+      id: 'carbon',
+      label: 'GES Économisés',
+      value: '4,2',
+      unit: 't CO2e',
       trend: 15.3,
       positive: true,
       icon: Leaf,
-      color: "emerald",
+      color: 'emerald',
     },
   ];
 
   // Parcel data
   const parcels = [
-    { id: "P1", name: "Parcelle Nord", area: 12.5, crop: "Blé", ndvi: 0.78, health: 94 },
-    { id: "P2", name: "Parcelle Sud", area: 8.3, crop: "Maïs", ndvi: 0.82, health: 91 },
-    { id: "P3", name: "Parcelle Est", area: 15.2, crop: "Tournesol", ndvi: 0.68, health: 87 },
-    { id: "P4", name: "Parcelle Ouest", area: 10.8, crop: "Colza", ndvi: 0.75, health: 89 },
+    { id: 'P1', name: 'Parcelle Nord', area: 12.5, crop: 'Blé', ndvi: 0.78, health: 94 },
+    { id: 'P2', name: 'Parcelle Sud', area: 8.3, crop: 'Maïs', ndvi: 0.82, health: 91 },
+    { id: 'P3', name: 'Parcelle Est', area: 15.2, crop: 'Tournesol', ndvi: 0.68, health: 87 },
+    { id: 'P4', name: 'Parcelle Ouest', area: 10.8, crop: 'Colza', ndvi: 0.75, health: 89 },
   ];
 
   // Map layers
   const mapLayers = [
-    { id: "ndvi", name: "NDVI (Santé)", icon: Leaf, color: "green" },
-    { id: "moisture", name: "Humidité Sol", icon: Droplet, color: "blue" },
-    { id: "temperature", name: "Température", icon: ThermometerSun, color: "orange" },
-    { id: "biomass", name: "Biomasse", icon: Sprout, color: "emerald" },
-    { id: "stress", name: "Stress Hydrique", icon: AlertTriangle, color: "red" },
+    { id: 'ndvi', name: 'NDVI (Santé)', icon: Leaf, color: 'green' },
+    { id: 'moisture', name: 'Humidité Sol', icon: Droplet, color: 'blue' },
+    { id: 'temperature', name: 'Température', icon: ThermometerSun, color: 'orange' },
+    { id: 'biomass', name: 'Biomasse', icon: Sprout, color: 'emerald' },
+    { id: 'stress', name: 'Stress Hydrique', icon: AlertTriangle, color: 'red' },
   ];
 
   // Weather data
   const weatherData = {
     current: { temp: 22, humidity: 65, wind: 12, rain: 0 },
     forecast: [
-      { day: "Lun", temp: 24, rain: 10, icon: Sun },
-      { day: "Mar", temp: 23, rain: 20, icon: CloudRain },
-      { day: "Mer", temp: 21, rain: 60, icon: CloudRain },
-      { day: "Jeu", temp: 25, rain: 5, icon: Sun },
-      { day: "Ven", temp: 26, rain: 0, icon: Sun },
-      { day: "Sam", temp: 27, rain: 15, icon: Sun },
-      { day: "Dim", temp: 25, rain: 30, icon: CloudRain },
+      { day: 'Lun', temp: 24, rain: 10, icon: Sun },
+      { day: 'Mar', temp: 23, rain: 20, icon: CloudRain },
+      { day: 'Mer', temp: 21, rain: 60, icon: CloudRain },
+      { day: 'Jeu', temp: 25, rain: 5, icon: Sun },
+      { day: 'Ven', temp: 26, rain: 0, icon: Sun },
+      { day: 'Sam', temp: 27, rain: 15, icon: Sun },
+      { day: 'Dim', temp: 25, rain: 30, icon: CloudRain },
     ],
   };
 
   // Alerts
   const alerts = [
     {
-      id: "1",
-      type: "critical",
-      title: "Risque de mildiou détecté",
-      message: "Conditions favorables au développement - Parcelle Nord",
-      time: "Il y a 2h",
+      id: '1',
+      type: 'critical',
+      title: 'Risque de mildiou détecté',
+      message: 'Conditions favorables au développement - Parcelle Nord',
+      time: 'Il y a 2h',
     },
     {
-      id: "2",
-      type: "warning",
-      title: "Stress hydrique modéré",
-      message: "Envisager irrigation - Parcelle Est",
-      time: "Il y a 5h",
+      id: '2',
+      type: 'warning',
+      title: 'Stress hydrique modéré',
+      message: 'Envisager irrigation - Parcelle Est',
+      time: 'Il y a 5h',
     },
     {
-      id: "3",
-      type: "info",
-      title: "Fenêtre de traitement optimale",
-      message: "Conditions idéales pour traitement fongicide - Demain 6h-10h",
-      time: "Il y a 1h",
+      id: '3',
+      type: 'info',
+      title: 'Fenêtre de traitement optimale',
+      message: 'Conditions idéales pour traitement fongicide - Demain 6h-10h',
+      time: 'Il y a 1h',
     },
   ];
 
   // Disease risk data
   const diseaseRisks = [
-    { name: "Mildiou", risk: 8, parcels: ["P1"], treatment: "Fongicide curatif", cost: 45 },
-    { name: "Oïdium", risk: 4, parcels: ["P2"], treatment: "Soufre", cost: 28 },
-    { name: "Rouille", risk: 3, parcels: ["P3", "P4"], treatment: "Triazole", cost: 38 },
+    { name: 'Mildiou', risk: 8, parcels: ['P1'], treatment: 'Fongicide curatif', cost: 45 },
+    { name: 'Oïdium', risk: 4, parcels: ['P2'], treatment: 'Soufre', cost: 28 },
+    { name: 'Rouille', risk: 3, parcels: ['P3', 'P4'], treatment: 'Triazole', cost: 38 },
   ];
 
   // Yield prediction data
   const yieldPrediction = [
-    { month: "Jan", actual: null, predicted: 45, min: 40, max: 50 },
-    { month: "Fév", actual: null, predicted: 48, min: 43, max: 53 },
-    { month: "Mar", actual: null, predicted: 52, min: 47, max: 57 },
-    { month: "Avr", actual: null, predicted: 58, min: 52, max: 64 },
-    { month: "Mai", actual: null, predicted: 64, min: 58, max: 70 },
-    { month: "Juin", actual: null, predicted: 68.4, min: 62, max: 75 },
+    { month: 'Jan', actual: null, predicted: 45, min: 40, max: 50 },
+    { month: 'Fév', actual: null, predicted: 48, min: 43, max: 53 },
+    { month: 'Mar', actual: null, predicted: 52, min: 47, max: 57 },
+    { month: 'Avr', actual: null, predicted: 58, min: 52, max: 64 },
+    { month: 'Mai', actual: null, predicted: 64, min: 58, max: 70 },
+    { month: 'Juin', actual: null, predicted: 68.4, min: 62, max: 75 },
   ];
 
   // Enhanced AI forecasts with confidence intervals for different horizons
   const forecastData = {
-    "3m": {
+    '3m': {
       confidence: 92,
       predictions: [
-        { month: "Mois 1", value: 68.4, lower: 65.2, upper: 71.6, confidence: 92 },
-        { month: "Mois 2", value: 70.1, lower: 66.3, upper: 73.9, confidence: 89 },
-        { month: "Mois 3", value: 72.5, lower: 67.8, upper: 77.2, confidence: 85 },
+        { month: 'Mois 1', value: 68.4, lower: 65.2, upper: 71.6, confidence: 92 },
+        { month: 'Mois 2', value: 70.1, lower: 66.3, upper: 73.9, confidence: 89 },
+        { month: 'Mois 3', value: 72.5, lower: 67.8, upper: 77.2, confidence: 85 },
       ],
       keyFactors: [
-        { name: "Météo prévue", impact: 45, trend: "positive" },
-        { name: "Tendance marché", impact: 30, trend: "stable" },
-        { name: "Pratiques culturales", impact: 25, trend: "positive" },
+        { name: 'Météo prévue', impact: 45, trend: 'positive' },
+        { name: 'Tendance marché', impact: 30, trend: 'stable' },
+        { name: 'Pratiques culturales', impact: 25, trend: 'positive' },
       ],
     },
-    "6m": {
+    '6m': {
       confidence: 87,
       predictions: [
-        { month: "Mois 1", value: 68.4, lower: 65.2, upper: 71.6, confidence: 92 },
-        { month: "Mois 2", value: 70.1, lower: 66.3, upper: 73.9, confidence: 89 },
-        { month: "Mois 3", value: 72.5, lower: 67.8, upper: 77.2, confidence: 85 },
-        { month: "Mois 4", value: 75.3, lower: 69.1, upper: 81.5, confidence: 82 },
-        { month: "Mois 5", value: 78.8, lower: 71.2, upper: 86.4, confidence: 78 },
-        { month: "Mois 6", value: 82.1, lower: 73.5, upper: 90.7, confidence: 74 },
+        { month: 'Mois 1', value: 68.4, lower: 65.2, upper: 71.6, confidence: 92 },
+        { month: 'Mois 2', value: 70.1, lower: 66.3, upper: 73.9, confidence: 89 },
+        { month: 'Mois 3', value: 72.5, lower: 67.8, upper: 77.2, confidence: 85 },
+        { month: 'Mois 4', value: 75.3, lower: 69.1, upper: 81.5, confidence: 82 },
+        { month: 'Mois 5', value: 78.8, lower: 71.2, upper: 86.4, confidence: 78 },
+        { month: 'Mois 6', value: 82.1, lower: 73.5, upper: 90.7, confidence: 74 },
       ],
       keyFactors: [
-        { name: "Météo saisonnière", impact: 40, trend: "positive" },
-        { name: "Prix marché", impact: 25, trend: "stable" },
-        { name: "Rotation cultures", impact: 20, trend: "positive" },
-        { name: "Stress climatique", impact: 15, trend: "neutral" },
+        { name: 'Météo saisonnière', impact: 40, trend: 'positive' },
+        { name: 'Prix marché', impact: 25, trend: 'stable' },
+        { name: 'Rotation cultures', impact: 20, trend: 'positive' },
+        { name: 'Stress climatique', impact: 15, trend: 'neutral' },
       ],
     },
-    "12m": {
+    '12m': {
       confidence: 78,
       predictions: [
-        { month: "Mois 1", value: 68.4, lower: 65.2, upper: 71.6, confidence: 92 },
-        { month: "Mois 2", value: 70.1, lower: 66.3, upper: 73.9, confidence: 89 },
-        { month: "Mois 3", value: 72.5, lower: 67.8, upper: 77.2, confidence: 85 },
-        { month: "Mois 4", value: 75.3, lower: 69.1, upper: 81.5, confidence: 82 },
-        { month: "Mois 5", value: 78.8, lower: 71.2, upper: 86.4, confidence: 78 },
-        { month: "Mois 6", value: 82.1, lower: 73.5, upper: 90.7, confidence: 74 },
-        { month: "Mois 7", value: 85.6, lower: 75.3, upper: 95.9, confidence: 70 },
-        { month: "Mois 8", value: 88.2, lower: 76.8, upper: 99.6, confidence: 67 },
-        { month: "Mois 9", value: 90.5, lower: 77.9, upper: 103.1, confidence: 63 },
-        { month: "Mois 10", value: 92.1, lower: 78.2, upper: 106.0, confidence: 60 },
-        { month: "Mois 11", value: 93.8, lower: 78.5, upper: 109.1, confidence: 57 },
-        { month: "Mois 12", value: 95.2, lower: 78.6, upper: 111.8, confidence: 54 },
+        { month: 'Mois 1', value: 68.4, lower: 65.2, upper: 71.6, confidence: 92 },
+        { month: 'Mois 2', value: 70.1, lower: 66.3, upper: 73.9, confidence: 89 },
+        { month: 'Mois 3', value: 72.5, lower: 67.8, upper: 77.2, confidence: 85 },
+        { month: 'Mois 4', value: 75.3, lower: 69.1, upper: 81.5, confidence: 82 },
+        { month: 'Mois 5', value: 78.8, lower: 71.2, upper: 86.4, confidence: 78 },
+        { month: 'Mois 6', value: 82.1, lower: 73.5, upper: 90.7, confidence: 74 },
+        { month: 'Mois 7', value: 85.6, lower: 75.3, upper: 95.9, confidence: 70 },
+        { month: 'Mois 8', value: 88.2, lower: 76.8, upper: 99.6, confidence: 67 },
+        { month: 'Mois 9', value: 90.5, lower: 77.9, upper: 103.1, confidence: 63 },
+        { month: 'Mois 10', value: 92.1, lower: 78.2, upper: 106.0, confidence: 60 },
+        { month: 'Mois 11', value: 93.8, lower: 78.5, upper: 109.1, confidence: 57 },
+        { month: 'Mois 12', value: 95.2, lower: 78.6, upper: 111.8, confidence: 54 },
       ],
       keyFactors: [
-        { name: "Climat annuel", impact: 35, trend: "neutral" },
-        { name: "Marchés internationaux", impact: 25, trend: "volatile" },
-        { name: "Innovation technologique", impact: 20, trend: "positive" },
-        { name: "Réglementation", impact: 12, trend: "neutral" },
-        { name: "Disponibilité intrants", impact: 8, trend: "stable" },
+        { name: 'Climat annuel', impact: 35, trend: 'neutral' },
+        { name: 'Marchés internationaux', impact: 25, trend: 'volatile' },
+        { name: 'Innovation technologique', impact: 20, trend: 'positive' },
+        { name: 'Réglementation', impact: 12, trend: 'neutral' },
+        { name: 'Disponibilité intrants', impact: 8, trend: 'stable' },
       ],
     },
   };
@@ -320,27 +369,27 @@ export function AnalyticsDashboard() {
 
   // ROI data
   const roiData = [
-    { intervention: "Fertilisation", cost: 120, gain: 340, roi: 183 },
-    { intervention: "Traitement", cost: 65, gain: 180, roi: 177 },
-    { intervention: "Irrigation", cost: 85, gain: 210, roi: 147 },
-    { intervention: "Semences Premium", cost: 95, gain: 245, roi: 158 },
+    { intervention: 'Fertilisation', cost: 120, gain: 340, roi: 183 },
+    { intervention: 'Traitement', cost: 65, gain: 180, roi: 177 },
+    { intervention: 'Irrigation', cost: 85, gain: 210, roi: 147 },
+    { intervention: 'Semences Premium', cost: 95, gain: 245, roi: 158 },
   ];
 
   // Correlation matrix
   const correlationMatrix = [
-    { var1: "Rendement", var2: "Rendement", value: 1.0 },
-    { var1: "Rendement", var2: "Humidité", value: 0.76 },
-    { var1: "Rendement", var2: "Température", value: -0.32 },
-    { var1: "Humidité", var2: "Rendement", value: 0.76 },
-    { var1: "Humidité", var2: "Humidité", value: 1.0 },
-    { var1: "Humidité", var2: "Température", value: -0.45 },
-    { var1: "Température", var2: "Rendement", value: -0.32 },
-    { var1: "Température", var2: "Humidité", value: -0.45 },
-    { var1: "Température", var2: "Température", value: 1.0 },
+    { var1: 'Rendement', var2: 'Rendement', value: 1.0 },
+    { var1: 'Rendement', var2: 'Humidité', value: 0.76 },
+    { var1: 'Rendement', var2: 'Température', value: -0.32 },
+    { var1: 'Humidité', var2: 'Rendement', value: 0.76 },
+    { var1: 'Humidité', var2: 'Humidité', value: 1.0 },
+    { var1: 'Humidité', var2: 'Température', value: -0.45 },
+    { var1: 'Température', var2: 'Rendement', value: -0.32 },
+    { var1: 'Température', var2: 'Humidité', value: -0.45 },
+    { var1: 'Température', var2: 'Température', value: 1.0 },
   ];
 
   const handleRefreshData = () => {
-    toast.success("Données mises à jour");
+    toast.success('Données mises à jour');
   };
 
   const handleExport = (format: string) => {
@@ -352,10 +401,10 @@ export function AnalyticsDashboard() {
   const generateExportData = () => {
     const data: any = {
       metadata: {
-        title: "Tableau de Bord AgroLogistic - Analyse Complète",
+        title: 'Tableau de Bord AgroLogistic - Analyse Complète',
         date: new Date().toISOString(),
         period: selectedPeriod,
-        generatedBy: "AgroLogistic Analytics Engine v2.0",
+        generatedBy: 'AgroLogistic Analytics Engine v2.0',
       },
     };
 
@@ -384,10 +433,10 @@ export function AnalyticsDashboard() {
 
     if (exportContent.sensors) {
       data.sensors = [
-        { name: "Humidité Sol", value: "42%", status: "optimal" },
-        { name: "Température Sol", value: "18°C", status: "optimal" },
-        { name: "Luminosité (PAR)", value: "850 μmol", status: "optimal" },
-        { name: "Pluviométrie", value: "2.4 mm", status: "faible" },
+        { name: 'Humidité Sol', value: '42%', status: 'optimal' },
+        { name: 'Température Sol', value: '18°C', status: 'optimal' },
+        { name: 'Luminosité (PAR)', value: '850 μmol', status: 'optimal' },
+        { name: 'Pluviométrie', value: '2.4 mm', status: 'faible' },
       ];
     }
 
@@ -416,7 +465,7 @@ export function AnalyticsDashboard() {
     return data;
   };
 
-  const handleAdvancedExport = async (format: "pdf" | "excel" | "csv" | "ppt") => {
+  const handleAdvancedExport = async (format: 'pdf' | 'excel' | 'csv' | 'ppt') => {
     setIsExporting(true);
     setSelectedExportFormat(format);
 
@@ -427,29 +476,33 @@ export function AnalyticsDashboard() {
       const formatName = format.toUpperCase();
       const sections = Object.keys(data).length;
 
-      if (format === "pdf") {
-        toast.success(`Rapport PDF genere avec succes! ${sections} sections incluses`, { duration: 4000 });
-        console.log("PDF Export Data:", data);
-      } else if (format === "excel") {
+      if (format === 'pdf') {
+        toast.success(`Rapport PDF genere avec succes! ${sections} sections incluses`, {
+          duration: 4000,
+        });
+        console.log('PDF Export Data:', data);
+      } else if (format === 'excel') {
         const sheetNames: string[] = [];
-        if (exportContent.kpis) sheetNames.push("KPIs");
-        if (exportContent.forecasts) sheetNames.push("Previsions");
-        if (exportContent.economic) sheetNames.push("Analyse ROI");
-        toast.success(`Fichier Excel genere! ${sheetNames.length} feuilles creees`, { duration: 4000 });
-        console.log("Excel Export Data:", data);
-      } else if (format === "csv") {
+        if (exportContent.kpis) sheetNames.push('KPIs');
+        if (exportContent.forecasts) sheetNames.push('Previsions');
+        if (exportContent.economic) sheetNames.push('Analyse ROI');
+        toast.success(`Fichier Excel genere! ${sheetNames.length} feuilles creees`, {
+          duration: 4000,
+        });
+        console.log('Excel Export Data:', data);
+      } else if (format === 'csv') {
         const rowCount = data.kpis ? data.kpis.length : 0;
         toast.success(`Fichier CSV genere! ${rowCount} lignes exportees`, { duration: 4000 });
-        console.log("CSV Export Data:", data);
-      } else if (format === "ppt") {
+        console.log('CSV Export Data:', data);
+      } else if (format === 'ppt') {
         toast.success(`Presentation PowerPoint generee avec succes!`, { duration: 4000 });
-        console.log("PowerPoint Export Data:", data);
+        console.log('PowerPoint Export Data:', data);
       }
 
       setShowExportModal(false);
     } catch (error) {
       toast.error(`Erreur lors de l export ${format}`);
-      console.error("Export error:", error);
+      console.error('Export error:', error);
     } finally {
       setIsExporting(false);
       setSelectedExportFormat(null);
@@ -464,33 +517,73 @@ export function AnalyticsDashboard() {
   const toggleWidget = (widgetId: string) => {
     setDashboardLayout((prev) => ({
       ...prev,
-      widgets: prev.widgets.map((w) =>
-        w.id === widgetId ? { ...w, visible: !w.visible } : w
-      ),
+      widgets: prev.widgets.map((w) => (w.id === widgetId ? { ...w, visible: !w.visible } : w)),
     }));
   };
 
   const saveDashboardLayout = () => {
-    localStorage.setItem("AgroLogistic-dashboard-layout", JSON.stringify(dashboardLayout));
-    toast.success("Configuration du tableau de bord sauvegardee");
+    localStorage.setItem('AgroLogistic-dashboard-layout', JSON.stringify(dashboardLayout));
+    toast.success('Configuration du tableau de bord sauvegardee');
     setIsEditMode(false);
   };
 
   const resetDashboardLayout = () => {
     const defaultLayout = {
       widgets: [
-        { id: "w1", type: "kpi" as const, title: "KPIs Principaux", visible: true, position: { x: 0, y: 0, w: 12, h: 2 } },
-        { id: "w2", type: "forecast" as const, title: "Previsions IA", visible: true, position: { x: 0, y: 2, w: 8, h: 4 } },
-        { id: "w3", type: "weather" as const, title: "Meteo", visible: true, position: { x: 8, y: 2, w: 4, h: 4 } },
-        { id: "w4", type: "sensors" as const, title: "Capteurs IoT", visible: true, position: { x: 0, y: 6, w: 6, h: 3 } },
-        { id: "w5", type: "map" as const, title: "Carte Parcelles", visible: true, position: { x: 6, y: 6, w: 6, h: 3 } },
-        { id: "w6", type: "economic" as const, title: "Analyse ROI", visible: false, position: { x: 0, y: 9, w: 12, h: 3 } },
-        { id: "w7", type: "alerts" as const, title: "Alertes Actives", visible: false, position: { x: 0, y: 12, w: 12, h: 2 } },
+        {
+          id: 'w1',
+          type: 'kpi' as const,
+          title: 'KPIs Principaux',
+          visible: true,
+          position: { x: 0, y: 0, w: 12, h: 2 },
+        },
+        {
+          id: 'w2',
+          type: 'forecast' as const,
+          title: 'Previsions IA',
+          visible: true,
+          position: { x: 0, y: 2, w: 8, h: 4 },
+        },
+        {
+          id: 'w3',
+          type: 'weather' as const,
+          title: 'Meteo',
+          visible: true,
+          position: { x: 8, y: 2, w: 4, h: 4 },
+        },
+        {
+          id: 'w4',
+          type: 'sensors' as const,
+          title: 'Capteurs IoT',
+          visible: true,
+          position: { x: 0, y: 6, w: 6, h: 3 },
+        },
+        {
+          id: 'w5',
+          type: 'map' as const,
+          title: 'Carte Parcelles',
+          visible: true,
+          position: { x: 6, y: 6, w: 6, h: 3 },
+        },
+        {
+          id: 'w6',
+          type: 'economic' as const,
+          title: 'Analyse ROI',
+          visible: false,
+          position: { x: 0, y: 9, w: 12, h: 3 },
+        },
+        {
+          id: 'w7',
+          type: 'alerts' as const,
+          title: 'Alertes Actives',
+          visible: false,
+          position: { x: 0, y: 12, w: 12, h: 2 },
+        },
       ],
     };
     setDashboardLayout(defaultLayout);
-    localStorage.setItem("AgroLogistic-dashboard-layout", JSON.stringify(defaultLayout));
-    toast.success("Configuration reinitialis ee par defaut");
+    localStorage.setItem('AgroLogistic-dashboard-layout', JSON.stringify(defaultLayout));
+    toast.success('Configuration reinitialis ee par defaut');
   };
 
   // Alert management functions
@@ -503,11 +596,15 @@ export function AnalyticsDashboard() {
       if (actualHumidity < alertThresholds.stressHydrique.value) {
         newAlerts.push({
           id: `alert-sh-${Date.now()}`,
-          type: "warning",
-          title: "Stress hydrique detecte",
+          type: 'warning',
+          title: 'Stress hydrique detecte',
           message: `Humidite actuelle ${actualHumidity}% inferieure au seuil de ${alertThresholds.stressHydrique.value}%`,
           timestamp: new Date().toISOString(),
-          threshold: { metric: "Stress Hydrique", value: alertThresholds.stressHydrique.value, actual: actualHumidity },
+          threshold: {
+            metric: 'Stress Hydrique',
+            value: alertThresholds.stressHydrique.value,
+            actual: actualHumidity,
+          },
           read: false,
           dismissed: false,
         });
@@ -520,11 +617,15 @@ export function AnalyticsDashboard() {
       if (actualTemp > alertThresholds.temperatureCritique.value) {
         newAlerts.push({
           id: `alert-tc-${Date.now()}`,
-          type: "critical",
-          title: "Temperature critique atteinte",
+          type: 'critical',
+          title: 'Temperature critique atteinte',
           message: `Temperature actuelle ${actualTemp}C depasse le seuil de ${alertThresholds.temperatureCritique.value}C`,
           timestamp: new Date().toISOString(),
-          threshold: { metric: "Temperature", value: alertThresholds.temperatureCritique.value, actual: actualTemp },
+          threshold: {
+            metric: 'Temperature',
+            value: alertThresholds.temperatureCritique.value,
+            actual: actualTemp,
+          },
           read: false,
           dismissed: false,
         });
@@ -537,11 +638,17 @@ export function AnalyticsDashboard() {
         if (disease.risk >= alertThresholds.risqueMaladie.value) {
           newAlerts.push({
             id: `alert-rm-${disease.name}-${Date.now()}`,
-            type: disease.risk >= 8 ? "critical" : "warning",
+            type: disease.risk >= 8 ? 'critical' : 'warning',
             title: `Risque maladie eleve: ${disease.name}`,
-            message: `Risque de ${disease.name} a ${disease.risk}/10 sur parcelles ${disease.parcels.join(", ")}`,
+            message: `Risque de ${disease.name} a ${
+              disease.risk
+            }/10 sur parcelles ${disease.parcels.join(', ')}`,
             timestamp: new Date().toISOString(),
-            threshold: { metric: "Risque Maladie", value: alertThresholds.risqueMaladie.value, actual: disease.risk },
+            threshold: {
+              metric: 'Risque Maladie',
+              value: alertThresholds.risqueMaladie.value,
+              actual: disease.risk,
+            },
             read: false,
             dismissed: false,
           });
@@ -555,11 +662,15 @@ export function AnalyticsDashboard() {
         if (parcel.ndvi < alertThresholds.ndviFaible.value) {
           newAlerts.push({
             id: `alert-ndvi-${parcel.id}-${Date.now()}`,
-            type: "warning",
+            type: 'warning',
             title: `NDVI faible detecte: ${parcel.name}`,
             message: `NDVI de ${parcel.ndvi} inferieur au seuil de ${alertThresholds.ndviFaible.value}`,
             timestamp: new Date().toISOString(),
-            threshold: { metric: "NDVI", value: alertThresholds.ndviFaible.value, actual: parcel.ndvi },
+            threshold: {
+              metric: 'NDVI',
+              value: alertThresholds.ndviFaible.value,
+              actual: parcel.ndvi,
+            },
             read: false,
             dismissed: false,
           });
@@ -587,7 +698,7 @@ export function AnalyticsDashboard() {
   const clearAllAlerts = () => {
     setActiveAlerts([]);
     setNotificationCount(0);
-    toast.success("Toutes les alertes ont ete effacees");
+    toast.success('Toutes les alertes ont ete effacees');
   };
 
   const updateNotificationCount = () => {
@@ -597,8 +708,8 @@ export function AnalyticsDashboard() {
 
   const saveAlertThresholds = (newThresholds: typeof alertThresholds) => {
     setAlertThresholds(newThresholds);
-    localStorage.setItem("AgroLogistic-alert-thresholds", JSON.stringify(newThresholds));
-    toast.success("Seuils d alertes sauvegardes");
+    localStorage.setItem('AgroLogistic-alert-thresholds', JSON.stringify(newThresholds));
+    toast.success('Seuils d alertes sauvegardes');
   };
 
   const toggleVariable = (variable: string) => {
@@ -624,12 +735,12 @@ export function AnalyticsDashboard() {
 
         // Show toast for critical alerts
         newAlerts.forEach((alert) => {
-          if (alert.type === "critical") {
+          if (alert.type === 'critical') {
             toast.error(alert.title, {
               description: alert.message,
               duration: 8000,
             });
-          } else if (alert.type === "warning") {
+          } else if (alert.type === 'warning') {
             toast.warning(alert.title, {
               description: alert.message,
               duration: 6000,
@@ -655,9 +766,9 @@ export function AnalyticsDashboard() {
 
   const getAlertIcon = (type: string) => {
     switch (type) {
-      case "critical":
+      case 'critical':
         return <AlertTriangle className="h-5 w-5 text-red-600" />;
-      case "warning":
+      case 'warning':
         return <AlertTriangle className="h-5 w-5 text-orange-600" />;
       default:
         return <Info className="h-5 w-5 text-blue-600" />;
@@ -666,12 +777,12 @@ export function AnalyticsDashboard() {
 
   const getAlertColor = (type: string) => {
     switch (type) {
-      case "critical":
-        return "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800";
-      case "warning":
-        return "bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800";
+      case 'critical':
+        return 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800';
+      case 'warning':
+        return 'bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800';
       default:
-        return "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800";
+        return 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800';
     }
   };
 
@@ -748,19 +859,19 @@ export function AnalyticsDashboard() {
           </div>
           <div className="flex gap-2">
             {[
-              { value: "today", label: "Aujourd'hui" },
-              { value: "7d", label: "7 jours" },
-              { value: "30d", label: "30 jours" },
-              { value: "season", label: "Saison" },
-              { value: "custom", label: "Personnalisé" },
+              { value: 'today', label: "Aujourd'hui" },
+              { value: '7d', label: '7 jours' },
+              { value: '30d', label: '30 jours' },
+              { value: 'season', label: 'Saison' },
+              { value: 'custom', label: 'Personnalisé' },
             ].map((period) => (
               <button
                 key={period.value}
                 onClick={() => setSelectedPeriod(period.value)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   selectedPeriod === period.value
-                    ? "bg-[#27AE60] text-white"
-                    : "bg-muted hover:bg-muted/80"
+                    ? 'bg-[#27AE60] text-white'
+                    : 'bg-muted hover:bg-muted/80'
                 }`}
               >
                 {period.label}
@@ -786,7 +897,7 @@ export function AnalyticsDashboard() {
                 </div>
                 <div
                   className={`flex items-center gap-1 text-sm font-medium ${
-                    kpi.positive ? "text-green-600" : "text-red-600"
+                    kpi.positive ? 'text-green-600' : 'text-red-600'
                   }`}
                 >
                   {kpi.positive ? (
@@ -825,10 +936,7 @@ export function AnalyticsDashboard() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {alerts.map((alert) => (
-              <div
-                key={alert.id}
-                className={`p-3 border rounded-lg ${getAlertColor(alert.type)}`}
-              >
+              <div key={alert.id} className={`p-3 border rounded-lg ${getAlertColor(alert.type)}`}>
                 <div className="flex items-start gap-3">
                   {getAlertIcon(alert.type)}
                   <div className="flex-1 min-w-0">
@@ -874,7 +982,7 @@ export function AnalyticsDashboard() {
                     className={`px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all flex items-center gap-2 ${
                       activeLayer === layer.id
                         ? `bg-${layer.color}-600 text-white`
-                        : "bg-muted hover:bg-muted/80"
+                        : 'bg-muted hover:bg-muted/80'
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -907,8 +1015,8 @@ export function AnalyticsDashboard() {
                         }}
                         className={`p-4 border-2 rounded-lg text-left transition-all ${
                           selectedParcels.includes(parcel.id)
-                            ? "border-[#27AE60] bg-green-50 dark:bg-green-900/20"
-                            : "border-gray-300 hover:border-gray-400"
+                            ? 'border-[#27AE60] bg-green-50 dark:bg-green-900/20'
+                            : 'border-gray-300 hover:border-gray-400'
                         }`}
                       >
                         <div className="flex items-center justify-between mb-2">
@@ -975,17 +1083,17 @@ export function AnalyticsDashboard() {
             {/* Forecast Horizon Selector */}
             <div className="flex gap-2 mb-6">
               {[
-                { value: "3m" as const, label: "3 mois", desc: "Court terme" },
-                { value: "6m" as const, label: "6 mois", desc: "Moyen terme" },
-                { value: "12m" as const, label: "12 mois", desc: "Long terme" },
+                { value: '3m' as const, label: '3 mois', desc: 'Court terme' },
+                { value: '6m' as const, label: '6 mois', desc: 'Moyen terme' },
+                { value: '12m' as const, label: '12 mois', desc: 'Long terme' },
               ].map((horizon) => (
                 <button
                   key={horizon.value}
                   onClick={() => setForecastHorizon(horizon.value)}
                   className={`flex-1 p-3 rounded-lg border-2 transition-all ${
                     forecastHorizon === horizon.value
-                      ? "border-[#27AE60] bg-green-50 dark:bg-green-900/20"
-                      : "border-gray-200 hover:border-gray-300"
+                      ? 'border-[#27AE60] bg-green-50 dark:bg-green-900/20'
+                      : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   <div className="text-sm font-bold">{horizon.label}</div>
@@ -1036,7 +1144,9 @@ export function AnalyticsDashboard() {
                     // Upper bound
                     ...currentForecast.predictions.map(
                       (d, i) =>
-                        `${i === 0 ? "M" : "L"} ${60 + i * (720 / (currentForecast.predictions.length - 1))} ${300 - (d.upper / 125) * 260}`
+                        `${i === 0 ? 'M' : 'L'} ${
+                          60 + i * (720 / (currentForecast.predictions.length - 1))
+                        } ${300 - (d.upper / 125) * 260}`
                     ),
                     // Lower bound (reversed)
                     ...currentForecast.predictions
@@ -1044,10 +1154,14 @@ export function AnalyticsDashboard() {
                       .reverse()
                       .map(
                         (d, i) =>
-                          `L ${60 + (currentForecast.predictions.length - 1 - i) * (720 / (currentForecast.predictions.length - 1))} ${300 - (d.lower / 125) * 260}`
+                          `L ${
+                            60 +
+                            (currentForecast.predictions.length - 1 - i) *
+                              (720 / (currentForecast.predictions.length - 1))
+                          } ${300 - (d.lower / 125) * 260}`
                       ),
-                    "Z",
-                  ].join(" ")}
+                    'Z',
+                  ].join(' ')}
                   fill="url(#confidenceGradient)"
                   className="opacity-70"
                 />
@@ -1057,9 +1171,11 @@ export function AnalyticsDashboard() {
                   d={currentForecast.predictions
                     .map(
                       (d, i) =>
-                        `${i === 0 ? "M" : "L"} ${60 + i * (720 / (currentForecast.predictions.length - 1))} ${300 - (d.upper / 125) * 260}`
+                        `${i === 0 ? 'M' : 'L'} ${
+                          60 + i * (720 / (currentForecast.predictions.length - 1))
+                        } ${300 - (d.upper / 125) * 260}`
                     )
-                    .join(" ")}
+                    .join(' ')}
                   className="stroke-[#27AE60]"
                   strokeWidth="1.5"
                   strokeDasharray="5,5"
@@ -1072,9 +1188,11 @@ export function AnalyticsDashboard() {
                   d={currentForecast.predictions
                     .map(
                       (d, i) =>
-                        `${i === 0 ? "M" : "L"} ${60 + i * (720 / (currentForecast.predictions.length - 1))} ${300 - (d.lower / 125) * 260}`
+                        `${i === 0 ? 'M' : 'L'} ${
+                          60 + i * (720 / (currentForecast.predictions.length - 1))
+                        } ${300 - (d.lower / 125) * 260}`
                     )
-                    .join(" ")}
+                    .join(' ')}
                   className="stroke-[#27AE60]"
                   strokeWidth="1.5"
                   strokeDasharray="5,5"
@@ -1087,9 +1205,11 @@ export function AnalyticsDashboard() {
                   d={currentForecast.predictions
                     .map(
                       (d, i) =>
-                        `${i === 0 ? "M" : "L"} ${60 + i * (720 / (currentForecast.predictions.length - 1))} ${300 - (d.value / 125) * 260}`
+                        `${i === 0 ? 'M' : 'L'} ${
+                          60 + i * (720 / (currentForecast.predictions.length - 1))
+                        } ${300 - (d.value / 125) * 260}`
                     )
-                    .join(" ")}
+                    .join(' ')}
                   className="stroke-[#27AE60]"
                   strokeWidth="3"
                   fill="none"
@@ -1163,11 +1283,11 @@ export function AnalyticsDashboard() {
               <div className="space-y-2">
                 {currentForecast.keyFactors.map((factor) => {
                   const trendColors = {
-                    positive: "text-green-600",
-                    negative: "text-red-600",
-                    neutral: "text-gray-600",
-                    stable: "text-blue-600",
-                    volatile: "text-orange-600",
+                    positive: 'text-green-600',
+                    negative: 'text-red-600',
+                    neutral: 'text-gray-600',
+                    stable: 'text-blue-600',
+                    volatile: 'text-orange-600',
                   };
                   const trendIcons = {
                     positive: <TrendingUp className="h-3 w-3" />,
@@ -1181,7 +1301,11 @@ export function AnalyticsDashboard() {
                       <div className="flex justify-between text-sm mb-1">
                         <span className="flex items-center gap-2">
                           {factor.name}
-                          <span className={`flex items-center gap-1 text-xs ${trendColors[factor.trend as keyof typeof trendColors]}`}>
+                          <span
+                            className={`flex items-center gap-1 text-xs ${
+                              trendColors[factor.trend as keyof typeof trendColors]
+                            }`}
+                          >
                             {trendIcons[factor.trend as keyof typeof trendIcons]}
                           </span>
                         </span>
@@ -1230,8 +1354,8 @@ export function AnalyticsDashboard() {
                         <span
                           className={`px-2 py-1 rounded text-sm font-bold ${
                             row.roi > 150
-                              ? "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400"
-                              : "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400"
+                              ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                              : 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'
                           }`}
                         >
                           {row.roi}%
@@ -1253,9 +1377,9 @@ export function AnalyticsDashboard() {
               <h3 className="text-sm font-semibold mb-4">Simulation de Scénarios</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[
-                  { label: "Prix de vente", value: 180, unit: "€/t", min: 150, max: 250 },
-                  { label: "Coût engrais", value: 120, unit: "€/ha", min: 80, max: 180 },
-                  { label: "Rendement cible", value: 68, unit: "t/ha", min: 50, max: 90 },
+                  { label: 'Prix de vente', value: 180, unit: '€/t', min: 150, max: 250 },
+                  { label: 'Coût engrais', value: 120, unit: '€/ha', min: 80, max: 180 },
+                  { label: 'Rendement cible', value: 68, unit: 't/ha', min: 50, max: 90 },
                 ].map((slider) => (
                   <div key={slider.label}>
                     <label className="block text-sm font-medium mb-2">{slider.label}</label>
@@ -1319,7 +1443,10 @@ export function AnalyticsDashboard() {
               {weatherData.forecast.map((day, i) => {
                 const Icon = day.icon;
                 return (
-                  <div key={i} className="flex items-center justify-between p-2 hover:bg-muted rounded">
+                  <div
+                    key={i}
+                    className="flex items-center justify-between p-2 hover:bg-muted rounded"
+                  >
                     <span className="text-sm font-medium w-12">{day.day}</span>
                     <Icon className="h-5 w-5 text-muted-foreground" />
                     <span className="text-sm">{day.temp}°C</span>
@@ -1348,10 +1475,10 @@ export function AnalyticsDashboard() {
                     <span
                       className={`px-2 py-1 rounded text-xs font-bold ${
                         disease.risk >= 7
-                          ? "bg-red-100 text-red-700 dark:bg-red-900/20"
+                          ? 'bg-red-100 text-red-700 dark:bg-red-900/20'
                           : disease.risk >= 4
-                          ? "bg-orange-100 text-orange-700 dark:bg-orange-900/20"
-                          : "bg-green-100 text-green-700 dark:bg-green-900/20"
+                          ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/20'
+                          : 'bg-green-100 text-green-700 dark:bg-green-900/20'
                       }`}
                     >
                       Risque: {disease.risk}/10
@@ -1362,10 +1489,10 @@ export function AnalyticsDashboard() {
                     <div
                       className={`h-full ${
                         disease.risk >= 7
-                          ? "bg-red-600"
+                          ? 'bg-red-600'
                           : disease.risk >= 4
-                          ? "bg-orange-600"
-                          : "bg-green-600"
+                          ? 'bg-orange-600'
+                          : 'bg-green-600'
                       }`}
                       style={{ width: `${disease.risk * 10}%` }}
                     />
@@ -1374,7 +1501,7 @@ export function AnalyticsDashboard() {
                   <div className="text-xs space-y-2">
                     <div className="flex items-center gap-2">
                       <MapPin className="h-3 w-3 text-muted-foreground" />
-                      <span>Parcelles: {disease.parcels.join(", ")}</span>
+                      <span>Parcelles: {disease.parcels.join(', ')}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Zap className="h-3 w-3 text-muted-foreground" />
@@ -1406,39 +1533,44 @@ export function AnalyticsDashboard() {
             <div className="space-y-4">
               {[
                 {
-                  name: "Humidité Sol",
-                  value: "42%",
-                  status: "optimal",
+                  name: 'Humidité Sol',
+                  value: '42%',
+                  status: 'optimal',
                   icon: Droplet,
-                  color: "blue",
+                  color: 'blue',
                 },
                 {
-                  name: "Température Sol",
-                  value: "18°C",
-                  status: "optimal",
+                  name: 'Température Sol',
+                  value: '18°C',
+                  status: 'optimal',
                   icon: ThermometerSun,
-                  color: "orange",
+                  color: 'orange',
                 },
                 {
-                  name: "Luminosité (PAR)",
-                  value: "850 μmol",
-                  status: "optimal",
+                  name: 'Luminosité (PAR)',
+                  value: '850 μmol',
+                  status: 'optimal',
                   icon: Sun,
-                  color: "yellow",
+                  color: 'yellow',
                 },
                 {
-                  name: "Pluviométrie",
-                  value: "2.4 mm",
-                  status: "faible",
+                  name: 'Pluviométrie',
+                  value: '2.4 mm',
+                  status: 'faible',
                   icon: CloudRain,
-                  color: "blue",
+                  color: 'blue',
                 },
               ].map((sensor, i) => {
                 const Icon = sensor.icon;
                 return (
-                  <div key={i} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                  <div
+                    key={i}
+                    className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+                  >
                     <div className="flex items-center gap-3">
-                      <div className={`p-2 bg-${sensor.color}-100 dark:bg-${sensor.color}-900/20 rounded`}>
+                      <div
+                        className={`p-2 bg-${sensor.color}-100 dark:bg-${sensor.color}-900/20 rounded`}
+                      >
                         <Icon className={`h-4 w-4 text-${sensor.color}-600`} />
                       </div>
                       <div>
@@ -1450,7 +1582,7 @@ export function AnalyticsDashboard() {
                       <div className="font-bold">{sensor.value}</div>
                       <div
                         className={`text-xs ${
-                          sensor.status === "optimal" ? "text-green-600" : "text-orange-600"
+                          sensor.status === 'optimal' ? 'text-green-600' : 'text-orange-600'
                         }`}
                       >
                         {sensor.status}
@@ -1480,7 +1612,7 @@ export function AnalyticsDashboard() {
             </h2>
 
             <div className="space-y-2 mb-4">
-              {["Rendement", "Humidité", "Température", "NDVI", "Biomasse"].map((variable) => (
+              {['Rendement', 'Humidité', 'Température', 'NDVI', 'Biomasse'].map((variable) => (
                 <label
                   key={variable}
                   className="flex items-center gap-2 p-2 hover:bg-muted rounded cursor-pointer"
@@ -1524,13 +1656,11 @@ export function AnalyticsDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {["Rendement", "Humidité", "Température"].map((row) => (
+                {['Rendement', 'Humidité', 'Température'].map((row) => (
                   <tr key={row}>
                     <th className="p-2 border text-sm font-medium text-left">{row}</th>
-                    {["Rendement", "Humidité", "Température"].map((col) => {
-                      const cell = correlationMatrix.find(
-                        (c) => c.var1 === row && c.var2 === col
-                      );
+                    {['Rendement', 'Humidité', 'Température'].map((col) => {
+                      const cell = correlationMatrix.find((c) => c.var1 === row && c.var2 === col);
                       const value = cell?.value || 0;
                       const intensity = Math.abs(value);
                       return (
@@ -1542,7 +1672,7 @@ export function AnalyticsDashboard() {
                               value > 0
                                 ? `rgba(39, 174, 96, ${intensity})`
                                 : `rgba(231, 76, 60, ${intensity})`,
-                            color: intensity > 0.5 ? "white" : "inherit",
+                            color: intensity > 0.5 ? 'white' : 'inherit',
                           }}
                         >
                           {value.toFixed(2)}
@@ -1611,25 +1741,27 @@ export function AnalyticsDashboard() {
                 <div className="space-y-3">
                   {activeAlerts
                     .filter((a) => !a.dismissed)
-                    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+                    .sort(
+                      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+                    )
                     .map((alert) => (
                       <div
                         key={alert.id}
                         className={`border rounded-lg p-4 transition-all ${
-                          alert.read ? "bg-muted/30" : "bg-card"
+                          alert.read ? 'bg-muted/30' : 'bg-card'
                         } ${
-                          alert.type === "critical"
-                            ? "border-red-300 dark:border-red-800"
-                            : alert.type === "warning"
-                            ? "border-orange-300 dark:border-orange-800"
-                            : "border-blue-300 dark:border-blue-800"
+                          alert.type === 'critical'
+                            ? 'border-red-300 dark:border-red-800'
+                            : alert.type === 'warning'
+                            ? 'border-orange-300 dark:border-orange-800'
+                            : 'border-blue-300 dark:border-blue-800'
                         }`}
                       >
                         <div className="flex items-start gap-3">
                           <div className="flex-shrink-0 mt-0.5">
-                            {alert.type === "critical" ? (
+                            {alert.type === 'critical' ? (
                               <AlertTriangle className="h-5 w-5 text-red-600" />
-                            ) : alert.type === "warning" ? (
+                            ) : alert.type === 'warning' ? (
                               <AlertTriangle className="h-5 w-5 text-orange-600" />
                             ) : (
                               <Info className="h-5 w-5 text-blue-600" />
@@ -1658,13 +1790,15 @@ export function AnalyticsDashboard() {
                               </div>
                               <div className="flex justify-between">
                                 <span>Actuel:</span>
-                                <span className="font-bold text-red-600">{alert.threshold.actual}</span>
+                                <span className="font-bold text-red-600">
+                                  {alert.threshold.actual}
+                                </span>
                               </div>
                             </div>
 
                             <div className="flex items-center justify-between">
                               <span className="text-xs text-muted-foreground">
-                                {new Date(alert.timestamp).toLocaleString("fr-FR")}
+                                {new Date(alert.timestamp).toLocaleString('fr-FR')}
                               </span>
 
                               <div className="flex gap-2">
@@ -1704,7 +1838,10 @@ export function AnalyticsDashboard() {
                 <Settings className="h-5 w-5 text-[#27AE60]" />
                 Personnaliser le Tableau de Bord
               </h2>
-              <button onClick={() => setShowCustomizeModal(false)} className="p-1 hover:bg-muted rounded">
+              <button
+                onClick={() => setShowCustomizeModal(false)}
+                className="p-1 hover:bg-muted rounded"
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -1758,8 +1895,8 @@ export function AnalyticsDashboard() {
                       Personnalisation Avancee
                     </div>
                     <p className="text-blue-800 dark:text-blue-200">
-                      Votre configuration est automatiquement sauvegardee localement. 
-                      Pour reorganiser les widgets, activez le mode edition avec le bouton en haut.
+                      Votre configuration est automatiquement sauvegardee localement. Pour
+                      reorganiser les widgets, activez le mode edition avec le bouton en haut.
                     </p>
                   </div>
                 </div>
@@ -1813,7 +1950,10 @@ export function AnalyticsDashboard() {
           <div className="bg-card border rounded-lg shadow-xl w-full max-w-md">
             <div className="px-6 py-4 border-b flex items-center justify-between">
               <h2 className="text-xl font-bold">Exporter le Rapport</h2>
-              <button onClick={() => setShowExportModal(false)} className="p-1 hover:bg-muted rounded">
+              <button
+                onClick={() => setShowExportModal(false)}
+                className="p-1 hover:bg-muted rounded"
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -1822,7 +1962,7 @@ export function AnalyticsDashboard() {
               <div>
                 <label className="block text-sm font-medium mb-2">Format</label>
                 <div className="grid grid-cols-2 gap-2">
-                  {["PDF", "Excel", "PowerPoint", "CSV"].map((format) => (
+                  {['PDF', 'Excel', 'PowerPoint', 'CSV'].map((format) => (
                     <button
                       key={format}
                       onClick={() => handleExport(format.toLowerCase())}
@@ -1837,18 +1977,22 @@ export function AnalyticsDashboard() {
               <div>
                 <label className="block text-sm font-medium mb-2">Contenu</label>
                 <div className="space-y-2">
-                  {["KPIs", "Carte des parcelles", "Prévisions", "Analyse économique", "Données capteurs"].map(
-                    (item) => (
-                      <label key={item} className="flex items-center gap-2 text-sm">
-                        <input
-                          type="checkbox"
-                          defaultChecked
-                          className="h-4 w-4 rounded border-gray-300 text-[#27AE60] focus:ring-[#27AE60]"
-                        />
-                        {item}
-                      </label>
-                    )
-                  )}
+                  {[
+                    'KPIs',
+                    'Carte des parcelles',
+                    'Prévisions',
+                    'Analyse économique',
+                    'Données capteurs',
+                  ].map((item) => (
+                    <label key={item} className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        defaultChecked
+                        className="h-4 w-4 rounded border-gray-300 text-[#27AE60] focus:ring-[#27AE60]"
+                      />
+                      {item}
+                    </label>
+                  ))}
                 </div>
               </div>
             </div>
@@ -1861,7 +2005,7 @@ export function AnalyticsDashboard() {
                 Annuler
               </button>
               <button
-                onClick={() => handleExport("pdf")}
+                onClick={() => handleExport('pdf')}
                 className="px-6 py-2 bg-[#27AE60] text-white rounded-lg hover:bg-[#229954] transition-colors"
               >
                 Exporter
@@ -1877,17 +2021,20 @@ export function AnalyticsDashboard() {
           <div className="bg-card border rounded-lg shadow-xl w-full max-w-2xl">
             <div className="px-6 py-4 border-b flex items-center justify-between">
               <h2 className="text-xl font-bold">Configuration des Alertes</h2>
-              <button onClick={() => setShowAlertConfig(false)} className="p-1 hover:bg-muted rounded">
+              <button
+                onClick={() => setShowAlertConfig(false)}
+                className="p-1 hover:bg-muted rounded"
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             <div className="p-6 space-y-6">
               {[
-                { name: "Stress hydrique", threshold: 30, unit: "%" },
-                { name: "Température critique", threshold: 35, unit: "°C" },
-                { name: "Risque maladie", threshold: 7, unit: "/10" },
-                { name: "NDVI faible", threshold: 0.6, unit: "" },
+                { name: 'Stress hydrique', threshold: 30, unit: '%' },
+                { name: 'Température critique', threshold: 35, unit: '°C' },
+                { name: 'Risque maladie', threshold: 7, unit: '/10' },
+                { name: 'NDVI faible', threshold: 0.6, unit: '' },
               ].map((alert) => (
                 <div key={alert.name} className="space-y-2">
                   <div className="flex justify-between">
@@ -1930,7 +2077,7 @@ export function AnalyticsDashboard() {
               </button>
               <button
                 onClick={() => {
-                  toast.success("Alertes configurées");
+                  toast.success('Alertes configurées');
                   setShowAlertConfig(false);
                 }}
                 className="px-6 py-2 bg-[#27AE60] text-white rounded-lg hover:bg-[#229954] transition-colors"
@@ -1951,7 +2098,10 @@ export function AnalyticsDashboard() {
                 <Target className="h-5 w-5 text-[#27AE60]" />
                 Détails des Prévisions IA - {forecastHorizon.toUpperCase()}
               </h2>
-              <button onClick={() => setShowForecastDetails(false)} className="p-1 hover:bg-muted rounded">
+              <button
+                onClick={() => setShowForecastDetails(false)}
+                className="p-1 hover:bg-muted rounded"
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -1962,12 +2112,18 @@ export function AnalyticsDashboard() {
                 <div className="flex items-center justify-between mb-3">
                   <div>
                     <div className="text-sm text-muted-foreground">Indice de Confiance Global</div>
-                    <div className="text-3xl font-bold text-[#27AE60]">{currentForecast.confidence}%</div>
+                    <div className="text-3xl font-bold text-[#27AE60]">
+                      {currentForecast.confidence}%
+                    </div>
                   </div>
                   <div className="text-right">
                     <div className="text-sm text-muted-foreground">Horizon de prévision</div>
                     <div className="text-2xl font-bold">
-                      {forecastHorizon === "3m" ? "3 mois" : forecastHorizon === "6m" ? "6 mois" : "12 mois"}
+                      {forecastHorizon === '3m'
+                        ? '3 mois'
+                        : forecastHorizon === '6m'
+                        ? '6 mois'
+                        : '12 mois'}
                     </div>
                   </div>
                 </div>
@@ -1978,7 +2134,11 @@ export function AnalyticsDashboard() {
                   />
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
-                  🎯 Basé sur {forecastHorizon === "3m" ? "120" : forecastHorizon === "6m" ? "240" : "480"} points de données historiques et {forecastHorizon === "3m" ? "15" : forecastHorizon === "6m" ? "28" : "48"} variables contextuelles
+                  🎯 Basé sur{' '}
+                  {forecastHorizon === '3m' ? '120' : forecastHorizon === '6m' ? '240' : '480'}{' '}
+                  points de données historiques et{' '}
+                  {forecastHorizon === '3m' ? '15' : forecastHorizon === '6m' ? '28' : '48'}{' '}
+                  variables contextuelles
                 </p>
               </div>
 
@@ -2005,13 +2165,20 @@ export function AnalyticsDashboard() {
                         {currentForecast.predictions.map((pred, index) => {
                           const spread = pred.upper - pred.lower;
                           return (
-                            <tr key={index} className="border-t hover:bg-muted/30 transition-colors">
+                            <tr
+                              key={index}
+                              className="border-t hover:bg-muted/30 transition-colors"
+                            >
                               <td className="px-4 py-3 font-medium">{pred.month}</td>
                               <td className="px-4 py-3 text-right font-bold text-[#27AE60]">
                                 {pred.value.toFixed(1)} t/ha
                               </td>
-                              <td className="px-4 py-3 text-right text-sm">{pred.lower.toFixed(1)} t/ha</td>
-                              <td className="px-4 py-3 text-right text-sm">{pred.upper.toFixed(1)} t/ha</td>
+                              <td className="px-4 py-3 text-right text-sm">
+                                {pred.lower.toFixed(1)} t/ha
+                              </td>
+                              <td className="px-4 py-3 text-right text-sm">
+                                {pred.upper.toFixed(1)} t/ha
+                              </td>
                               <td className="px-4 py-3 text-right text-sm text-muted-foreground">
                                 ±{(spread / 2).toFixed(1)}
                               </td>
@@ -2019,10 +2186,10 @@ export function AnalyticsDashboard() {
                                 <span
                                   className={`px-2 py-1 rounded text-xs font-bold ${
                                     pred.confidence >= 85
-                                      ? "bg-green-100 text-green-700 dark:bg-green-900/20"
+                                      ? 'bg-green-100 text-green-700 dark:bg-green-900/20'
                                       : pred.confidence >= 70
-                                      ? "bg-blue-100 text-blue-700 dark:bg-blue-900/20"
-                                      : "bg-orange-100 text-orange-700 dark:bg-orange-900/20"
+                                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/20'
+                                      : 'bg-orange-100 text-orange-700 dark:bg-orange-900/20'
                                   }`}
                                 >
                                   {pred.confidence}%
@@ -2046,11 +2213,36 @@ export function AnalyticsDashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {currentForecast.keyFactors.map((factor, index) => {
                     const trendConfig = {
-                      positive: { color: "green", icon: TrendingUp, label: "Positif", bg: "bg-green-50 dark:bg-green-900/20" },
-                      negative: { color: "red", icon: TrendingDown, label: "Négatif", bg: "bg-red-50 dark:bg-red-900/20" },
-                      neutral: { color: "gray", icon: Minus, label: "Neutre", bg: "bg-gray-50 dark:bg-gray-900/20" },
-                      stable: { color: "blue", icon: CheckCircle, label: "Stable", bg: "bg-blue-50 dark:bg-blue-900/20" },
-                      volatile: { color: "orange", icon: AlertTriangle, label: "Volatil", bg: "bg-orange-50 dark:bg-orange-900/20" },
+                      positive: {
+                        color: 'green',
+                        icon: TrendingUp,
+                        label: 'Positif',
+                        bg: 'bg-green-50 dark:bg-green-900/20',
+                      },
+                      negative: {
+                        color: 'red',
+                        icon: TrendingDown,
+                        label: 'Négatif',
+                        bg: 'bg-red-50 dark:bg-red-900/20',
+                      },
+                      neutral: {
+                        color: 'gray',
+                        icon: Minus,
+                        label: 'Neutre',
+                        bg: 'bg-gray-50 dark:bg-gray-900/20',
+                      },
+                      stable: {
+                        color: 'blue',
+                        icon: CheckCircle,
+                        label: 'Stable',
+                        bg: 'bg-blue-50 dark:bg-blue-900/20',
+                      },
+                      volatile: {
+                        color: 'orange',
+                        icon: AlertTriangle,
+                        label: 'Volatil',
+                        bg: 'bg-orange-50 dark:bg-orange-900/20',
+                      },
                     };
                     const config = trendConfig[factor.trend as keyof typeof trendConfig];
                     const Icon = config.icon;
@@ -2059,7 +2251,9 @@ export function AnalyticsDashboard() {
                       <div key={index} className={`border rounded-lg p-4 ${config.bg}`}>
                         <div className="flex items-center justify-between mb-3">
                           <div className="font-medium">{factor.name}</div>
-                          <div className={`flex items-center gap-1 text-xs text-${config.color}-600`}>
+                          <div
+                            className={`flex items-center gap-1 text-xs text-${config.color}-600`}
+                          >
                             <Icon className="h-3 w-3" />
                             {config.label}
                           </div>
@@ -2091,8 +2285,15 @@ export function AnalyticsDashboard() {
                       Méthodologie IA
                     </div>
                     <p className="text-blue-800 dark:text-blue-200">
-                      Ces prévisions sont générées par un modèle d'apprentissage automatique (ensemble de réseaux neuronaux) entraîné sur {forecastHorizon === "3m" ? "5 ans" : forecastHorizon === "6m" ? "8 ans" : "15 ans"} de données historiques. 
-                      Les intervalles de confiance représentent une probabilité de 95% que la valeur réelle se situe dans la plage indiquée.
+                      Ces prévisions sont générées par un modèle d'apprentissage automatique
+                      (ensemble de réseaux neuronaux) entraîné sur{' '}
+                      {forecastHorizon === '3m'
+                        ? '5 ans'
+                        : forecastHorizon === '6m'
+                        ? '8 ans'
+                        : '15 ans'}{' '}
+                      de données historiques. Les intervalles de confiance représentent une
+                      probabilité de 95% que la valeur réelle se situe dans la plage indiquée.
                     </p>
                   </div>
                 </div>
@@ -2102,7 +2303,7 @@ export function AnalyticsDashboard() {
             <div className="px-6 py-4 border-t flex gap-3 justify-between">
               <button
                 onClick={() => {
-                  toast.success("Export des prévisions lancé");
+                  toast.success('Export des prévisions lancé');
                 }}
                 className="px-4 py-2 border rounded-lg hover:bg-muted transition-colors flex items-center gap-2"
               >

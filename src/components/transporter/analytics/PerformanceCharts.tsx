@@ -16,7 +16,7 @@ import {
   Cell,
   LineChart,
   Line,
-  Legend
+  Legend,
 } from 'recharts';
 import type { PerformanceMetrics } from '@/types/transporter';
 
@@ -35,7 +35,7 @@ export function PerformanceCharts({ metrics }: PerformanceChartsProps) {
 
   // Data for On-Time Delivery Pie Chart
   const onTimeData = [
-    { name: 'À l\'heure', value: metrics.onTimeDeliveries, color: '#22c55e' },
+    { name: "À l'heure", value: metrics.onTimeDeliveries, color: '#22c55e' },
     { name: 'En retard', value: metrics.lateDeliveries, color: '#ef4444' },
   ];
 
@@ -59,11 +59,23 @@ export function PerformanceCharts({ metrics }: PerformanceChartsProps) {
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
               <XAxis dataKey="name" />
               <YAxis />
-              <Tooltip 
-                formatter={(value: number) => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF', maximumFractionDigits: 0 }).format(value)}
+              <Tooltip
+                formatter={(value: number) =>
+                  new Intl.NumberFormat('fr-FR', {
+                    style: 'currency',
+                    currency: 'XOF',
+                    maximumFractionDigits: 0,
+                  }).format(value)
+                }
               />
               <Legend />
-              <Line type="monotone" dataKey="revenue" name="Revenus" stroke="#3b82f6" strokeWidth={3} />
+              <Line
+                type="monotone"
+                dataKey="revenue"
+                name="Revenus"
+                stroke="#3b82f6"
+                strokeWidth={3}
+              />
               <Line type="monotone" dataKey="costs" name="Coûts" stroke="#f97316" strokeWidth={3} />
             </LineChart>
           </ResponsiveContainer>
@@ -116,8 +128,8 @@ export function PerformanceCharts({ metrics }: PerformanceChartsProps) {
         </div>
         <div className="text-center mt-4">
           <div className="flex items-center justify-center gap-1 text-yellow-500 mb-1">
-             <span className="text-2xl font-bold">{metrics.averageRating}</span>
-             <span className="text-xl">★</span>
+            <span className="text-2xl font-bold">{metrics.averageRating}</span>
+            <span className="text-xl">★</span>
           </div>
           <p className="text-sm text-gray-500">Moyenne sur {metrics.totalRatings} avis</p>
         </div>

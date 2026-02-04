@@ -1,9 +1,14 @@
-import { Request, Response, NextFunction } from 'express';
-import { requireRole, requirePermission, adminOnly } from '../../../src/middleware/authorization.middleware';
+import { Response, NextFunction } from 'express';
+import type { AuthenticatedRequest } from '../../../src/middleware/auth.middleware';
+import {
+  requireRole,
+  requirePermission,
+  adminOnly,
+} from '../../../src/middleware/authorization.middleware';
 import { UserRole } from '../../../src/models/permission.model';
 
 describe('Authorization Middleware', () => {
-  let mockRequest: Partial<Request>;
+  let mockRequest: Partial<AuthenticatedRequest>;
   let mockResponse: Partial<Response>;
   let mockNext: NextFunction;
 
@@ -32,11 +37,7 @@ describe('Authorization Middleware', () => {
       };
 
       const middleware = requireRole(UserRole.BUYER);
-      middleware(
-        mockRequest as Request,
-        mockResponse as Response,
-        mockNext
-      );
+      middleware(mockRequest as AuthenticatedRequest, mockResponse as Response, mockNext);
 
       expect(mockNext).toHaveBeenCalled();
       expect(mockResponse.status).not.toHaveBeenCalled();
@@ -51,11 +52,7 @@ describe('Authorization Middleware', () => {
       };
 
       const middleware = requireRole(UserRole.ADMIN);
-      middleware(
-        mockRequest as Request,
-        mockResponse as Response,
-        mockNext
-      );
+      middleware(mockRequest as AuthenticatedRequest, mockResponse as Response, mockNext);
 
       expect(mockResponse.status).toHaveBeenCalledWith(403);
       expect(mockNext).not.toHaveBeenCalled();
@@ -65,11 +62,7 @@ describe('Authorization Middleware', () => {
       mockRequest.user = undefined;
 
       const middleware = requireRole(UserRole.BUYER);
-      middleware(
-        mockRequest as Request,
-        mockResponse as Response,
-        mockNext
-      );
+      middleware(mockRequest as AuthenticatedRequest, mockResponse as Response, mockNext);
 
       expect(mockResponse.status).toHaveBeenCalledWith(401);
       expect(mockNext).not.toHaveBeenCalled();
@@ -84,11 +77,7 @@ describe('Authorization Middleware', () => {
       };
 
       const middleware = requireRole(UserRole.BUYER, UserRole.ADMIN);
-      middleware(
-        mockRequest as Request,
-        mockResponse as Response,
-        mockNext
-      );
+      middleware(mockRequest as AuthenticatedRequest, mockResponse as Response, mockNext);
 
       expect(mockNext).toHaveBeenCalled();
     });
@@ -104,11 +93,7 @@ describe('Authorization Middleware', () => {
       };
 
       const middleware = requirePermission('product:browse');
-      middleware(
-        mockRequest as Request,
-        mockResponse as Response,
-        mockNext
-      );
+      middleware(mockRequest as AuthenticatedRequest, mockResponse as Response, mockNext);
 
       expect(mockNext).toHaveBeenCalled();
     });
@@ -122,11 +107,7 @@ describe('Authorization Middleware', () => {
       };
 
       const middleware = requirePermission('order:create');
-      middleware(
-        mockRequest as Request,
-        mockResponse as Response,
-        mockNext
-      );
+      middleware(mockRequest as AuthenticatedRequest, mockResponse as Response, mockNext);
 
       expect(mockResponse.status).toHaveBeenCalledWith(403);
       expect(mockNext).not.toHaveBeenCalled();
@@ -141,11 +122,7 @@ describe('Authorization Middleware', () => {
       };
 
       const middleware = requirePermission('any:permission');
-      middleware(
-        mockRequest as Request,
-        mockResponse as Response,
-        mockNext
-      );
+      middleware(mockRequest as AuthenticatedRequest, mockResponse as Response, mockNext);
 
       expect(mockNext).toHaveBeenCalled();
     });
@@ -160,11 +137,7 @@ describe('Authorization Middleware', () => {
         permissions: ['*'],
       };
 
-      adminOnly(
-        mockRequest as Request,
-        mockResponse as Response,
-        mockNext
-      );
+      adminOnly(mockRequest as AuthenticatedRequest, mockResponse as Response, mockNext);
 
       expect(mockNext).toHaveBeenCalled();
     });
@@ -177,11 +150,7 @@ describe('Authorization Middleware', () => {
         permissions: ['product:browse'],
       };
 
-      adminOnly(
-        mockRequest as Request,
-        mockResponse as Response,
-        mockNext
-      );
+      adminOnly(mockRequest as AuthenticatedRequest, mockResponse as Response, mockNext);
 
       expect(mockResponse.status).toHaveBeenCalledWith(403);
       expect(mockNext).not.toHaveBeenCalled();

@@ -1,12 +1,12 @@
-import { Navbar } from "@/components/layout/Navbar"
-import { Footer } from "@/components/layout/Footer"
-import { HeroSection } from "@/components/landing/HeroSection"
-import { SolutionsGrid } from "@/components/landing/SolutionsGrid"
-import { ProductsShowcase } from "@/components/landing/ProductsShowcase"
-import { SocialProof } from "@/components/landing/SocialProof"
-import { BentoFeatures } from "@/components/landing/BentoFeatures"
-import { ProfileTabs } from "@/components/landing/ProfileTabs"
-import { FAQSection } from "@/components/landing/FAQSection"
+import { Navbar } from '@/components/layout/Navbar';
+import { Footer } from '@/components/layout/Footer';
+import { HeroSection } from '@/components/landing/HeroSection';
+import { SolutionsGrid } from '@/components/landing/SolutionsGrid';
+import { ProductsShowcase } from '@/components/landing/ProductsShowcase';
+import { SocialProof } from '@/components/landing/SocialProof';
+import { PerformanceInnovation } from '@/components/landing/PerformanceInnovation';
+import { ProfileTabs } from '@/components/landing/ProfileTabs';
+import { FAQSection } from '@/components/landing/FAQSection';
 
 export default function Home() {
   return (
@@ -19,10 +19,10 @@ export default function Home() {
         <SolutionsGrid />
         <ProductsShowcase />
         <SocialProof />
-        
+
         {/* Feature-rich sections */}
-        <BentoFeatures />
-        
+        <PerformanceInnovation />
+
         {/* Engagement sections */}
         <ProfileTabs />
         <FAQSection />
@@ -30,5 +30,5 @@ export default function Home() {
 
       <Footer />
     </div>
-  )
+  );
 }

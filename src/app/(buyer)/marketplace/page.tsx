@@ -19,7 +19,7 @@ import {
   ChevronDown,
   X,
   Check,
-  Scale
+  Scale,
 } from 'lucide-react';
 import type { Product, ProductCategory } from '@/types/buyer';
 
@@ -39,7 +39,8 @@ const categoryLabels: Record<ProductCategory, string> = {
 };
 
 export default function BuyerMarketplacePage() {
-  const { products, totalCount, facets, filters, updateFilters, resetFilters, isLoading } = useMarketplaceSearch();
+  const { products, totalCount, facets, filters, updateFilters, resetFilters, isLoading } =
+    useMarketplaceSearch();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(true);
   const [compareList, setCompareList] = useState<Product[]>([]);
@@ -53,10 +54,10 @@ export default function BuyerMarketplacePage() {
   };
 
   const toggleCompare = (product: Product) => {
-    setCompareList(prev => {
-      const exists = prev.find(p => p.id === product.id);
+    setCompareList((prev) => {
+      const exists = prev.find((p) => p.id === product.id);
       if (exists) {
-        return prev.filter(p => p.id !== product.id);
+        return prev.filter((p) => p.id !== product.id);
       }
       if (prev.length >= 3) return prev;
       return [...prev, product];
@@ -89,7 +90,9 @@ export default function BuyerMarketplacePage() {
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={`flex items-center gap-2 px-4 py-3 border rounded-xl text-sm font-medium transition-colors ${
-              showFilters ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+              showFilters
+                ? 'bg-slate-900 text-white border-slate-900'
+                : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
             }`}
           >
             <Filter className="w-4 h-4" />
@@ -98,13 +101,17 @@ export default function BuyerMarketplacePage() {
           <div className="flex bg-white border border-slate-200 rounded-xl p-1">
             <button
               onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-slate-100 text-slate-900' : 'text-slate-400'}`}
+              className={`p-2 rounded-lg transition-colors ${
+                viewMode === 'grid' ? 'bg-slate-100 text-slate-900' : 'text-slate-400'
+              }`}
             >
               <Grid3X3 className="w-5 h-5" />
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-2 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-slate-100 text-slate-900' : 'text-slate-400'}`}
+              className={`p-2 rounded-lg transition-colors ${
+                viewMode === 'list' ? 'bg-slate-100 text-slate-900' : 'text-slate-400'
+              }`}
             >
               <List className="w-5 h-5" />
             </button>
@@ -119,7 +126,10 @@ export default function BuyerMarketplacePage() {
             <div className="bg-white rounded-2xl border border-slate-200 p-6 sticky top-24">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="font-semibold text-slate-900">Filtres</h2>
-                <button onClick={resetFilters} className="text-sm text-amber-600 hover:text-amber-700">
+                <button
+                  onClick={resetFilters}
+                  className="text-sm text-amber-600 hover:text-amber-700"
+                >
                   Réinitialiser
                 </button>
               </div>
@@ -128,7 +138,7 @@ export default function BuyerMarketplacePage() {
               <div className="mb-6">
                 <h3 className="text-sm font-medium text-slate-900 mb-3">Catégories</h3>
                 <div className="space-y-2">
-                  {facets?.categories.map(cat => (
+                  {facets?.categories.map((cat) => (
                     <label key={cat.value} className="flex items-center gap-3 cursor-pointer">
                       <input
                         type="checkbox"
@@ -136,9 +146,11 @@ export default function BuyerMarketplacePage() {
                         onChange={(e) => {
                           const current = filters.categories || [];
                           if (e.target.checked) {
-                            updateFilters({ categories: [...current, cat.value as ProductCategory] });
+                            updateFilters({
+                              categories: [...current, cat.value as ProductCategory],
+                            });
                           } else {
-                            updateFilters({ categories: current.filter(c => c !== cat.value) });
+                            updateFilters({ categories: current.filter((c) => c !== cat.value) });
                           }
                         }}
                         className="w-4 h-4 rounded border-slate-300 text-amber-500 focus:ring-amber-500"
@@ -157,7 +169,9 @@ export default function BuyerMarketplacePage() {
                   <input
                     type="checkbox"
                     checked={filters.isOrganic === true}
-                    onChange={(e) => updateFilters({ isOrganic: e.target.checked ? true : undefined })}
+                    onChange={(e) =>
+                      updateFilters({ isOrganic: e.target.checked ? true : undefined })
+                    }
                     className="w-4 h-4 rounded border-slate-300 text-amber-500 focus:ring-amber-500"
                   />
                   <Leaf className="w-4 h-4 text-emerald-500" />
@@ -171,7 +185,10 @@ export default function BuyerMarketplacePage() {
                 <select
                   value={`${filters.sortBy || 'rating'}-${filters.sortOrder || 'desc'}`}
                   onChange={(e) => {
-                    const [sortBy, sortOrder] = e.target.value.split('-') as ['price' | 'rating', 'asc' | 'desc'];
+                    const [sortBy, sortOrder] = e.target.value.split('-') as [
+                      'price' | 'rating',
+                      'asc' | 'desc',
+                    ];
                     updateFilters({ sortBy, sortOrder });
                   }}
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-amber-500"
@@ -192,13 +209,19 @@ export default function BuyerMarketplacePage() {
               <div className="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
             </div>
           ) : (
-            <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6' : 'space-y-4'}>
+            <div
+              className={
+                viewMode === 'grid'
+                  ? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6'
+                  : 'space-y-4'
+              }
+            >
               {products.map((product) => (
                 <ProductCard
                   key={product.id}
                   product={product}
                   viewMode={viewMode}
-                  isInCompare={compareList.some(p => p.id === product.id)}
+                  isInCompare={compareList.some((p) => p.id === product.id)}
                   onToggleCompare={() => toggleCompare(product)}
                   formatCurrency={formatCurrency}
                 />
@@ -216,7 +239,7 @@ export default function BuyerMarketplacePage() {
             <span className="font-medium">{compareList.length} produit(s) à comparer</span>
           </div>
           <div className="flex items-center gap-2">
-            {compareList.map(p => (
+            {compareList.map((p) => (
               <div key={p.id} className="flex items-center gap-2 bg-slate-800 px-3 py-1 rounded-lg">
                 <span className="text-sm">{p.name}</span>
                 <button onClick={() => toggleCompare(p)} className="hover:text-red-400">
@@ -271,13 +294,22 @@ function ProductCard({
           <p className="text-sm text-slate-600 mt-2 line-clamp-1">{product.description}</p>
         </div>
         <div className="text-right">
-          <p className="text-xl font-bold text-slate-900">{formatCurrency(product.pricePerKg)}<span className="text-sm font-normal text-slate-500">/kg</span></p>
-          <p className="text-xs text-slate-500">Min. {product.minOrderQuantity} {product.unit}</p>
+          <p className="text-xl font-bold text-slate-900">
+            {formatCurrency(product.pricePerKg)}
+            <span className="text-sm font-normal text-slate-500">/kg</span>
+          </p>
+          <p className="text-xs text-slate-500">
+            Min. {product.minOrderQuantity} {product.unit}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={onToggleCompare}
-            className={`p-2 rounded-lg border transition-colors ${isInCompare ? 'bg-amber-100 border-amber-500 text-amber-600' : 'border-slate-200 text-slate-400 hover:text-slate-600'}`}
+            className={`p-2 rounded-lg border transition-colors ${
+              isInCompare
+                ? 'bg-amber-100 border-amber-500 text-amber-600'
+                : 'border-slate-200 text-slate-400 hover:text-slate-600'
+            }`}
           >
             <Scale className="w-5 h-5" />
           </button>
@@ -306,7 +338,11 @@ function ProductCard({
         <div className="absolute top-3 right-3 flex items-center gap-2">
           <button
             onClick={onToggleCompare}
-            className={`p-2 rounded-lg transition-colors ${isInCompare ? 'bg-amber-500 text-white' : 'bg-white/90 text-slate-600 hover:bg-amber-100'}`}
+            className={`p-2 rounded-lg transition-colors ${
+              isInCompare
+                ? 'bg-amber-500 text-white'
+                : 'bg-white/90 text-slate-600 hover:bg-amber-100'
+            }`}
           >
             <Scale className="w-4 h-4" />
           </button>
@@ -332,8 +368,13 @@ function ProductCard({
         <p className="text-sm text-slate-600 line-clamp-2 mb-4">{product.description}</p>
         <div className="flex items-end justify-between">
           <div>
-            <p className="text-2xl font-bold text-slate-900">{formatCurrency(product.pricePerKg)}<span className="text-sm font-normal text-slate-500">/kg</span></p>
-            <p className="text-xs text-slate-500">Min. {product.minOrderQuantity} {product.unit}</p>
+            <p className="text-2xl font-bold text-slate-900">
+              {formatCurrency(product.pricePerKg)}
+              <span className="text-sm font-normal text-slate-500">/kg</span>
+            </p>
+            <p className="text-xs text-slate-500">
+              Min. {product.minOrderQuantity} {product.unit}
+            </p>
           </div>
           <button className="px-4 py-2 bg-amber-500 text-white rounded-xl font-medium hover:bg-amber-600 transition-colors flex items-center gap-2">
             <ShoppingCart className="w-4 h-4" />

@@ -103,7 +103,11 @@ export default function FarmerLayout() {
                   : 'text-emerald-100 hover:bg-white/10'
               }`}
             >
-              <Icon className={`w-5 h-5 ${isActive ? 'text-emerald-600' : 'text-emerald-300 group-hover:text-white'}`} />
+              <Icon
+                className={`w-5 h-5 ${
+                  isActive ? 'text-emerald-600' : 'text-emerald-300 group-hover:text-white'
+                }`}
+              />
               <span className="font-medium">{item.name}</span>
               {isActive && <ChevronRight className="w-4 h-4 ml-auto text-emerald-400" />}
             </Link>
@@ -133,7 +137,10 @@ export default function FarmerLayout() {
             <p className="text-sm font-medium text-white truncate">Ibrahima Diallo</p>
             <p className="text-xs text-emerald-300">Agriculteur Premium</p>
           </div>
-          <Link to="/farmer/settings" className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+          <Link
+            to="/farmer/settings"
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+          >
             <Settings className="w-5 h-5 text-emerald-300" />
           </Link>
         </div>
@@ -145,7 +152,10 @@ export default function FarmerLayout() {
     <div className="min-h-screen bg-slate-100">
       {/* Mobile Sidebar */}
       <div className={`fixed inset-0 z-50 lg:hidden ${sidebarOpen ? 'block' : 'hidden'}`}>
-        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
+        <div
+          className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm"
+          onClick={() => setSidebarOpen(false)}
+        />
         <div className="fixed inset-y-0 left-0 w-80 bg-gradient-to-b from-emerald-600 via-emerald-700 to-emerald-900 shadow-2xl flex flex-col">
           <button
             onClick={() => setSidebarOpen(false)}
@@ -181,7 +191,11 @@ export default function FarmerLayout() {
               <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-xl">
                 <Calendar className="w-4 h-4 text-emerald-600" />
                 <span className="text-sm font-medium text-emerald-700">
-                  {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
+                  {new Date().toLocaleDateString('fr-FR', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                  })}
                 </span>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 rounded-xl">

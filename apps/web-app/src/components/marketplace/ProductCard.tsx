@@ -1,20 +1,20 @@
-"use client"
+'use client';
 
-import React from 'react'
-import { Product } from '@/data/marketplace-products'
-import { useCart } from '@/context/CartContext'
-import { ShoppingCart, Star, Plus, Minus } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
-import Link from 'next/link'
+import React from 'react';
+import { Product } from '@/data/marketplace-products';
+import { useCart } from '@/context/CartContext';
+import { ShoppingCart, Star, Plus, Minus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 interface ProductCardProps {
-  product: Product
-  isNew?: boolean
+  product: Product;
+  isNew?: boolean;
 }
 
 export function ProductCard({ product, isNew }: ProductCardProps) {
-  const { addToCart } = useCart()
+  const { addToCart } = useCart();
 
   return (
     <div className="group relative bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 overflow-hidden flex flex-col h-full">
@@ -27,8 +27,8 @@ export function ProductCard({ product, isNew }: ProductCardProps) {
 
       {/* Image Container */}
       <Link href={`/marketplace/${product.id}`} className="relative h-56 overflow-hidden">
-        <img 
-          src={product.image} 
+        <img
+          src={product.image}
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
@@ -52,7 +52,7 @@ export function ProductCard({ product, isNew }: ProductCardProps) {
             {product.name}
           </h3>
         </Link>
-        
+
         <p className="text-sm text-muted-foreground mb-4 line-clamp-2 flex-1">
           {product.description}
         </p>
@@ -66,11 +66,11 @@ export function ProductCard({ product, isNew }: ProductCardProps) {
               Par {product.unit}
             </span>
           </div>
-          
-          <Button 
+
+          <Button
             onClick={(e) => {
-              e.preventDefault()
-              addToCart(product)
+              e.preventDefault();
+              addToCart(product);
             }}
             size="icon"
             className="h-10 w-10 rounded-xl bg-primary hover:bg-orange-600 shadow-lg shadow-primary/10 transition-all hover:scale-110 active:scale-95"
@@ -80,5 +80,5 @@ export function ProductCard({ product, isNew }: ProductCardProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

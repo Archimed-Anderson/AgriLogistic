@@ -16,8 +16,8 @@ export default function MarketplaceProPage() {
     products && products.length > 0 ? products[0].id : null
   );
 
-  const currentProduct = products?.find(p => p.id === selectedProduct);
-  const currentAnalysis = marketAnalysis?.find(a => a.productId === selectedProduct);
+  const currentProduct = products?.find((p) => p.id === selectedProduct);
+  const currentAnalysis = marketAnalysis?.find((a) => a.productId === selectedProduct);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -26,7 +26,10 @@ export default function MarketplaceProPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
-              <Link to="/farmer/dashboard" className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
+              <Link
+                to="/farmer/dashboard"
+                className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
                 <ArrowLeft className="w-5 h-5" />
               </Link>
               <div>
@@ -59,13 +62,14 @@ export default function MarketplaceProPage() {
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <p className="text-sm text-gray-600 mb-1">Produits actifs</p>
               <p className="text-2xl font-bold text-gray-900">
-                {products?.filter(p => p.status === 'available').length || 0}
+                {products?.filter((p) => p.status === 'available').length || 0}
               </p>
             </div>
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <p className="text-sm text-gray-600 mb-1">Commandes en cours</p>
               <p className="text-2xl font-bold text-gray-900">
-                {orders?.filter(o => o.status !== 'delivered' && o.status !== 'cancelled').length || 0}
+                {orders?.filter((o) => o.status !== 'delivered' && o.status !== 'cancelled')
+                  .length || 0}
               </p>
             </div>
             <div className="bg-white rounded-lg border border-gray-200 p-4">
@@ -78,7 +82,9 @@ export default function MarketplaceProPage() {
               <p className="text-sm text-gray-600 mb-1">Note moyenne</p>
               <p className="text-2xl font-bold text-gray-900">
                 {products && products.length > 0
-                  ? (products.reduce((sum, p) => sum + p.ratings.average, 0) / products.length).toFixed(1)
+                  ? (
+                      products.reduce((sum, p) => sum + p.ratings.average, 0) / products.length
+                    ).toFixed(1)
                   : '0.0'}
                 <span className="text-lg text-yellow-500 ml-1">⭐</span>
               </p>

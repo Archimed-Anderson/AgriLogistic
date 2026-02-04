@@ -22,6 +22,8 @@ export type ProductType =
 
 // Coordonnées géographiques strictes [latitude, longitude]
 export type Coordinates = [number, number];
+/** Alias pour compatibilité avec les composants qui utilisent GeoCoordinates */
+export type GeoCoordinates = Coordinates;
 
 export interface LocationInfo {
   coordinates: Coordinates;

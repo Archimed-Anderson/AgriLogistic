@@ -1,36 +1,36 @@
-import { useEffect, useRef, useState } from "react";
-import { Apple, Beef, ChevronLeft, ChevronRight, Egg, Leaf, Milk, Sprout } from "lucide-react";
+import { useEffect, useRef, useState } from 'react';
+import { Apple, Beef, ChevronLeft, ChevronRight, Egg, Leaf, Milk, Sprout } from 'lucide-react';
 
 const slides = [
   {
-    title: "Fruits de Saison",
-    subtitle: "Découvrez notre sélection de fruits frais directement des producteurs",
-    color: "from-orange-500 to-red-500",
+    title: 'Fruits de Saison',
+    subtitle: 'Découvrez notre sélection de fruits frais directement des producteurs',
+    color: 'from-orange-500 to-red-500',
     IconComponent: Apple,
-    stats: { label: "Produits disponibles", value: "150+" }
+    stats: { label: 'Produits disponibles', value: '150+' },
   },
   {
-    title: "Nouveaux Producteurs",
+    title: 'Nouveaux Producteurs',
     subtitle: "Soutenez les agriculteurs locaux et l'économie circulaire",
-    color: "from-green-500 to-emerald-500",
+    color: 'from-green-500 to-emerald-500',
     IconComponent: Leaf,
-    stats: { label: "Producteurs partenaires", value: "500+" }
+    stats: { label: 'Producteurs partenaires', value: '500+' },
   },
   {
-    title: "Produits Bio",
-    subtitle: "100% certifiés agriculture biologique et traçables",
-    color: "from-blue-500 to-cyan-500",
+    title: 'Produits Bio',
+    subtitle: '100% certifiés agriculture biologique et traçables',
+    color: 'from-blue-500 to-cyan-500',
     IconComponent: Sprout,
-    stats: { label: "Certifications bio", value: "98%" }
+    stats: { label: 'Certifications bio', value: '98%' },
   },
 ];
 
 const heroCategories = [
-  { name: "Légumes", IconComponent: Leaf, count: 45 },
-  { name: "Fruits", IconComponent: Apple, count: 38 },
-  { name: "Produits Laitiers", IconComponent: Milk, count: 22 },
-  { name: "Viandes", IconComponent: Beef, count: 18 },
-  { name: "Œufs", IconComponent: Egg, count: 12 },
+  { name: 'Légumes', IconComponent: Leaf, count: 45 },
+  { name: 'Fruits', IconComponent: Apple, count: 38 },
+  { name: 'Produits Laitiers', IconComponent: Milk, count: 22 },
+  { name: 'Viandes', IconComponent: Beef, count: 18 },
+  { name: 'Œufs', IconComponent: Egg, count: 12 },
 ];
 
 export function MarketplaceHero() {
@@ -42,7 +42,7 @@ export function MarketplaceHero() {
   // Auto-play slides
   useEffect(() => {
     if (!isAutoPlaying) return;
-    
+
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
@@ -54,7 +54,7 @@ export function MarketplaceHero() {
     const element = heroRef.current;
     if (!element) return;
 
-    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
       setHasEnteredView(true);
       return;
     }
@@ -90,10 +90,13 @@ export function MarketplaceHero() {
         {/* Image de fond moderne - Agriculture et technologie */}
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-900 via-green-800 to-lime-700">
           {/* Pattern overlay pour effet moderne */}
-          <div className="absolute inset-0 opacity-10" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-          }} />
-          
+          <div
+            className="absolute inset-0 opacity-10"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            }}
+          />
+
           {/* Illustration agricole moderne avec icônes */}
           <div className="absolute inset-0 flex items-center justify-center opacity-20">
             <div className="grid grid-cols-4 gap-8 transform rotate-12 scale-150">
@@ -108,14 +111,19 @@ export function MarketplaceHero() {
 
         <div
           className={`relative inset-0 h-full flex flex-col items-center justify-center px-6 md:px-10 text-white transition-all duration-700 ease-out ${
-            hasEnteredView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+            hasEnteredView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
           <div className="text-center space-y-6 max-w-3xl">
             <div className="inline-flex p-6 bg-white/15 backdrop-blur-md rounded-3xl shadow-xl border border-white/25">
               {(() => {
                 const Icon = slides[currentSlide].IconComponent;
-                return <Icon className="h-20 w-20 md:h-24 md:w-24 text-white drop-shadow-2xl" strokeWidth={1.5} />;
+                return (
+                  <Icon
+                    className="h-20 w-20 md:h-24 md:w-24 text-white drop-shadow-2xl"
+                    strokeWidth={1.5}
+                  />
+                );
               })()}
             </div>
 
@@ -148,7 +156,9 @@ export function MarketplaceHero() {
             <div className="mt-8 flex flex-wrap justify-center gap-6 md:gap-8">
               <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                <span className="text-sm font-medium">{slides[currentSlide].stats.value} {slides[currentSlide].stats.label}</span>
+                <span className="text-sm font-medium">
+                  {slides[currentSlide].stats.value} {slides[currentSlide].stats.label}
+                </span>
               </div>
               <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
                 <Leaf className="h-4 w-4 text-green-400" />
@@ -192,7 +202,7 @@ export function MarketplaceHero() {
               type="button"
               onClick={() => setCurrentSlide(index)}
               className={`h-2 rounded-full transition-all ${
-                index === currentSlide ? "w-8 bg-white" : "w-2 bg-white/50"
+                index === currentSlide ? 'w-8 bg-white' : 'w-2 bg-white/50'
               }`}
               aria-label={`Aller au slide ${index + 1}`}
               aria-pressed={index === currentSlide}
@@ -214,7 +224,12 @@ export function MarketplaceHero() {
               <div className="mx-auto w-20 h-20 bg-gradient-to-br from-[#15803d]/10 via-emerald-500/10 to-lime-400/10 rounded-2xl flex items-center justify-center group-hover:from-[#15803d]/20 group-hover:via-emerald-500/20 group-hover:to-lime-400/20 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-lg">
                 {(() => {
                   const Icon = category.IconComponent;
-                  return <Icon className="h-10 w-10 text-[#15803d] group-hover:text-emerald-600 transition-colors" strokeWidth={1.5} />;
+                  return (
+                    <Icon
+                      className="h-10 w-10 text-[#15803d] group-hover:text-emerald-600 transition-colors"
+                      strokeWidth={1.5}
+                    />
+                  );
                 })()}
               </div>
             </div>

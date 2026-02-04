@@ -34,9 +34,10 @@ export function FarmMapLeaflet({ fields, sensors, isLoading }: FarmMapLeafletPro
   }
 
   // Calculate map center from fields
-  const center: [number, number] = fields && fields.length > 0
-    ? [fields[0].coordinates[0][1], fields[0].coordinates[0][0]]
-    : [48.8566, 2.3522];
+  const center: [number, number] =
+    fields && fields.length > 0
+      ? [fields[0].coordinates[0][1], fields[0].coordinates[0][0]]
+      : [48.8566, 2.3522];
 
   const getSensorStatusColor = (status: IoTSensor['lastReading']['status']) => {
     switch (status) {
@@ -86,9 +87,7 @@ export function FarmMapLeaflet({ fields, sensors, isLoading }: FarmMapLeafletPro
           <button
             onClick={() => setShowSensors(!showSensors)}
             className={`flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg ${
-              showSensors
-                ? 'bg-blue-100 text-blue-700'
-                : 'bg-gray-100 text-gray-600'
+              showSensors ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
             }`}
           >
             <Activity className="w-4 h-4" />
@@ -120,10 +119,11 @@ export function FarmMapLeaflet({ fields, sensors, isLoading }: FarmMapLeafletPro
 
           {/* Field Polygons */}
           {fields.map((field) => {
-            const positions: [number, number][] = field.coordinates.map(
-              (coord) => [coord[1], coord[0]]
-            );
-            
+            const positions: [number, number][] = field.coordinates.map((coord) => [
+              coord[1],
+              coord[0],
+            ]);
+
             return (
               <Polygon
                 key={field.id}
@@ -140,7 +140,7 @@ export function FarmMapLeaflet({ fields, sensors, isLoading }: FarmMapLeafletPro
                     <h3 className="font-semibold text-sm mb-1">{field.name}</h3>
                     <p className="text-xs text-gray-600">Surface: {field.area} ha</p>
                     {field.currentCrop && (
-                      <p className="text-xs text-gray-600">Culture: {field.currentCrop}</p>
+                      <p className="text-xs text-gray-600">Culture: {field.currentCrop.name}</p>
                     )}
                   </div>
                 </Popup>
@@ -149,35 +149,34 @@ export function FarmMapLeaflet({ fields, sensors, isLoading }: FarmMapLeafletPro
           })}
 
           {/* Sensor Markers */}
-          {showSensors && sensors.map((sensor) => (
-            <Marker
-              key={sensor.id}
-              position={[sensor.location.coordinates[1], sensor.location.coordinates[0]]}
-              icon={createSensorIcon(getSensorStatusColor(sensor.lastReading.status))}
-            >
-              <Popup>
-                <div className="p-2">
-                  <h3 className="font-semibold text-sm mb-1 capitalize">
-                    {sensor.type.replace('_', ' ')}
-                  </h3>
-                  <p className="text-xs text-gray-600 mb-2">ID: {sensor.id}</p>
-                  <div className="bg-gray-50 rounded p-2 mb-2">
-                    <p className="text-lg font-bold">
-                      {sensor.lastReading.value} {sensor.lastReading.unit}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {new Date(sensor.lastReading.timestamp).toLocaleTimeString('fr-FR')}
-                    </p>
+          {showSensors &&
+            sensors.map((sensor) => (
+              <Marker
+                key={sensor.id}
+                position={[sensor.location.coordinates[1], sensor.location.coordinates[0]]}
+                icon={createSensorIcon(getSensorStatusColor(sensor.lastReading.status))}
+              >
+                <Popup>
+                  <div className="p-2">
+                    <h3 className="font-semibold text-sm mb-1 capitalize">
+                      {sensor.type.replace('_', ' ')}
+                    </h3>
+                    <p className="text-xs text-gray-600 mb-2">ID: {sensor.id}</p>
+                    <div className="bg-gray-50 rounded p-2 mb-2">
+                      <p className="text-lg font-bold">
+                        {sensor.lastReading.value} {sensor.lastReading.unit}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(sensor.lastReading.timestamp).toLocaleTimeString('fr-FR')}
+                      </p>
+                    </div>
+                    {sensor.batteryLevel !== undefined && (
+                      <p className="text-xs text-gray-600">Batterie: {sensor.batteryLevel}%</p>
+                    )}
                   </div>
-                  {sensor.batteryLevel !== undefined && (
-                    <p className="text-xs text-gray-600">
-                      Batterie: {sensor.batteryLevel}%
-                    </p>
-                  )}
-                </div>
-              </Popup>
-            </Marker>
-          ))}
+                </Popup>
+              </Marker>
+            ))}
         </MapContainer>
       </div>
 
@@ -186,7 +185,8 @@ export function FarmMapLeaflet({ fields, sensors, isLoading }: FarmMapLeafletPro
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-4">
             <span className="text-gray-600">
-              Surface totale: <span className="font-semibold text-gray-900">
+              Surface totale:{' '}
+              <span className="font-semibold text-gray-900">
                 {fields.reduce((sum, f) => sum + f.area, 0).toFixed(1)} ha
               </span>
             </span>
@@ -197,9 +197,7 @@ export function FarmMapLeaflet({ fields, sensors, isLoading }: FarmMapLeafletPro
               Capteurs: <span className="font-semibold text-gray-900">{sensors.length}</span>
             </span>
           </div>
-          <span className="text-xs text-gray-500">
-            Powered by OpenStreetMap & Leaflet
-          </span>
+          <span className="text-xs text-gray-500">Powered by OpenStreetMap & Leaflet</span>
         </div>
       </div>
     </div>

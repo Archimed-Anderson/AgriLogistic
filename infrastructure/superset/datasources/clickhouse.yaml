@@ -1,0 +1,52 @@
+# =============================================================================
+# Superset - Connecteur ClickHouse (OLAP - analytics temps réel AgriLogistic)
+# =============================================================================
+# URI: clickhouse+native (port 9000) ou clickhouse+http (port 8123)
+# Tables: events, iot_telemetry, funnel_analysis (matérialisé).
+# Import: superset import_datasources -p /app/pythonpath/datasources/clickhouse.yaml -r
+# =============================================================================
+
+databases:
+  - database_name: agrilogistic_analytics
+    sqlalchemy_uri: clickhouse+native://${CLICKHOUSE_USER}:${CLICKHOUSE_PASSWORD}@clickhouse:9000/analytics
+    # Alternative HTTP: clickhouse+http://user:pass@clickhouse:8123/analytics
+    display_name: AgriLogistic Analytics (ClickHouse)
+    allow_run_async: true
+    allow_ctas: false
+    allow_cvas: false
+    allow_dml: false
+    expose_in_sqllab: true
+    configuration_method: sqlalchemy_form
+    # Cache 5min pour données temps réel (events, iot_telemetry). Surcharger par dataset si besoin.
+    extra: |
+      {
+        "metadata_params": {},
+        "engine_params": {},
+        "metadata_cache_timeout": {},
+        "schemas_allowed_for_csv_upload": [],
+        "cache_timeout": 300
+      }
+    tables:
+      - table_name: events
+        main_dttm_col: created_at
+        description: "Tous les événements trackés (user, order, logistics, payment)"
+        filter_select_enabled: true
+        extra: '{"row_limit": 500000}'
+        columns: []
+        metrics: []
+
+      - table_name: iot_telemetry
+        main_dttm_col: created_at
+        description: "Données capteurs IoT (flotte, capteurs terrain)"
+        filter_select_enabled: true
+        extra: '{"row_limit": 200000}'
+        columns: []
+        metrics: []
+
+      - table_name: funnel_analysis
+        main_dttm_col: null
+        description: "Vue matérialisée funnel (conversion, étapes)"
+        filter_select_enabled: true
+        extra: '{"row_limit": 100000}'
+        columns: []
+        metrics: []

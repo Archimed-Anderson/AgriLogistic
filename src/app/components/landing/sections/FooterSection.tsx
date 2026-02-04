@@ -1,7 +1,5 @@
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 
-
-
 interface FooterSectionProps {
   onNavigate?: (route: string) => void;
 }
@@ -32,8 +30,8 @@ export default function FooterSection({ onNavigate }: FooterSectionProps) {
               </span>
             </div>
             <p className="text-gray-400 leading-relaxed mb-8 text-sm">
-              La plateforme de confiance qui connecte producteurs, acheteurs et transporteurs 
-              pour une agriculture locale, durable et rentable.
+              La plateforme de confiance qui connecte producteurs, acheteurs et transporteurs pour
+              une agriculture locale, durable et rentable.
             </p>
             {/* Social Media */}
             <div className="flex gap-4">
@@ -85,7 +83,9 @@ export default function FooterSection({ onNavigate }: FooterSectionProps) {
               </li>
               <li>
                 <button
-                  onClick={() => document.getElementById('story')?.scrollIntoView({ behavior: 'smooth' })}
+                  onClick={() =>
+                    document.getElementById('story')?.scrollIntoView({ behavior: 'smooth' })
+                  }
                   className="text-gray-400 hover:text-emerald-400 transition-colors duration-300"
                 >
                   À propos
@@ -99,22 +99,34 @@ export default function FooterSection({ onNavigate }: FooterSectionProps) {
             <h3 className="text-lg font-bold mb-4">Services</h3>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="text-gray-400 hover:text-emerald-400 transition-colors duration-300">
+                <a
+                  href="#"
+                  className="text-gray-400 hover:text-emerald-400 transition-colors duration-300"
+                >
                   E-commerce
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-emerald-400 transition-colors duration-300">
+                <a
+                  href="#"
+                  className="text-gray-400 hover:text-emerald-400 transition-colors duration-300"
+                >
                   IoT Monitoring
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-emerald-400 transition-colors duration-300">
+                <a
+                  href="#"
+                  className="text-gray-400 hover:text-emerald-400 transition-colors duration-300"
+                >
                   Farming
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-emerald-400 transition-colors duration-300">
+                <a
+                  href="#"
+                  className="text-gray-400 hover:text-emerald-400 transition-colors duration-300"
+                >
                   Agriculture Durable
                 </a>
               </li>
@@ -128,19 +140,26 @@ export default function FooterSection({ onNavigate }: FooterSectionProps) {
               <li className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-emerald-400 mt-1 flex-shrink-0" />
                 <span className="text-gray-400">
-                  123 Rue de l'Agriculture<br />
+                  123 Rue de l'Agriculture
+                  <br />
                   75001 Paris, France
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-emerald-400 flex-shrink-0" />
-                <a href="tel:+33123456789" className="text-gray-400 hover:text-emerald-400 transition-colors duration-300">
+                <a
+                  href="tel:+33123456789"
+                  className="text-gray-400 hover:text-emerald-400 transition-colors duration-300"
+                >
                   +33 1 23 45 67 89
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-emerald-400 flex-shrink-0" />
-                <a href="mailto:contact@AgroLogistic.com" className="text-gray-400 hover:text-emerald-400 transition-colors duration-300">
+                <a
+                  href="mailto:contact@AgroLogistic.com"
+                  className="text-gray-400 hover:text-emerald-400 transition-colors duration-300"
+                >
                   contact@AgroLogistic.com
                 </a>
               </li>
@@ -155,13 +174,22 @@ export default function FooterSection({ onNavigate }: FooterSectionProps) {
               © {currentYear} AgroLogistic. Tous droits réservés.
             </p>
             <div className="flex gap-6">
-              <a href="#" className="text-gray-400 hover:text-emerald-400 text-sm transition-colors duration-300">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-emerald-400 text-sm transition-colors duration-300"
+              >
                 Politique de confidentialité
               </a>
-              <a href="#" className="text-gray-400 hover:text-emerald-400 text-sm transition-colors duration-300">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-emerald-400 text-sm transition-colors duration-300"
+              >
                 Conditions d'utilisation
               </a>
-              <a href="#" className="text-gray-400 hover:text-emerald-400 text-sm transition-colors duration-300">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-emerald-400 text-sm transition-colors duration-300"
+              >
                 Mentions légales
               </a>
             </div>

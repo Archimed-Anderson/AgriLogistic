@@ -40,7 +40,7 @@ export function InventoryTracker({ inventory, isLoading }: InventoryTrackerProps
     return { color: 'text-green-600 bg-green-50', label: 'Stock OK', icon: Package };
   };
 
-  const lowStockItems = inventory.filter(item => item.quantity <= item.minStock).length;
+  const lowStockItems = inventory.filter((item) => item.quantity <= item.minStock).length;
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -89,7 +89,9 @@ export function InventoryTracker({ inventory, isLoading }: InventoryTrackerProps
                             {item.supplier} • {item.location}
                           </p>
                         </div>
-                        <span className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${status.color}`}>
+                        <span
+                          className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${status.color}`}
+                        >
                           <StatusIcon className="w-3 h-3" />
                           {status.label}
                         </span>

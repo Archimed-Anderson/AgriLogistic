@@ -32,7 +32,7 @@ interface AdminDashboardState {
   recentActivity: Activity[];
   isLoading: boolean;
   error: string | null;
-  
+
   // Actions
   setMetrics: (metrics: DashboardMetrics) => void;
   setAlerts: (alerts: SystemAlert[]) => void;
@@ -53,21 +53,21 @@ const initialState = {
 
 export const useAdminDashboardStore = create<AdminDashboardState>((set) => ({
   ...initialState,
-  
+
   setMetrics: (metrics) => set({ metrics }),
-  
+
   setAlerts: (alerts) => set({ alerts }),
-  
+
   setRecentActivity: (recentActivity) => set({ recentActivity }),
-  
+
   dismissAlert: (alertId) =>
     set((state) => ({
       alerts: state.alerts.filter((alert) => alert.id !== alertId),
     })),
-  
+
   setLoading: (isLoading) => set({ isLoading }),
-  
+
   setError: (error) => set({ error }),
-  
+
   reset: () => set(initialState),
 }));

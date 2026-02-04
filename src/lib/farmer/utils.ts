@@ -40,7 +40,7 @@ export function calculatePercentageChange(current: number, previous: number): nu
  */
 export function formatDate(date: Date | string, format: 'short' | 'long' = 'short'): string {
   const d = typeof date === 'string' ? new Date(date) : date;
-  
+
   if (format === 'long') {
     return d.toLocaleDateString('fr-FR', {
       weekday: 'long',
@@ -49,7 +49,7 @@ export function formatDate(date: Date | string, format: 'short' | 'long' = 'shor
       day: 'numeric',
     });
   }
-  
+
   return d.toLocaleDateString('fr-FR', {
     day: 'numeric',
     month: 'short',
@@ -64,11 +64,11 @@ export function getRelativeTime(date: Date | string): string {
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - d.getTime()) / 1000);
 
-  if (diffInSeconds < 60) return 'à l\'instant';
+  if (diffInSeconds < 60) return "à l'instant";
   if (diffInSeconds < 3600) return `il y a ${Math.floor(diffInSeconds / 60)} min`;
   if (diffInSeconds < 86400) return `il y a ${Math.floor(diffInSeconds / 3600)}h`;
   if (diffInSeconds < 604800) return `il y a ${Math.floor(diffInSeconds / 86400)}j`;
-  
+
   return formatDate(d);
 }
 

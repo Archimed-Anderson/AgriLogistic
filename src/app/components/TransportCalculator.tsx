@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   MapPin,
   Navigation,
@@ -15,8 +15,8 @@ import {
   ArrowRight,
   Bookmark,
   X,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 interface TransportCalculatorProps {
   productName?: string;
@@ -42,27 +42,27 @@ export function TransportCalculator({
   productWeight,
   onReserve,
   compact = false,
-  className = "",
+  className = '',
 }: TransportCalculatorProps) {
-  const [origin, setOrigin] = useState("");
-  const [destination, setDestination] = useState("");
-  const [merchandiseType, setMerchandiseType] = useState("standard");
-  const [urgency, setUrgency] = useState("standard");
+  const [origin, setOrigin] = useState('');
+  const [destination, setDestination] = useState('');
+  const [merchandiseType, setMerchandiseType] = useState('standard');
+  const [urgency, setUrgency] = useState('standard');
   const [quote, setQuote] = useState<TransportQuote | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [showMap, setShowMap] = useState(false);
 
   const merchandiseTypes = [
-    { value: "standard", label: "Standard", icon: Package },
-    { value: "perishable", label: "Périssable", icon: AlertCircle, color: "text-orange-600" },
-    { value: "bulk", label: "Volumineux", icon: Truck, color: "text-blue-600" },
-    { value: "fragile", label: "Fragile", icon: AlertCircle, color: "text-red-600" },
+    { value: 'standard', label: 'Standard', icon: Package },
+    { value: 'perishable', label: 'Périssable', icon: AlertCircle, color: 'text-orange-600' },
+    { value: 'bulk', label: 'Volumineux', icon: Truck, color: 'text-blue-600' },
+    { value: 'fragile', label: 'Fragile', icon: AlertCircle, color: 'text-red-600' },
   ];
 
   const urgencyLevels = [
-    { value: "standard", label: "Standard (3-5 jours)", price: 1, icon: Clock },
-    { value: "express", label: "Express (1-2 jours)", price: 1.5, icon: Zap },
-    { value: "urgent", label: "Urgent (24h)", price: 2, icon: AlertCircle },
+    { value: 'standard', label: 'Standard (3-5 jours)', price: 1, icon: Clock },
+    { value: 'express', label: 'Express (1-2 jours)', price: 1.5, icon: Zap },
+    { value: 'urgent', label: 'Urgent (24h)', price: 2, icon: AlertCircle },
   ];
 
   const calculateTransport = async () => {
@@ -77,16 +77,20 @@ export function TransportCalculator({
     setTimeout(() => {
       const baseDistance = Math.floor(Math.random() * 500) + 50;
       const baseCost = baseDistance * 1.2;
-      
-      const merchandiseMultiplier = merchandiseType === "perishable" ? 1.3 : 
-                                     merchandiseType === "bulk" ? 1.4 : 
-                                     merchandiseType === "fragile" ? 1.2 : 1;
-      
-      const urgencyMultiplier = urgency === "express" ? 1.5 : 
-                                 urgency === "urgent" ? 2 : 1;
-      
+
+      const merchandiseMultiplier =
+        merchandiseType === 'perishable'
+          ? 1.3
+          : merchandiseType === 'bulk'
+          ? 1.4
+          : merchandiseType === 'fragile'
+          ? 1.2
+          : 1;
+
+      const urgencyMultiplier = urgency === 'express' ? 1.5 : urgency === 'urgent' ? 2 : 1;
+
       const totalCost = baseCost * merchandiseMultiplier * urgencyMultiplier;
-      const estimatedDays = urgency === "urgent" ? 1 : urgency === "express" ? 2 : 4;
+      const estimatedDays = urgency === 'urgent' ? 1 : urgency === 'express' ? 2 : 4;
 
       const newQuote: TransportQuote = {
         origin,
@@ -96,36 +100,38 @@ export function TransportCalculator({
         distance: baseDistance,
         estimatedCost: Math.round(totalCost),
         estimatedDays,
-        carrier: "AgriGator Express",
+        carrier: 'AgriGator Express',
       };
 
       setQuote(newQuote);
       setIsCalculating(false);
-      toast.success("Coût de transport calculé avec succès !");
+      toast.success('Coût de transport calculé avec succès !');
     }, 1500);
   };
 
   const handleReserve = () => {
     if (quote) {
       onReserve?.(quote);
-      toast.success("Demande de réservation envoyée !");
+      toast.success('Demande de réservation envoyée !');
     }
   };
 
   const handleSaveQuote = () => {
     if (quote) {
-      toast.success("Devis sauvegardé dans vos favoris");
+      toast.success('Devis sauvegardé dans vos favoris');
     }
   };
 
   if (compact) {
     return (
-      <div className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 ${className}`}>
+      <div
+        className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 ${className}`}
+      >
         <div className="flex items-center gap-2 mb-3">
           <Calculator className="h-5 w-5 text-green-600" />
           <h3 className="font-semibold text-gray-900 dark:text-white">Calculer le transport</h3>
         </div>
-        
+
         <div className="space-y-3">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -165,11 +171,15 @@ export function TransportCalculator({
             <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-gray-600 dark:text-gray-400">Coût estimé</span>
-                <span className="text-2xl font-bold text-green-600 dark:text-green-400">{quote.estimatedCost}€</span>
+                <span className="text-2xl font-bold text-green-600 dark:text-green-400">
+                  {quote.estimatedCost}€
+                </span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">Délai</span>
-                <span className="font-semibold text-gray-900 dark:text-white">{quote.estimatedDays} jours</span>
+                <span className="font-semibold text-gray-900 dark:text-white">
+                  {quote.estimatedDays} jours
+                </span>
               </div>
             </div>
           )}
@@ -179,7 +189,9 @@ export function TransportCalculator({
   }
 
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 ${className}`}>
+    <div
+      className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 ${className}`}
+    >
       {/* Header */}
       <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
@@ -188,8 +200,12 @@ export function TransportCalculator({
               <Calculator className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Calculateur de Transport</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Optimisé par TomTom & AgriGator</p>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                Calculateur de Transport
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Optimisé par TomTom & AgriGator
+              </p>
             </div>
           </div>
           {productName && (
@@ -248,11 +264,11 @@ export function TransportCalculator({
                   onClick={() => setMerchandiseType(type.value)}
                   className={`p-4 border-2 rounded-lg transition-all ${
                     merchandiseType === type.value
-                      ? "border-green-500 bg-green-50 dark:bg-green-900/20"
-                      : "border-gray-200 dark:border-gray-700 hover:border-gray-300"
+                      ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
                   }`}
                 >
-                  <Icon className={`h-6 w-6 mx-auto mb-2 ${type.color || "text-gray-600"}`} />
+                  <Icon className={`h-6 w-6 mx-auto mb-2 ${type.color || 'text-gray-600'}`} />
                   <p className="text-sm font-medium text-gray-900 dark:text-white">{type.label}</p>
                 </button>
               );
@@ -274,8 +290,8 @@ export function TransportCalculator({
                   onClick={() => setUrgency(level.value)}
                   className={`p-4 border-2 rounded-lg transition-all ${
                     urgency === level.value
-                      ? "border-green-500 bg-green-50 dark:bg-green-900/20"
-                      : "border-gray-200 dark:border-gray-700 hover:border-gray-300"
+                      ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -319,7 +335,9 @@ export function TransportCalculator({
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Check className="h-6 w-6 text-green-600" />
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">Devis de transport</h3>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                    Devis de transport
+                  </h3>
                 </div>
                 <button
                   onClick={handleSaveQuote}
@@ -336,7 +354,9 @@ export function TransportCalculator({
                     <DollarSign className="h-5 w-5 text-green-600" />
                     <span className="text-sm text-gray-600 dark:text-gray-400">Coût total</span>
                   </div>
-                  <p className="text-3xl font-bold text-green-600 dark:text-green-400">{quote.estimatedCost}€</p>
+                  <p className="text-3xl font-bold text-green-600 dark:text-green-400">
+                    {quote.estimatedCost}€
+                  </p>
                 </div>
 
                 <div className="bg-white dark:bg-gray-800 rounded-lg p-4">
@@ -344,7 +364,9 @@ export function TransportCalculator({
                     <Clock className="h-5 w-5 text-blue-600" />
                     <span className="text-sm text-gray-600 dark:text-gray-400">Délai estimé</span>
                   </div>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">{quote.estimatedDays}</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                    {quote.estimatedDays}
+                  </p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">jours ouvrés</p>
                 </div>
 
@@ -353,7 +375,9 @@ export function TransportCalculator({
                     <Map className="h-5 w-5 text-purple-600" />
                     <span className="text-sm text-gray-600 dark:text-gray-400">Distance</span>
                   </div>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">{quote.distance}</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                    {quote.distance}
+                  </p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">kilomètres</p>
                 </div>
               </div>
@@ -368,7 +392,9 @@ export function TransportCalculator({
                   <ArrowRight className="h-5 w-5 text-gray-400 flex-shrink-0" />
                   <div className="flex-1">
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Arrivée</p>
-                    <p className="font-semibold text-gray-900 dark:text-white">{quote.destination}</p>
+                    <p className="font-semibold text-gray-900 dark:text-white">
+                      {quote.destination}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -382,12 +408,18 @@ export function TransportCalculator({
                     </div>
                     <div>
                       <p className="font-semibold text-gray-900 dark:text-white">{quote.carrier}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Transporteur certifié</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Transporteur certifié
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
                     {[1, 2, 3, 4, 5].map((star) => (
-                      <svg key={star} className="h-4 w-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                      <svg
+                        key={star}
+                        className="h-4 w-4 text-yellow-400 fill-current"
+                        viewBox="0 0 20 20"
+                      >
                         <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
                       </svg>
                     ))}
@@ -409,7 +441,7 @@ export function TransportCalculator({
                   className="px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg font-semibold flex items-center gap-2"
                 >
                   <Map className="h-5 w-5" />
-                  {showMap ? "Masquer" : "Voir"} carte
+                  {showMap ? 'Masquer' : 'Voir'} carte
                 </button>
               </div>
             </div>

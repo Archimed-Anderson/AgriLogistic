@@ -1,0 +1,81 @@
+# =============================================================================
+# Superset - Connecteur PostgreSQL (OLTP - données métier AgriLogistic)
+# =============================================================================
+# URI: postgresql+psycopg2 (driver recommandé pour Superset)
+# Tables exposées avec limites row count pour éviter surcharge.
+# Import: superset import_datasources -p /app/pythonpath/datasources/postgres.yaml -r
+# =============================================================================
+
+databases:
+  - database_name: agrilogistic_oltp
+    sqlalchemy_uri: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/agrilogistic
+    # Alternative avec variables d'env (à substituer au déploiement):
+    # sqlalchemy_uri: postgresql+psycopg2://user:pass@postgres:5432/agrilogistic
+    display_name: AgriLogistic OLTP (PostgreSQL)
+    allow_run_async: true
+    allow_ctas: false
+    allow_cvas: false
+    allow_dml: false
+    expose_in_sqllab: true
+    configuration_method: sqlalchemy_form
+    # Cache 1h pour données historiques OLTP (voir superset_config.py DATA_CACHE_CONFIG)
+    extra: |
+      {
+        "metadata_params": {},
+        "engine_params": {"pool_pre_ping": true, "pool_recycle": 3600},
+        "metadata_cache_timeout": {},
+        "schemas_allowed_for_csv_upload": [],
+        "cache_timeout": 3600
+      }
+    tables:
+      # Utilisateurs (anonymisés pour analytics)
+      - table_name: users
+        main_dttm_col: created_at
+        description: "Utilisateurs (anonymisés pour analytics)"
+        filter_select_enabled: true
+        fetch_values_predicate: null
+        extra: '{"row_limit": 10000}'
+        columns: []
+        metrics: []
+
+      - table_name: entities
+        main_dttm_col: created_at
+        description: "Entités (coopératives, fermes, etc.)"
+        filter_select_enabled: true
+        extra: '{"row_limit": 5000}'
+        columns: []
+        metrics: []
+
+      # Snapshot hebdomadaire produits
+      - table_name: products
+        main_dttm_col: created_at
+        description: "Snapshot hebdo des produits"
+        filter_select_enabled: true
+        extra: '{"row_limit": 50000}'
+        columns: []
+        metrics: []
+
+      - table_name: orders
+        main_dttm_col: created_at
+        description: "Commandes"
+        filter_select_enabled: true
+        extra: '{"row_limit": 100000}'
+        columns: []
+        metrics: []
+
+      - table_name: contracts
+        main_dttm_col: created_at
+        description: "Contrats"
+        filter_select_enabled: true
+        extra: '{"row_limit": 20000}'
+        columns: []
+        metrics: []
+
+      # Missions (archivage > 90j vers ClickHouse - voir analytics)
+      - table_name: missions
+        main_dttm_col: created_at
+        description: "Missions logistiques (données récentes < 90j)"
+        filter_select_enabled: true
+        extra: '{"row_limit": 50000}'
+        columns: []
+        metrics: []

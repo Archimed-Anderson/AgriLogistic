@@ -73,4 +73,3 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
     </div>
   );
 }
-

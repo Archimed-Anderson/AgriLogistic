@@ -90,11 +90,11 @@ class ProductServiceApi {
   async getProducts(params: SearchParams = {}): Promise<ApiResponse<ProductListResponse>> {
     try {
       const queryParams = new URLSearchParams();
-      
+
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
           if (Array.isArray(value)) {
-            value.forEach(v => queryParams.append(key, v));
+            value.forEach((v) => queryParams.append(key, v));
           } else {
             queryParams.append(key, String(value));
           }
@@ -103,23 +103,26 @@ class ProductServiceApi {
 
       const url = `${this.baseUrl}/products?${queryParams.toString()}`;
       console.log('Fetching products from:', url);
-      
+
       const response = await fetch(url);
       const data = await response.json();
-      
+
       return data;
     } catch (error) {
       console.error('Error fetching products:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-        data: { products: [], total: 0, pages: 0 }
+        data: { products: [], total: 0, pages: 0 },
       };
     }
   }
 
   // Search products with Elasticsearch
-  async searchProducts(query: string, params: Omit<SearchParams, 'q'> = {}): Promise<ApiResponse<ProductListResponse>> {
+  async searchProducts(
+    query: string,
+    params: Omit<SearchParams, 'q'> = {}
+  ): Promise<ApiResponse<ProductListResponse>> {
     try {
       const searchParams: SearchParams = { ...params, q: query };
       return await this.getProducts(searchParams);
@@ -128,7 +131,7 @@ class ProductServiceApi {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Search failed',
-        data: { products: [], total: 0, pages: 0 }
+        data: { products: [], total: 0, pages: 0 },
       };
     }
   }
@@ -144,7 +147,7 @@ class ProductServiceApi {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Product not found',
-        data: {} as Product
+        data: {} as Product,
       };
     }
   }
@@ -160,7 +163,7 @@ class ProductServiceApi {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Product not found',
-        data: {} as Product
+        data: {} as Product,
       };
     }
   }
@@ -176,17 +179,20 @@ class ProductServiceApi {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to load categories',
-        data: { categories: [] }
+        data: { categories: [] },
       };
     }
   }
 
   // Get autocomplete suggestions
-  async getAutocomplete(query: string, category?: string): Promise<ApiResponse<{ suggestions: string[] }>> {
+  async getAutocomplete(
+    query: string,
+    category?: string
+  ): Promise<ApiResponse<{ suggestions: string[] }>> {
     try {
       const params = new URLSearchParams({ q: query });
       if (category) params.append('category', category);
-      
+
       const response = await fetch(`${this.baseUrl}/products/autocomplete?${params.toString()}`);
       const data = await response.json();
       return data;
@@ -195,13 +201,16 @@ class ProductServiceApi {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Autocomplete failed',
-        data: { suggestions: [] }
+        data: { suggestions: [] },
       };
     }
   }
 
   // Get similar products (More Like This)
-  async getSimilarProducts(productId: string, limit: number = 5): Promise<ApiResponse<{ products: Product[] }>> {
+  async getSimilarProducts(
+    productId: string,
+    limit: number = 5
+  ): Promise<ApiResponse<{ products: Product[] }>> {
     try {
       const response = await fetch(`${this.baseUrl}/products/${productId}/similar?limit=${limit}`);
       const data = await response.json();
@@ -211,7 +220,7 @@ class ProductServiceApi {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to get similar products',
-        data: { products: [] }
+        data: { products: [] },
       };
     }
   }
@@ -226,7 +235,7 @@ class ProductServiceApi {
         },
         body: JSON.stringify(productData),
       });
-      
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -234,13 +243,16 @@ class ProductServiceApi {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to create product',
-        data: { product: {} as Product }
+        data: { product: {} as Product },
       };
     }
   }
 
   // Update a product (admin only)
-  async updateProduct(id: string, updates: Partial<Product>): Promise<ApiResponse<{ product: Product }>> {
+  async updateProduct(
+    id: string,
+    updates: Partial<Product>
+  ): Promise<ApiResponse<{ product: Product }>> {
     try {
       const response = await fetch(`${this.baseUrl}/products/${id}`, {
         method: 'PUT',
@@ -249,7 +261,7 @@ class ProductServiceApi {
         },
         body: JSON.stringify(updates),
       });
-      
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -257,7 +269,7 @@ class ProductServiceApi {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to update product',
-        data: { product: {} as Product }
+        data: { product: {} as Product },
       };
     }
   }
@@ -268,7 +280,7 @@ class ProductServiceApi {
       const response = await fetch(`${this.baseUrl}/products/${id}`, {
         method: 'DELETE',
       });
-      
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -276,13 +288,17 @@ class ProductServiceApi {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to delete product',
-        data: false
+        data: false,
       };
     }
   }
 
   // Update product stock
-  async updateStock(productId: string, quantity: number, transactionType: string): Promise<ApiResponse<void>> {
+  async updateStock(
+    productId: string,
+    quantity: number,
+    transactionType: string
+  ): Promise<ApiResponse<void>> {
     try {
       const response = await fetch(`${this.baseUrl}/products/${productId}/stock`, {
         method: 'POST',
@@ -291,7 +307,7 @@ class ProductServiceApi {
         },
         body: JSON.stringify({ quantity, transactionType }),
       });
-      
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -299,13 +315,15 @@ class ProductServiceApi {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to update stock',
-        data: undefined
+        data: undefined,
       };
     }
   }
 
   // Health check
-  async healthCheck(): Promise<ApiResponse<{ status: string; service: string; timestamp: string }>> {
+  async healthCheck(): Promise<
+    ApiResponse<{ status: string; service: string; timestamp: string }>
+  > {
     try {
       const response = await fetch(`${this.baseUrl}/health`);
       const data = await response.json();
@@ -315,7 +333,11 @@ class ProductServiceApi {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Service unavailable',
-        data: { status: 'unhealthy', service: 'product-service', timestamp: new Date().toISOString() }
+        data: {
+          status: 'unhealthy',
+          service: 'product-service',
+          timestamp: new Date().toISOString(),
+        },
       };
     }
   }

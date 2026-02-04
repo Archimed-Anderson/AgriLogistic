@@ -1,14 +1,25 @@
-import { useState } from "react";
-import { Send, Search, MoreVertical, Bot, User, Sparkles, Lightbulb, BookOpen, Wrench, AlertCircle } from "lucide-react";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { Card } from "./ui/card";
-import { Avatar, AvatarFallback } from "./ui/avatar";
-import { chatConversations, messages as initialMessages } from "../data/mockData";
+import { useState } from 'react';
+import {
+  Send,
+  Search,
+  MoreVertical,
+  Bot,
+  User,
+  Sparkles,
+  Lightbulb,
+  BookOpen,
+  Wrench,
+  AlertCircle,
+} from 'lucide-react';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
+import { Card } from './ui/card';
+import { Avatar, AvatarFallback } from './ui/avatar';
+import { chatConversations, messages as initialMessages } from '../data/mockData';
 
 interface AIMessage {
   id: number;
-  sender: "user" | "ai";
+  sender: 'user' | 'ai';
   text: string;
   timestamp: string;
   intent?: string;
@@ -29,27 +40,33 @@ interface ConversationContext {
 
 export function ChatInterface() {
   const [selectedChat, setSelectedChat] = useState(1);
-  const [messageInput, setMessageInput] = useState("");
+  const [messageInput, setMessageInput] = useState('');
   const [messages, setMessages] = useState(initialMessages);
   const [aiMessages, setAiMessages] = useState<AIMessage[]>([
     {
       id: 1,
-      sender: "ai",
+      sender: 'ai',
       text: "Bonjour! Je suis votre assistant IA AgroLogistic. Je peux vous aider avec vos cultures, la gestion de votre exploitation, les prévisions météo, et bien plus encore. Comment puis-je vous assister aujourd'hui?",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      intent: "greeting",
+      intent: 'greeting',
       confidence: 100,
       suggestedActions: [
-        { label: "État de mes cultures", action: "Afficher l'état actuel de toutes mes cultures" },
-        { label: "Recommandations IA", action: "Quelles sont vos recommandations IA pour cette semaine?" },
-        { label: "Météo prévisions", action: "Quelle est la météo prévue pour les 7 prochains jours?" },
+        { label: 'État de mes cultures', action: "Afficher l'état actuel de toutes mes cultures" },
+        {
+          label: 'Recommandations IA',
+          action: 'Quelles sont vos recommandations IA pour cette semaine?',
+        },
+        {
+          label: 'Météo prévisions',
+          action: 'Quelle est la météo prévue pour les 7 prochains jours?',
+        },
       ],
     },
   ]);
   const [isAiMode, setIsAiMode] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [conversationContext, setConversationContext] = useState<ConversationContext>({
-    topic: "general",
+    topic: 'general',
     entities: [],
     history: [],
     userPreferences: {},
@@ -58,103 +75,138 @@ export function ChatInterface() {
   // AI Natural Language Processing
   const processAIMessage = async (userMessage: string): Promise<AIMessage> => {
     const lowercaseMsg = userMessage.toLowerCase();
-    
+
     // Intent detection
-    let intent = "general";
+    let intent = 'general';
     let confidence = 75;
-    let response = "";
+    let response = '';
     let suggestedActions: Array<{ label: string; action: string }> = [];
 
     // Crop status queries
-    if (lowercaseMsg.includes("culture") || lowercaseMsg.includes("récolte") || lowercaseMsg.includes("plante")) {
-      intent = "crop_status";
+    if (
+      lowercaseMsg.includes('culture') ||
+      lowercaseMsg.includes('récolte') ||
+      lowercaseMsg.includes('plante')
+    ) {
+      intent = 'crop_status';
       confidence = 92;
-      response = "Selon mes analyses, vos cultures de maïs (Parcelle Nord) montrent une excellente santé avec un NDVI de 0.82. Les tomates (Serre B) ont besoin d'irrigation dans les 48h. Blé (Champ Est) est à 85% de maturité, récolte prévue dans 12-15 jours. Voulez-vous des détails sur une culture spécifique?";
+      response =
+        "Selon mes analyses, vos cultures de maïs (Parcelle Nord) montrent une excellente santé avec un NDVI de 0.82. Les tomates (Serre B) ont besoin d'irrigation dans les 48h. Blé (Champ Est) est à 85% de maturité, récolte prévue dans 12-15 jours. Voulez-vous des détails sur une culture spécifique?";
       suggestedActions = [
-        { label: "Détails maïs", action: "Donne-moi plus de détails sur le maïs" },
-        { label: "Plan irrigation", action: "Créer un plan d'irrigation pour les tomates" },
-        { label: "Planifier récolte", action: "Planifier la récolte du blé" },
+        { label: 'Détails maïs', action: 'Donne-moi plus de détails sur le maïs' },
+        { label: 'Plan irrigation', action: "Créer un plan d'irrigation pour les tomates" },
+        { label: 'Planifier récolte', action: 'Planifier la récolte du blé' },
       ];
     }
     // Weather queries
-    else if (lowercaseMsg.includes("météo") || lowercaseMsg.includes("pluie") || lowercaseMsg.includes("température")) {
-      intent = "weather";
+    else if (
+      lowercaseMsg.includes('météo') ||
+      lowercaseMsg.includes('pluie') ||
+      lowercaseMsg.includes('température')
+    ) {
+      intent = 'weather';
       confidence = 95;
-      response = "Prévisions 7 jours: Aujourd'hui 22°C ensoleillé, demain 24°C nuageux, pluie modérée jeudi (15mm) - idéal pour reporter traitement phytosanitaire. Températures montant à 27°C en fin de semaine. Vent faible toute la semaine. Risque gel: 0%. Je recommande d'irriguer avant jeudi.";
+      response =
+        "Prévisions 7 jours: Aujourd'hui 22°C ensoleillé, demain 24°C nuageux, pluie modérée jeudi (15mm) - idéal pour reporter traitement phytosanitaire. Températures montant à 27°C en fin de semaine. Vent faible toute la semaine. Risque gel: 0%. Je recommande d'irriguer avant jeudi.";
       suggestedActions = [
-        { label: "Détails horaires", action: "Prévisions heure par heure pour demain" },
-        { label: "Impact cultures", action: "Comment cette météo va affecter mes cultures?" },
-        { label: "Alerte météo", action: "Créer une alerte météo personnalisée" },
+        { label: 'Détails horaires', action: 'Prévisions heure par heure pour demain' },
+        { label: 'Impact cultures', action: 'Comment cette météo va affecter mes cultures?' },
+        { label: 'Alerte météo', action: 'Créer une alerte météo personnalisée' },
       ];
     }
     // Disease detection
-    else if (lowercaseMsg.includes("maladie") || lowercaseMsg.includes("parasite") || lowercaseMsg.includes("traitement")) {
-      intent = "disease_help";
+    else if (
+      lowercaseMsg.includes('maladie') ||
+      lowercaseMsg.includes('parasite') ||
+      lowercaseMsg.includes('traitement')
+    ) {
+      intent = 'disease_help';
       confidence = 88;
-      response = "Aucune maladie critique détectée actuellement. Cependant, j'ai identifié des signes précoces de mildiou sur 3% de la Parcelle Nord (confiance 87%). Traitement préventif recommandé: fongicide cuivre à 0.5kg/ha sous 72h. Coût estimé: 45€. Voulez-vous que je crée une tâche d'intervention?";
+      response =
+        "Aucune maladie critique détectée actuellement. Cependant, j'ai identifié des signes précoces de mildiou sur 3% de la Parcelle Nord (confiance 87%). Traitement préventif recommandé: fongicide cuivre à 0.5kg/ha sous 72h. Coût estimé: 45€. Voulez-vous que je crée une tâche d'intervention?";
       suggestedActions = [
-        { label: "Créer intervention", action: "Créer une tâche d'intervention pour le mildiou" },
-        { label: "Voir symptômes", action: "Montre-moi les photos des symptômes détectés" },
-        { label: "Alternatives bio", action: "Quels sont les traitements bio disponibles?" },
+        { label: 'Créer intervention', action: "Créer une tâche d'intervention pour le mildiou" },
+        { label: 'Voir symptômes', action: 'Montre-moi les photos des symptômes détectés' },
+        { label: 'Alternatives bio', action: 'Quels sont les traitements bio disponibles?' },
       ];
     }
     // Recommendations
-    else if (lowercaseMsg.includes("recommand") || lowercaseMsg.includes("conseil") || lowercaseMsg.includes("suggesti")) {
-      intent = "recommendations";
+    else if (
+      lowercaseMsg.includes('recommand') ||
+      lowercaseMsg.includes('conseil') ||
+      lowercaseMsg.includes('suggesti')
+    ) {
+      intent = 'recommendations';
       confidence = 90;
-      response = "3 recommandations prioritaires IA cette semaine:\n\n1️⃣ Augmenter densité maïs de 5% (ROI: +3.2x, confiance 91%)\n2️⃣ Vendre blé dans 3-4 jours - pic prix prévu à 245€/t (confiance 88%)\n3️⃣ Réduire fertilisation azote de 12% - sol sursaturé (économie: 380€)\n\nVoulez-vous appliquer une de ces recommandations?";
+      response =
+        '3 recommandations prioritaires IA cette semaine:\n\n1️⃣ Augmenter densité maïs de 5% (ROI: +3.2x, confiance 91%)\n2️⃣ Vendre blé dans 3-4 jours - pic prix prévu à 245€/t (confiance 88%)\n3️⃣ Réduire fertilisation azote de 12% - sol sursaturé (économie: 380€)\n\nVoulez-vous appliquer une de ces recommandations?';
       suggestedActions = [
-        { label: "Appliquer #1", action: "Appliquer la recommandation densité maïs" },
-        { label: "Détails #2", action: "Plus de détails sur la recommandation vente blé" },
-        { label: "Toutes les recommandations", action: "Afficher toutes les recommandations IA" },
+        { label: 'Appliquer #1', action: 'Appliquer la recommandation densité maïs' },
+        { label: 'Détails #2', action: 'Plus de détails sur la recommandation vente blé' },
+        { label: 'Toutes les recommandations', action: 'Afficher toutes les recommandations IA' },
       ];
     }
     // Automation
-    else if (lowercaseMsg.includes("automatisation") || lowercaseMsg.includes("règle") || lowercaseMsg.includes("workflow")) {
-      intent = "automation";
+    else if (
+      lowercaseMsg.includes('automatisation') ||
+      lowercaseMsg.includes('règle') ||
+      lowercaseMsg.includes('workflow')
+    ) {
+      intent = 'automation';
       confidence = 86;
-      response = "Vous avez 5 règles d'automatisation actives (taux succès 98%). La plus utilisée: 'Irrigation Intelligente' (24 exécutions cette semaine). Je peux créer une nouvelle règle - par exemple: déclencher alerte si humidité < 25% ET température > 28°C. Quel type d'automatisation souhaitez-vous?";
+      response =
+        "Vous avez 5 règles d'automatisation actives (taux succès 98%). La plus utilisée: 'Irrigation Intelligente' (24 exécutions cette semaine). Je peux créer une nouvelle règle - par exemple: déclencher alerte si humidité < 25% ET température > 28°C. Quel type d'automatisation souhaitez-vous?";
       suggestedActions = [
-        { label: "Nouvelle règle", action: "Créer une nouvelle règle d'automatisation" },
-        { label: "Voir règles actives", action: "Afficher toutes mes règles d'automatisation" },
-        { label: "Optimiser règles", action: "Suggère des optimisations pour mes règles" },
+        { label: 'Nouvelle règle', action: "Créer une nouvelle règle d'automatisation" },
+        { label: 'Voir règles actives', action: "Afficher toutes mes règles d'automatisation" },
+        { label: 'Optimiser règles', action: 'Suggère des optimisations pour mes règles' },
       ];
     }
     // Market/Finance
-    else if (lowercaseMsg.includes("prix") || lowercaseMsg.includes("vente") || lowercaseMsg.includes("marché")) {
-      intent = "market";
+    else if (
+      lowercaseMsg.includes('prix') ||
+      lowercaseMsg.includes('vente') ||
+      lowercaseMsg.includes('marché')
+    ) {
+      intent = 'market';
       confidence = 89;
-      response = "Analyse marché aujourd'hui:\n\n🌾 Blé: 238€/t (+2% cette semaine) - VENDRE dans 3-5 jours\n🌽 Maïs: 195€/t (stable) - ATTENDRE 2 semaines\n🍅 Tomates: 1.85€/kg (+8% demande) - VENDRE maintenant\n\nVos stocks: 45t blé, 22t maïs, 580kg tomates. Revenus potentiels: 18,850€. Voulez-vous créer une annonce?";
+      response =
+        "Analyse marché aujourd'hui:\n\n🌾 Blé: 238€/t (+2% cette semaine) - VENDRE dans 3-5 jours\n🌽 Maïs: 195€/t (stable) - ATTENDRE 2 semaines\n🍅 Tomates: 1.85€/kg (+8% demande) - VENDRE maintenant\n\nVos stocks: 45t blé, 22t maïs, 580kg tomates. Revenus potentiels: 18,850€. Voulez-vous créer une annonce?";
       suggestedActions = [
-        { label: "Vendre blé", action: "Créer une annonce de vente pour mon blé" },
-        { label: "Tendances prix", action: "Afficher les tendances de prix sur 30 jours" },
-        { label: "Alertes prix", action: "Configurer des alertes de prix personnalisées" },
+        { label: 'Vendre blé', action: 'Créer une annonce de vente pour mon blé' },
+        { label: 'Tendances prix', action: 'Afficher les tendances de prix sur 30 jours' },
+        { label: 'Alertes prix', action: 'Configurer des alertes de prix personnalisées' },
       ];
     }
     // Learning/Help
-    else if (lowercaseMsg.includes("comment") || lowercaseMsg.includes("aide") || lowercaseMsg.includes("expliqu")) {
-      intent = "help";
+    else if (
+      lowercaseMsg.includes('comment') ||
+      lowercaseMsg.includes('aide') ||
+      lowercaseMsg.includes('expliqu')
+    ) {
+      intent = 'help';
       confidence = 82;
-      response = "Je peux vous aider! Je suis spécialisé dans:\n\n📊 Analyse de données agricoles en temps réel\n🤖 Recommandations IA personnalisées\n🌱 Surveillance cultures et détection maladies\n⚙️ Automatisation des tâches répétitives\n💰 Optimisation revenus et timing marché\n\nPosez-moi des questions en langage naturel, par exemple: 'Quand dois-je récolter?' ou 'Mes tomates ont-elles besoin d'eau?'";
+      response =
+        "Je peux vous aider! Je suis spécialisé dans:\n\n📊 Analyse de données agricoles en temps réel\n🤖 Recommandations IA personnalisées\n🌱 Surveillance cultures et détection maladies\n⚙️ Automatisation des tâches répétitives\n💰 Optimisation revenus et timing marché\n\nPosez-moi des questions en langage naturel, par exemple: 'Quand dois-je récolter?' ou 'Mes tomates ont-elles besoin d'eau?'";
       suggestedActions = [
-        { label: "Tutoriel IA", action: "Montre-moi comment utiliser les fonctionnalités IA" },
-        { label: "FAQ", action: "Afficher les questions fréquentes" },
-        { label: "Ressources", action: "Accéder aux ressources d'apprentissage" },
+        { label: 'Tutoriel IA', action: 'Montre-moi comment utiliser les fonctionnalités IA' },
+        { label: 'FAQ', action: 'Afficher les questions fréquentes' },
+        { label: 'Ressources', action: "Accéder aux ressources d'apprentissage" },
       ];
     }
     // Default
     else {
       response = `J'ai bien reçu votre message: "${userMessage}". Je peux vous aider avec la gestion de cultures, prévisions météo, recommandations IA, automatisation, analyses marché, et bien plus. Pouvez-vous préciser votre besoin?`;
       suggestedActions = [
-        { label: "État cultures", action: "Quel est l'état de mes cultures?" },
-        { label: "Recommandations", action: "Quelles sont tes recommandations?" },
-        { label: "Aide", action: "Comment peux-tu m'aider?" },
+        { label: 'État cultures', action: "Quel est l'état de mes cultures?" },
+        { label: 'Recommandations', action: 'Quelles sont tes recommandations?' },
+        { label: 'Aide', action: "Comment peux-tu m'aider?" },
       ];
     }
 
     return {
       id: Date.now(),
-      sender: "ai",
+      sender: 'ai',
       text: response,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       intent,
@@ -170,13 +222,13 @@ export function ChatInterface() {
         // AI Mode
         const userMessage: AIMessage = {
           id: Date.now(),
-          sender: "user",
+          sender: 'user',
           text: messageInput,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         };
-        
+
         setAiMessages((prev) => [...prev, userMessage]);
-        setMessageInput("");
+        setMessageInput('');
         setIsProcessing(true);
 
         // Update context
@@ -197,12 +249,12 @@ export function ChatInterface() {
           ...messages,
           {
             id: messages.length + 1,
-            sender: "admin",
+            sender: 'admin',
             text: messageInput,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          }
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          },
         ]);
-        setMessageInput("");
+        setMessageInput('');
       }
     }
   };
@@ -224,11 +276,11 @@ export function ChatInterface() {
               onClick={() => setIsAiMode(!isAiMode)}
               className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                 isAiMode
-                  ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white"
-                  : "bg-muted text-muted-foreground"
+                  ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white'
+                  : 'bg-muted text-muted-foreground'
               }`}
             >
-              {isAiMode ? "Mode IA" : "Mode Chat"}
+              {isAiMode ? 'Mode IA' : 'Mode Chat'}
             </button>
           </div>
           <div className="relative">
@@ -236,24 +288,29 @@ export function ChatInterface() {
             <Input placeholder="Search conversations..." className="pl-10" />
           </div>
         </div>
-        
+
         {isAiMode ? (
           <div className="flex-1 p-4">
             <div className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-950 dark:to-blue-950 rounded-lg p-4 border-2 border-purple-200 dark:border-purple-800">
               <div className="flex items-center gap-2 mb-3">
                 <Bot className="h-5 w-5 text-purple-600" />
-                <h3 className="font-bold text-purple-900 dark:text-purple-100">Assistant IA AgroLogistic</h3>
+                <h3 className="font-bold text-purple-900 dark:text-purple-100">
+                  Assistant IA AgroLogistic
+                </h3>
               </div>
               <p className="text-sm text-muted-foreground mb-4">
-                Intelligence artificielle avancée pour vous aider avec toutes vos questions agricoles.
+                Intelligence artificielle avancée pour vous aider avec toutes vos questions
+                agricoles.
               </p>
-              
+
               <div className="space-y-2">
                 <div className="flex items-start gap-2">
                   <Lightbulb className="h-4 w-4 text-yellow-600 mt-0.5" />
                   <div>
                     <p className="text-xs font-medium">Contexte Intelligent</p>
-                    <p className="text-xs text-muted-foreground">Comprend le contexte de vos conversations</p>
+                    <p className="text-xs text-muted-foreground">
+                      Comprend le contexte de vos conversations
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
@@ -267,7 +324,9 @@ export function ChatInterface() {
                   <BookOpen className="h-4 w-4 text-blue-600 mt-0.5" />
                   <div>
                     <p className="text-xs font-medium">Apprentissage Continu</p>
-                    <p className="text-xs text-muted-foreground">S'améliore avec chaque interaction</p>
+                    <p className="text-xs text-muted-foreground">
+                      S'améliore avec chaque interaction
+                    </p>
                   </div>
                 </div>
               </div>
@@ -292,7 +351,7 @@ export function ChatInterface() {
                 key={conversation.id}
                 onClick={() => setSelectedChat(conversation.id)}
                 className={`w-full p-4 flex items-start gap-3 transition-colors border-b hover:bg-muted/50 ${
-                  selectedChat === conversation.id ? "bg-muted" : ""
+                  selectedChat === conversation.id ? 'bg-muted' : ''
                 }`}
               >
                 <Avatar>
@@ -303,9 +362,7 @@ export function ChatInterface() {
                 <div className="flex-1 text-left">
                   <div className="flex items-center justify-between mb-1">
                     <span className="font-medium">{conversation.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {conversation.timestamp}
-                    </span>
+                    <span className="text-xs text-muted-foreground">{conversation.timestamp}</span>
                   </div>
                   <p className="text-sm text-muted-foreground line-clamp-1">
                     {conversation.lastMessage}
@@ -374,42 +431,38 @@ export function ChatInterface() {
                 <div key={message.id}>
                   <div
                     className={`flex items-start gap-3 ${
-                      message.sender === "user" ? "justify-end" : "justify-start"
+                      message.sender === 'user' ? 'justify-end' : 'justify-start'
                     }`}
                   >
-                    {message.sender === "ai" && (
+                    {message.sender === 'ai' && (
                       <div className="h-8 w-8 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0">
                         <Bot className="h-5 w-5 text-white" />
                       </div>
                     )}
                     <div
                       className={`max-w-[70%] rounded-lg px-4 py-3 ${
-                        message.sender === "user"
-                          ? "bg-[#2563eb] text-white"
-                          : "bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-950 dark:to-blue-950 border border-purple-200 dark:border-purple-800"
+                        message.sender === 'user'
+                          ? 'bg-[#2563eb] text-white'
+                          : 'bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-950 dark:to-blue-950 border border-purple-200 dark:border-purple-800'
                       }`}
                     >
                       <p className="text-sm whitespace-pre-line">{message.text}</p>
                       <div className="flex items-center justify-between mt-2 pt-2 border-t border-current/10">
                         <span
                           className={`text-xs ${
-                            message.sender === "user"
-                              ? "text-blue-100"
-                              : "text-muted-foreground"
+                            message.sender === 'user' ? 'text-blue-100' : 'text-muted-foreground'
                           }`}
                         >
                           {message.timestamp}
                         </span>
                         {message.confidence && (
-                          <span
-                            className="text-xs px-2 py-0.5 rounded bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300"
-                          >
+                          <span className="text-xs px-2 py-0.5 rounded bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">
                             {message.confidence}% confiance
                           </span>
                         )}
                       </div>
                     </div>
-                    {message.sender === "user" && (
+                    {message.sender === 'user' && (
                       <div className="h-8 w-8 rounded-full bg-[#2563eb] flex items-center justify-center flex-shrink-0">
                         <User className="h-5 w-5 text-white" />
                       </div>
@@ -441,9 +494,18 @@ export function ChatInterface() {
                   <div className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-950 dark:to-blue-950 border border-purple-200 dark:border-purple-800 rounded-lg px-4 py-3">
                     <div className="flex items-center gap-2">
                       <div className="flex gap-1">
-                        <span className="h-2 w-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></span>
-                        <span className="h-2 w-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></span>
-                        <span className="h-2 w-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></span>
+                        <span
+                          className="h-2 w-2 bg-purple-500 rounded-full animate-bounce"
+                          style={{ animationDelay: '0ms' }}
+                        ></span>
+                        <span
+                          className="h-2 w-2 bg-purple-500 rounded-full animate-bounce"
+                          style={{ animationDelay: '150ms' }}
+                        ></span>
+                        <span
+                          className="h-2 w-2 bg-purple-500 rounded-full animate-bounce"
+                          style={{ animationDelay: '300ms' }}
+                        ></span>
                       </div>
                       <span className="text-xs text-muted-foreground">Analyse en cours...</span>
                     </div>
@@ -455,23 +517,17 @@ export function ChatInterface() {
             messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex ${
-                  message.sender === "admin" ? "justify-end" : "justify-start"
-                }`}
+                className={`flex ${message.sender === 'admin' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
                   className={`max-w-[70%] rounded-lg px-4 py-2 ${
-                    message.sender === "admin"
-                      ? "bg-[#2563eb] text-white"
-                      : "bg-muted"
+                    message.sender === 'admin' ? 'bg-[#2563eb] text-white' : 'bg-muted'
                   }`}
                 >
                   <p className="text-sm">{message.text}</p>
                   <span
                     className={`text-xs mt-1 block ${
-                      message.sender === "admin"
-                        ? "text-blue-100"
-                        : "text-muted-foreground"
+                      message.sender === 'admin' ? 'text-blue-100' : 'text-muted-foreground'
                     }`}
                   >
                     {message.timestamp}
@@ -490,15 +546,12 @@ export function ChatInterface() {
               value={messageInput}
               onChange={(e) => setMessageInput(e.target.value)}
               onKeyPress={(e) => {
-                if (e.key === "Enter") {
+                if (e.key === 'Enter') {
                   handleSendMessage();
                 }
               }}
             />
-            <Button
-              onClick={handleSendMessage}
-              className="bg-[#2563eb] hover:bg-[#1d4ed8]"
-            >
+            <Button onClick={handleSendMessage} className="bg-[#2563eb] hover:bg-[#1d4ed8]">
               <Send className="h-4 w-4" />
             </Button>
           </div>

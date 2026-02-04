@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Checkbox } from "./ui/checkbox";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { Progress } from "./ui/progress";
+import { useState } from 'react';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { Checkbox } from './ui/checkbox';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Progress } from './ui/progress';
 
 interface RegisterScreenProps {
   onNavigate: (route: string) => void;
@@ -14,13 +14,13 @@ interface RegisterScreenProps {
 export function RegisterScreen({ onNavigate }: RegisterScreenProps) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    firstName: "",
-    lastName: "",
-    phone: "",
-    accountType: "",
-    agreeToTerms: false
+    email: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    phone: '',
+    accountType: '',
+    agreeToTerms: false,
   });
 
   const calculatePasswordStrength = (password: string) => {
@@ -34,17 +34,17 @@ export function RegisterScreen({ onNavigate }: RegisterScreenProps) {
 
   const passwordStrength = calculatePasswordStrength(formData.password);
   const getStrengthLabel = () => {
-    if (passwordStrength <= 25) return "Weak";
-    if (passwordStrength <= 50) return "Fair";
-    if (passwordStrength <= 75) return "Good";
-    return "Strong";
+    if (passwordStrength <= 25) return 'Weak';
+    if (passwordStrength <= 50) return 'Fair';
+    if (passwordStrength <= 75) return 'Good';
+    return 'Strong';
   };
 
   const getStrengthColor = () => {
-    if (passwordStrength <= 25) return "bg-red-500";
-    if (passwordStrength <= 50) return "bg-orange-500";
-    if (passwordStrength <= 75) return "bg-yellow-500";
-    return "bg-green-500";
+    if (passwordStrength <= 25) return 'bg-red-500';
+    if (passwordStrength <= 50) return 'bg-orange-500';
+    if (passwordStrength <= 75) return 'bg-yellow-500';
+    return 'bg-green-500';
   };
 
   const handleNext = () => {
@@ -57,7 +57,7 @@ export function RegisterScreen({ onNavigate }: RegisterScreenProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onNavigate("/admin/overview");
+    onNavigate('/admin/overview');
   };
 
   return (
@@ -79,7 +79,9 @@ export function RegisterScreen({ onNavigate }: RegisterScreenProps) {
           <div className="mb-6">
             <div className="flex justify-between mb-2">
               <span className="text-sm font-medium">Step {step} of 2</span>
-              <span className="text-sm text-muted-foreground">{step === 1 ? "Account Info" : "Personal Info"}</span>
+              <span className="text-sm text-muted-foreground">
+                {step === 1 ? 'Account Info' : 'Personal Info'}
+              </span>
             </div>
             <Progress value={step * 50} className="h-2" />
           </div>
@@ -112,12 +114,17 @@ export function RegisterScreen({ onNavigate }: RegisterScreenProps) {
                     <div className="space-y-1">
                       <div className="flex items-center justify-between text-xs">
                         <span>Password strength:</span>
-                        <span className={`font-medium ${
-                          passwordStrength <= 25 ? "text-red-500" :
-                          passwordStrength <= 50 ? "text-orange-500" :
-                          passwordStrength <= 75 ? "text-yellow-500" :
-                          "text-green-500"
-                        }`}>
+                        <span
+                          className={`font-medium ${
+                            passwordStrength <= 25
+                              ? 'text-red-500'
+                              : passwordStrength <= 50
+                              ? 'text-orange-500'
+                              : passwordStrength <= 75
+                              ? 'text-yellow-500'
+                              : 'text-green-500'
+                          }`}
+                        >
                           {getStrengthLabel()}
                         </span>
                       </div>
@@ -202,19 +209,22 @@ export function RegisterScreen({ onNavigate }: RegisterScreenProps) {
                     }
                     required
                   />
-                  <label htmlFor="terms" className="text-sm text-muted-foreground leading-none cursor-pointer">
-                    I agree to the{" "}
+                  <label
+                    htmlFor="terms"
+                    className="text-sm text-muted-foreground leading-none cursor-pointer"
+                  >
+                    I agree to the{' '}
                     <button
                       type="button"
-                      onClick={() => onNavigate("/terms")}
+                      onClick={() => onNavigate('/terms')}
                       className="text-[#2563eb] hover:underline"
                     >
                       Terms of Service
-                    </button>{" "}
-                    and{" "}
+                    </button>{' '}
+                    and{' '}
                     <button
                       type="button"
-                      onClick={() => onNavigate("/privacy")}
+                      onClick={() => onNavigate('/privacy')}
                       className="text-[#2563eb] hover:underline"
                     >
                       Privacy Policy
@@ -222,18 +232,18 @@ export function RegisterScreen({ onNavigate }: RegisterScreenProps) {
                   </label>
                 </div>
                 <div className="flex gap-3">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleBack}
-                    className="flex-1"
-                  >
+                  <Button type="button" variant="outline" onClick={handleBack} className="flex-1">
                     Back
                   </Button>
                   <Button
                     type="submit"
                     className="flex-1 bg-[#2563eb] hover:bg-[#1d4ed8]"
-                    disabled={!formData.firstName || !formData.lastName || !formData.phone || !formData.agreeToTerms}
+                    disabled={
+                      !formData.firstName ||
+                      !formData.lastName ||
+                      !formData.phone ||
+                      !formData.agreeToTerms
+                    }
                   >
                     Create Account
                   </Button>
@@ -246,7 +256,7 @@ export function RegisterScreen({ onNavigate }: RegisterScreenProps) {
           <div className="mt-6 text-center text-sm">
             <span className="text-muted-foreground">Already have an account? </span>
             <button
-              onClick={() => onNavigate("/login")}
+              onClick={() => onNavigate('/login')}
               className="text-[#2563eb] hover:underline font-medium"
             >
               Sign in

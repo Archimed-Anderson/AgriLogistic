@@ -57,12 +57,24 @@ export function InvoicesList({ invoices, onDownload, onSend, onView }: InvoicesL
         <table className="w-full">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200 text-left">
-              <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Facture</th>
-              <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Client</th>
-              <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
-              <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Montant</th>
-              <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Statut</th>
-              <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+              <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Facture
+              </th>
+              <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Client
+              </th>
+              <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Date
+              </th>
+              <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Montant
+              </th>
+              <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Statut
+              </th>
+              <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -96,9 +108,7 @@ export function InvoicesList({ invoices, onDownload, onSend, onView }: InvoicesL
                     {formatCurrency(invoice.total, invoice.currency)}
                   </p>
                 </td>
-                <td className="py-4 px-6">
-                  {getStatusBadge(invoice.status)}
-                </td>
+                <td className="py-4 px-6">{getStatusBadge(invoice.status)}</td>
                 <td className="py-4 px-6">
                   <div className="flex items-center justify-end gap-2">
                     <button

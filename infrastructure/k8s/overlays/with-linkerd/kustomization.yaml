@@ -1,0 +1,9 @@
+# Overlay avec Service Mesh Linkerd (injection via namespace)
+# Usage: kubectl apply -k infrastructure/k8s/overlays/with-linkerd/
+# Prérequis: Linkerd control plane + viz installés (infrastructure/linkerd/install.sh)
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../production
+  - namespace-linkerd.yaml

@@ -125,16 +125,40 @@ const mockInventory: InventoryItem[] = [
 ];
 
 const mockMovements: StockMovement[] = [
-  { id: 'm-1', itemId: 'inv-001', type: 'in', quantity: 100, reason: 'Réception commande', date: new Date('2026-01-20'), user: 'Amadou Fall' },
-  { id: 'm-2', itemId: 'inv-001', type: 'out', quantity: 50, reason: 'Vente client', date: new Date('2026-01-21'), user: 'Marie Seck' },
-  { id: 'm-3', itemId: 'inv-003', type: 'out', quantity: 35, reason: 'Vente client', date: new Date('2026-01-22'), user: 'Marie Seck' },
+  {
+    id: 'm-1',
+    itemId: 'inv-001',
+    type: 'in',
+    quantity: 100,
+    reason: 'Réception commande',
+    date: new Date('2026-01-20'),
+    user: 'Amadou Fall',
+  },
+  {
+    id: 'm-2',
+    itemId: 'inv-001',
+    type: 'out',
+    quantity: 50,
+    reason: 'Vente client',
+    date: new Date('2026-01-21'),
+    user: 'Marie Seck',
+  },
+  {
+    id: 'm-3',
+    itemId: 'inv-003',
+    type: 'out',
+    quantity: 35,
+    reason: 'Vente client',
+    date: new Date('2026-01-22'),
+    user: 'Marie Seck',
+  },
 ];
 
 export function useInventory() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['buyer', 'inventory'],
     queryFn: async () => {
-      await new Promise(resolve => setTimeout(resolve, 600));
+      await new Promise((resolve) => setTimeout(resolve, 600));
       return {
         items: mockInventory,
         movements: mockMovements,
@@ -143,11 +167,13 @@ export function useInventory() {
   });
 
   const items = data?.items || [];
-  const lowStockItems = items.filter(i => i.status === 'low' || i.status === 'critical');
+  const lowStockItems = items.filter((i) => i.status === 'low' || i.status === 'critical');
   const totalValue = items.reduce((acc, i) => acc + i.totalValue, 0);
-  const expiringItems = items.filter(i => {
+  const expiringItems = items.filter((i) => {
     if (!i.expiryDate) return false;
-    const daysUntilExpiry = Math.ceil((new Date(i.expiryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    const daysUntilExpiry = Math.ceil(
+      (new Date(i.expiryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+    );
     return daysUntilExpiry <= 7;
   });
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Zap,
   Play,
@@ -33,13 +33,13 @@ import {
   Target,
   ArrowRight,
   Save,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 interface Workflow {
   id: string;
   name: string;
-  status: "active" | "paused" | "draft" | "error";
+  status: 'active' | 'paused' | 'draft' | 'error';
   trigger: string;
   actions: number;
   executions: number;
@@ -52,7 +52,7 @@ interface ExecutionLog {
   id: string;
   workflowId: string;
   workflowName: string;
-  status: "success" | "failed" | "running";
+  status: 'success' | 'failed' | 'running';
   startTime: string;
   endTime: string;
   duration: number;
@@ -60,24 +60,24 @@ interface ExecutionLog {
 
 // Advanced Rule Engine Interfaces
 interface RuleTrigger {
-  type: "sensor" | "schedule" | "manual" | "event" | "threshold";
+  type: 'sensor' | 'schedule' | 'manual' | 'event' | 'threshold';
   condition: string;
   value?: any;
-  operator?: "=" | ">" | "<" | ">=" | "<=" | "!=" | "contains";
+  operator?: '=' | '>' | '<' | '>=' | '<=' | '!=' | 'contains';
 }
 
 interface RuleCondition {
   id: string;
-  type: "if" | "else_if" | "else";
+  type: 'if' | 'else_if' | 'else';
   field: string;
-  operator: "=" | ">" | "<" | ">=" | "<=" | "!=" | "contains" | "between";
+  operator: '=' | '>' | '<' | '>=' | '<=' | '!=' | 'contains' | 'between';
   value: any;
-  logicGate?: "AND" | "OR";
+  logicGate?: 'AND' | 'OR';
 }
 
 interface RuleAction {
   id: string;
-  type: "notification" | "command" | "api_call" | "data_log" | "alert";
+  type: 'notification' | 'command' | 'api_call' | 'data_log' | 'alert';
   target: string;
   parameters: Record<string, any>;
   delay?: number;
@@ -88,7 +88,7 @@ interface AdvancedRule {
   name: string;
   description: string;
   enabled: boolean;
-  priority: "low" | "medium" | "high" | "critical";
+  priority: 'low' | 'medium' | 'high' | 'critical';
   trigger: RuleTrigger;
   conditions: RuleCondition[];
   actions: RuleAction[];
@@ -99,9 +99,11 @@ interface AdvancedRule {
 }
 
 export function AutomationWorkflows() {
-  const [activeView, setActiveView] = useState<"overview" | "builder" | "scheduled" | "triggers" | "logs">("overview");
+  const [activeView, setActiveView] = useState<
+    'overview' | 'builder' | 'scheduled' | 'triggers' | 'logs'
+  >('overview');
   const [showBuilder, setShowBuilder] = useState(false);
-  
+
   // Advanced Rule Engine State
   const [showRuleBuilder, setShowRuleBuilder] = useState(false);
   const [advancedRules, setAdvancedRules] = useState<AdvancedRule[]>([]);
@@ -111,131 +113,131 @@ export function AutomationWorkflows() {
   // KPIs Data
   const kpis = [
     {
-      id: "active",
-      label: "Workflows Actifs",
-      value: "18",
+      id: 'active',
+      label: 'Workflows Actifs',
+      value: '18',
       change: 3,
       icon: Zap,
-      color: "green",
-      trend: "up",
-      subtitle: "Sur 22 total",
+      color: 'green',
+      trend: 'up',
+      subtitle: 'Sur 22 total',
     },
     {
-      id: "executions",
+      id: 'executions',
       label: "Exécutions Aujourd'hui",
-      value: "342",
+      value: '342',
       change: 15,
       icon: Activity,
-      color: "blue",
-      trend: "up",
-      subtitle: "+15% vs hier",
+      color: 'blue',
+      trend: 'up',
+      subtitle: '+15% vs hier',
     },
     {
-      id: "success",
-      label: "Taux de Réussite",
-      value: "98.7%",
+      id: 'success',
+      label: 'Taux de Réussite',
+      value: '98.7%',
       change: 0.5,
       icon: CheckCircle,
-      color: "green",
-      trend: "up",
-      subtitle: "1,245 réussies",
+      color: 'green',
+      trend: 'up',
+      subtitle: '1,245 réussies',
     },
     {
-      id: "next",
-      label: "Prochain Déclenchement",
-      value: "14:30",
+      id: 'next',
+      label: 'Prochain Déclenchement',
+      value: '14:30',
       change: 0,
       icon: Clock,
-      color: "orange",
-      trend: "neutral",
-      subtitle: "Dans 2h 15min",
+      color: 'orange',
+      trend: 'neutral',
+      subtitle: 'Dans 2h 15min',
     },
   ];
 
   // Workflows Data
   const workflows: Workflow[] = [
     {
-      id: "WF-001",
-      name: "Alerte Irrigation Automatique",
-      status: "active",
-      trigger: "Humidité < 30%",
+      id: 'WF-001',
+      name: 'Alerte Irrigation Automatique',
+      status: 'active',
+      trigger: 'Humidité < 30%',
       actions: 3,
       executions: 145,
       successRate: 99.3,
-      lastRun: "Il y a 2h",
-      nextRun: "Dans 4h",
+      lastRun: 'Il y a 2h',
+      nextRun: 'Dans 4h',
     },
     {
-      id: "WF-002",
-      name: "Rapport Hebdomadaire Automatisé",
-      status: "active",
-      trigger: "Chaque lundi 9h",
+      id: 'WF-002',
+      name: 'Rapport Hebdomadaire Automatisé',
+      status: 'active',
+      trigger: 'Chaque lundi 9h',
       actions: 5,
       executions: 48,
       successRate: 100,
-      lastRun: "Il y a 2 jours",
-      nextRun: "Lundi 9h",
+      lastRun: 'Il y a 2 jours',
+      nextRun: 'Lundi 9h',
     },
     {
-      id: "WF-003",
-      name: "Notification Facture Impayée",
-      status: "active",
-      trigger: "Échéance +7 jours",
+      id: 'WF-003',
+      name: 'Notification Facture Impayée',
+      status: 'active',
+      trigger: 'Échéance +7 jours',
       actions: 2,
       executions: 23,
       successRate: 95.7,
-      lastRun: "Hier",
-      nextRun: "Dans 3 jours",
+      lastRun: 'Hier',
+      nextRun: 'Dans 3 jours',
     },
     {
-      id: "WF-004",
-      name: "Backup Données Quotidien",
-      status: "paused",
-      trigger: "Tous les jours 2h",
+      id: 'WF-004',
+      name: 'Backup Données Quotidien',
+      status: 'paused',
+      trigger: 'Tous les jours 2h',
       actions: 4,
       executions: 305,
       successRate: 99.7,
-      lastRun: "Il y a 12h",
-      nextRun: "Pausé",
+      lastRun: 'Il y a 12h',
+      nextRun: 'Pausé',
     },
   ];
 
   // Execution Logs
   const executionLogs: ExecutionLog[] = [
     {
-      id: "EX-001",
-      workflowId: "WF-001",
-      workflowName: "Alerte Irrigation Automatique",
-      status: "success",
-      startTime: "2025-01-13 12:30:45",
-      endTime: "2025-01-13 12:31:12",
+      id: 'EX-001',
+      workflowId: 'WF-001',
+      workflowName: 'Alerte Irrigation Automatique',
+      status: 'success',
+      startTime: '2025-01-13 12:30:45',
+      endTime: '2025-01-13 12:31:12',
       duration: 27,
     },
     {
-      id: "EX-002",
-      workflowId: "WF-002",
-      workflowName: "Rapport Hebdomadaire",
-      status: "success",
-      startTime: "2025-01-13 09:00:00",
-      endTime: "2025-01-13 09:02:34",
+      id: 'EX-002',
+      workflowId: 'WF-002',
+      workflowName: 'Rapport Hebdomadaire',
+      status: 'success',
+      startTime: '2025-01-13 09:00:00',
+      endTime: '2025-01-13 09:02:34',
       duration: 154,
     },
     {
-      id: "EX-003",
-      workflowId: "WF-003",
-      workflowName: "Notification Facture",
-      status: "failed",
-      startTime: "2025-01-12 14:15:00",
-      endTime: "2025-01-12 14:15:08",
+      id: 'EX-003',
+      workflowId: 'WF-003',
+      workflowName: 'Notification Facture',
+      status: 'failed',
+      startTime: '2025-01-12 14:15:00',
+      endTime: '2025-01-12 14:15:08',
       duration: 8,
     },
     {
-      id: "EX-004",
-      workflowId: "WF-001",
-      workflowName: "Alerte Irrigation",
-      status: "running",
-      startTime: "2025-01-13 14:30:00",
-      endTime: "",
+      id: 'EX-004',
+      workflowId: 'WF-001',
+      workflowName: 'Alerte Irrigation',
+      status: 'running',
+      startTime: '2025-01-13 14:30:00',
+      endTime: '',
       duration: 0,
     },
   ];
@@ -243,161 +245,214 @@ export function AutomationWorkflows() {
   // Sample Advanced Rules
   const sampleRules: AdvancedRule[] = [
     {
-      id: "RULE-001",
-      name: "Irrigation Intelligente Multi-Conditions",
-      description: "Déclenche l'irrigation si humidité < 30% ET température > 25°C ET pas de pluie prévue",
+      id: 'RULE-001',
+      name: 'Irrigation Intelligente Multi-Conditions',
+      description:
+        "Déclenche l'irrigation si humidité < 30% ET température > 25°C ET pas de pluie prévue",
       enabled: true,
-      priority: "high",
+      priority: 'high',
       trigger: {
-        type: "sensor",
-        condition: "Humidité Sol",
+        type: 'sensor',
+        condition: 'Humidité Sol',
         value: 30,
-        operator: "<",
+        operator: '<',
       },
       conditions: [
         {
-          id: "COND-001",
-          type: "if",
-          field: "temperature",
-          operator: ">",
+          id: 'COND-001',
+          type: 'if',
+          field: 'temperature',
+          operator: '>',
           value: 25,
-          logicGate: "AND",
+          logicGate: 'AND',
         },
         {
-          id: "COND-002",
-          type: "if",
-          field: "rain_forecast",
-          operator: "=",
+          id: 'COND-002',
+          type: 'if',
+          field: 'rain_forecast',
+          operator: '=',
           value: false,
-          logicGate: "AND",
+          logicGate: 'AND',
         },
       ],
       actions: [
         {
-          id: "ACT-001",
-          type: "command",
-          target: "Système Irrigation Parcelle Nord",
-          parameters: { duration: 60, intensity: "medium" },
+          id: 'ACT-001',
+          type: 'command',
+          target: 'Système Irrigation Parcelle Nord',
+          parameters: { duration: 60, intensity: 'medium' },
         },
         {
-          id: "ACT-002",
-          type: "notification",
-          target: "Responsable Agricole",
-          parameters: { channel: "sms", message: "Irrigation démarrée" },
+          id: 'ACT-002',
+          type: 'notification',
+          target: 'Responsable Agricole',
+          parameters: { channel: 'sms', message: 'Irrigation démarrée' },
           delay: 2,
         },
       ],
-      createdAt: "2025-01-10",
-      lastExecuted: "Il y a 3h",
+      createdAt: '2025-01-10',
+      lastExecuted: 'Il y a 3h',
       executionCount: 24,
       successRate: 100,
     },
     {
-      id: "RULE-002",
-      name: "Alerte Maladie avec IA",
-      description: "Si IA détecte maladie avec confiance > 85% ALORS notifier + créer ticket",
+      id: 'RULE-002',
+      name: 'Alerte Maladie avec IA',
+      description: 'Si IA détecte maladie avec confiance > 85% ALORS notifier + créer ticket',
       enabled: true,
-      priority: "critical",
+      priority: 'critical',
       trigger: {
-        type: "event",
-        condition: "AI Disease Detection",
+        type: 'event',
+        condition: 'AI Disease Detection',
       },
       conditions: [
         {
-          id: "COND-003",
-          type: "if",
-          field: "confidence",
-          operator: ">=",
+          id: 'COND-003',
+          type: 'if',
+          field: 'confidence',
+          operator: '>=',
           value: 85,
         },
       ],
       actions: [
         {
-          id: "ACT-003",
-          type: "alert",
-          target: "Dashboard Principal",
-          parameters: { severity: "high", sound: true },
+          id: 'ACT-003',
+          type: 'alert',
+          target: 'Dashboard Principal',
+          parameters: { severity: 'high', sound: true },
         },
         {
-          id: "ACT-004",
-          type: "api_call",
-          target: "Ticket System API",
-          parameters: { endpoint: "/tickets/create", method: "POST" },
+          id: 'ACT-004',
+          type: 'api_call',
+          target: 'Ticket System API',
+          parameters: { endpoint: '/tickets/create', method: 'POST' },
           delay: 1,
         },
         {
-          id: "ACT-005",
-          type: "notification",
-          target: "Agronome Chef",
-          parameters: { channel: "email", priority: "urgent" },
+          id: 'ACT-005',
+          type: 'notification',
+          target: 'Agronome Chef',
+          parameters: { channel: 'email', priority: 'urgent' },
           delay: 2,
         },
       ],
-      createdAt: "2025-01-08",
-      lastExecuted: "Il y a 5h",
+      createdAt: '2025-01-08',
+      lastExecuted: 'Il y a 5h',
       executionCount: 7,
       successRate: 100,
     },
     {
-      id: "RULE-003",
-      name: "Optimisation Coûts Énergie",
-      description: "Active équipements énergivores pendant heures creuses (22h-6h)",
+      id: 'RULE-003',
+      name: 'Optimisation Coûts Énergie',
+      description: 'Active équipements énergivores pendant heures creuses (22h-6h)',
       enabled: true,
-      priority: "medium",
+      priority: 'medium',
       trigger: {
-        type: "schedule",
-        condition: "Tous les jours 22:00",
+        type: 'schedule',
+        condition: 'Tous les jours 22:00',
       },
       conditions: [
         {
-          id: "COND-004",
-          type: "if",
-          field: "electricity_rate",
-          operator: "<",
+          id: 'COND-004',
+          type: 'if',
+          field: 'electricity_rate',
+          operator: '<',
           value: 0.15,
         },
       ],
       actions: [
         {
-          id: "ACT-006",
-          type: "command",
-          target: "Pompes Irrigation",
-          parameters: { action: "start", mode: "eco" },
+          id: 'ACT-006',
+          type: 'command',
+          target: 'Pompes Irrigation',
+          parameters: { action: 'start', mode: 'eco' },
         },
         {
-          id: "ACT-007",
-          type: "data_log",
-          target: "Energy Database",
-          parameters: { metrics: ["consumption", "cost", "savings"] },
+          id: 'ACT-007',
+          type: 'data_log',
+          target: 'Energy Database',
+          parameters: { metrics: ['consumption', 'cost', 'savings'] },
         },
       ],
-      createdAt: "2025-01-05",
-      lastExecuted: "Hier 22:00",
+      createdAt: '2025-01-05',
+      lastExecuted: 'Hier 22:00',
       executionCount: 11,
       successRate: 100,
     },
   ];
 
   const getStatusConfig = (status: string) => {
-    const configs: { [key: string]: { icon: any; label: string; color: string; bgColor: string } } = {
-      active: { icon: CheckCircle, label: "Actif", color: "text-green-700", bgColor: "bg-green-100 dark:bg-green-900/20" },
-      paused: { icon: Pause, label: "Pausé", color: "text-orange-700", bgColor: "bg-orange-100 dark:bg-orange-900/20" },
-      draft: { icon: Edit, label: "Brouillon", color: "text-gray-700", bgColor: "bg-gray-100 dark:bg-gray-800" },
-      error: { icon: XCircle, label: "Erreur", color: "text-red-700", bgColor: "bg-red-100 dark:bg-red-900/20" },
-      success: { icon: CheckCircle, label: "Réussi", color: "text-green-700", bgColor: "bg-green-100 dark:bg-green-900/20" },
-      failed: { icon: XCircle, label: "Échoué", color: "text-red-700", bgColor: "bg-red-100 dark:bg-red-900/20" },
-      running: { icon: Activity, label: "En cours", color: "text-blue-700", bgColor: "bg-blue-100 dark:bg-blue-900/20" },
-    };
+    const configs: { [key: string]: { icon: any; label: string; color: string; bgColor: string } } =
+      {
+        active: {
+          icon: CheckCircle,
+          label: 'Actif',
+          color: 'text-green-700',
+          bgColor: 'bg-green-100 dark:bg-green-900/20',
+        },
+        paused: {
+          icon: Pause,
+          label: 'Pausé',
+          color: 'text-orange-700',
+          bgColor: 'bg-orange-100 dark:bg-orange-900/20',
+        },
+        draft: {
+          icon: Edit,
+          label: 'Brouillon',
+          color: 'text-gray-700',
+          bgColor: 'bg-gray-100 dark:bg-gray-800',
+        },
+        error: {
+          icon: XCircle,
+          label: 'Erreur',
+          color: 'text-red-700',
+          bgColor: 'bg-red-100 dark:bg-red-900/20',
+        },
+        success: {
+          icon: CheckCircle,
+          label: 'Réussi',
+          color: 'text-green-700',
+          bgColor: 'bg-green-100 dark:bg-green-900/20',
+        },
+        failed: {
+          icon: XCircle,
+          label: 'Échoué',
+          color: 'text-red-700',
+          bgColor: 'bg-red-100 dark:bg-red-900/20',
+        },
+        running: {
+          icon: Activity,
+          label: 'En cours',
+          color: 'text-blue-700',
+          bgColor: 'bg-blue-100 dark:bg-blue-900/20',
+        },
+      };
     return configs[status];
   };
 
   // Rule Engine Functions
   const getPriorityConfig = (priority: string) => {
     const configs: { [key: string]: { bg: string; text: string; border: string } } = {
-      low: { bg: "bg-gray-100 dark:bg-gray-900/20", text: "text-gray-700", border: "border-gray-300" },
-      medium: { bg: "bg-blue-100 dark:bg-blue-900/20", text: "text-blue-700", border: "border-blue-300" },
-      high: { bg: "bg-orange-100 dark:bg-orange-900/20", text: "text-orange-700", border: "border-orange-300" },
-      critical: { bg: "bg-red-100 dark:bg-red-900/20", text: "text-red-700", border: "border-red-300" },
+      low: {
+        bg: 'bg-gray-100 dark:bg-gray-900/20',
+        text: 'text-gray-700',
+        border: 'border-gray-300',
+      },
+      medium: {
+        bg: 'bg-blue-100 dark:bg-blue-900/20',
+        text: 'text-blue-700',
+        border: 'border-blue-300',
+      },
+      high: {
+        bg: 'bg-orange-100 dark:bg-orange-900/20',
+        text: 'text-orange-700',
+        border: 'border-orange-300',
+      },
+      critical: {
+        bg: 'bg-red-100 dark:bg-red-900/20',
+        text: 'text-red-700',
+        border: 'border-red-300',
+      },
     };
     return configs[priority] || configs.medium;
   };
@@ -417,7 +472,7 @@ export function AutomationWorkflows() {
     const rule = [...sampleRules, ...advancedRules].find((r) => r.id === ruleId);
     if (!rule) return;
 
-    toast.success(`Règle "${rule.name}" ${rule.enabled ? "désactivée" : "activée"}`);
+    toast.success(`Règle "${rule.name}" ${rule.enabled ? 'désactivée' : 'activée'}`);
   };
 
   const executeRule = async (ruleId: string) => {
@@ -444,7 +499,7 @@ export function AutomationWorkflows() {
       name: `${rule.name} (copie)`,
       enabled: false,
       executionCount: 0,
-      createdAt: new Date().toISOString().split("T")[0],
+      createdAt: new Date().toISOString().split('T')[0],
     };
 
     setAdvancedRules((prev) => [newRule, ...prev]);
@@ -466,13 +521,13 @@ export function AutomationWorkflows() {
                 <div className={`p-3 rounded-lg bg-${kpi.color}-100 dark:bg-${kpi.color}-900/20`}>
                   <Icon className={`h-6 w-6 text-${kpi.color}-600`} />
                 </div>
-                {kpi.trend !== "neutral" && (
+                {kpi.trend !== 'neutral' && (
                   <div
                     className={`flex items-center gap-1 text-xs font-semibold ${
-                      kpi.trend === "up" ? "text-green-600" : "text-red-600"
+                      kpi.trend === 'up' ? 'text-green-600' : 'text-red-600'
                     }`}
                   >
-                    {kpi.trend === "up" ? (
+                    {kpi.trend === 'up' ? (
                       <TrendingUp className="h-3 w-3" />
                     ) : (
                       <TrendingUp className="h-3 w-3 rotate-180" />
@@ -514,7 +569,11 @@ export function AutomationWorkflows() {
                 </div>
                 <div className="text-xs text-muted-foreground truncate">{workflow.name}</div>
                 <div className="flex items-center gap-1 mt-2">
-                  <Activity className={`h-3 w-3 ${workflow.successRate > 95 ? "text-green-600" : "text-orange-600"}`} />
+                  <Activity
+                    className={`h-3 w-3 ${
+                      workflow.successRate > 95 ? 'text-green-600' : 'text-orange-600'
+                    }`}
+                  />
                   <span className="text-xs font-semibold">{workflow.successRate}%</span>
                 </div>
               </div>
@@ -535,7 +594,9 @@ export function AutomationWorkflows() {
 
               return (
                 <div key={log.id} className="relative pl-12">
-                  <div className={`absolute left-0 w-8 h-8 rounded-full flex items-center justify-center ${statusConfig.bgColor}`}>
+                  <div
+                    className={`absolute left-0 w-8 h-8 rounded-full flex items-center justify-center ${statusConfig.bgColor}`}
+                  >
                     <StatusIcon className={`h-4 w-4 ${statusConfig.color}`} />
                   </div>
                   <div className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
@@ -544,7 +605,9 @@ export function AutomationWorkflows() {
                         <div className="font-medium">{log.workflowName}</div>
                         <div className="text-sm text-muted-foreground">{log.workflowId}</div>
                       </div>
-                      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold ${statusConfig.color} ${statusConfig.bgColor}`}>
+                      <span
+                        className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold ${statusConfig.color} ${statusConfig.bgColor}`}
+                      >
                         {statusConfig.label}
                       </span>
                     </div>
@@ -571,9 +634,7 @@ export function AutomationWorkflows() {
                 style={{ height: `${value * 2.5}px` }}
                 title={`${value}%`}
               />
-              <div className="text-xs font-medium text-muted-foreground mt-2">
-                J{index + 1}
-              </div>
+              <div className="text-xs font-medium text-muted-foreground mt-2">J{index + 1}</div>
             </div>
           ))}
         </div>
@@ -587,7 +648,9 @@ export function AutomationWorkflows() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Moteur de Règles Avancé</h2>
-          <p className="text-muted-foreground">Créez des automatisations intelligentes avec conditions complexes</p>
+          <p className="text-muted-foreground">
+            Créez des automatisations intelligentes avec conditions complexes
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -601,11 +664,11 @@ export function AutomationWorkflows() {
             onClick={() => setRuleEngineEnabled(!ruleEngineEnabled)}
             className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
               ruleEngineEnabled
-                ? "bg-green-100 text-green-700 dark:bg-green-900/30"
-                : "bg-gray-100 text-gray-700 dark:bg-gray-800"
+                ? 'bg-green-100 text-green-700 dark:bg-green-900/30'
+                : 'bg-gray-100 text-gray-700 dark:bg-gray-800'
             }`}
           >
-            {ruleEngineEnabled ? "Moteur Actif" : "Moteur Inactif"}
+            {ruleEngineEnabled ? 'Moteur Actif' : 'Moteur Inactif'}
           </button>
         </div>
       </div>
@@ -619,13 +682,19 @@ export function AutomationWorkflows() {
           <div className="flex-1">
             <h3 className="font-bold text-lg mb-1">Moteur de Règles Intelligent</h3>
             <p className="text-sm text-muted-foreground">
-              {[...sampleRules, ...advancedRules].length} règles actives | {[...sampleRules, ...advancedRules].filter(r => r.enabled).length} activées
+              {[...sampleRules, ...advancedRules].length} règles actives |{' '}
+              {[...sampleRules, ...advancedRules].filter((r) => r.enabled).length} activées
             </p>
           </div>
           <div className="flex items-center gap-2">
             <Sparkles className="h-6 w-6 text-green-600 animate-pulse" />
             <span className="text-sm font-semibold text-green-700 dark:text-green-300">
-              Taux succès: {Math.round([...sampleRules, ...advancedRules].reduce((acc, r) => acc + r.successRate, 0) / ([...sampleRules, ...advancedRules].length || 1))}%
+              Taux succès:{' '}
+              {Math.round(
+                [...sampleRules, ...advancedRules].reduce((acc, r) => acc + r.successRate, 0) /
+                  ([...sampleRules, ...advancedRules].length || 1)
+              )}
+              %
             </span>
           </div>
         </div>
@@ -652,7 +721,9 @@ export function AutomationWorkflows() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2 flex-wrap">
                         <h3 className="font-semibold text-lg">{rule.name}</h3>
-                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${priorityConfig.text} ${priorityConfig.bg}`}>
+                        <span
+                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${priorityConfig.text} ${priorityConfig.bg}`}
+                        >
                           Priorité: {rule.priority.toUpperCase()}
                         </span>
                         {rule.enabled ? (
@@ -667,7 +738,7 @@ export function AutomationWorkflows() {
                           </span>
                         )}
                         <span className="text-xs text-muted-foreground">
-                          {rule.lastExecuted || "Jamais exécutée"}
+                          {rule.lastExecuted || 'Jamais exécutée'}
                         </span>
                       </div>
                       <p className="text-sm text-muted-foreground mb-3">{rule.description}</p>
@@ -676,12 +747,17 @@ export function AutomationWorkflows() {
                       <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
                         <div className="flex items-center gap-2 mb-1">
                           <Zap className="h-4 w-4 text-blue-600" />
-                          <span className="text-xs font-semibold text-blue-900 dark:text-blue-200">Déclencheur ({rule.trigger.type}):</span>
+                          <span className="text-xs font-semibold text-blue-900 dark:text-blue-200">
+                            Déclencheur ({rule.trigger.type}):
+                          </span>
                         </div>
                         <div className="text-sm text-blue-800 dark:text-blue-300">
                           {rule.trigger.condition}
                           {rule.trigger.operator && rule.trigger.value !== undefined && (
-                            <span> {rule.trigger.operator} {JSON.stringify(rule.trigger.value)}</span>
+                            <span>
+                              {' '}
+                              {rule.trigger.operator} {JSON.stringify(rule.trigger.value)}
+                            </span>
                           )}
                         </div>
                       </div>
@@ -697,11 +773,21 @@ export function AutomationWorkflows() {
                             {rule.conditions.map((condition, idx) => (
                               <div key={condition.id} className="flex items-start gap-2 text-sm">
                                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs font-bold flex-shrink-0">
-                                  {condition.type === "if" ? "IF" : condition.type === "else_if" ? "ELSE IF" : "ELSE"}
+                                  {condition.type === 'if'
+                                    ? 'IF'
+                                    : condition.type === 'else_if'
+                                    ? 'ELSE IF'
+                                    : 'ELSE'}
                                 </span>
                                 <span>
-                                  {condition.field} {condition.operator} {JSON.stringify(condition.value)}
-                                  {condition.logicGate && <span className="font-bold text-purple-600"> {condition.logicGate}</span>}
+                                  {condition.field} {condition.operator}{' '}
+                                  {JSON.stringify(condition.value)}
+                                  {condition.logicGate && (
+                                    <span className="font-bold text-purple-600">
+                                      {' '}
+                                      {condition.logicGate}
+                                    </span>
+                                  )}
                                 </span>
                               </div>
                             ))}
@@ -717,14 +803,18 @@ export function AutomationWorkflows() {
                         </div>
                         <div className="space-y-2">
                           {rule.actions.map((action, idx) => (
-                            <div key={action.id} className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                            <div
+                              key={action.id}
+                              className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg"
+                            >
                               <div className="flex items-start justify-between">
                                 <div className="flex-1">
                                   <div className="font-semibold text-sm text-green-900 dark:text-green-100">
                                     {idx + 1}. {action.type.toUpperCase()}: {action.target}
                                   </div>
                                   <div className="text-xs text-muted-foreground mt-1">
-                                    Paramètres: {Object.keys(action.parameters).length} | {action.delay ? `Délai: ${action.delay}s` : "Immédiat"}
+                                    Paramètres: {Object.keys(action.parameters).length} |{' '}
+                                    {action.delay ? `Délai: ${action.delay}s` : 'Immédiat'}
                                   </div>
                                 </div>
                               </div>
@@ -737,15 +827,21 @@ export function AutomationWorkflows() {
                       <div className="grid grid-cols-3 gap-3 mb-3">
                         <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                           <div className="text-xs text-muted-foreground">Exécutions</div>
-                          <div className="font-bold text-blue-700 dark:text-blue-400">{rule.executionCount}</div>
+                          <div className="font-bold text-blue-700 dark:text-blue-400">
+                            {rule.executionCount}
+                          </div>
                         </div>
                         <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
                           <div className="text-xs text-muted-foreground">Taux Succès</div>
-                          <div className="font-bold text-green-700 dark:text-green-400">{rule.successRate}%</div>
+                          <div className="font-bold text-green-700 dark:text-green-400">
+                            {rule.successRate}%
+                          </div>
                         </div>
                         <div className="p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
                           <div className="text-xs text-muted-foreground">Créée</div>
-                          <div className="font-bold text-orange-700 dark:text-orange-400">{rule.createdAt}</div>
+                          <div className="font-bold text-orange-700 dark:text-orange-400">
+                            {rule.createdAt}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -765,7 +861,7 @@ export function AutomationWorkflows() {
                       className="px-4 py-2 border-2 border-green-200 dark:border-green-800 rounded-lg hover:border-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all font-medium text-sm flex items-center gap-2"
                     >
                       {rule.enabled ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                      {rule.enabled ? "Désactiver" : "Activer"}
+                      {rule.enabled ? 'Désactiver' : 'Activer'}
                     </button>
                     <button
                       onClick={() => duplicateRule(rule.id)}
@@ -804,7 +900,9 @@ export function AutomationWorkflows() {
           <div className="flex items-center gap-3">
             <CheckCircle className="h-8 w-8 text-blue-600" />
             <div>
-              <div className="text-2xl font-bold">{[...sampleRules, ...advancedRules].filter(r => r.enabled).length}</div>
+              <div className="text-2xl font-bold">
+                {[...sampleRules, ...advancedRules].filter((r) => r.enabled).length}
+              </div>
               <div className="text-xs text-muted-foreground">Règles Actives</div>
             </div>
           </div>
@@ -813,7 +911,9 @@ export function AutomationWorkflows() {
           <div className="flex items-center gap-3">
             <Activity className="h-8 w-8 text-purple-600" />
             <div>
-              <div className="text-2xl font-bold">{[...sampleRules, ...advancedRules].reduce((acc, r) => acc + r.executionCount, 0)}</div>
+              <div className="text-2xl font-bold">
+                {[...sampleRules, ...advancedRules].reduce((acc, r) => acc + r.executionCount, 0)}
+              </div>
               <div className="text-xs text-muted-foreground">Exécutions Total</div>
             </div>
           </div>
@@ -822,7 +922,9 @@ export function AutomationWorkflows() {
           <div className="flex items-center gap-3">
             <Zap className="h-8 w-8 text-orange-600" />
             <div>
-              <div className="text-2xl font-bold">{[...sampleRules, ...advancedRules].reduce((acc, r) => acc + r.actions.length, 0)}</div>
+              <div className="text-2xl font-bold">
+                {[...sampleRules, ...advancedRules].reduce((acc, r) => acc + r.actions.length, 0)}
+              </div>
               <div className="text-xs text-muted-foreground">Actions Config</div>
             </div>
           </div>
@@ -842,7 +944,7 @@ export function AutomationWorkflows() {
       <div className="bg-card border rounded-xl p-6">
         <h3 className="text-lg font-semibold mb-6">Calendrier des Tâches</h3>
         <div className="grid grid-cols-7 gap-2">
-          {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day) => (
+          {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day) => (
             <div key={day} className="text-center text-sm font-medium text-muted-foreground py-2">
               {day}
             </div>
@@ -854,10 +956,10 @@ export function AutomationWorkflows() {
               <div
                 key={i}
                 className={`aspect-square border rounded-lg p-2 hover:bg-muted transition-colors cursor-pointer ${
-                  day === 13 ? "bg-blue-50 dark:bg-blue-900/20 border-blue-500" : ""
+                  day === 13 ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500' : ''
                 }`}
               >
-                <div className="text-sm font-medium">{day > 0 && day <= 31 ? day : ""}</div>
+                <div className="text-sm font-medium">{day > 0 && day <= 31 ? day : ''}</div>
                 {hasTask && day > 0 && day <= 31 && (
                   <div className="mt-1">
                     <div className="w-full h-1 bg-[#16A085] rounded mb-0.5" />
@@ -875,10 +977,10 @@ export function AutomationWorkflows() {
         <h3 className="text-lg font-semibold mb-4">Prochaines 7 Exécutions</h3>
         <div className="space-y-3">
           {[
-            { workflow: "Rapport Hebdomadaire", time: "Demain, 09:00", frequency: "Hebdomadaire" },
-            { workflow: "Backup Données", time: "Aujourd'hui, 02:00", frequency: "Quotidien" },
-            { workflow: "Alerte Irrigation", time: "Dans 4h", frequency: "Temps réel" },
-            { workflow: "Facturation Mensuelle", time: "1er Février, 10:00", frequency: "Mensuel" },
+            { workflow: 'Rapport Hebdomadaire', time: 'Demain, 09:00', frequency: 'Hebdomadaire' },
+            { workflow: 'Backup Données', time: "Aujourd'hui, 02:00", frequency: 'Quotidien' },
+            { workflow: 'Alerte Irrigation', time: 'Dans 4h', frequency: 'Temps réel' },
+            { workflow: 'Facturation Mensuelle', time: '1er Février, 10:00', frequency: 'Mensuel' },
           ].map((task, index) => (
             <div key={index} className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
               <div className="flex items-center justify-between">
@@ -913,10 +1015,10 @@ export function AutomationWorkflows() {
       {/* Event Sources */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
-          { source: "IoT Hub", events: 145, icon: Activity, color: "blue" },
-          { source: "Crop Intelligence", events: 89, icon: AlertCircle, color: "green" },
-          { source: "Financial Suite", events: 56, icon: DollarSign, color: "red" },
-          { source: "API Webhook", events: 234, icon: Webhook, color: "purple" },
+          { source: 'IoT Hub', events: 145, icon: Activity, color: 'blue' },
+          { source: 'Crop Intelligence', events: 89, icon: AlertCircle, color: 'green' },
+          { source: 'Financial Suite', events: 56, icon: DollarSign, color: 'red' },
+          { source: 'API Webhook', events: 234, icon: Webhook, color: 'purple' },
         ].map((src, index) => {
           const Icon = src.icon;
           return (
@@ -960,9 +1062,9 @@ export function AutomationWorkflows() {
             <div>
               <label className="block text-sm font-medium mb-2">Condition</label>
               <select className="w-full px-3 py-2 border rounded-lg bg-background">
-                <option>Température {">"} 35°C</option>
-                <option>Humidité {"<"} 30%</option>
-                <option>Batterie {"<"} 20%</option>
+                <option>Température {'>'} 35°C</option>
+                <option>Humidité {'<'} 30%</option>
+                <option>Batterie {'<'} 20%</option>
               </select>
             </div>
           </div>
@@ -974,7 +1076,7 @@ export function AutomationWorkflows() {
                   Aperçu du Déclencheur
                 </div>
                 <div className="text-sm text-blue-800 dark:text-blue-200">
-                  SI [IoT Hub] → [Alerte capteur] → [Température {">"} 35°C] ALORS [Workflow]
+                  SI [IoT Hub] → [Alerte capteur] → [Température {'>'} 35°C] ALORS [Workflow]
                 </div>
               </div>
             </div>
@@ -1039,9 +1141,7 @@ export function AutomationWorkflows() {
                 return (
                   <tr key={log.id} className="border-t hover:bg-muted/50 transition-colors">
                     <td className="px-4 py-3">
-                      <code className="text-xs bg-muted px-2 py-1 rounded font-mono">
-                        {log.id}
-                      </code>
+                      <code className="text-xs bg-muted px-2 py-1 rounded font-mono">{log.id}</code>
                     </td>
                     <td className="px-4 py-3">
                       <div className="font-medium">{log.workflowName}</div>
@@ -1056,10 +1156,10 @@ export function AutomationWorkflows() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm">{log.startTime}</td>
-                    <td className="px-4 py-3 text-sm">{log.endTime || "-"}</td>
+                    <td className="px-4 py-3 text-sm">{log.endTime || '-'}</td>
                     <td className="px-4 py-3">
                       <div className="font-semibold text-sm">
-                        {log.duration > 0 ? `${log.duration}s` : "-"}
+                        {log.duration > 0 ? `${log.duration}s` : '-'}
                       </div>
                     </td>
                     <td className="px-4 py-3">
@@ -1114,11 +1214,11 @@ export function AutomationWorkflows() {
       {/* Navigation Tabs */}
       <div className="bg-card border rounded-xl p-2 flex gap-2 overflow-x-auto">
         {[
-          { id: "overview", label: "Vue d'ensemble", icon: Activity },
-          { id: "builder", label: "Builder", icon: GitBranch },
-          { id: "scheduled", label: "Planifiées", icon: Calendar },
-          { id: "triggers", label: "Déclencheurs", icon: Zap },
-          { id: "logs", label: "Logs", icon: FileText },
+          { id: 'overview', label: "Vue d'ensemble", icon: Activity },
+          { id: 'builder', label: 'Builder', icon: GitBranch },
+          { id: 'scheduled', label: 'Planifiées', icon: Calendar },
+          { id: 'triggers', label: 'Déclencheurs', icon: Zap },
+          { id: 'logs', label: 'Logs', icon: FileText },
         ].map((tab) => {
           const Icon = tab.icon;
           return (
@@ -1126,9 +1226,7 @@ export function AutomationWorkflows() {
               key={tab.id}
               onClick={() => setActiveView(tab.id as any)}
               className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all whitespace-nowrap ${
-                activeView === tab.id
-                  ? "bg-[#16A085] text-white"
-                  : "hover:bg-muted"
+                activeView === tab.id ? 'bg-[#16A085] text-white' : 'hover:bg-muted'
               }`}
             >
               <Icon className="h-4 w-4" />
@@ -1139,11 +1237,11 @@ export function AutomationWorkflows() {
       </div>
 
       {/* Content */}
-      {activeView === "overview" && renderOverview()}
-      {activeView === "builder" && renderBuilder()}
-      {activeView === "scheduled" && renderScheduled()}
-      {activeView === "triggers" && renderTriggers()}
-      {activeView === "logs" && renderLogs()}
+      {activeView === 'overview' && renderOverview()}
+      {activeView === 'builder' && renderBuilder()}
+      {activeView === 'scheduled' && renderScheduled()}
+      {activeView === 'triggers' && renderTriggers()}
+      {activeView === 'logs' && renderLogs()}
     </div>
   );
 }

@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { MapPin } from "lucide-react";
-import { ProductCard } from "../cards/ProductCard";
-import { Badge } from "../../ui/badge";
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { MapPin } from 'lucide-react';
+import { ProductCard } from '../cards/ProductCard';
+import { Badge } from '../../ui/badge';
 
 interface ProductGridProps {
   products: any[];
-  viewMode: "grid" | "list" | "map";
+  viewMode: 'grid' | 'list' | 'map';
   favorites: string[];
   compareProducts: string[];
   selectedForEdit: string[];
@@ -42,14 +42,11 @@ export function ProductGrid({
   }, [products]);
 
   const layoutClass =
-    viewMode === "grid"
-      ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 grid"
-      : "flex flex-col gap-4 list";
+    viewMode === 'grid'
+      ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 grid'
+      : 'flex flex-col gap-4 list';
 
-  const visibleProducts = useMemo(
-    () => products.slice(0, visibleCount),
-    [products, visibleCount],
-  );
+  const visibleProducts = useMemo(() => products.slice(0, visibleCount), [products, visibleCount]);
 
   const markerPositions = useMemo(
     () =>
@@ -59,7 +56,7 @@ export function ProductGrid({
         const left = 10 + ((base * 2) % 80);
         return { top, left };
       }),
-    [visibleProducts],
+    [visibleProducts]
   );
 
   const handleScroll = () => {
@@ -78,12 +75,10 @@ export function ProductGrid({
     <div
       ref={containerRef}
       onScroll={handleScroll}
-      className={`max-h-[900px] overflow-auto ${
-        viewMode === "map" ? "" : layoutClass
-      }`}
+      className={`max-h-[900px] overflow-auto ${viewMode === 'map' ? '' : layoutClass}`}
       data-testid="product-container"
     >
-      {viewMode === "map" ? (
+      {viewMode === 'map' ? (
         <div className="relative h-[600px] rounded-xl border bg-gradient-to-br from-emerald-50 to-green-100 dark:from-emerald-900/20 dark:to-emerald-900/40 overflow-hidden">
           <div className="absolute inset-0 opacity-40">
             <div className="grid h-full w-full grid-cols-6 gap-px">
@@ -114,10 +109,8 @@ export function ProductGrid({
                   </div>
                   <div className="rounded-lg bg-background/90 px-2 py-1 text-xs shadow-md border border-border/60 min-w-[140px] max-w-[180px]">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-medium truncate">
-                        {product.name}
-                      </span>
-                      {typeof product.price === "number" && (
+                      <span className="font-medium truncate">{product.name}</span>
+                      {typeof product.price === 'number' && (
                         <span className="text-[11px] font-semibold text-primary">
                           {product.price}€
                         </span>
@@ -125,7 +118,7 @@ export function ProductGrid({
                     </div>
                     <div className="mt-1 flex items-center justify-between gap-2">
                       <span className="text-[11px] text-muted-foreground truncate">
-                        {product.seller?.location || "Localisation inconnue"}
+                        {product.seller?.location || 'Localisation inconnue'}
                       </span>
                       {product.seller?.distance != null && (
                         <Badge className="px-1.5 py-0 text-[10px]">

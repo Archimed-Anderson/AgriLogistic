@@ -19,11 +19,13 @@ Corriger les 5 problèmes critiques identifiés dans l'audit pour rendre le syst
 **Fichier:** `src/lib/hooks/use-auth.tsx`
 
 **Modifications:**
+
 1. Créer une fonction `getDashboardPath(role: string)`
 2. Remplacer la redirection hardcodée ligne 93
 3. Ajouter la gestion des cas d'erreur (rôle inconnu)
 
 **Code à ajouter:**
+
 ```typescript
 const getDashboardPath = (role: string): string => {
   const roleMap: Record<string, string> = {
@@ -31,10 +33,10 @@ const getDashboardPath = (role: string): string => {
     farmer: '/dashboard/farmer',
     buyer: '/dashboard/buyer',
     transporter: '/dashboard/transporter',
-  }
-  const normalizedRole = role.toLowerCase()
-  return roleMap[normalizedRole] || '/dashboard/farmer' // Fallback
-}
+  };
+  const normalizedRole = role.toLowerCase();
+  return roleMap[normalizedRole] || '/dashboard/farmer'; // Fallback
+};
 ```
 
 **Estimation:** 2 heures
@@ -46,6 +48,7 @@ const getDashboardPath = (role: string): string => {
 **Fichier:** `src/components/auth/LoginForm.tsx`
 
 **Modifications:**
+
 1. Ajouter un état pour le rôle sélectionné
 2. Créer un composant de sélection de rôle (Radio buttons ou Select)
 3. Valider que le rôle correspond à l'utilisateur connecté
@@ -79,6 +82,7 @@ const getDashboardPath = (role: string): string => {
 **Fichier:** `src/middleware.ts` (nouveau)
 
 **Fonctionnalités:**
+
 - Vérification de l'authentification
 - Vérification des permissions par rôle
 - Redirection vers login si non authentifié
@@ -93,6 +97,7 @@ const getDashboardPath = (role: string): string => {
 **Fichier:** `src/lib/hooks/use-auth.tsx`
 
 **Modifications:**
+
 1. Créer une fonction `fetchUserProfile()`
 2. Appeler `/auth/me` pour valider le token
 3. Gérer le refresh token automatiquement
@@ -107,11 +112,13 @@ const getDashboardPath = (role: string): string => {
 ### ✅ Tâche 3.1: Créer des Layouts Spécifiques par Rôle
 
 **Fichiers à créer:**
+
 1. `src/app/dashboard/admin/layout.tsx`
 2. `src/app/dashboard/buyer/layout.tsx`
 3. `src/app/dashboard/transporter/layout.tsx`
 
 **Fonctionnalités:**
+
 - Sidebar avec navigation spécifique au rôle
 - Header avec informations utilisateur
 - Menu contextuel selon les permissions
@@ -125,6 +132,7 @@ const getDashboardPath = (role: string): string => {
 **Fichier:** `src/components/auth/LoginForm.tsx`
 
 **Améliorations:**
+
 - Design moderne avec icônes pour chaque rôle
 - Cartes interactives pour la sélection de rôle
 - Descriptions pour chaque type de compte
@@ -136,12 +144,12 @@ const getDashboardPath = (role: string): string => {
 
 ## 📊 RÉCAPITULATIF
 
-| Phase | Tâches | Estimation | Priorité |
-|-------|--------|------------|----------|
-| Phase 1 | 3 tâches | 14 heures | 🔴 Critique |
-| Phase 2 | 2 tâches | 10 heures | 🟡 Majeur |
-| Phase 3 | 2 tâches | 12 heures | 🟡 Majeur |
-| **TOTAL** | **7 tâches** | **36 heures** | |
+| Phase     | Tâches       | Estimation    | Priorité    |
+| --------- | ------------ | ------------- | ----------- |
+| Phase 1   | 3 tâches     | 14 heures     | 🔴 Critique |
+| Phase 2   | 2 tâches     | 10 heures     | 🟡 Majeur   |
+| Phase 3   | 2 tâches     | 12 heures     | 🟡 Majeur   |
+| **TOTAL** | **7 tâches** | **36 heures** |             |
 
 **Durée estimée:** 5-7 jours de développement
 
@@ -150,18 +158,21 @@ const getDashboardPath = (role: string): string => {
 ## ✅ CHECKLIST DE VALIDATION
 
 ### Phase 1
+
 - [ ] Redirection fonctionnelle pour tous les rôles
 - [ ] Sélection de rôle dans le formulaire
 - [ ] Routes dashboard créées et accessibles
 - [ ] Tests E2E passants pour chaque rôle
 
 ### Phase 2
+
 - [ ] Middleware de protection implémenté
 - [ ] Validation du token fonctionnelle
 - [ ] Tests de sécurité validés
 - [ ] Gestion des tokens expirés
 
 ### Phase 3
+
 - [ ] Layouts spécifiques créés
 - [ ] Navigation adaptée par rôle
 - [ ] Design du formulaire amélioré
@@ -172,6 +183,7 @@ const getDashboardPath = (role: string): string => {
 ## 🧪 TESTS À EFFECTUER
 
 ### Tests E2E (Playwright)
+
 - [ ] Connexion Admin → Redirection `/dashboard/admin`
 - [ ] Connexion Agriculteur → Redirection `/dashboard/farmer`
 - [ ] Connexion Acheteur → Redirection `/dashboard/buyer`
@@ -179,12 +191,14 @@ const getDashboardPath = (role: string): string => {
 - [ ] Tentative d'accès non autorisé → Redirection appropriée
 
 ### Tests de Sécurité
+
 - [ ] Token expiré → Déconnexion automatique
 - [ ] Accès dashboard non autorisé → Refusé
 - [ ] Protection CSRF → Validée
 - [ ] Rate limiting → Fonctionnel
 
 ### Tests d'Accessibilité
+
 - [ ] Navigation au clavier → Complète
 - [ ] Lecteurs d'écran → Compatible
 - [ ] Contraste des couleurs → WCAG AA

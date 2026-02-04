@@ -1,0 +1,8 @@
+# Namespace AgriLogistic (Prompt 3.2 - Kubernetes Orchestration)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: agrilogistic
+  labels:
+    app.kubernetes.io/name: agrilogistic
+    app.kubernetes.io/part-of: agrilogistic-platform

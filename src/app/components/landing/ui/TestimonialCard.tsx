@@ -8,7 +8,13 @@ interface TestimonialCardProps {
   avatarSrc: string;
 }
 
-export default function TestimonialCard({ name, role, content, rating, avatarSrc }: TestimonialCardProps) {
+export default function TestimonialCard({
+  name,
+  role,
+  content,
+  rating,
+  avatarSrc,
+}: TestimonialCardProps) {
   return (
     <div className="bg-white rounded-xl p-8 border border-gray-100 hover:border-emerald-200 hover:shadow-xl transition-all duration-300">
       {/* Quote Icon */}
@@ -23,17 +29,13 @@ export default function TestimonialCard({ name, role, content, rating, avatarSrc
         {[...Array(5)].map((_, i) => (
           <Star
             key={i}
-            className={`h-5 w-5 ${
-              i < rating ? 'fill-amber-400 text-amber-400' : 'text-gray-300'
-            }`}
+            className={`h-5 w-5 ${i < rating ? 'fill-amber-400 text-amber-400' : 'text-gray-300'}`}
           />
         ))}
       </div>
 
       {/* Content */}
-      <p className="text-gray-700 text-lg leading-relaxed mb-6 line-clamp-4">
-        "{content}"
-      </p>
+      <p className="text-gray-700 text-lg leading-relaxed mb-6 line-clamp-4">"{content}"</p>
 
       {/* Author */}
       <div className="flex items-center gap-4 pt-6 border-t border-gray-100">

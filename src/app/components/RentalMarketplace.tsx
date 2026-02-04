@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Search,
   MapPin,
@@ -14,24 +14,24 @@ import {
   AlertCircle,
   ChevronRight,
   FolderTree,
-} from "lucide-react";
-import { RentalDetail } from "./RentalDetail";
-import { AddAssetModal } from "./AddAssetModal";
-import { ManageAssets } from "./ManageAssets";
-import { CategoryManagement } from "./CategoryManagement";
+} from 'lucide-react';
+import { RentalDetail } from './RentalDetail';
+import { AddAssetModal } from './AddAssetModal';
+import { ManageAssets } from './ManageAssets';
+import { CategoryManagement } from './CategoryManagement';
 
 interface Equipment {
   id: string;
   name: string;
   model: string;
-  category: "Tracteur" | "Couveuse" | "Remorque" | "Scie" | "Pulvérisateur" | "Outil";
+  category: 'Tracteur' | 'Couveuse' | 'Remorque' | 'Scie' | 'Pulvérisateur' | 'Outil';
   image: string;
   pricePerDay: number;
   location: string;
   distance: number;
   rating: number;
   totalRentals: number;
-  status: "available" | "reserved" | "maintenance";
+  status: 'available' | 'reserved' | 'maintenance';
   owner: string;
   description: string;
 }
@@ -45,14 +45,14 @@ interface Reservation {
   endDate: Date;
   days: number;
   totalPrice: number;
-  status: "pending" | "confirmed" | "active" | "completed" | "cancelled";
+  status: 'pending' | 'confirmed' | 'active' | 'completed' | 'cancelled';
   requestDate: Date;
 }
 
 export function RentalMarketplace() {
-  const [activeTab, setActiveTab] = useState<"find" | "manage" | "categories">("find");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [activeTab, setActiveTab] = useState<'find' | 'manage' | 'categories'>('find');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [selectedEquipmentId, setSelectedEquipmentId] = useState<string | null>(null);
   const [showAddAssetModal, setShowAddAssetModal] = useState(false);
@@ -61,132 +61,132 @@ export function RentalMarketplace() {
   // Mock data - 6 équipements variés
   const equipments: Equipment[] = [
     {
-      id: "EQ-001",
-      name: "Tracteur John Deere 6250R",
-      model: "6250R - 250 CV",
-      category: "Tracteur",
-      image: "tractor",
+      id: 'EQ-001',
+      name: 'Tracteur John Deere 6250R',
+      model: '6250R - 250 CV',
+      category: 'Tracteur',
+      image: 'tractor',
       pricePerDay: 450,
-      location: "Ferme du Soleil Levant, Lyon",
+      location: 'Ferme du Soleil Levant, Lyon',
       distance: 12.5,
       rating: 4.8,
       totalRentals: 23,
-      status: "available",
-      owner: "Pierre Moreau",
-      description: "Tracteur récent équipé GPS, idéal pour grandes surfaces",
+      status: 'available',
+      owner: 'Pierre Moreau',
+      description: 'Tracteur récent équipé GPS, idéal pour grandes surfaces',
     },
     {
-      id: "EQ-002",
-      name: "Tracteur Massey Ferguson 7718",
-      model: "7718 S - 180 CV",
-      category: "Tracteur",
-      image: "tractor",
+      id: 'EQ-002',
+      name: 'Tracteur Massey Ferguson 7718',
+      model: '7718 S - 180 CV',
+      category: 'Tracteur',
+      image: 'tractor',
       pricePerDay: 380,
-      location: "Coopérative Agricole, Bordeaux",
+      location: 'Coopérative Agricole, Bordeaux',
       distance: 8.2,
       rating: 4.6,
       totalRentals: 31,
-      status: "reserved",
-      owner: "Sophie Laurent",
-      description: "Tracteur polyvalent avec chargeur frontal",
+      status: 'reserved',
+      owner: 'Sophie Laurent',
+      description: 'Tracteur polyvalent avec chargeur frontal',
     },
     {
-      id: "EQ-003",
-      name: "Couveuse Automatique 500 Œufs",
-      model: "Borotto REAL 49 Plus",
-      category: "Couveuse",
-      image: "incubator",
+      id: 'EQ-003',
+      name: 'Couveuse Automatique 500 Œufs',
+      model: 'Borotto REAL 49 Plus',
+      category: 'Couveuse',
+      image: 'incubator',
       pricePerDay: 35,
-      location: "Les Jardins de Provence, Marseille",
+      location: 'Les Jardins de Provence, Marseille',
       distance: 25.0,
       rating: 4.9,
       totalRentals: 12,
-      status: "available",
-      owner: "Jean Dupont",
-      description: "Couveuse professionnelle avec retournement automatique",
+      status: 'available',
+      owner: 'Jean Dupont',
+      description: 'Couveuse professionnelle avec retournement automatique',
     },
     {
-      id: "EQ-004",
-      name: "Remorque Benne Agricole 12T",
-      model: "Joskin Trans-Space 7000",
-      category: "Remorque",
-      image: "trailer",
+      id: 'EQ-004',
+      name: 'Remorque Benne Agricole 12T',
+      model: 'Joskin Trans-Space 7000',
+      category: 'Remorque',
+      image: 'trailer',
       pricePerDay: 85,
-      location: "Bio Terre Aquitaine, Bordeaux",
+      location: 'Bio Terre Aquitaine, Bordeaux',
       distance: 15.8,
       rating: 4.7,
       totalRentals: 18,
-      status: "available",
-      owner: "Marie Petit",
-      description: "Remorque benne avec système de déchargement hydraulique",
+      status: 'available',
+      owner: 'Marie Petit',
+      description: 'Remorque benne avec système de déchargement hydraulique',
     },
     {
-      id: "EQ-005",
-      name: "Tronçonneuse Professionnelle",
-      model: "Stihl MS 661 C-M",
-      category: "Scie",
-      image: "chainsaw",
+      id: 'EQ-005',
+      name: 'Tronçonneuse Professionnelle',
+      model: 'Stihl MS 661 C-M',
+      category: 'Scie',
+      image: 'chainsaw',
       pricePerDay: 45,
-      location: "Ferme du Val de Loire, Tours",
+      location: 'Ferme du Val de Loire, Tours',
       distance: 5.3,
       rating: 5.0,
       totalRentals: 8,
-      status: "available",
-      owner: "Luc Bernard",
-      description: "Tronçonneuse thermique puissante pour abattage",
+      status: 'available',
+      owner: 'Luc Bernard',
+      description: 'Tronçonneuse thermique puissante pour abattage',
     },
     {
-      id: "EQ-006",
-      name: "Pulvérisateur Trainé 2500L",
-      model: "Amazone UX 5200",
-      category: "Pulvérisateur",
-      image: "sprayer",
+      id: 'EQ-006',
+      name: 'Pulvérisateur Trainé 2500L',
+      model: 'Amazone UX 5200',
+      category: 'Pulvérisateur',
+      image: 'sprayer',
       pricePerDay: 220,
-      location: "Maraîchers de Bretagne, Rennes",
+      location: 'Maraîchers de Bretagne, Rennes',
       distance: 42.0,
       rating: 4.5,
       totalRentals: 15,
-      status: "available",
-      owner: "Antoine Rousseau",
-      description: "Pulvérisateur 18m avec régulation électronique",
+      status: 'available',
+      owner: 'Antoine Rousseau',
+      description: 'Pulvérisateur 18m avec régulation électronique',
     },
   ];
 
   const categories = [
-    { value: "all", label: "Toutes catégories", icon: Package },
-    { value: "Tracteur", label: "Tracteurs", icon: Tractor },
-    { value: "Couveuse", label: "Couveuses", icon: Settings },
-    { value: "Remorque", label: "Remorques", icon: Package },
-    { value: "Scie", label: "Scies & Outils", icon: Settings },
-    { value: "Pulvérisateur", label: "Pulvérisateurs", icon: Settings },
+    { value: 'all', label: 'Toutes catégories', icon: Package },
+    { value: 'Tracteur', label: 'Tracteurs', icon: Tractor },
+    { value: 'Couveuse', label: 'Couveuses', icon: Settings },
+    { value: 'Remorque', label: 'Remorques', icon: Package },
+    { value: 'Scie', label: 'Scies & Outils', icon: Settings },
+    { value: 'Pulvérisateur', label: 'Pulvérisateurs', icon: Settings },
   ];
 
   const filteredEquipments = equipments.filter((eq) => {
     const matchesSearch =
       eq.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       eq.model.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || eq.category === selectedCategory;
+    const matchesCategory = selectedCategory === 'all' || eq.category === selectedCategory;
     const matchesPrice = eq.pricePerDay >= priceRange[0] && eq.pricePerDay <= priceRange[1];
     return matchesSearch && matchesCategory && matchesPrice;
   });
 
-  const getStatusBadge = (status: Equipment["status"]) => {
+  const getStatusBadge = (status: Equipment['status']) => {
     switch (status) {
-      case "available":
+      case 'available':
         return (
           <span className="flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-xs font-medium rounded-full">
             <CheckCircle2 className="h-3 w-3" />
             Disponible maintenant
           </span>
         );
-      case "reserved":
+      case 'reserved':
         return (
           <span className="flex items-center gap-1 px-2 py-1 bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 text-xs font-medium rounded-full">
             <Clock className="h-3 w-3" />
             Réservé cette semaine
           </span>
         );
-      case "maintenance":
+      case 'maintenance':
         return (
           <span className="flex items-center gap-1 px-2 py-1 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 text-xs font-medium rounded-full">
             <AlertCircle className="h-3 w-3" />
@@ -196,16 +196,16 @@ export function RentalMarketplace() {
     }
   };
 
-  const getEquipmentIcon = (category: Equipment["category"]) => {
-    const icons: Record<Equipment["category"], string> = {
-      Tracteur: "🚜",
-      Couveuse: "🥚",
-      Remorque: "🚛",
-      Scie: "🪚",
-      Pulvérisateur: "💧",
-      Outil: "🔧",
+  const getEquipmentIcon = (category: Equipment['category']) => {
+    const icons: Record<Equipment['category'], string> = {
+      Tracteur: '🚜',
+      Couveuse: '🥚',
+      Remorque: '🚛',
+      Scie: '🪚',
+      Pulvérisateur: '💧',
+      Outil: '🔧',
     };
-    return icons[category] || "📦";
+    return icons[category] || '📦';
   };
 
   const handleEquipmentClick = (equipmentId: string) => {
@@ -231,35 +231,35 @@ export function RentalMarketplace() {
       id: `RES-${Date.now()}`,
       equipmentId,
       equipmentName: equipment.name,
-      renterName: "Utilisateur Actuel", // In real app, would be current user
+      renterName: 'Utilisateur Actuel', // In real app, would be current user
       startDate,
       endDate,
       days,
       totalPrice,
-      status: "pending",
+      status: 'pending',
       requestDate: new Date(),
     };
 
     setReservations([...reservations, newReservation]);
     setSelectedEquipmentId(null);
-    setActiveTab("manage"); // Switch to manage tab to see the reservation
+    setActiveTab('manage'); // Switch to manage tab to see the reservation
   };
 
   const handleAcceptReservation = (reservationId: string) => {
     setReservations(
-      reservations.map((r) => (r.id === reservationId ? { ...r, status: "confirmed" as const } : r))
+      reservations.map((r) => (r.id === reservationId ? { ...r, status: 'confirmed' as const } : r))
     );
   };
 
   const handleRejectReservation = (reservationId: string) => {
     setReservations(
-      reservations.map((r) => (r.id === reservationId ? { ...r, status: "cancelled" as const } : r))
+      reservations.map((r) => (r.id === reservationId ? { ...r, status: 'cancelled' as const } : r))
     );
   };
 
   const handleSaveAsset = (asset: any) => {
     // In real app, would save to backend
-    console.log("New asset:", asset);
+    console.log('New asset:', asset);
   };
 
   // If an equipment is selected, show detail view
@@ -287,38 +287,38 @@ export function RentalMarketplace() {
       <div className="border-b">
         <nav className="flex gap-8">
           <button
-            onClick={() => setActiveTab("find")}
+            onClick={() => setActiveTab('find')}
             className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors ${
-              activeTab === "find"
-                ? "border-[#2563eb] text-[#2563eb] font-semibold"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+              activeTab === 'find'
+                ? 'border-[#2563eb] text-[#2563eb] font-semibold'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             <Search className="h-5 w-5" />
             Trouver un Équipement
           </button>
           <button
-            onClick={() => setActiveTab("manage")}
+            onClick={() => setActiveTab('manage')}
             className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors ${
-              activeTab === "manage"
-                ? "border-[#2563eb] text-[#2563eb] font-semibold"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+              activeTab === 'manage'
+                ? 'border-[#2563eb] text-[#2563eb] font-semibold'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             <Settings className="h-5 w-5" />
             Gérer mes Actifs
-            {reservations.filter((r) => r.status === "pending").length > 0 && (
+            {reservations.filter((r) => r.status === 'pending').length > 0 && (
               <span className="px-1.5 py-0.5 bg-red-600 text-white text-xs rounded-full">
-                {reservations.filter((r) => r.status === "pending").length}
+                {reservations.filter((r) => r.status === 'pending').length}
               </span>
             )}
           </button>
           <button
-            onClick={() => setActiveTab("categories")}
+            onClick={() => setActiveTab('categories')}
             className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors ${
-              activeTab === "categories"
-                ? "border-[#2563eb] text-[#2563eb] font-semibold"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+              activeTab === 'categories'
+                ? 'border-[#2563eb] text-[#2563eb] font-semibold'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             <FolderTree className="h-5 w-5" />
@@ -328,7 +328,7 @@ export function RentalMarketplace() {
       </div>
 
       {/* Find Equipment Tab */}
-      {activeTab === "find" && (
+      {activeTab === 'find' && (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Left Sidebar - Filters */}
           <div className="lg:col-span-1 space-y-6">
@@ -340,7 +340,7 @@ export function RentalMarketplace() {
                 </h2>
                 <button
                   onClick={() => {
-                    setSelectedCategory("all");
+                    setSelectedCategory('all');
                     setPriceRange([0, 1000]);
                   }}
                   className="text-xs text-[#2563eb] hover:underline"
@@ -362,8 +362,8 @@ export function RentalMarketplace() {
                           onClick={() => setSelectedCategory(cat.value)}
                           className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm ${
                             selectedCategory === cat.value
-                              ? "bg-[#2563eb] text-white"
-                              : "hover:bg-muted"
+                              ? 'bg-[#2563eb] text-white'
+                              : 'hover:bg-muted'
                           }`}
                         >
                           <Icon className="h-4 w-4" />
@@ -464,7 +464,7 @@ export function RentalMarketplace() {
             {/* Results Count */}
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
-                <span className="font-semibold text-foreground">{filteredEquipments.length}</span>{" "}
+                <span className="font-semibold text-foreground">{filteredEquipments.length}</span>{' '}
                 équipement(s) disponible(s)
               </p>
               <select className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background text-sm">
@@ -510,7 +510,7 @@ export function RentalMarketplace() {
                     {/* Location & Distance */}
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <MapPin className="h-4 w-4" />
-                      <span>{equipment.location.split(",")[1]}</span>
+                      <span>{equipment.location.split(',')[1]}</span>
                       <span className="text-xs">• {equipment.distance} km</span>
                     </div>
 
@@ -522,8 +522,8 @@ export function RentalMarketplace() {
                             key={i}
                             className={`h-4 w-4 ${
                               i < Math.floor(equipment.rating)
-                                ? "fill-yellow-400 text-yellow-400"
-                                : "text-gray-300"
+                                ? 'fill-yellow-400 text-yellow-400'
+                                : 'text-gray-300'
                             }`}
                           />
                         ))}
@@ -562,9 +562,9 @@ export function RentalMarketplace() {
                 </p>
                 <button
                   onClick={() => {
-                    setSelectedCategory("all");
+                    setSelectedCategory('all');
                     setPriceRange([0, 1000]);
-                    setSearchQuery("");
+                    setSearchQuery('');
                   }}
                   className="px-4 py-2 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors"
                 >
@@ -577,7 +577,7 @@ export function RentalMarketplace() {
       )}
 
       {/* Manage Assets Tab */}
-      {activeTab === "manage" && (
+      {activeTab === 'manage' && (
         <ManageAssets
           onAddAsset={() => setShowAddAssetModal(true)}
           reservations={reservations}
@@ -592,7 +592,7 @@ export function RentalMarketplace() {
       )}
 
       {/* Category Management Tab */}
-      {activeTab === "categories" && <CategoryManagement />}
+      {activeTab === 'categories' && <CategoryManagement />}
     </div>
   );
 }

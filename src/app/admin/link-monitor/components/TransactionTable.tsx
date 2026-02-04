@@ -14,7 +14,9 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ loads }) => {
   return (
     <div className="transaction-console bg-black/40 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden">
       <div className="p-6 border-b border-white/5 flex justify-between items-center">
-        <h3 className="text-lg font-bold text-white tracking-wider uppercase">Console de Transactions</h3>
+        <h3 className="text-lg font-bold text-white tracking-wider uppercase">
+          Console de Transactions
+        </h3>
         <button className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-bold text-gray-300 transition-colors">
           EXPORTER (CSV)
         </button>
@@ -36,7 +38,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ loads }) => {
           <tbody className="divide-y divide-white/5">
             {loads.slice(0, 10).map((load) => {
               const finalPrice = load.priceOffer * 0.95; // Simulé: négo de 5%
-              const margin = finalPrice * 0.10; // Commission plateforme
+              const margin = finalPrice * 0.1; // Commission plateforme
 
               return (
                 <tr key={load.id} className="hover:bg-white/2 transition-colors group">
@@ -48,24 +50,25 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ loads }) => {
                   </td>
                   <td className="px-6 py-4 text-gray-300">
                     <div className="flex items-center gap-2">
-                       {load.origin.city} <span className="text-cyan-400">→</span> {load.destination.city}
+                      {load.originCity ?? '-'} <span className="text-cyan-400">→</span>{' '}
+                      {load.destinationCity ?? '-'}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-gray-400">
-                    {load.priceOffer.toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 text-white font-bold">
-                    {finalPrice.toLocaleString()}
-                  </td>
+                  <td className="px-6 py-4 text-gray-400">{load.priceOffer.toLocaleString()}</td>
+                  <td className="px-6 py-4 text-white font-bold">{finalPrice.toLocaleString()}</td>
                   <td className="px-6 py-4 text-green-400 font-black">
                     +{margin.toLocaleString()}
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 rounded text-[10px] font-bold ${
-                      load.status === 'Pending' ? 'bg-cyan-900/40 text-cyan-400' :
-                      load.status === 'Matched' ? 'bg-green-900/40 text-green-400' :
-                      'bg-gray-800 text-gray-400'
-                    }`}>
+                    <span
+                      className={`px-2 py-1 rounded text-[10px] font-bold ${
+                        load.status === 'Pending'
+                          ? 'bg-cyan-900/40 text-cyan-400'
+                          : load.status === 'Matched'
+                          ? 'bg-green-900/40 text-green-400'
+                          : 'bg-gray-800 text-gray-400'
+                      }`}
+                    >
                       {load.status.toUpperCase()}
                     </span>
                   </td>

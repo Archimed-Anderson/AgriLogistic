@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from 'react';
 import {
   Play,
   ArrowRight,
@@ -21,8 +21,8 @@ import {
   Users,
   BarChart3,
   Quote,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 interface LandingPageInteractiveProps {
   onNavigate: (route: string) => void;
@@ -30,15 +30,15 @@ interface LandingPageInteractiveProps {
 
 export function LandingPageInteractive({ onNavigate }: LandingPageInteractiveProps) {
   const [showDemoModal, setShowDemoModal] = useState(false);
-  const [selectedDemoModule, setSelectedDemoModule] = useState("crop");
-  const [email, setEmail] = useState("");
-  const [activeSection, setActiveSection] = useState("hero");
+  const [selectedDemoModule, setSelectedDemoModule] = useState('crop');
+  const [email, setEmail] = useState('');
+  const [activeSection, setActiveSection] = useState('hero');
 
   // Smooth scroll to section
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      element.scrollIntoView({ behavior: 'smooth' });
       setActiveSection(sectionId);
     }
   };
@@ -46,76 +46,76 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
   // Ecosystem modules
   const ecosystemModules = [
     {
-      id: "crop",
+      id: 'crop',
       icon: Sprout,
-      emoji: "🌾",
-      title: "Crop Intelligence",
-      description: "Surveillance avancée, analyse croissance, détection maladies",
-      color: "green",
-      route: "/admin/crop-intelligence",
+      emoji: '🌾',
+      title: 'Crop Intelligence',
+      description: 'Surveillance avancée, analyse croissance, détection maladies',
+      color: 'green',
+      route: '/admin/crop-intelligence',
     },
     {
-      id: "iot",
+      id: 'iot',
       icon: Cpu,
-      emoji: "📡",
-      title: "IoT Device Hub",
-      description: "Gestion centralisée de tous vos capteurs et équipements",
-      color: "blue",
-      route: "/admin/iot-hub",
+      emoji: '📡',
+      title: 'IoT Device Hub',
+      description: 'Gestion centralisée de tous vos capteurs et équipements',
+      color: 'blue',
+      route: '/admin/iot-hub',
     },
     {
-      id: "ai",
+      id: 'ai',
       icon: Brain,
-      emoji: "🤖",
-      title: "AI Insights",
-      description: "Prédictions, recommandations et optimisation par IA",
-      color: "purple",
-      route: "/admin/ai-insights",
+      emoji: '🤖',
+      title: 'AI Insights',
+      description: 'Prédictions, recommandations et optimisation par IA',
+      color: 'purple',
+      route: '/admin/ai-insights',
     },
     {
-      id: "reports",
+      id: 'reports',
       icon: FileText,
-      emoji: "📄",
-      title: "Report Engine",
-      description: "Rapports automatisés, personnalisables et programmables",
-      color: "indigo",
-      route: "/admin/reports",
+      emoji: '📄',
+      title: 'Report Engine',
+      description: 'Rapports automatisés, personnalisables et programmables',
+      color: 'indigo',
+      route: '/admin/reports',
     },
     {
-      id: "automation",
+      id: 'automation',
       icon: Zap,
-      emoji: "⚙️",
-      title: "Automation Workflows",
-      description: "Workflows intelligents et tâches automatisées",
-      color: "teal",
-      route: "/admin/automation",
+      emoji: '⚙️',
+      title: 'Automation Workflows',
+      description: 'Workflows intelligents et tâches automatisées',
+      color: 'teal',
+      route: '/admin/automation',
     },
     {
-      id: "governance",
+      id: 'governance',
       icon: Shield,
-      emoji: "🛡️",
-      title: "Data Governance",
-      description: "Qualité, sécurité et conformité de vos données",
-      color: "violet",
-      route: "/",
+      emoji: '🛡️',
+      title: 'Data Governance',
+      description: 'Qualité, sécurité et conformité de vos données',
+      color: 'violet',
+      route: '/',
     },
     {
-      id: "api",
+      id: 'api',
       icon: LinkIcon,
-      emoji: "🔌",
-      title: "API Management",
-      description: "Intégrez AgroLogistic avec vos systèmes existants",
-      color: "orange",
-      route: "/",
+      emoji: '🔌',
+      title: 'API Management',
+      description: 'Intégrez AgroLogistic avec vos systèmes existants',
+      color: 'orange',
+      route: '/',
     },
     {
-      id: "financial",
+      id: 'financial',
       icon: DollarSign,
-      emoji: "💰",
-      title: "Financial Suite",
-      description: "Gestion complète des finances et analyse de rentabilité",
-      color: "red",
-      route: "/admin/financial",
+      emoji: '💰',
+      title: 'Financial Suite',
+      description: 'Gestion complète des finances et analyse de rentabilité',
+      color: 'red',
+      route: '/admin/financial',
     },
   ];
 
@@ -123,65 +123,90 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
   const howItWorksSteps = [
     {
       number: 1,
-      title: "Connectez vos équipements",
-      description: "Intégrez vos capteurs IoT, drones et équipements agricoles en quelques clics",
-      emoji: "📡",
+      title: 'Connectez vos équipements',
+      description: 'Intégrez vos capteurs IoT, drones et équipements agricoles en quelques clics',
+      emoji: '📡',
     },
     {
       number: 2,
-      title: "Collectez et analysez",
-      description: "Surveillez en temps réel et analysez vos données avec notre IA avancée",
-      emoji: "📊",
+      title: 'Collectez et analysez',
+      description: 'Surveillez en temps réel et analysez vos données avec notre IA avancée',
+      emoji: '📊',
     },
     {
       number: 3,
-      title: "Recevez des insights actionnables",
-      description: "Obtenez des recommandations précises pour optimiser votre exploitation",
-      emoji: "💡",
+      title: 'Recevez des insights actionnables',
+      description: 'Obtenez des recommandations précises pour optimiser votre exploitation',
+      emoji: '💡',
     },
     {
       number: 4,
-      title: "Automatisez et maximisez",
-      description: "Automatisez vos processus et maximisez votre rentabilité",
-      emoji: "🚀",
+      title: 'Automatisez et maximisez',
+      description: 'Automatisez vos processus et maximisez votre rentabilité',
+      emoji: '🚀',
     },
   ];
 
   // Demo modules content
   const demoModules = {
     crop: {
-      title: "Dashboard Crop Intelligence",
-      description: "Surveillez la santé de vos cultures en temps réel",
-      features: ["Carte interactive NDVI", "Détection précoce des maladies", "Prédictions de rendement", "Planification irrigation"],
+      title: 'Dashboard Crop Intelligence',
+      description: 'Surveillez la santé de vos cultures en temps réel',
+      features: [
+        'Carte interactive NDVI',
+        'Détection précoce des maladies',
+        'Prédictions de rendement',
+        'Planification irrigation',
+      ],
     },
     iot: {
-      title: "Gestion des Appareils IoT",
-      description: "Contrôlez tous vos capteurs depuis un seul endroit",
-      features: ["État réseau en temps réel", "Alertes batterie faible", "Performance tracking", "Configuration à distance"],
+      title: 'Gestion des Appareils IoT',
+      description: 'Contrôlez tous vos capteurs depuis un seul endroit',
+      features: [
+        'État réseau en temps réel',
+        'Alertes batterie faible',
+        'Performance tracking',
+        'Configuration à distance',
+      ],
     },
     ai: {
-      title: "Insights IA en Action",
+      title: 'Insights IA en Action',
       description: "L'intelligence artificielle au service de votre ferme",
-      features: ["Prédictions météo hyper-locales", "Optimisation multi-objectifs", "Recommandations personnalisées", "ROI calculé automatiquement"],
+      features: [
+        'Prédictions météo hyper-locales',
+        'Optimisation multi-objectifs',
+        'Recommandations personnalisées',
+        'ROI calculé automatiquement',
+      ],
     },
     reports: {
-      title: "Création de Rapports",
-      description: "Générez des rapports professionnels automatiquement",
-      features: ["Templates prédéfinis", "Planification automatique", "Export multi-formats", "Partage sécurisé"],
+      title: 'Création de Rapports',
+      description: 'Générez des rapports professionnels automatiquement',
+      features: [
+        'Templates prédéfinis',
+        'Planification automatique',
+        'Export multi-formats',
+        'Partage sécurisé',
+      ],
     },
     automation: {
-      title: "Configuration de Workflows",
-      description: "Automatisez vos tâches répétitives",
-      features: ["Builder drag & drop", "Déclencheurs intelligents", "Conditions avancées", "Logs détaillés"],
+      title: 'Configuration de Workflows',
+      description: 'Automatisez vos tâches répétitives',
+      features: [
+        'Builder drag & drop',
+        'Déclencheurs intelligents',
+        'Conditions avancées',
+        'Logs détaillés',
+      ],
     },
   };
 
   // Stats
   const stats = [
-    { value: "10,000+", label: "Agriculteurs" },
-    { value: "500K+", label: "Hectares gérés" },
-    { value: "+25%", label: "Rendement moyen" },
-    { value: "99.9%", label: "Disponibilité" },
+    { value: '10,000+', label: 'Agriculteurs' },
+    { value: '500K+', label: 'Hectares gérés' },
+    { value: '+25%', label: 'Rendement moyen' },
+    { value: '99.9%', label: 'Disponibilité' },
   ];
 
   return (
@@ -192,7 +217,7 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
           <div className="flex items-center justify-between">
             {/* Logo */}
             <button
-              onClick={() => scrollToSection("hero")}
+              onClick={() => scrollToSection('hero')}
               className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#2563eb]">
@@ -204,39 +229,39 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
             {/* Navigation Links */}
             <div className="hidden md:flex items-center gap-8">
               <button
-                onClick={() => scrollToSection("hero")}
+                onClick={() => scrollToSection('hero')}
                 className={`text-sm font-medium hover:text-[#2563eb] transition-colors ${
-                  activeSection === "hero" ? "text-[#2563eb]" : ""
+                  activeSection === 'hero' ? 'text-[#2563eb]' : ''
                 }`}
               >
                 Accueil
               </button>
               <button
-                onClick={() => scrollToSection("how-it-works")}
+                onClick={() => scrollToSection('how-it-works')}
                 className={`text-sm font-medium hover:text-[#2563eb] transition-colors ${
-                  activeSection === "how-it-works" ? "text-[#2563eb]" : ""
+                  activeSection === 'how-it-works' ? 'text-[#2563eb]' : ''
                 }`}
               >
                 Comment ça marche
               </button>
               <button
-                onClick={() => scrollToSection("pricing")}
+                onClick={() => scrollToSection('pricing')}
                 className={`text-sm font-medium hover:text-[#2563eb] transition-colors ${
-                  activeSection === "pricing" ? "text-[#2563eb]" : ""
+                  activeSection === 'pricing' ? 'text-[#2563eb]' : ''
                 }`}
               >
                 Tarifs
               </button>
               <button
-                onClick={() => scrollToSection("contact")}
+                onClick={() => scrollToSection('contact')}
                 className={`text-sm font-medium hover:text-[#2563eb] transition-colors ${
-                  activeSection === "contact" ? "text-[#2563eb]" : ""
+                  activeSection === 'contact' ? 'text-[#2563eb]' : ''
                 }`}
               >
                 Contact
               </button>
               <button
-                onClick={() => onNavigate("/market")}
+                onClick={() => onNavigate('/market')}
                 className="text-sm font-medium hover:text-[#2563eb] transition-colors"
               >
                 Marketplace
@@ -269,13 +294,13 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
               </h1>
 
               <p className="text-xl text-muted-foreground">
-                Optimisez votre exploitation avec l'IA, l'IoT et l'automatisation.
-                Une plateforme tout-en-un pour l'agriculture de précision.
+                Optimisez votre exploitation avec l'IA, l'IoT et l'automatisation. Une plateforme
+                tout-en-un pour l'agriculture de précision.
               </p>
 
               <div className="flex flex-wrap gap-4">
                 <button
-                  onClick={() => onNavigate("/market")}
+                  onClick={() => onNavigate('/market')}
                   className="px-8 py-4 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-all font-semibold text-lg flex items-center gap-2 shadow-lg hover:shadow-xl"
                 >
                   Explorer le Marketplace
@@ -348,15 +373,17 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
                   key={module.id}
                   className="group bg-card border rounded-xl p-6 hover:shadow-xl transition-all cursor-pointer hover:-translate-y-1"
                   onClick={() => {
-                    if (module.route && module.route !== "/") {
+                    if (module.route && module.route !== '/') {
                       onNavigate(module.route);
                     } else {
-                      toast.info("Module bientôt disponible");
+                      toast.info('Module bientôt disponible');
                     }
                   }}
                 >
                   <div className="mb-4">
-                    <div className={`w-12 h-12 rounded-lg bg-${module.color}-100 dark:bg-${module.color}-900/20 flex items-center justify-center text-2xl`}>
+                    <div
+                      className={`w-12 h-12 rounded-lg bg-${module.color}-100 dark:bg-${module.color}-900/20 flex items-center justify-center text-2xl`}
+                    >
                       {module.emoji}
                     </div>
                   </div>
@@ -426,40 +453,55 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">Tarifs transparents</h2>
-            <p className="text-xl text-muted-foreground">
-              Choisissez le plan adapté à vos besoins
-            </p>
+            <p className="text-xl text-muted-foreground">Choisissez le plan adapté à vos besoins</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                name: "Starter",
-                price: "49€",
-                period: "/mois",
-                description: "Pour les petites exploitations",
-                features: ["5 capteurs IoT", "Dashboard basique", "Rapports mensuels", "Support email"],
+                name: 'Starter',
+                price: '49€',
+                period: '/mois',
+                description: 'Pour les petites exploitations',
+                features: [
+                  '5 capteurs IoT',
+                  'Dashboard basique',
+                  'Rapports mensuels',
+                  'Support email',
+                ],
               },
               {
-                name: "Professional",
-                price: "149€",
-                period: "/mois",
-                description: "Pour les exploitations moyennes",
-                features: ["20 capteurs IoT", "IA & Automatisation", "Rapports illimités", "Support prioritaire", "API Access"],
+                name: 'Professional',
+                price: '149€',
+                period: '/mois',
+                description: 'Pour les exploitations moyennes',
+                features: [
+                  '20 capteurs IoT',
+                  'IA & Automatisation',
+                  'Rapports illimités',
+                  'Support prioritaire',
+                  'API Access',
+                ],
                 popular: true,
               },
               {
-                name: "Enterprise",
-                price: "Sur devis",
-                period: "",
-                description: "Pour les grandes exploitations",
-                features: ["Capteurs illimités", "Tous les modules", "Support dédié 24/7", "Formation sur site", "Intégration personnalisée"],
+                name: 'Enterprise',
+                price: 'Sur devis',
+                period: '',
+                description: 'Pour les grandes exploitations',
+                features: [
+                  'Capteurs illimités',
+                  'Tous les modules',
+                  'Support dédié 24/7',
+                  'Formation sur site',
+                  'Intégration personnalisée',
+                ],
               },
             ].map((plan, index) => (
               <div
                 key={index}
                 className={`bg-card border-2 rounded-xl p-8 ${
-                  plan.popular ? "border-[#2563eb] shadow-xl scale-105" : ""
+                  plan.popular ? 'border-[#2563eb] shadow-xl scale-105' : ''
                 } hover:shadow-lg transition-all`}
               >
                 {plan.popular && (
@@ -487,11 +529,11 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
                 </ul>
 
                 <button
-                  onClick={() => onNavigate("/register")}
+                  onClick={() => onNavigate('/register')}
                   className={`w-full py-3 rounded-lg font-semibold transition-colors ${
                     plan.popular
-                      ? "bg-[#2563eb] text-white hover:bg-[#1d4ed8]"
-                      : "border-2 border-[#2563eb] text-[#2563eb] hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                      ? 'bg-[#2563eb] text-white hover:bg-[#1d4ed8]'
+                      : 'border-2 border-[#2563eb] text-[#2563eb] hover:bg-blue-50 dark:hover:bg-blue-900/20'
                   }`}
                 >
                   Commencer
@@ -519,7 +561,10 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
                   </div>
                   <div>
                     <div className="font-semibold mb-1">Email</div>
-                    <a href="mailto:contact@AgroLogistic.com" className="text-muted-foreground hover:text-[#2563eb]">
+                    <a
+                      href="mailto:contact@AgroLogistic.com"
+                      className="text-muted-foreground hover:text-[#2563eb]"
+                    >
                       contact@AgroLogistic.com
                     </a>
                   </div>
@@ -531,7 +576,10 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
                   </div>
                   <div>
                     <div className="font-semibold mb-1">Téléphone</div>
-                    <a href="tel:+33123456789" className="text-muted-foreground hover:text-[#2563eb]">
+                    <a
+                      href="tel:+33123456789"
+                      className="text-muted-foreground hover:text-[#2563eb]"
+                    >
                       +33 1 23 45 67 89
                     </a>
                   </div>
@@ -544,7 +592,8 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
                   <div>
                     <div className="font-semibold mb-1">Adresse</div>
                     <p className="text-muted-foreground">
-                      123 Rue de l'Agriculture<br />
+                      123 Rue de l'Agriculture
+                      <br />
                       75001 Paris, France
                     </p>
                   </div>
@@ -556,7 +605,7 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  toast.success("Message envoyé ! Nous vous recontacterons bientôt.");
+                  toast.success('Message envoyé ! Nous vous recontacterons bientôt.');
                 }}
                 className="space-y-6"
               >
@@ -629,9 +678,7 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
                       key={key}
                       onClick={() => setSelectedDemoModule(key)}
                       className={`w-full text-left px-4 py-3 rounded-lg transition-all ${
-                        selectedDemoModule === key
-                          ? "bg-[#2563eb] text-white"
-                          : "hover:bg-muted"
+                        selectedDemoModule === key ? 'bg-[#2563eb] text-white' : 'hover:bg-muted'
                       }`}
                     >
                       <div className="font-semibold text-sm">{module.title}</div>
@@ -670,7 +717,7 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
                       <button
                         onClick={() => {
                           setShowDemoModal(false);
-                          onNavigate("/register");
+                          onNavigate('/register');
                         }}
                         className="w-full px-6 py-3 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors font-semibold"
                       >
@@ -704,29 +751,90 @@ export function LandingPageInteractive({ onNavigate }: LandingPageInteractivePro
             <div>
               <h3 className="font-semibold mb-4">Produits</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><button onClick={() => onNavigate("/admin/crop-intelligence")} className="hover:text-[#2563eb]">Crop Intelligence</button></li>
-                <li><button onClick={() => onNavigate("/admin/iot-hub")} className="hover:text-[#2563eb]">IoT Device Hub</button></li>
-                <li><button onClick={() => onNavigate("/admin/ai-insights")} className="hover:text-[#2563eb]">AI Insights</button></li>
-                <li><button onClick={() => onNavigate("/admin/automation")} className="hover:text-[#2563eb]">Automation</button></li>
+                <li>
+                  <button
+                    onClick={() => onNavigate('/admin/crop-intelligence')}
+                    className="hover:text-[#2563eb]"
+                  >
+                    Crop Intelligence
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => onNavigate('/admin/iot-hub')}
+                    className="hover:text-[#2563eb]"
+                  >
+                    IoT Device Hub
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => onNavigate('/admin/ai-insights')}
+                    className="hover:text-[#2563eb]"
+                  >
+                    AI Insights
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => onNavigate('/admin/automation')}
+                    className="hover:text-[#2563eb]"
+                  >
+                    Automation
+                  </button>
+                </li>
               </ul>
             </div>
 
             <div>
               <h3 className="font-semibold mb-4">Entreprise</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><button onClick={() => scrollToSection("how-it-works")} className="hover:text-[#2563eb]">Comment ça marche</button></li>
-                <li><button onClick={() => scrollToSection("pricing")} className="hover:text-[#2563eb]">Tarifs</button></li>
-                <li><button onClick={() => onNavigate("/blog")} className="hover:text-[#2563eb]">Blog</button></li>
-                <li><button onClick={() => scrollToSection("contact")} className="hover:text-[#2563eb]">Contact</button></li>
+                <li>
+                  <button
+                    onClick={() => scrollToSection('how-it-works')}
+                    className="hover:text-[#2563eb]"
+                  >
+                    Comment ça marche
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => scrollToSection('pricing')}
+                    className="hover:text-[#2563eb]"
+                  >
+                    Tarifs
+                  </button>
+                </li>
+                <li>
+                  <button onClick={() => onNavigate('/blog')} className="hover:text-[#2563eb]">
+                    Blog
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => scrollToSection('contact')}
+                    className="hover:text-[#2563eb]"
+                  >
+                    Contact
+                  </button>
+                </li>
               </ul>
             </div>
 
             <div>
               <h3 className="font-semibold mb-4">Ressources</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><button onClick={() => onNavigate("/academy")} className="hover:text-[#2563eb]">Académie</button></li>
-                <li><button className="hover:text-[#2563eb]">Documentation API</button></li>
-                <li><button className="hover:text-[#2563eb]">Support</button></li>
+                <li>
+                  <button onClick={() => onNavigate('/academy')} className="hover:text-[#2563eb]">
+                    Académie
+                  </button>
+                </li>
+                <li>
+                  <button className="hover:text-[#2563eb]">Documentation API</button>
+                </li>
+                <li>
+                  <button className="hover:text-[#2563eb]">Support</button>
+                </li>
               </ul>
             </div>
           </div>

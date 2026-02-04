@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from 'react';
 import {
   Leaf,
   Sprout,
@@ -13,7 +13,7 @@ import {
   ChevronLeft,
   Play,
   Pause,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface HeroSlide {
   title: string;
@@ -30,39 +30,40 @@ interface HeroSlide {
 
 const heroSlides: HeroSlide[] = [
   {
-    title: "Agriculture Connectée",
+    title: 'Agriculture Connectée',
     subtitle: "La plateforme qui révolutionne l'agriculture locale",
-    description: "Connectez producteurs, acheteurs et transporteurs pour une agriculture durable et rentable",
+    description:
+      'Connectez producteurs, acheteurs et transporteurs pour une agriculture durable et rentable',
     IconComponent: Leaf,
-    gradient: "from-emerald-600 via-green-500 to-lime-400",
+    gradient: 'from-emerald-600 via-green-500 to-lime-400',
     stats: [
-      { label: "Producteurs", value: "500+", icon: Users },
-      { label: "Produits", value: "1,200+", icon: ShoppingBag },
-      { label: "Livraisons", value: "5,000+", icon: Truck },
+      { label: 'Producteurs', value: '500+', icon: Users },
+      { label: 'Produits', value: '1,200+', icon: ShoppingBag },
+      { label: 'Livraisons', value: '5,000+', icon: Truck },
     ],
   },
   {
-    title: "Produits Bio & Locaux",
-    subtitle: "100% certifiés agriculture biologique",
+    title: 'Produits Bio & Locaux',
+    subtitle: '100% certifiés agriculture biologique',
     description: "Découvrez des produits frais, traçables et respectueux de l'environnement",
     IconComponent: Sprout,
-    gradient: "from-green-600 via-emerald-500 to-teal-400",
+    gradient: 'from-green-600 via-emerald-500 to-teal-400',
     stats: [
-      { label: "Bio Certifié", value: "98%", icon: Sprout },
-      { label: "Rayon Local", value: "50km", icon: TrendingUp },
-      { label: "Fraîcheur", value: "24h", icon: Sun },
+      { label: 'Bio Certifié', value: '98%', icon: Sprout },
+      { label: 'Rayon Local', value: '50km', icon: TrendingUp },
+      { label: 'Fraîcheur', value: '24h', icon: Sun },
     ],
   },
   {
-    title: "Technologie & Innovation",
+    title: 'Technologie & Innovation',
     subtitle: "Des outils modernes pour l'agriculture de demain",
-    description: "Gestion intelligente, analytics en temps réel et optimisation logistique",
+    description: 'Gestion intelligente, analytics en temps réel et optimisation logistique',
     IconComponent: TrendingUp,
-    gradient: "from-blue-600 via-cyan-500 to-teal-400",
+    gradient: 'from-blue-600 via-cyan-500 to-teal-400',
     stats: [
-      { label: "Gain Temps", value: "40%", icon: TrendingUp },
-      { label: "Réduction Coûts", value: "25%", icon: Droplet },
-      { label: "Satisfaction", value: "4.8/5", icon: Sun },
+      { label: 'Gain Temps', value: '40%', icon: TrendingUp },
+      { label: 'Réduction Coûts', value: '25%', icon: Droplet },
+      { label: 'Satisfaction', value: '4.8/5', icon: Sun },
     ],
   },
 ];
@@ -89,7 +90,7 @@ export function ModernHero() {
     const element = heroRef.current;
     if (!element) return;
 
-    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
       setHasEnteredView(true);
       return;
     }
@@ -144,7 +145,7 @@ export function ModernHero() {
                   className="w-12 h-12 rounded-full bg-white/30 backdrop-blur-sm animate-pulse"
                   style={{
                     animationDelay: `${i * 0.1}s`,
-                    animationDuration: "3s",
+                    animationDuration: '3s',
                   }}
                 />
               ))}
@@ -159,7 +160,7 @@ export function ModernHero() {
       {/* Contenu principal */}
       <div
         className={`relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 h-full min-h-[600px] md:min-h-[700px] lg:min-h-[800px] flex flex-col justify-center transition-all duration-700 ease-out ${
-          hasEnteredView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+          hasEnteredView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
         }`}
       >
         <div className="max-w-4xl mx-auto text-center space-y-8">
@@ -167,10 +168,13 @@ export function ModernHero() {
           <div
             className="inline-flex p-8 bg-white/15 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 transform transition-all duration-500 hover:scale-110 hover:rotate-3"
             style={{
-              animation: "float 3s ease-in-out infinite",
+              animation: 'float 3s ease-in-out infinite',
             }}
           >
-            <slide.IconComponent className="h-24 w-24 md:h-32 md:w-32 text-white drop-shadow-2xl" strokeWidth={1.5} />
+            <slide.IconComponent
+              className="h-24 w-24 md:h-32 md:w-32 text-white drop-shadow-2xl"
+              strokeWidth={1.5}
+            />
           </div>
 
           {/* Titre et description */}
@@ -259,7 +263,7 @@ export function ModernHero() {
                   setIsAutoPlaying(false);
                 }}
                 className={`h-2 rounded-full transition-all duration-300 ${
-                  index === currentSlide ? "w-8 bg-white" : "w-2 bg-white/50 hover:bg-white/70"
+                  index === currentSlide ? 'w-8 bg-white' : 'w-2 bg-white/50 hover:bg-white/70'
                 }`}
                 aria-label={`Aller au slide ${index + 1}`}
                 aria-pressed={index === currentSlide}
@@ -285,7 +289,7 @@ export function ModernHero() {
             type="button"
             onClick={() => setIsAutoPlaying(!isAutoPlaying)}
             className="p-3 bg-white/20 hover:bg-white/30 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-110 shadow-lg ml-2"
-            aria-label={isAutoPlaying ? "Mettre en pause" : "Reprendre"}
+            aria-label={isAutoPlaying ? 'Mettre en pause' : 'Reprendre'}
           >
             {isAutoPlaying ? (
               <Pause className="h-5 w-5 text-white" strokeWidth={2.5} />

@@ -1,29 +1,29 @@
-import { useEffect, useState } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Toaster } from "sonner";
+import { useEffect, useState } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Toaster } from 'sonner';
 
-import { useAuth } from "@presentation/contexts/AuthContext";
-import { ConsentBanner } from "@components/ConsentBanner";
-import { BackendStatus } from "@components/BackendStatus";
-import { trackPageView } from "@/app/lib/analytics/ga";
+import { useAuth } from '@presentation/contexts/AuthContext';
+import { ConsentBanner } from '@components/ConsentBanner';
+import { BackendStatus } from '@components/BackendStatus';
+import { trackPageView } from '@/app/lib/analytics/ga';
 
-import { Navbar } from "@components/Navbar";
-import { Sidebar } from "@components/Sidebar";
+import { Navbar } from '@components/Navbar';
+import { Sidebar } from '@components/Sidebar';
 
-import type { UserRole } from "@domain/enums/user-role.enum";
+import type { UserRole } from '@domain/enums/user-role.enum';
 
 export function RootLayout() {
   const { isAuthenticated, isLoading, user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const currentRoute = location.pathname || "/";
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const currentRoute = location.pathname || '/';
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [sidebarMobileOpen, setSidebarMobileOpen] = useState(false);
   const [adminMode, setAdminMode] = useState(false);
   const [showBackendStatus, setShowBackendStatus] = useState(false);
-  const gaMeasurementId = import.meta.env.VITE_GA_MEASUREMENT_ID || "";
+  const gaMeasurementId = import.meta.env.VITE_GA_MEASUREMENT_ID || '';
 
   // SPA page views (GA4) - uniquement si consentement donné et GA initialisé.
   useEffect(() => {
@@ -32,43 +32,47 @@ export function RootLayout() {
 
   // Routes handled by the modern AdminLayout (have their own sidebar)
   const isModernAdminRoute = [
-    "/admin/dashboard", "/admin/overview", "/admin/war-room",
-    "/admin/users",
-    "/admin/products",
-    "/admin/orders",
-    "/admin/categories",
-    "/admin/reports",
-    "/admin/analytics",
-    "/admin/system",
-    "/admin/security",
-    "/admin/panel",
-    "/admin/labor",
-    "/admin/iot",
-    "/admin/automation",
-    "/admin/ai-insights",
-    "/admin/finance",
-    "/admin/logistics",
-    "/admin/chat",
-    "/admin/blog",
-    "/admin/academy",
-    "/admin/help",
-    "/admin/tasks",
-    "/admin/equipment",
-    "/admin/crops",
-    "/admin/weather",
-    "/admin/soil-water",
-    "/admin/transport-calculator",
-    "/admin/affiliate-dashboard",
-    "/admin/tracking",
-    "/admin/fleet",
-    "/admin/blockchain"
-  ].some(route => currentRoute.startsWith(route));
+    '/admin/dashboard',
+    '/admin/overview',
+    '/admin/war-room',
+    '/admin/users',
+    '/admin/products',
+    '/admin/orders',
+    '/admin/categories',
+    '/admin/reports',
+    '/admin/analytics',
+    '/admin/system',
+    '/admin/security',
+    '/admin/panel',
+    '/admin/labor',
+    '/admin/iot',
+    '/admin/automation',
+    '/admin/ai-insights',
+    '/admin/finance',
+    '/admin/logistics',
+    '/admin/chat',
+    '/admin/blog',
+    '/admin/academy',
+    '/admin/help',
+    '/admin/tasks',
+    '/admin/equipment',
+    '/admin/crops',
+    '/admin/weather',
+    '/admin/soil-water',
+    '/admin/transport-calculator',
+    '/admin/affiliate-dashboard',
+    '/admin/tracking',
+    '/admin/fleet',
+    '/admin/blockchain',
+  ].some((route) => currentRoute.startsWith(route));
 
   const showSidebar =
-    isAuthenticated && 
-    ((currentRoute.startsWith("/admin") && !isModernAdminRoute) || currentRoute.startsWith("/customer"));
+    isAuthenticated &&
+    ((currentRoute.startsWith('/admin') && !isModernAdminRoute) ||
+      currentRoute.startsWith('/customer'));
 
-  const getSidebarType = (): "admin" | "customer" => (currentRoute.startsWith("/admin") ? "admin" : "customer");
+  const getSidebarType = (): 'admin' | 'customer' =>
+    currentRoute.startsWith('/admin') ? 'admin' : 'customer';
 
   const handleNavigate = (route: string) => {
     navigate(route);
@@ -77,9 +81,9 @@ export function RootLayout() {
   };
 
   const handleThemeToggle = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
+    const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
+    document.documentElement.classList.toggle('dark', newTheme === 'dark');
   };
 
   const userRole: UserRole | undefined = user?.role;
@@ -101,7 +105,7 @@ export function RootLayout() {
         onSidebarToggle={() => setSidebarMobileOpen((v) => !v)}
         onLogout={async () => {
           await logout();
-          navigate("/");
+          navigate('/');
         }}
       />
 
@@ -119,7 +123,7 @@ export function RootLayout() {
             userPermissions={userPermissions}
             onLogout={async () => {
               await logout();
-              navigate("/");
+              navigate('/');
             }}
           />
           <main className="w-full md:flex-1 overflow-y-auto bg-[#F6F7F9] dark:bg-gray-950">
@@ -158,4 +162,3 @@ export function RootLayout() {
     </div>
   );
 }
-

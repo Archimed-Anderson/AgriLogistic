@@ -24,11 +24,16 @@ export function ResetPasswordPage({ onNavigate }: ResetPasswordPageProps) {
     setIsSubmitting(true);
     try {
       // New auth-service: /api/v1/auth/password-reset/confirm
-      await apiClient.post('/auth/password-reset/confirm', { token: token.trim(), new_password: password });
+      await apiClient.post('/auth/password-reset/confirm', {
+        token: token.trim(),
+        new_password: password,
+      });
       toast.success('Mot de passe mis à jour. Vous pouvez vous connecter.');
       onNavigate('/auth');
     } catch (err: any) {
-      toast.error(err?.message || 'Erreur lors de la réinitialisation. Vérifiez le code et réessayez.');
+      toast.error(
+        err?.message || 'Erreur lors de la réinitialisation. Vérifiez le code et réessayez.'
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -108,4 +113,3 @@ export function ResetPasswordPage({ onNavigate }: ResetPasswordPageProps) {
     </div>
   );
 }
-

@@ -1,0 +1,19 @@
+# Fragment de règle Prometheus (latence p99 > 500ms) - à inclure dans rule_files
+# si Prometheus Operator n'est pas utilisé. Ex. dans prometheus.yml :
+#   rule_files:
+#     - "infrastructure/linkerd/prometheus-rule-fragment-p99.yaml"
+groups:
+  - name: linkerd-latency
+    rules:
+      - alert: LinkerdP99LatencyHigh
+        expr: |
+          histogram_quantile(0.99,
+            sum(rate(response_latency_ms_bucket[5m])) by (le, dst)
+          ) > 500
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Latence p99 > 500ms (Linkerd)"
+          description: "La latence p99 vers {{ $labels.dst }} dépasse 500 ms."

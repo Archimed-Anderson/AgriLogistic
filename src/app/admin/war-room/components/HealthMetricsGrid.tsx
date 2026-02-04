@@ -1,11 +1,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/app/components/ui/card';
 import { cn } from '@/shared/lib/utils';
-import { 
-  AreaChart, 
-  Area, 
-  ResponsiveContainer 
-} from 'recharts';
+import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 import { Activity, Clock, Zap, AlertTriangle } from 'lucide-react';
 
 const mockData = [
@@ -21,44 +17,44 @@ const mockData = [
 export function HealthMetricsGrid() {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-6">
-      <MetricCard 
-        title="Avg Latency" 
-        value="48ms" 
-        change="-4ms" 
-        icon={Clock} 
+      <MetricCard
+        title="Avg Latency"
+        value="48ms"
+        change="-4ms"
+        icon={Clock}
         color="text-emerald-400"
         bg="bg-emerald-500/10"
-        data={mockData.map(d => ({ value: d.latency }))}
+        data={mockData.map((d) => ({ value: d.latency }))}
         dataKey="value"
         stroke="#10b981"
       />
-      <MetricCard 
-        title="Error Rate" 
-        value="0.12%" 
-        change="+0.02%" 
-        icon={AlertTriangle} 
+      <MetricCard
+        title="Error Rate"
+        value="0.12%"
+        change="+0.02%"
+        icon={AlertTriangle}
         color="text-red-400"
         bg="bg-red-500/10"
-        data={mockData.map(d => ({ value: d.errorRate }))}
+        data={mockData.map((d) => ({ value: d.errorRate }))}
         dataKey="value"
         stroke="#ef4444"
       />
-      <MetricCard 
-        title="Throughput" 
-        value="1.4k req/s" 
-        change="+12%" 
-        icon={Zap} 
+      <MetricCard
+        title="Throughput"
+        value="1.4k req/s"
+        change="+12%"
+        icon={Zap}
         color="text-blue-400"
         bg="bg-blue-500/10"
-        data={mockData.map(d => ({ value: d.traffic }))}
+        data={mockData.map((d) => ({ value: d.traffic }))}
         dataKey="value"
         stroke="#3b82f6"
       />
-      <MetricCard 
-        title="Active Nodes" 
-        value="24 / 24" 
-        change="Stable" 
-        icon={Activity} 
+      <MetricCard
+        title="Active Nodes"
+        value="24 / 24"
+        change="Stable"
+        icon={Activity}
         color="text-purple-400"
         bg="bg-purple-500/10"
         data={mockData.map((_, _i) => ({ value: 24 }))}
@@ -81,7 +77,17 @@ interface MetricCardProps {
   stroke: string;
 }
 
-function MetricCard({ title, value, change, icon: Icon, color, bg, data, dataKey, stroke }: MetricCardProps) {
+function MetricCard({
+  title,
+  value,
+  change,
+  icon: Icon,
+  color,
+  bg,
+  data,
+  dataKey,
+  stroke,
+}: MetricCardProps) {
   return (
     <Card className="bg-card/40 border-border backdrop-blur-md overflow-hidden rounded-[24px] shadow-lg transition-all hover:bg-card/60">
       <CardContent className="p-0">
@@ -90,17 +96,21 @@ function MetricCard({ title, value, change, icon: Icon, color, bg, data, dataKey
             <div className={`p-2 rounded-xl ${bg} border border-current opacity-80`}>
               <Icon className={`w-5 h-5 ${color}`} />
             </div>
-            <span className={cn(
-              "text-[10px] font-black px-2 py-0.5 rounded-full border",
-              change.startsWith('+') 
-                ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20' 
-                : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
-            )}>
+            <span
+              className={cn(
+                'text-[10px] font-black px-2 py-0.5 rounded-full border',
+                change.startsWith('+')
+                  ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20'
+                  : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+              )}
+            >
               {change}
             </span>
           </div>
           <div>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-[0.1em] font-bold">{title}</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-[0.1em] font-bold">
+              {title}
+            </p>
             <h3 className="text-2xl font-black text-foreground mt-1 tracking-tighter">{value}</h3>
           </div>
         </div>
@@ -109,16 +119,16 @@ function MetricCard({ title, value, change, icon: Icon, color, bg, data, dataKey
             <AreaChart data={data}>
               <defs>
                 <linearGradient id={`gradient-${title}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={stroke} stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor={stroke} stopOpacity={0}/>
+                  <stop offset="5%" stopColor={stroke} stopOpacity={0.3} />
+                  <stop offset="95%" stopColor={stroke} stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <Area 
-                type="monotone" 
-                dataKey={dataKey} 
-                stroke={stroke} 
-                fillOpacity={1} 
-                fill={`url(#gradient-${title})`} 
+              <Area
+                type="monotone"
+                dataKey={dataKey}
+                stroke={stroke}
+                fillOpacity={1}
+                fill={`url(#gradient-${title})`}
                 strokeWidth={2}
               />
             </AreaChart>

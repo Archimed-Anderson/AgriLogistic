@@ -113,6 +113,25 @@ export class ClickHouseClient {
       `
     });
 
+    // Incident events (War Room - topic Kafka incident-events)
+    await client!.query({
+      query: `
+        CREATE TABLE IF NOT EXISTS incident_events (
+          incident_id String,
+          type LowCardinality(String),
+          severity UInt8,
+          region String,
+          location_lat Float64,
+          location_lng Float64,
+          title String,
+          created_at DateTime DEFAULT now()
+        )
+        ENGINE = MergeTree()
+        PARTITION BY toYYYYMM(created_at)
+        ORDER BY (type, created_at)
+      `
+    });
+
     console.log('✅ ClickHouse tables created');
   }
 }

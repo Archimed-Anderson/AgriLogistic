@@ -29,7 +29,7 @@ function RadialProduction() {
       { color: '#3B82F6', value: 10, label: 'Rice' },
       { color: '#A855F7', value: 20, label: 'Other' },
     ],
-    [],
+    []
   );
 
   const total = segments.reduce((a, s) => a + s.value, 0);
@@ -100,7 +100,7 @@ export function FarmVistaDashboard({ onNavigate }: FarmVistaDashboardProps) {
       { label: 'Produits en stock', value: '1 234', delta: '+8%', icon: Package },
       { label: 'Utilisateurs actifs', value: '245', delta: '+15%', icon: Users },
     ],
-    [],
+    []
   );
 
   const quickAccess = useMemo(
@@ -112,17 +112,29 @@ export function FarmVistaDashboard({ onNavigate }: FarmVistaDashboardProps) {
       { label: 'Académie', icon: BookOpen, route: '/admin/academy' },
       { label: 'Loueur', icon: Tractor, route: '/admin/rental' },
     ],
-    [],
+    []
   );
 
   const recentActivity = useMemo(
     () => [
-      { title: 'Nouvelle commande #1245', subtitle: 'Tracteur John Deere â€¢ â‚¬45 000', time: 'Il y a 5 min' },
+      {
+        title: 'Nouvelle commande #1245',
+        subtitle: 'Tracteur John Deere â€¢ â‚¬45 000',
+        time: 'Il y a 5 min',
+      },
       { title: 'Stock faible', subtitle: '15 articles à réapprovisionner', time: 'Il y a 15 min' },
-      { title: 'Nouveaux utilisateurs', subtitle: '5 inscriptions via la marketplace', time: 'Il y a 1 h' },
-      { title: 'Livraison effectuée', subtitle: "Système d'irrigation automatique", time: 'Il y a 2 h' },
+      {
+        title: 'Nouveaux utilisateurs',
+        subtitle: '5 inscriptions via la marketplace',
+        time: 'Il y a 1 h',
+      },
+      {
+        title: 'Livraison effectuée',
+        subtitle: "Système d'irrigation automatique",
+        time: 'Il y a 2 h',
+      },
     ],
-    [],
+    []
   );
 
   const importantNotifications = useMemo(
@@ -130,7 +142,7 @@ export function FarmVistaDashboard({ onNavigate }: FarmVistaDashboardProps) {
       { level: 'info', label: 'Rappel', text: 'Pensez à exporter vos rapports hebdomadaires.' },
       { level: 'warn', label: 'Alerte', text: 'Risque de gel nocturne mercredi (module météo).' },
     ],
-    [],
+    []
   );
 
   const go = (route: string) => {
@@ -144,7 +156,8 @@ export function FarmVistaDashboard({ onNavigate }: FarmVistaDashboardProps) {
         <div>
           <div className="text-[22px] font-semibold text-[#111827]">Bonjour !</div>
           <div className="text-[12px] text-[#6B7280]">
-            Pilotez vos opérations avec des insights temps réel â€” style FarmVista, contenu AgriLogistic.
+            Pilotez vos opérations avec des insights temps réel â€” style FarmVista, contenu
+            AgriLogistic.
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -193,7 +206,9 @@ export function FarmVistaDashboard({ onNavigate }: FarmVistaDashboardProps) {
               <div className="grid place-items-center rounded-2xl bg-[#F8FAFC] p-3">
                 <Sun className="h-10 w-10 text-[#F59E0B]" />
               </div>
-              <div className="mt-2 text-[13px] font-medium text-[#111827]">Partiellement nuageux</div>
+              <div className="mt-2 text-[13px] font-medium text-[#111827]">
+                Partiellement nuageux
+              </div>
               <div className="text-[11px] text-[#6B7280]">Ressenti 26</div>
             </div>
           </div>
@@ -274,10 +289,15 @@ export function FarmVistaDashboard({ onNavigate }: FarmVistaDashboardProps) {
         <Card className="rounded-2xl border-[#EEF2F7] bg-white p-4 shadow-sm lg:col-span-2">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-[14px] font-semibold text-[#111827]">Analyse de rendement mensuel</div>
+              <div className="text-[14px] font-semibold text-[#111827]">
+                Analyse de rendement mensuel
+              </div>
               <div className="text-[11px] text-[#6B7280]">Maïs</div>
             </div>
-            <Button variant="outline" className="h-8 rounded-lg border-[#E5E7EB] bg-white text-[12px] text-[#111827] hover:bg-[#F3F4F6]">
+            <Button
+              variant="outline"
+              className="h-8 rounded-lg border-[#E5E7EB] bg-white text-[12px] text-[#111827] hover:bg-[#F3F4F6]"
+            >
               2024
               <ChevronDown className="ml-2 h-4 w-4 text-[#6B7280]" />
             </Button>
@@ -297,7 +317,10 @@ export function FarmVistaDashboard({ onNavigate }: FarmVistaDashboardProps) {
           </div>
           <div className="mt-3 flex items-center justify-between">
             <div className="text-[13px] font-semibold text-[#111827]">Parcelle Maïs</div>
-            <Button variant="outline" className="h-8 rounded-lg border-[#E5E7EB] bg-white text-[12px] text-[#111827] hover:bg-[#F3F4F6]">
+            <Button
+              variant="outline"
+              className="h-8 rounded-lg border-[#E5E7EB] bg-white text-[12px] text-[#111827] hover:bg-[#F3F4F6]"
+            >
               Détails
             </Button>
           </div>
@@ -339,7 +362,9 @@ export function FarmVistaDashboard({ onNavigate }: FarmVistaDashboardProps) {
                     <Icon className="h-5 w-5" />
                   </div>
                   <div className="min-w-0">
-                    <div className="truncate text-[13px] font-semibold text-[#111827]">{q.label}</div>
+                    <div className="truncate text-[13px] font-semibold text-[#111827]">
+                      {q.label}
+                    </div>
                     <div className="text-[11px] text-[#6B7280]">Ouvrir</div>
                   </div>
                   <ArrowRight className="ml-auto h-4 w-4 text-[#9CA3AF] group-hover:text-[#6B7280]" />
@@ -369,7 +394,9 @@ export function FarmVistaDashboard({ onNavigate }: FarmVistaDashboardProps) {
                     <BarChart3 className="h-4 w-4 text-[#0B7A4B]" />
                   </div>
                   <div className="min-w-0">
-                    <div className="truncate text-[13px] font-semibold text-[#111827]">{a.title}</div>
+                    <div className="truncate text-[13px] font-semibold text-[#111827]">
+                      {a.title}
+                    </div>
                     <div className="truncate text-[11px] text-[#6B7280]">{a.subtitle}</div>
                     <div className="mt-1 text-[11px] text-[#9CA3AF]">{a.time}</div>
                   </div>
@@ -404,6 +431,3 @@ export function FarmVistaDashboard({ onNavigate }: FarmVistaDashboardProps) {
     </div>
   );
 }
-
-
-

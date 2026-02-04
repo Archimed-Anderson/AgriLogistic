@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import type { AuthenticatedRequest } from '../middleware/auth.middleware';
 import { UserRepository } from '../repositories/user.repository';
 import { getPermissionsByRole, UserRole } from '../models/permission.model';
 export class BuyerController {
@@ -12,7 +13,7 @@ export class BuyerController {
    */
   getProfile = async (req: Request, res: Response): Promise<void> => {
     try {
-      const user = await this.userRepository.findById(req.user!.id);
+      const user = await this.userRepository.findById((req as AuthenticatedRequest).user!.id);
       if (!user) {
         res.status(404).json({
           success: false,
@@ -52,7 +53,7 @@ export class BuyerController {
   updateProfile = async (req: Request, res: Response): Promise<void> => {
     try {
       const { firstName, lastName, phone } = req.body;
-      const user = await this.userRepository.update(req.user!.id, {
+      const user = await this.userRepository.update((req as AuthenticatedRequest).user!.id, {
         firstName,
         lastName,
         phone,

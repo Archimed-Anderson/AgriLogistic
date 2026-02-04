@@ -1,0 +1,27 @@
+# =============================================================================
+# Superset - Connecteur Trino (Federated queries - optionnel)
+# =============================================================================
+# Permet des joins cross-databases (PostgreSQL + ClickHouse) sans ETL complexe.
+# Dépend du déploiement d'un cluster Trino avec catalogues postgres et clickhouse.
+# Import: superset import_datasources -p /app/pythonpath/datasources/trino.yaml -r
+# =============================================================================
+
+databases:
+  - database_name: agrilogistic_federated
+    sqlalchemy_uri: trino://${TRINO_USER}:${TRINO_PASSWORD}@trino:8080/analytics
+    display_name: AgriLogistic Federated (Trino)
+    allow_run_async: true
+    allow_ctas: false
+    allow_cvas: false
+    allow_dml: false
+    expose_in_sqllab: true
+    configuration_method: sqlalchemy_form
+    extra: |
+      {
+        "metadata_params": {},
+        "engine_params": {},
+        "metadata_cache_timeout": {},
+        "schemas_allowed_for_csv_upload": []
+      }
+    # Pas de tables prédéfinies : requêtes ad-hoc sur catalogues (e.g. postgres.agrilogistic.orders, clickhouse.analytics.events)
+    tables: []

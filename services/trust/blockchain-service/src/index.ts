@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import blockchainRoutes from './routes/blockchain.routes';
+import escrowRoutes from './routes/escrow.routes';
 import { BlockchainService } from './services/blockchain.service';
 
 dotenv.config();
@@ -36,6 +37,7 @@ app.get('/live', (_req, res) => res.json({ status: 'alive' }));
 
 // Routes
 app.use('/blockchain', blockchainRoutes);
+app.use('/escrow', escrowRoutes);
 
 // 404 handler
 app.use((_req, res) => res.status(404).json({ success: false, error: 'Not found' }));

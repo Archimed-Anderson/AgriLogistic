@@ -1,22 +1,22 @@
-import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
-import "./globals.css";
-import { AuthProvider } from "@/context/AuthContext";
-import { CartProvider } from "@/context/CartContext";
-import { Toaster } from "sonner";
+import type { Metadata } from 'next';
+import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
+import './globals.css';
+import { ClientProviders } from '@/components/providers/ClientProviders';
 
 const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
 });
 
 const jakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-jakarta",
+  subsets: ['latin'],
+  variable: '--font-jakarta',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: "AgriLogistic - Révolutionnez votre agriculture",
+  title: 'AgriLogistic - Révolutionnez votre agriculture',
   description: "Plateforme IA & Blockchain pour la chaîne d'approvisionnement agricole",
 };
 
@@ -28,15 +28,8 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <body className={`${inter.variable} ${jakarta.variable} font-jakarta antialiased`}>
-        <AuthProvider>
-          <CartProvider>
-            {children}
-            <Toaster position="top-right" richColors />
-          </CartProvider>
-        </AuthProvider>
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );
 }
-
-

@@ -86,7 +86,7 @@ const initializeMockUsers = () => {
     },
   ];
 
-  demoUsers.forEach(user => {
+  demoUsers.forEach((user) => {
     const normalizedEmail = user.email!.toLowerCase();
     mockUserDatabase.set(normalizedEmail, {
       ...user,
@@ -95,7 +95,7 @@ const initializeMockUsers = () => {
       createdAt: new Date(),
     } as StoredUser);
   });
-  
+
   console.log('🔧 [MockAuth] Initialized with demo users:', Array.from(mockUserDatabase.keys()));
 };
 
@@ -140,18 +140,23 @@ export class MockAuthAdapter implements AuthPort, AuthProvider {
 
   private getAvatarForRole(role: UserRole): string {
     const avatars: Record<UserRole, string> = {
-      [UserRole.ADMIN]: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin&backgroundColor=b6e3f4',
-      [UserRole.FARMER]: 'https://api.dicebear.com/7.x/avataaars/svg?seed=farmer&backgroundColor=c0aede',
-      [UserRole.BUYER]: 'https://api.dicebear.com/7.x/avataaars/svg?seed=buyer&backgroundColor=d1d4f9',
-      [UserRole.TRANSPORTER]: 'https://api.dicebear.com/7.x/avataaars/svg?seed=transporter&backgroundColor=ffd5dc',
-      [UserRole.GUEST]: 'https://api.dicebear.com/7.x/avataaars/svg?seed=guest&backgroundColor=ffdfbf',
+      [UserRole.ADMIN]:
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=admin&backgroundColor=b6e3f4',
+      [UserRole.FARMER]:
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=farmer&backgroundColor=c0aede',
+      [UserRole.BUYER]:
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=buyer&backgroundColor=d1d4f9',
+      [UserRole.TRANSPORTER]:
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=transporter&backgroundColor=ffd5dc',
+      [UserRole.GUEST]:
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=guest&backgroundColor=ffdfbf',
     };
     return avatars[role] || avatars[UserRole.GUEST];
   }
 
   async login(email: string, _password: string): Promise<{ user: User; token: string }> {
     console.log(`🔐 [MockAuth] Login attempt for: ${email}`);
-    
+
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 800));
 
@@ -163,14 +168,16 @@ export class MockAuthAdapter implements AuthPort, AuthProvider {
 
     // Look up user in mock database
     const storedUser = mockUserDatabase.get(email.toLowerCase());
-    
+
     if (storedUser) {
-      console.log(`✅ [MockAuth] User found: ${storedUser.firstName} ${storedUser.lastName} (${storedUser.role})`);
+      console.log(
+        `✅ [MockAuth] User found: ${storedUser.firstName} ${storedUser.lastName} (${storedUser.role})`
+      );
       const user = this.createUserFromStored(storedUser);
       this.currentUser = user;
       const token = this.generateToken(storedUser.id);
       localStorage.setItem('accessToken', token);
-      
+
       return { user, token };
     }
 
@@ -183,11 +190,11 @@ export class MockAuthAdapter implements AuthPort, AuthProvider {
       role: UserRole.BUYER,
       avatarUrl: this.getAvatarForRole(UserRole.BUYER),
     });
-    
+
     this.currentUser = tempUser;
     const token = this.generateToken('temp-' + Date.now());
     localStorage.setItem('accessToken', token);
-    
+
     return { user: tempUser, token };
   }
 
@@ -198,7 +205,7 @@ export class MockAuthAdapter implements AuthPort, AuthProvider {
       firstName: request.firstName,
       lastName: request.lastName,
     });
-    
+
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -218,7 +225,9 @@ export class MockAuthAdapter implements AuthPort, AuthProvider {
     }
 
     // Generate unique ID
-    const userId = `${request.accountType}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const userId = `${request.accountType}-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
 
     // Create stored user record
     const storedUser: StoredUser = {
@@ -240,7 +249,7 @@ export class MockAuthAdapter implements AuthPort, AuthProvider {
 
     // Store in mock database
     mockUserDatabase.set(storedUser.email, storedUser);
-    
+
     console.log('✅ [MockAuth] User registered successfully:', {
       id: userId,
       email: storedUser.email,
@@ -251,7 +260,7 @@ export class MockAuthAdapter implements AuthPort, AuthProvider {
     // Create User entity
     const user = this.createUserFromStored(storedUser);
     user.acceptTerms();
-    
+
     this.currentUser = user;
 
     // Simulate email verification sending
@@ -311,21 +320,21 @@ export class MockAuthAdapter implements AuthPort, AuthProvider {
   async verifyEmail(token: string): Promise<boolean> {
     console.log(`✉️ [MockAuth] Email verification with token: ${token}`);
     await new Promise((resolve) => setTimeout(resolve, 500));
-    
+
     // In a real implementation, this would verify the token and update the user
     if (this.currentUser) {
       // Mark as verified
       console.log('✅ [MockAuth] Email verified successfully');
       return true;
     }
-    
+
     return false;
   }
 
   async sendPasswordResetEmail(email: string): Promise<void> {
     console.log(`🔑 [MockAuth] Password reset requested for: ${email}`);
     await new Promise((resolve) => setTimeout(resolve, 800));
-    
+
     const user = mockUserDatabase.get(email.toLowerCase());
     if (user) {
       console.log(`📧 [MockAuth] Password reset email sent to: ${email}`);
@@ -351,7 +360,6 @@ export class MockAuthAdapter implements AuthPort, AuthProvider {
   static listUsers(): StoredUser[] {
     return Array.from(mockUserDatabase.values());
   }
-
 
   // Utility method to get user count
   static getUserCount(): number {

@@ -111,9 +111,7 @@ export function WeatherAlerts({ weather, alerts, isLoading }: WeatherAlertsProps
                 </p>
                 <div className="flex justify-center mb-2">{getWeatherIcon(day.condition)}</div>
                 <div className="space-y-1">
-                  <p className="text-lg font-bold text-gray-900">
-                    {day.temperature.max}°
-                  </p>
+                  <p className="text-lg font-bold text-gray-900">{day.temperature.max}°</p>
                   <p className="text-sm text-gray-500">{day.temperature.min}°</p>
                 </div>
                 <div className="flex items-center justify-center gap-1 mt-2 text-xs text-gray-600">
@@ -124,9 +122,7 @@ export function WeatherAlerts({ weather, alerts, isLoading }: WeatherAlertsProps
             ))}
           </div>
         ) : (
-          <p className="text-sm text-gray-500 text-center py-4">
-            Données météo non disponibles
-          </p>
+          <p className="text-sm text-gray-500 text-center py-4">Données météo non disponibles</p>
         )}
       </div>
 

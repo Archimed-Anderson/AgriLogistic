@@ -27,14 +27,10 @@ export default function AnalyticsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                ðŸ“Š Analytics & Performance
-              </h1>
-              <p className="text-sm text-gray-600">
-                Indicateurs clés et optimisation
-              </p>
+              <h1 className="text-2xl font-bold text-gray-900">ðŸ“Š Analytics & Performance</h1>
+              <p className="text-sm text-gray-600">Indicateurs clés et optimisation</p>
             </div>
-            
+
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm">
                 <Calendar className="w-4 h-4 text-gray-500" />
@@ -78,8 +74,9 @@ export default function AnalyticsPage() {
                 </div>
                 <h3 className="text-xl font-bold mb-2">Conseil d'optimisation</h3>
                 <p className="text-indigo-100 max-w-2xl mb-4">
-                  Votre consommation de carburant est 12% plus élevée que la moyenne de la flotte sur les trajets Dakar-Touba. 
-                  Une réduction de la vitesse de 5km/h pourrait économiser environ 150,000 FCFA par mois.
+                  Votre consommation de carburant est 12% plus élevée que la moyenne de la flotte
+                  sur les trajets Dakar-Touba. Une réduction de la vitesse de 5km/h pourrait
+                  économiser environ 150,000 FCFA par mois.
                 </p>
                 <button className="px-4 py-2 bg-white text-indigo-600 font-semibold rounded-lg hover:bg-indigo-50 transition-colors">
                   Voir l'analyse détaillée
@@ -92,5 +89,3 @@ export default function AnalyticsPage() {
     </div>
   );
 }
-
-

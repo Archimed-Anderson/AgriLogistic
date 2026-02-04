@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   TrendingUp,
   Link2,
@@ -25,10 +25,10 @@ import {
   Wrench,
   Tractor,
   Lightbulb,
-  Plug
-} from "lucide-react";
-import { Card } from "./ui/card";
-import { Button } from "./ui/button";
+  Plug,
+} from 'lucide-react';
+import { Card } from './ui/card';
+import { Button } from './ui/button';
 
 interface AffiliateLink {
   id: string;
@@ -39,7 +39,7 @@ interface AffiliateLink {
   clicks: number;
   conversions: number;
   revenue: number;
-  status: "active" | "paused" | "pending";
+  status: 'active' | 'paused' | 'pending';
   createdAt: string;
 }
 
@@ -51,12 +51,12 @@ interface Partner {
   commissionRate: number;
   activeLinks: number;
   totalRevenue: number;
-  status: "active" | "inactive";
+  status: 'active' | 'inactive';
 }
 
 export function AffiliateDashboard() {
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedPeriod, setSelectedPeriod] = useState("month");
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedPeriod, setSelectedPeriod] = useState('month');
   const [showLinkModal, setShowLinkModal] = useState(false);
 
   // Mock data
@@ -68,121 +68,121 @@ export function AffiliateDashboard() {
     conversions: 892,
     conversionRate: 5.8,
     pendingCommissions: 12450,
-    paidCommissions: 33440
+    paidCommissions: 33440,
   };
 
   const affiliateLinks: AffiliateLink[] = [
     {
-      id: "1",
-      productName: "Tracteur John Deere 6M Series",
-      category: "Engins Agricoles",
-      affiliateUrl: "https://AgroLogistic.com/aff/jd-6m-abc123",
+      id: '1',
+      productName: 'Tracteur John Deere 6M Series',
+      category: 'Engins Agricoles',
+      affiliateUrl: 'https://AgroLogistic.com/aff/jd-6m-abc123',
       commission: 8.5,
       clicks: 1234,
       conversions: 45,
       revenue: 8900,
-      status: "active",
-      createdAt: "2026-01-10"
+      status: 'active',
+      createdAt: '2026-01-10',
     },
     {
-      id: "2",
-      productName: "Pièces Détachées Moissonneuse",
-      category: "Pièces Détachées",
-      affiliateUrl: "https://AgroLogistic.com/aff/spare-parts-xyz789",
+      id: '2',
+      productName: 'Pièces Détachées Moissonneuse',
+      category: 'Pièces Détachées',
+      affiliateUrl: 'https://AgroLogistic.com/aff/spare-parts-xyz789',
       commission: 12,
       clicks: 890,
       conversions: 67,
       revenue: 6700,
-      status: "active",
-      createdAt: "2026-01-08"
+      status: 'active',
+      createdAt: '2026-01-08',
     },
     {
-      id: "3",
-      productName: "Électro-Pompe Irrigation",
-      category: "Électroménager Agricole",
-      affiliateUrl: "https://AgroLogistic.com/aff/pump-def456",
+      id: '3',
+      productName: 'Électro-Pompe Irrigation',
+      category: 'Électroménager Agricole',
+      affiliateUrl: 'https://AgroLogistic.com/aff/pump-def456',
       commission: 10,
       clicks: 567,
       conversions: 34,
       revenue: 4200,
-      status: "active",
-      createdAt: "2026-01-05"
+      status: 'active',
+      createdAt: '2026-01-05',
     },
     {
-      id: "4",
+      id: '4',
       productName: "Système d'Irrigation Automatique",
-      category: "Produits Industriels",
-      affiliateUrl: "https://AgroLogistic.com/aff/irrigation-ghi789",
+      category: 'Produits Industriels',
+      affiliateUrl: 'https://AgroLogistic.com/aff/irrigation-ghi789',
       commission: 15,
       clicks: 2100,
       conversions: 89,
       revenue: 15600,
-      status: "active",
-      createdAt: "2025-12-28"
+      status: 'active',
+      createdAt: '2025-12-28',
     },
     {
-      id: "5",
-      productName: "Kit Capteurs IoT Agriculture",
-      category: "Produits Industriels",
-      affiliateUrl: "https://AgroLogistic.com/aff/iot-sensors-jkl012",
+      id: '5',
+      productName: 'Kit Capteurs IoT Agriculture',
+      category: 'Produits Industriels',
+      affiliateUrl: 'https://AgroLogistic.com/aff/iot-sensors-jkl012',
       commission: 18,
       clicks: 1450,
       conversions: 56,
       revenue: 10080,
-      status: "paused",
-      createdAt: "2025-12-20"
-    }
+      status: 'paused',
+      createdAt: '2025-12-20',
+    },
   ];
 
   const partners: Partner[] = [
     {
-      id: "1",
-      name: "John Deere",
-      logo: "🚜",
-      category: "Engins Agricoles",
+      id: '1',
+      name: 'John Deere',
+      logo: '🚜',
+      category: 'Engins Agricoles',
       commissionRate: 8.5,
       activeLinks: 23,
       totalRevenue: 18900,
-      status: "active"
+      status: 'active',
     },
     {
-      id: "2",
-      name: "AgriParts Pro",
-      logo: "⚙️",
-      category: "Pièces Détachées",
+      id: '2',
+      name: 'AgriParts Pro',
+      logo: '⚙️',
+      category: 'Pièces Détachées',
       commissionRate: 12,
       activeLinks: 45,
       totalRevenue: 12450,
-      status: "active"
+      status: 'active',
     },
     {
-      id: "3",
-      name: "AgroTech Solutions",
-      logo: "💡",
-      category: "Produits Industriels",
+      id: '3',
+      name: 'AgroTech Solutions',
+      logo: '💡',
+      category: 'Produits Industriels',
       commissionRate: 15,
       activeLinks: 34,
       totalRevenue: 8900,
-      status: "active"
+      status: 'active',
     },
     {
-      id: "4",
-      name: "FarmElectro",
-      logo: "🔌",
-      category: "Électroménager Agricole",
+      id: '4',
+      name: 'FarmElectro',
+      logo: '🔌',
+      category: 'Électroménager Agricole',
       commissionRate: 10,
       activeLinks: 25,
       totalRevenue: 5640,
-      status: "active"
-    }
+      status: 'active',
+    },
   ];
 
   const categories = [
-    { id: "all", name: "Toutes Catégories", icon: Package, color: "gray" },
-    { id: "tractors", name: "Engins Agricoles", icon: Tractor, color: "green" },
-    { id: "parts", name: "Pièces Détachées", icon: Wrench, color: "orange" },
-    { id: "industrial", name: "Produits Industriels", icon: Lightbulb, color: "purple" },
-    { id: "appliances", name: "Électroménager Agricole", icon: Plug, color: "blue" }
+    { id: 'all', name: 'Toutes Catégories', icon: Package, color: 'gray' },
+    { id: 'tractors', name: 'Engins Agricoles', icon: Tractor, color: 'green' },
+    { id: 'parts', name: 'Pièces Détachées', icon: Wrench, color: 'orange' },
+    { id: 'industrial', name: 'Produits Industriels', icon: Lightbulb, color: 'purple' },
+    { id: 'appliances', name: 'Électroménager Agricole', icon: Plug, color: 'blue' },
   ];
 
   const copyToClipboard = (text: string) => {
@@ -192,10 +192,10 @@ export function AffiliateDashboard() {
 
   const getStatusBadge = (status: string) => {
     const styles = {
-      active: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300",
-      paused: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300",
-      pending: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
-      inactive: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300"
+      active: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
+      paused: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
+      pending: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+      inactive: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
     };
     return styles[status as keyof typeof styles] || styles.pending;
   };
@@ -284,16 +284,14 @@ export function AffiliateDashboard() {
           <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
             €{stats.pendingCommissions.toLocaleString()}
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-            Disponibles dans 15 jours
-          </p>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Disponibles dans 15 jours</p>
           <div className="mt-4">
             <div className="flex items-center justify-between text-xs mb-2">
               <span className="text-gray-500">Progression</span>
               <span className="text-gray-700 dark:text-gray-300 font-medium">72%</span>
             </div>
             <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-              <div className="bg-yellow-500 h-2 rounded-full" style={{ width: "72%" }}></div>
+              <div className="bg-yellow-500 h-2 rounded-full" style={{ width: '72%' }}></div>
             </div>
           </div>
         </Card>
@@ -306,9 +304,7 @@ export function AffiliateDashboard() {
           <p className="text-3xl font-bold text-green-600 dark:text-green-400">
             €{stats.paidCommissions.toLocaleString()}
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-            Total depuis le début
-          </p>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Total depuis le début</p>
           <Button className="mt-4 w-full" variant="outline">
             Voir Historique
           </Button>
@@ -328,13 +324,17 @@ export function AffiliateDashboard() {
               <Card
                 key={category.id}
                 className={`p-4 cursor-pointer transition-all hover:shadow-lg ${
-                  isSelected ? "ring-2 ring-[#0B7A4B] bg-green-50 dark:bg-green-900/20" : ""
+                  isSelected ? 'ring-2 ring-[#0B7A4B] bg-green-50 dark:bg-green-900/20' : ''
                 }`}
                 onClick={() => setSelectedCategory(category.id)}
               >
                 <div className="flex flex-col items-center text-center">
-                  <div className={`h-12 w-12 rounded-full bg-${category.color}-100 dark:bg-${category.color}-900 flex items-center justify-center mb-3`}>
-                    <Icon className={`h-6 w-6 text-${category.color}-600 dark:text-${category.color}-400`} />
+                  <div
+                    className={`h-12 w-12 rounded-full bg-${category.color}-100 dark:bg-${category.color}-900 flex items-center justify-center mb-3`}
+                  >
+                    <Icon
+                      className={`h-6 w-6 text-${category.color}-600 dark:text-${category.color}-400`}
+                    />
                   </div>
                   <p className="font-medium text-gray-900 dark:text-white text-sm">
                     {category.name}
@@ -376,7 +376,9 @@ export function AffiliateDashboard() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-gray-500">Commission</span>
-                  <span className="text-sm font-semibold text-green-600">{partner.commissionRate}%</span>
+                  <span className="text-sm font-semibold text-green-600">
+                    {partner.commissionRate}%
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-gray-500">Liens actifs</span>
@@ -384,7 +386,9 @@ export function AffiliateDashboard() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-gray-500">Revenu total</span>
-                  <span className="text-sm font-semibold">€{partner.totalRevenue.toLocaleString()}</span>
+                  <span className="text-sm font-semibold">
+                    €{partner.totalRevenue.toLocaleString()}
+                  </span>
                 </div>
               </div>
               <Button className="w-full mt-3" size="sm" variant="outline">
@@ -408,7 +412,7 @@ export function AffiliateDashboard() {
             </Button>
             <Button variant="outline" size="sm" className="gap-2">
               <Calendar className="h-4 w-4" />
-              {selectedPeriod === "month" ? "Ce mois" : "Cette année"}
+              {selectedPeriod === 'month' ? 'Ce mois' : 'Cette année'}
             </Button>
           </div>
         </div>
@@ -493,8 +497,16 @@ export function AffiliateDashboard() {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadge(link.status)}`}>
-                        {link.status === "active" ? "Actif" : link.status === "paused" ? "Pause" : "En attente"}
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadge(
+                          link.status
+                        )}`}
+                      >
+                        {link.status === 'active'
+                          ? 'Actif'
+                          : link.status === 'paused'
+                          ? 'Pause'
+                          : 'En attente'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
@@ -599,11 +611,10 @@ export function AffiliateDashboard() {
       <Card className="p-6 bg-gradient-to-r from-[#0B7A4B] to-[#1A5F7A] text-white">
         <div className="flex items-center justify-between">
           <div className="flex-1">
-            <h3 className="text-xl font-bold mb-2">
-              🚀 Programme Ambassadeur Premium
-            </h3>
+            <h3 className="text-xl font-bold mb-2">🚀 Programme Ambassadeur Premium</h3>
             <p className="text-green-100 mb-4">
-              Débloquez des commissions jusqu'à 25% et des bonus exclusifs en devenant Ambassadeur Premium AgroLogistic
+              Débloquez des commissions jusqu'à 25% et des bonus exclusifs en devenant Ambassadeur
+              Premium AgroLogistic
             </p>
             <ul className="space-y-2 mb-4">
               <li className="flex items-center gap-2 text-sm">

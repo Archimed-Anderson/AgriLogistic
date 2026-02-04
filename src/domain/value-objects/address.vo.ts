@@ -60,9 +60,9 @@ export class Address {
       this.props.complement,
       `${this.props.postalCode} ${this.props.city}`,
       this.props.state,
-      this.props.country
+      this.props.country,
     ].filter(Boolean);
-    
+
     return parts.join(', ');
   }
 

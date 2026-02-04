@@ -4,12 +4,7 @@ import { RevenueTrendsWidget } from './widgets/RevenueTrendsWidget';
 import { KPICardsWidget } from './widgets/KPICardsWidget';
 import { LogisticsTrackerWidget } from './widgets/LogisticsTrackerWidget';
 import { getCurrentWeather, getDashboardSummary } from '@/data/mockDashboardData';
-import { 
-  Download, 
-  Sun, 
-  MapPin,
-  RefreshCw
-} from 'lucide-react';
+import { Download, Sun, MapPin, RefreshCw } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import { Card } from '@/app/components/ui/card';
 
@@ -49,9 +44,7 @@ export function ModernizedDashboard({ onNavigate }: ModernizedDashboardProps) {
       <div className="mb-8">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">
-              Dashboard Overview
-            </h1>
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">Dashboard Overview</h1>
             <p className="text-slate-600">
               Welcome back! Here's what's happening with your farm operations.
             </p>
@@ -76,21 +69,11 @@ export function ModernizedDashboard({ onNavigate }: ModernizedDashboardProps) {
             </div>
 
             {/* Action Buttons */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleRefresh}
-              className="gap-2"
-            >
+            <Button variant="outline" size="sm" onClick={handleRefresh} className="gap-2">
               <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleExportPDF}
-              className="gap-2"
-            >
+            <Button variant="outline" size="sm" onClick={handleExportPDF} className="gap-2">
               <Download className="w-4 h-4" />
               Export
             </Button>
@@ -147,7 +130,9 @@ export function ModernizedDashboard({ onNavigate }: ModernizedDashboardProps) {
             </span>
           </div>
           <p className="text-sm text-slate-600 mb-1">Total Revenue</p>
-          <p className="text-3xl font-bold text-slate-900">€{summary.totalRevenue.toLocaleString()}</p>
+          <p className="text-3xl font-bold text-slate-900">
+            €{summary.totalRevenue.toLocaleString()}
+          </p>
         </Card>
       </div>
 

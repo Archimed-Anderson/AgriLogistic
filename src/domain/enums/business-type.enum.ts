@@ -5,5 +5,5 @@ export enum BusinessType {
   FAMILY_FARM = 'family_farm', // Exploitation Familiale
   COOPERATIVE = 'cooperative', // Coopérative Agricole
   INDIVIDUAL = 'individual', // Entrepreneur Individuel
-  OTHER = 'other'
+  OTHER = 'other',
 }

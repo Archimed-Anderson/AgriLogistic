@@ -3,7 +3,15 @@
  * Displays key financial metrics and charts
  */
 import React from 'react';
-import { DollarSign, TrendingUp, TrendingDown, PieChart, CreditCard, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import {
+  DollarSign,
+  TrendingUp,
+  TrendingDown,
+  PieChart,
+  CreditCard,
+  ArrowUpRight,
+  ArrowDownRight,
+} from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import type { FinancialMetrics } from '@/types/transporter';
 
@@ -22,7 +30,7 @@ export function FinanceOverview({ metrics }: FinanceOverviewProps) {
 
   const cards = [
     {
-      label: 'Chiffre d\'affaires',
+      label: "Chiffre d'affaires",
       value: metrics.totalRevenue,
       change: +12.5,
       icon: DollarSign,
@@ -89,8 +97,16 @@ export function FinanceOverview({ metrics }: FinanceOverviewProps) {
                 <span className="text-2xl font-bold text-gray-900">
                   {card.isPercentage ? `${card.value}%` : formatCurrency(card.value)}
                 </span>
-                <div className={`flex items-center text-sm font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                  {isPositive ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
+                <div
+                  className={`flex items-center text-sm font-medium ${
+                    isPositive ? 'text-green-600' : 'text-red-600'
+                  }`}
+                >
+                  {isPositive ? (
+                    <ArrowUpRight className="w-4 h-4" />
+                  ) : (
+                    <ArrowDownRight className="w-4 h-4" />
+                  )}
                   <span>{Math.abs(card.change)}%</span>
                 </div>
               </div>
@@ -134,7 +150,9 @@ export function FinanceOverview({ metrics }: FinanceOverviewProps) {
                   <p className="text-sm text-gray-500">55% des charges</p>
                 </div>
               </div>
-              <span className="font-semibold text-gray-900">{formatCurrency(metrics.costsByType.fuel)}</span>
+              <span className="font-semibold text-gray-900">
+                {formatCurrency(metrics.costsByType.fuel)}
+              </span>
             </div>
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center gap-3">
@@ -146,7 +164,9 @@ export function FinanceOverview({ metrics }: FinanceOverviewProps) {
                   <p className="text-sm text-gray-500">22% des charges</p>
                 </div>
               </div>
-              <span className="font-semibold text-gray-900">{formatCurrency(metrics.costsByType.maintenance)}</span>
+              <span className="font-semibold text-gray-900">
+                {formatCurrency(metrics.costsByType.maintenance)}
+              </span>
             </div>
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center gap-3">
@@ -158,7 +178,9 @@ export function FinanceOverview({ metrics }: FinanceOverviewProps) {
                   <p className="text-sm text-gray-500">15% des charges</p>
                 </div>
               </div>
-              <span className="font-semibold text-gray-900">{formatCurrency(metrics.costsByType.insurance)}</span>
+              <span className="font-semibold text-gray-900">
+                {formatCurrency(metrics.costsByType.insurance)}
+              </span>
             </div>
           </div>
         </div>
@@ -170,14 +192,14 @@ export function FinanceOverview({ metrics }: FinanceOverviewProps) {
 // Helper icon
 function Fuel({ className }: { className?: string }) {
   return (
-    <svg 
+    <svg
       className={className}
-      xmlns="http://www.w3.org/2000/svg" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
       strokeLinejoin="round"
     >
       <path d="M3 22v-8a2 2 0 0 1 2-2h2.5" />

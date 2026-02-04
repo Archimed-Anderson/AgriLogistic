@@ -71,7 +71,9 @@ export const rentalAPI = {
   /**
    * Schedule maintenance
    */
-  scheduleMaintenance: async (maintenance: Partial<MaintenanceSchedule>): Promise<MaintenanceSchedule> => {
+  scheduleMaintenance: async (
+    maintenance: Partial<MaintenanceSchedule>
+  ): Promise<MaintenanceSchedule> => {
     const response = await apiClient.post('/api/farmer/rental/maintenance', maintenance);
     return response.data;
   },
@@ -79,13 +81,20 @@ export const rentalAPI = {
   /**
    * Get equipment availability
    */
-  getAvailability: async (equipmentId: string, startDate: Date, endDate: Date): Promise<boolean> => {
-    const response = await apiClient.get(`/api/farmer/rental/equipment/${equipmentId}/availability`, {
-      params: {
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
-      },
-    });
+  getAvailability: async (
+    equipmentId: string,
+    startDate: Date,
+    endDate: Date
+  ): Promise<boolean> => {
+    const response = await apiClient.get(
+      `/api/farmer/rental/equipment/${equipmentId}/availability`,
+      {
+        params: {
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
+        },
+      }
+    );
     return response.data.available;
   },
 

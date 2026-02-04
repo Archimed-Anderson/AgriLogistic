@@ -1,27 +1,27 @@
-"use client"
+'use client';
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 interface AuthTabsProps {
-  className?: string
+  className?: string;
 }
 
 export function AuthTabs({ className }: AuthTabsProps) {
-  const pathname = usePathname()
-  const isLogin = pathname === "/login"
-  const isRegister = pathname === "/register"
+  const pathname = usePathname();
+  const isLogin = pathname === '/login';
+  const isRegister = pathname === '/register';
 
   return (
-    <div className={cn("flex w-full border-b mb-6", className)}>
+    <div className={cn('flex w-full border-b mb-6', className)}>
       <Link
         href="/login"
         className={cn(
-          "flex-1 text-center py-3 text-sm font-bold transition-all duration-300 relative",
-          isLogin 
-            ? "text-primary bg-primary/5" 
-            : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+          'flex-1 text-center py-3 text-sm font-bold transition-all duration-300 relative',
+          isLogin
+            ? 'text-primary bg-primary/5'
+            : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
         )}
       >
         Se connecter
@@ -32,10 +32,10 @@ export function AuthTabs({ className }: AuthTabsProps) {
       <Link
         href="/register"
         className={cn(
-          "flex-1 text-center py-3 text-sm font-bold transition-all duration-300 relative",
-          isRegister 
-            ? "text-primary bg-primary/5" 
-            : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+          'flex-1 text-center py-3 text-sm font-bold transition-all duration-300 relative',
+          isRegister
+            ? 'text-primary bg-primary/5'
+            : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
         )}
       >
         Créer un compte
@@ -44,5 +44,5 @@ export function AuthTabs({ className }: AuthTabsProps) {
         )}
       </Link>
     </div>
-  )
+  );
 }

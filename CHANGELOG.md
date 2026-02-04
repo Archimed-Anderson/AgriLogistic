@@ -1,60 +1,24 @@
-# Changelog
+# Changelog – AgroDeep Platform
 
-All notable changes to the AgroLogistic project will be documented in this file.
-
-## [1.1.0] - 2026-01-22 - Admin Dashboard Release
-
-### Added
-
-#### Admin Dashboard (Frontend + Backend)
-- **Complete admin dashboard** with 5 main pages (Dashboard, Users, Analytics, System, Security)
-- **17 REST API endpoints** for admin operations
-- **Recharts visualizations** (UsersChart, RevenueChart)
-- **React Query hooks** for data fetching and caching
-- **Form validation** with React Hook Form + Zod
-- **Permission system** with 70+ granular permissions and 4 roles
-- **Audit logging** for all admin actions
-- **JWT RS256 authentication** with automatic token refresh
-
-#### New Dependencies
-- `@tanstack/react-query` ^5.90.19
-- `axios` ^1.13.2
-- `recharts` ^2.15.4
-- `react-hook-form` ^7.55.0
-- `zod` ^4.3.5
-- `sonner` ^2.0.3
-- `zustand` ^5.0.10
-
-#### Documentation
-- REQUIREMENTS.md - Complete dependencies list
-- CHANGELOG.md - Project changelog
-- FINALIZATION_GUIDE.md - Deployment guide
-- QUICKSTART.md (admin-service)
-- Postman collection for API testing
-
-### Changed
-- Updated START_APP_SIMPLE.ps1 to include admin-service
-- Enhanced API client with retry logic and error handling
-
-### Security
-- Bcrypt password hashing (10 rounds)
-- Comprehensive audit trail
-- CORS and Helmet.js protection
-- Input validation on all endpoints
-
-### Fixed
-- Port allocation conflicts (admin-service on 5005)
+Les modifications notables au niveau plateforme sont documentées ici.  
+Voir aussi `apps/web-app/CHANGELOG.md` pour la web-app et `docs/CLEANUP_REPORT.md` pour le détail du nettoyage.
 
 ---
 
-## [1.0.0] - 2026-01-15
+## [Non publié]
 
-### Added
-- Initial platform release
-- User authentication
-- Product catalog
-- Order management
+### Nettoyage complémentaire (2026-02-04)
 
----
+- **Suppression du dossier `.backups/`** : 4 sauvegardes auth-service obsolètes (générées par `fix-auth-service.ps1`) supprimées. Ajout de `.backups/` au `.gitignore`.
+- **Artefacts E2E** : Ajout au `.gitignore` de `tests/e2e/screenshots/`, `tests/e2e/analysis-reports/`, `apps/web-app/test-results/`, `apps/web-app/playwright-report/`.
+- **Tests E2E** : Suppression des specs redondants `auth-dev-mode.spec.ts` et `auth-stable-e2e.spec.ts` (scénarios déjà couverts par `auth.spec.ts` et `auth-complete.spec.ts`). Mise à jour de `tests/e2e/README.md` et `docs/CLEANUP_REPORT.md`.
 
-**For detailed changes, see [walkthrough.md](brain/.../walkthrough.md)**
+### Nettoyage du code source (2026-02-03)
+
+- **Suppressions** : Fichiers temporaires et scripts obsolètes (voir `docs/CLEANUP_REPORT.md`).
+  - Racine : `discovery_output.txt`.
+  - `apps/web-app` : `test_output*.txt`, `final_*_test.txt`, `final_test_results.txt`, `landing_files.txt`, et 10 scripts de diagnostic/test one-off (`check-section.js`, `deep-inspect.js`, `diagnostic-images.js`, `final-verification.js`, `inspect-html.js`, `test-crop-intelligence.js`, `test-enhanced-ui.js`, `test-no-cache.js`, `test-performance-section.js`, `test-widgets.js`).
+- **.gitignore** : Ajout de patterns pour éviter le retour des artefacts (`*.bak`, `*~`, `discovery_output.txt`, `test_output*.txt`, `final_*_test.txt`, `final_test_results.txt`, `landing_files.txt`).
+- **Documentation** : Rapport détaillé dans `docs/CLEANUP_REPORT.md`.
+
+Aucune modification du code source applicatif ; uniquement suppressions et configuration.

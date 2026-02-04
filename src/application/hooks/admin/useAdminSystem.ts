@@ -9,7 +9,7 @@ export const adminSystemKeys = {
   all: ['admin', 'system'] as const,
   health: () => [...adminSystemKeys.all, 'health'] as const,
   metrics: () => [...adminSystemKeys.all, 'metrics'] as const,
-  logs: (params: { limit?: number; level?: string }) => 
+  logs: (params: { limit?: number; level?: string }) =>
     [...adminSystemKeys.all, 'logs', params] as const,
 };
 

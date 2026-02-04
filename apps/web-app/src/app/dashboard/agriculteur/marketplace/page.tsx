@@ -1,7 +1,7 @@
-"use client"
+'use client';
 
-import { FarmerMarketplaceWidget } from "@/components/dashboard/FarmerMarketplaceWidget"
+import { FarmerMarketplaceWidget } from '@/components/dashboard/FarmerMarketplaceWidget';
 
 export default function MarketplacePage() {
-  return <FarmerMarketplaceWidget />
+  return <FarmerMarketplaceWidget />;
 }

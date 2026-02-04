@@ -1,4 +1,4 @@
-import { FinancialSuite } from "@/app/components/FinancialSuite";
+import { FinancialSuite } from '@/app/components/FinancialSuite';
 
 /**
  * Customer-facing payments page.
@@ -8,4 +8,3 @@ import { FinancialSuite } from "@/app/components/FinancialSuite";
 export function PaymentsPage() {
   return <FinancialSuite />;
 }
-

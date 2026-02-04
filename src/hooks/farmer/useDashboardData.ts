@@ -4,7 +4,14 @@
  */
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import type { DashboardKPIs, RevenueData, AgriTask, WeatherData, WeatherAlert, AIRecommendation } from '@/types/farmer/dashboard';
+import type {
+  DashboardKPIs,
+  RevenueData,
+  AgriTask,
+  WeatherData,
+  WeatherAlert,
+  AIRecommendation,
+} from '@/types/farmer/dashboard';
 
 // Mock data for development
 const mockKPIs: DashboardKPIs = {
@@ -34,7 +41,7 @@ const mockTasks: AgriTask[] = [
   {
     id: '1',
     title: 'Irrigation du champ nord',
-    description: 'Vérifier et activer le système d\'irrigation',
+    description: "Vérifier et activer le système d'irrigation",
     type: 'irrigation',
     priority: 'high',
     status: 'pending',
@@ -112,7 +119,8 @@ const mockRecommendations: AIRecommendation[] = [
     type: 'market',
     priority: 'high',
     title: 'Opportunité de vente - Tomates',
-    description: 'Les prix des tomates ont augmenté de 15% cette semaine. Moment idéal pour vendre votre stock.',
+    description:
+      'Les prix des tomates ont augmenté de 15% cette semaine. Moment idéal pour vendre votre stock.',
     action: 'Créer une offre flash',
     impact: {
       type: 'revenue',
@@ -223,6 +231,12 @@ export function useDashboardData() {
     weather,
     alerts,
     recommendations,
-    isLoading: kpisLoading || revenueLoading || tasksLoading || weatherLoading || alertsLoading || recommendationsLoading,
+    isLoading:
+      kpisLoading ||
+      revenueLoading ||
+      tasksLoading ||
+      weatherLoading ||
+      alertsLoading ||
+      recommendationsLoading,
   };
 }

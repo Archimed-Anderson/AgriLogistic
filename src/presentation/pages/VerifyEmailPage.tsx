@@ -1,39 +1,39 @@
-import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
-import { useAuth } from '@presentation/contexts/AuthContext'
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { useAuth } from '@presentation/contexts/AuthContext';
 
 interface VerifyEmailPageProps {
-  onNavigate: (route: string) => void
+  onNavigate: (route: string) => void;
 }
 
 export function VerifyEmailPage({ onNavigate }: VerifyEmailPageProps) {
-  const { verifyEmail, isLoading } = useAuth()
-  const [token, setToken] = useState('')
-  const [email, setEmail] = useState<string>('')
+  const { verifyEmail, isLoading } = useAuth();
+  const [token, setToken] = useState('');
+  const [email, setEmail] = useState<string>('');
 
   useEffect(() => {
     try {
-      const t = sessionStorage.getItem('email_verification_token') || ''
-      const e = sessionStorage.getItem('pending_verification_email') || ''
-      if (t) setToken(t)
-      if (e) setEmail(e)
+      const t = sessionStorage.getItem('email_verification_token') || '';
+      const e = sessionStorage.getItem('pending_verification_email') || '';
+      if (t) setToken(t);
+      if (e) setEmail(e);
     } catch {
       // ignore
     }
-  }, [])
+  }, []);
 
   const submit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const trimmed = token.trim()
-    if (!trimmed) return
-    const ok = await verifyEmail(trimmed)
+    e.preventDefault();
+    const trimmed = token.trim();
+    if (!trimmed) return;
+    const ok = await verifyEmail(trimmed);
     if (ok) {
-      toast.success('Email vérifié. Vous pouvez vous connecter.')
-      onNavigate('/auth')
+      toast.success('Email vérifié. Vous pouvez vous connecter.');
+      onNavigate('/auth');
     } else {
-      toast.error("Échec de vérification. Vérifiez le token et réessayez.")
+      toast.error('Échec de vérification. Vérifiez le token et réessayez.');
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-emerald-50 via-green-50 to-lime-50">
@@ -77,6 +77,5 @@ export function VerifyEmailPage({ onNavigate }: VerifyEmailPageProps) {
         </form>
       </div>
     </div>
-  )
+  );
 }
-

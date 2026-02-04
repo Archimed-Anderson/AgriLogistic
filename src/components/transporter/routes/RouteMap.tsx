@@ -7,7 +7,9 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import type { Waypoint } from '@/types/transporter';
 
-mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoiYWdyb2xvZ2lzdGljIiwiYSI6ImNsZGV4YW1wbGUifQ.example';
+mapboxgl.accessToken =
+  import.meta.env.VITE_MAPBOX_TOKEN ||
+  'pk.eyJ1IjoiYWdyb2xvZ2lzdGljIiwiYSI6ImNsZGV4YW1wbGUifQ.example';
 
 interface RouteMapProps {
   waypoints: Waypoint[];
@@ -75,7 +77,7 @@ export function RouteMap({
 
       const el = document.createElement('div');
       el.className = `cursor-move relative`;
-      
+
       const color =
         waypoint.type === 'pickup'
           ? 'bg-green-500'
@@ -102,9 +104,27 @@ export function RouteMap({
         .setPopup(
           new mapboxgl.Popup({ offset: 25 }).setHTML(`
             <div class="p-2">
-              <h3 class="font-semibold text-sm">${waypoint.type === 'pickup' ? 'Pickup' : waypoint.type === 'delivery' ? 'Delivery' : 'Waypoint'} #${index + 1}</h3>
+              <h3 class="font-semibold text-sm">${
+                waypoint.type === 'pickup'
+                  ? 'Pickup'
+                  : waypoint.type === 'delivery'
+                  ? 'Delivery'
+                  : 'Waypoint'
+              } #${index + 1}</h3>
               <p class="text-xs text-gray-600 mt-1">${waypoint.address}</p>
-              ${waypoint.timeWindow ? `<p class="text-xs text-gray-500 mt-1">⏰ ${new Date(waypoint.timeWindow.start).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} - ${new Date(waypoint.timeWindow.end).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</p>` : ''}
+              ${
+                waypoint.timeWindow
+                  ? `<p class="text-xs text-gray-500 mt-1">⏰ ${new Date(
+                      waypoint.timeWindow.start
+                    ).toLocaleTimeString('fr-FR', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })} - ${new Date(waypoint.timeWindow.end).toLocaleTimeString('fr-FR', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}</p>`
+                  : ''
+              }
               <p class="text-xs text-gray-500 mt-1">⏱️ ${waypoint.duration} min</p>
             </div>
           `)

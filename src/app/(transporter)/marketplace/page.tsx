@@ -36,22 +36,18 @@ export default function MarketplacePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                📦 Bourse de Fret
-              </h1>
-              <p className="text-sm text-gray-600">
-                {loads?.length || 0} offres disponibles
-              </p>
+              <h1 className="text-2xl font-bold text-gray-900">📦 Bourse de Fret</h1>
+              <p className="text-sm text-gray-600">{loads?.length || 0} offres disponibles</p>
             </div>
-            
+
             <div className="flex items-center gap-4">
               {/* View Toggle */}
               <div className="flex bg-gray-100 p-1 rounded-lg">
                 <button
                   onClick={() => setViewMode('list')}
                   className={`p-2 rounded-md transition-colors ${
-                    viewMode === 'list' 
-                      ? 'bg-white text-blue-600 shadow-sm' 
+                    viewMode === 'list'
+                      ? 'bg-white text-blue-600 shadow-sm'
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
@@ -60,8 +56,8 @@ export default function MarketplacePage() {
                 <button
                   onClick={() => setViewMode('map')}
                   className={`p-2 rounded-md transition-colors ${
-                    viewMode === 'map' 
-                      ? 'bg-white text-blue-600 shadow-sm' 
+                    viewMode === 'map'
+                      ? 'bg-white text-blue-600 shadow-sm'
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >

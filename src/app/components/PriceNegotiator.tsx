@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   DollarSign,
   TrendingDown,
@@ -13,8 +13,8 @@ import {
   Send,
   Target,
   Calculator,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 interface PriceNegotiatorProps {
   productName: string;
@@ -29,11 +29,11 @@ interface PriceNegotiatorProps {
 
 interface NegotiationOffer {
   id: string;
-  type: "buyer" | "seller";
+  type: 'buyer' | 'seller';
   price: number;
   timestamp: string;
   message?: string;
-  status: "pending" | "accepted" | "rejected" | "countered";
+  status: 'pending' | 'accepted' | 'rejected' | 'countered';
 }
 
 export function PriceNegotiator({
@@ -44,15 +44,15 @@ export function PriceNegotiator({
   sellerName,
   onAccept,
   onClose,
-  className = "",
+  className = '',
 }: PriceNegotiatorProps) {
   const [proposedPrice, setProposedPrice] = useState(originalPrice * 0.9);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
   const [offers, setOffers] = useState<NegotiationOffer[]>([]);
   const [isNegotiating, setIsNegotiating] = useState(false);
   const [timeLeft, setTimeLeft] = useState(24 * 60 * 60); // 24 heures en secondes
   const [showHistory, setShowHistory] = useState(false);
-  const [activeTab, setActiveTab] = useState<"negotiate" | "history">("negotiate");
+  const [activeTab, setActiveTab] = useState<'negotiate' | 'history'>('negotiate');
 
   // Timer countdown
   useEffect(() => {
@@ -78,7 +78,7 @@ export function PriceNegotiator({
 
   const handlePropose = async () => {
     if (proposedPrice >= originalPrice) {
-      toast.error("Votre offre doit être inférieure au prix initial");
+      toast.error('Votre offre doit être inférieure au prix initial');
       return;
     }
 
@@ -86,15 +86,15 @@ export function PriceNegotiator({
 
     const newOffer: NegotiationOffer = {
       id: `offer-${Date.now()}`,
-      type: "buyer",
+      type: 'buyer',
       price: proposedPrice,
-      timestamp: new Date().toLocaleString("fr-FR"),
+      timestamp: new Date().toLocaleString('fr-FR'),
       message: message || undefined,
-      status: "pending",
+      status: 'pending',
     };
 
     setOffers([newOffer, ...offers]);
-    setMessage("");
+    setMessage('');
 
     // Simulation de réponse du vendeur
     setTimeout(() => {
@@ -107,22 +107,22 @@ export function PriceNegotiator({
         // Acceptation
         sellerOffer = {
           id: `offer-${Date.now()}-seller`,
-          type: "seller",
+          type: 'seller',
           price: proposedPrice,
-          timestamp: new Date().toLocaleString("fr-FR"),
+          timestamp: new Date().toLocaleString('fr-FR'),
           message: "J'accepte votre offre !",
-          status: "accepted",
+          status: 'accepted',
         };
         toast.success(`Offre acceptée à ${proposedPrice}€ !`);
       } else if (randomResponse > 0.7) {
         // Contre-offre
         sellerOffer = {
           id: `offer-${Date.now()}-seller`,
-          type: "seller",
+          type: 'seller',
           price: counterPrice,
-          timestamp: new Date().toLocaleString("fr-FR"),
+          timestamp: new Date().toLocaleString('fr-FR'),
           message: `Je peux vous proposer ${counterPrice.toFixed(2)}€. C'est mon meilleur prix.`,
-          status: "countered",
+          status: 'countered',
         };
         setProposedPrice(counterPrice);
         toast.info(`Contre-offre reçue: ${counterPrice.toFixed(2)}€`);
@@ -130,13 +130,13 @@ export function PriceNegotiator({
         // Rejet
         sellerOffer = {
           id: `offer-${Date.now()}-seller`,
-          type: "seller",
+          type: 'seller',
           price: originalPrice,
-          timestamp: new Date().toLocaleString("fr-FR"),
-          message: "Désolé, cette offre est trop basse. Pouvez-vous proposer un meilleur prix ?",
-          status: "rejected",
+          timestamp: new Date().toLocaleString('fr-FR'),
+          message: 'Désolé, cette offre est trop basse. Pouvez-vous proposer un meilleur prix ?',
+          status: 'rejected',
         };
-        toast.error("Offre refusée. Essayez un prix plus élevé.");
+        toast.error('Offre refusée. Essayez un prix plus élevé.');
       }
 
       setOffers((prev) => [sellerOffer, ...prev]);
@@ -150,7 +150,7 @@ export function PriceNegotiator({
   };
 
   const handleRejectCounter = () => {
-    toast.info("Contre-offre refusée. Continuez à négocier.");
+    toast.info('Contre-offre refusée. Continuez à négocier.');
   };
 
   const getRecommendedPrice = () => {
@@ -158,7 +158,9 @@ export function PriceNegotiator({
   };
 
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 ${className}`}>
+    <div
+      className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 ${className}`}
+    >
       {/* Header */}
       <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
@@ -194,7 +196,9 @@ export function PriceNegotiator({
               <Clock className="h-4 w-4" />
               <span className="text-sm font-semibold">Expire dans</span>
             </div>
-            <p className="text-lg font-bold text-gray-900 dark:text-white">{formatTime(timeLeft)}</p>
+            <p className="text-lg font-bold text-gray-900 dark:text-white">
+              {formatTime(timeLeft)}
+            </p>
           </div>
         </div>
       </div>
@@ -203,8 +207,8 @@ export function PriceNegotiator({
       <div className="px-6 border-b border-gray-200 dark:border-gray-700">
         <div className="flex gap-4">
           {[
-            { id: "negotiate", label: "Négocier", icon: DollarSign },
-            { id: "history", label: "Historique", icon: History, count: offers.length },
+            { id: 'negotiate', label: 'Négocier', icon: DollarSign },
+            { id: 'history', label: 'Historique', icon: History, count: offers.length },
           ].map((tab) => {
             const Icon = tab.icon;
             return (
@@ -213,8 +217,8 @@ export function PriceNegotiator({
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors ${
                   activeTab === tab.id
-                    ? "border-purple-600 text-purple-600 dark:text-purple-400"
-                    : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                    ? 'border-purple-600 text-purple-600 dark:text-purple-400'
+                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -232,7 +236,7 @@ export function PriceNegotiator({
 
       {/* Content */}
       <div className="p-6">
-        {activeTab === "negotiate" && (
+        {activeTab === 'negotiate' && (
           <div className="space-y-6">
             {/* Price Comparison */}
             <div className="grid grid-cols-3 gap-4">
@@ -242,7 +246,9 @@ export function PriceNegotiator({
               </div>
               <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border-2 border-purple-200 dark:border-purple-800">
                 <p className="text-sm text-purple-600 dark:text-purple-400 mb-1">Votre offre</p>
-                <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{proposedPrice.toFixed(2)}€</p>
+                <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                  {proposedPrice.toFixed(2)}€
+                </p>
               </div>
               <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
                 <p className="text-sm text-green-600 dark:text-green-400 mb-1">Économie</p>
@@ -266,7 +272,7 @@ export function PriceNegotiator({
                   Prix recommandé
                 </button>
               </div>
-              
+
               <input
                 type="range"
                 min={minPrice}
@@ -276,7 +282,7 @@ export function PriceNegotiator({
                 onChange={handleSliderChange}
                 className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-600"
               />
-              
+
               <div className="flex items-center justify-between mt-2 text-sm text-gray-600 dark:text-gray-400">
                 <span>Min: {minPrice.toFixed(2)}€</span>
                 <span className="font-semibold text-purple-600 dark:text-purple-400">
@@ -292,9 +298,12 @@ export function PriceNegotiator({
                 <div className="flex items-start gap-3">
                   <Sparkles className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Prix recommandé !</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                      Prix recommandé !
+                    </h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Ce prix a {Math.floor(Math.random() * 20 + 70)}% de chances d'être accepté par le vendeur.
+                      Ce prix a {Math.floor(Math.random() * 20 + 70)}% de chances d'être accepté par
+                      le vendeur.
                     </p>
                   </div>
                 </div>
@@ -341,7 +350,9 @@ export function PriceNegotiator({
               <div className="flex items-start gap-3">
                 <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Conseils de négociation</h4>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    Conseils de négociation
+                  </h4>
                   <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                     <li>• Soyez respectueux et professionnel</li>
                     <li>• Justifiez votre offre avec des arguments solides</li>
@@ -353,12 +364,14 @@ export function PriceNegotiator({
           </div>
         )}
 
-        {activeTab === "history" && (
+        {activeTab === 'history' && (
           <div className="space-y-4">
             {offers.length === 0 ? (
               <div className="text-center py-12">
                 <History className="h-16 w-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-600 dark:text-gray-400 font-semibold">Aucune offre pour le moment</p>
+                <p className="text-gray-600 dark:text-gray-400 font-semibold">
+                  Aucune offre pour le moment
+                </p>
                 <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
                   Commencez à négocier pour voir l'historique
                 </p>
@@ -368,21 +381,21 @@ export function PriceNegotiator({
                 <div
                   key={offer.id}
                   className={`p-4 rounded-lg border-2 ${
-                    offer.type === "buyer"
-                      ? "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
-                      : "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-700"
+                    offer.type === 'buyer'
+                      ? 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800'
+                      : 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-700'
                   }`}
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <div
                         className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                          offer.type === "buyer"
-                            ? "bg-purple-100 dark:bg-purple-900/30"
-                            : "bg-blue-100 dark:bg-blue-900/30"
+                          offer.type === 'buyer'
+                            ? 'bg-purple-100 dark:bg-purple-900/30'
+                            : 'bg-blue-100 dark:bg-blue-900/30'
                         }`}
                       >
-                        {offer.type === "buyer" ? (
+                        {offer.type === 'buyer' ? (
                           <DollarSign className="h-4 w-4 text-purple-600" />
                         ) : (
                           <MessageCircle className="h-4 w-4 text-blue-600" />
@@ -390,26 +403,30 @@ export function PriceNegotiator({
                       </div>
                       <div>
                         <p className="font-semibold text-gray-900 dark:text-white">
-                          {offer.type === "buyer" ? "Vous" : sellerName}
+                          {offer.type === 'buyer' ? 'Vous' : sellerName}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-500">{offer.timestamp}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-500">
+                          {offer.timestamp}
+                        </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-bold text-gray-900 dark:text-white">{offer.price.toFixed(2)}€</p>
-                      {offer.status === "accepted" && (
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                        {offer.price.toFixed(2)}€
+                      </p>
+                      {offer.status === 'accepted' && (
                         <span className="inline-flex items-center gap-1 text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded">
                           <Check className="h-3 w-3" />
                           Acceptée
                         </span>
                       )}
-                      {offer.status === "rejected" && (
+                      {offer.status === 'rejected' && (
                         <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
                           <X className="h-3 w-3" />
                           Refusée
                         </span>
                       )}
-                      {offer.status === "countered" && (
+                      {offer.status === 'countered' && (
                         <span className="inline-flex items-center gap-1 text-xs font-semibold text-orange-600 bg-orange-100 dark:bg-orange-900/30 px-2 py-1 rounded">
                           <TrendingUp className="h-3 w-3" />
                           Contre-offre
@@ -417,14 +434,14 @@ export function PriceNegotiator({
                       )}
                     </div>
                   </div>
-                  
+
                   {offer.message && (
                     <p className="text-sm text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 p-3 rounded-lg">
                       "{offer.message}"
                     </p>
                   )}
 
-                  {offer.type === "seller" && offer.status === "countered" && (
+                  {offer.type === 'seller' && offer.status === 'countered' && (
                     <div className="flex gap-2 mt-3">
                       <button
                         onClick={() => handleAcceptCounter(offer.price)}

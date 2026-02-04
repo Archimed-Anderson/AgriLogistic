@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from 'react';
 import {
   Settings as SettingsIcon,
   Palette,
@@ -31,8 +31,8 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 interface SettingsProps {
   isClientView?: boolean;
@@ -47,26 +47,26 @@ interface NavItem {
 
 export function Settings({ isClientView = false }: SettingsProps) {
   // Navigation
-  const [activeSection, setActiveSection] = useState("general");
+  const [activeSection, setActiveSection] = useState('general');
   const [hasChanges, setHasChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   // General Settings
-  const [platformName, setPlatformName] = useState("AgroLogistic Pro");
-  const [timezone, setTimezone] = useState("Europe/Paris");
-  const [currency, setCurrency] = useState("EUR");
-  const [unitSystem, setUnitSystem] = useState("metric");
+  const [platformName, setPlatformName] = useState('AgroLogistic Pro');
+  const [timezone, setTimezone] = useState('Europe/Paris');
+  const [currency, setCurrency] = useState('EUR');
+  const [unitSystem, setUnitSystem] = useState('metric');
 
   // Appearance Settings
-  const [primaryColor, setPrimaryColor] = useState("#2563eb");
-  const [themeMode, setThemeMode] = useState("light");
-  const [customCSS, setCustomCSS] = useState("");
+  const [primaryColor, setPrimaryColor] = useState('#2563eb');
+  const [themeMode, setThemeMode] = useState('light');
+  const [customCSS, setCustomCSS] = useState('');
 
   // Security Settings
   const [force2FA, setForce2FA] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState("medium");
+  const [passwordStrength, setPasswordStrength] = useState('medium');
   const [showApiKey, setShowApiKey] = useState(false);
-  const [apiKey] = useState("sk_live_4242424242424242");
+  const [apiKey] = useState('sk_live_4242424242424242');
 
   // Notifications
   const [notifications, setNotifications] = useState({
@@ -95,21 +95,19 @@ export function Settings({ isClientView = false }: SettingsProps) {
   const rgpdRef = useRef<HTMLDivElement>(null);
 
   const navItems: NavItem[] = [
-    { id: "general", label: "Général", icon: SettingsIcon },
-    { id: "appearance", label: "Apparence", icon: Palette },
-    { id: "users", label: "Utilisateurs & Rôles", icon: Users, adminOnly: true },
-    { id: "notifications", label: "Notifications", icon: Bell },
-    { id: "billing", label: isClientView ? "Compte" : "Facturation", icon: CreditCard },
-    { id: "security", label: "Sécurité", icon: Shield },
-    { id: "governance", label: "Data Governance", icon: Database, adminOnly: true },
-    { id: "audit", label: "Audit Trails", icon: Activity, adminOnly: true },
-    { id: "rgpd", label: "RGPD Compliance", icon: UserCheck, adminOnly: true },
-    { id: "api", label: "API & Intégrations", icon: Code, adminOnly: true },
+    { id: 'general', label: 'Général', icon: SettingsIcon },
+    { id: 'appearance', label: 'Apparence', icon: Palette },
+    { id: 'users', label: 'Utilisateurs & Rôles', icon: Users, adminOnly: true },
+    { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'billing', label: isClientView ? 'Compte' : 'Facturation', icon: CreditCard },
+    { id: 'security', label: 'Sécurité', icon: Shield },
+    { id: 'governance', label: 'Data Governance', icon: Database, adminOnly: true },
+    { id: 'audit', label: 'Audit Trails', icon: Activity, adminOnly: true },
+    { id: 'rgpd', label: 'RGPD Compliance', icon: UserCheck, adminOnly: true },
+    { id: 'api', label: 'API & Intégrations', icon: Code, adminOnly: true },
   ];
 
-  const visibleNavItems = isClientView
-    ? navItems.filter((item) => !item.adminOnly)
-    : navItems;
+  const visibleNavItems = isClientView ? navItems.filter((item) => !item.adminOnly) : navItems;
 
   const scrollToSection = (sectionId: string) => {
     const refs: Record<string, React.RefObject<HTMLDivElement>> = {
@@ -127,7 +125,7 @@ export function Settings({ isClientView = false }: SettingsProps) {
 
     const ref = refs[sectionId];
     if (ref?.current) {
-      ref.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     setActiveSection(sectionId);
   };
@@ -138,44 +136,74 @@ export function Settings({ isClientView = false }: SettingsProps) {
     await new Promise((resolve) => setTimeout(resolve, 2000));
     setIsSaving(false);
     setHasChanges(false);
-    toast.success("Paramètres enregistrés avec succès");
+    toast.success('Paramètres enregistrés avec succès');
   };
 
   const handleCopyApiKey = () => {
     navigator.clipboard.writeText(apiKey);
-    toast.success("Clé API copiée dans le presse-papier");
+    toast.success('Clé API copiée dans le presse-papier');
   };
 
   const handleRegenerateApiKey = () => {
     setShowRegenerateModal(false);
-    toast.success("Nouvelle clé API générée");
+    toast.success('Nouvelle clé API générée');
   };
 
   const predefinedColors = [
-    { name: "Bleu AgroLogistic", value: "#2563eb" },
-    { name: "Vert Nature", value: "#10b981" },
-    { name: "Orange Récolte", value: "#f97316" },
-    { name: "Violet", value: "#8b5cf6" },
-    { name: "Rose", value: "#ec4899" },
+    { name: 'Bleu AgroLogistic', value: '#2563eb' },
+    { name: 'Vert Nature', value: '#10b981' },
+    { name: 'Orange Récolte', value: '#f97316' },
+    { name: 'Violet', value: '#8b5cf6' },
+    { name: 'Rose', value: '#ec4899' },
   ];
 
   const activeSessions = [
-    { device: "Chrome • Windows", location: "Paris, France", lastActive: "Maintenant", current: true },
-    { device: "Safari • iPhone", location: "Lyon, France", lastActive: "Il y a 2h", current: false },
-    { device: "Firefox • MacOS", location: "Bordeaux, France", lastActive: "Il y a 1j", current: false },
+    {
+      device: 'Chrome • Windows',
+      location: 'Paris, France',
+      lastActive: 'Maintenant',
+      current: true,
+    },
+    {
+      device: 'Safari • iPhone',
+      location: 'Lyon, France',
+      lastActive: 'Il y a 2h',
+      current: false,
+    },
+    {
+      device: 'Firefox • MacOS',
+      location: 'Bordeaux, France',
+      lastActive: 'Il y a 1j',
+      current: false,
+    },
   ];
 
   const auditLogs = [
-    { date: "10/01/2026 15:30", user: "Pierre Moreau", action: "Modifié les paramètres de livraison", ip: "192.168.1.1" },
-    { date: "10/01/2026 14:15", user: "Sophie Laurent", action: "Connexion depuis un nouvel appareil", ip: "192.168.1.45" },
-    { date: "10/01/2026 10:22", user: "Admin", action: "Régénéré la clé API", ip: "192.168.1.1" },
-    { date: "09/01/2026 18:45", user: "Jean Dupont", action: "Modifié les rôles utilisateurs", ip: "192.168.1.78" },
+    {
+      date: '10/01/2026 15:30',
+      user: 'Pierre Moreau',
+      action: 'Modifié les paramètres de livraison',
+      ip: '192.168.1.1',
+    },
+    {
+      date: '10/01/2026 14:15',
+      user: 'Sophie Laurent',
+      action: 'Connexion depuis un nouvel appareil',
+      ip: '192.168.1.45',
+    },
+    { date: '10/01/2026 10:22', user: 'Admin', action: 'Régénéré la clé API', ip: '192.168.1.1' },
+    {
+      date: '09/01/2026 18:45',
+      user: 'Jean Dupont',
+      action: 'Modifié les rôles utilisateurs',
+      ip: '192.168.1.78',
+    },
   ];
 
   const invoices = [
-    { id: "INV-2026-001", date: "01/01/2026", amount: "299€", status: "Payée" },
-    { id: "INV-2025-012", date: "01/12/2025", amount: "299€", status: "Payée" },
-    { id: "INV-2025-011", date: "01/11/2025", amount: "299€", status: "Payée" },
+    { id: 'INV-2026-001', date: '01/01/2026', amount: '299€', status: 'Payée' },
+    { id: 'INV-2025-012', date: '01/12/2025', amount: '299€', status: 'Payée' },
+    { id: 'INV-2025-011', date: '01/11/2025', amount: '299€', status: 'Payée' },
   ];
 
   return (
@@ -193,8 +221,8 @@ export function Settings({ isClientView = false }: SettingsProps) {
                   onClick={() => scrollToSection(item.id)}
                   className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                     activeSection === item.id
-                      ? "bg-[#2563eb] text-white"
-                      : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                      ? 'bg-[#2563eb] text-white'
+                      : 'hover:bg-muted text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -212,7 +240,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
         <div ref={generalRef} className="scroll-mt-6">
           <div className="mb-4">
             <h1 className="text-2xl font-bold">Général</h1>
-            <p className="text-muted-foreground">Configurez les paramètres principaux de votre plateforme</p>
+            <p className="text-muted-foreground">
+              Configurez les paramètres principaux de votre plateforme
+            </p>
           </div>
 
           <div className="bg-card border rounded-lg p-6 space-y-6">
@@ -281,13 +311,13 @@ export function Settings({ isClientView = false }: SettingsProps) {
               <div className="flex gap-4">
                 <button
                   onClick={() => {
-                    setUnitSystem("metric");
+                    setUnitSystem('metric');
                     setHasChanges(true);
                   }}
                   className={`flex-1 px-4 py-3 border rounded-lg transition-colors ${
-                    unitSystem === "metric"
-                      ? "border-[#2563eb] bg-[#2563eb]/10 text-[#2563eb]"
-                      : "hover:bg-muted"
+                    unitSystem === 'metric'
+                      ? 'border-[#2563eb] bg-[#2563eb]/10 text-[#2563eb]'
+                      : 'hover:bg-muted'
                   }`}
                 >
                   <div className="font-medium">Système Métrique</div>
@@ -295,13 +325,13 @@ export function Settings({ isClientView = false }: SettingsProps) {
                 </button>
                 <button
                   onClick={() => {
-                    setUnitSystem("imperial");
+                    setUnitSystem('imperial');
                     setHasChanges(true);
                   }}
                   className={`flex-1 px-4 py-3 border rounded-lg transition-colors ${
-                    unitSystem === "imperial"
-                      ? "border-[#2563eb] bg-[#2563eb]/10 text-[#2563eb]"
-                      : "hover:bg-muted"
+                    unitSystem === 'imperial'
+                      ? 'border-[#2563eb] bg-[#2563eb]/10 text-[#2563eb]'
+                      : 'hover:bg-muted'
                   }`}
                 >
                   <div className="font-medium">Système Impérial</div>
@@ -316,11 +346,11 @@ export function Settings({ isClientView = false }: SettingsProps) {
                 disabled={!hasChanges || isSaving}
                 className={`px-6 py-2 rounded-lg transition-colors flex items-center gap-2 ${
                   hasChanges && !isSaving
-                    ? "bg-[#2563eb] text-white hover:bg-[#1d4ed8]"
-                    : "bg-muted text-muted-foreground cursor-not-allowed"
+                    ? 'bg-[#2563eb] text-white hover:bg-[#1d4ed8]'
+                    : 'bg-muted text-muted-foreground cursor-not-allowed'
                 }`}
               >
-                {isSaving ? "Enregistrement..." : "Enregistrer les Modifications"}
+                {isSaving ? 'Enregistrement...' : 'Enregistrer les Modifications'}
               </button>
             </div>
           </div>
@@ -330,7 +360,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
         <div ref={appearanceRef} className="scroll-mt-6">
           <div className="mb-4">
             <h1 className="text-2xl font-bold">Apparence</h1>
-            <p className="text-muted-foreground">Personnalisez le thème et le branding de votre plateforme</p>
+            <p className="text-muted-foreground">
+              Personnalisez le thème et le branding de votre plateforme
+            </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -347,8 +379,8 @@ export function Settings({ isClientView = false }: SettingsProps) {
                       }}
                       className={`h-12 w-12 rounded-lg transition-all ${
                         primaryColor === color.value
-                          ? "ring-2 ring-offset-2 ring-gray-400 scale-110"
-                          : "hover:scale-105"
+                          ? 'ring-2 ring-offset-2 ring-gray-400 scale-110'
+                          : 'hover:scale-105'
                       }`}
                       style={{ backgroundColor: color.value }}
                       title={color.name}
@@ -381,9 +413,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
                 <label className="block text-sm font-medium mb-3">Mode de Thème</label>
                 <div className="grid grid-cols-3 gap-3">
                   {[
-                    { value: "light", label: "Clair", icon: Globe },
-                    { value: "dark", label: "Sombre", icon: Monitor },
-                    { value: "auto", label: "Automatique", icon: Smartphone },
+                    { value: 'light', label: 'Clair', icon: Globe },
+                    { value: 'dark', label: 'Sombre', icon: Monitor },
+                    { value: 'auto', label: 'Automatique', icon: Smartphone },
                   ].map((mode) => {
                     const Icon = mode.icon;
                     return (
@@ -395,8 +427,8 @@ export function Settings({ isClientView = false }: SettingsProps) {
                         }}
                         className={`px-4 py-3 border rounded-lg transition-colors flex flex-col items-center gap-2 ${
                           themeMode === mode.value
-                            ? "border-[#2563eb] bg-[#2563eb]/10 text-[#2563eb]"
-                            : "hover:bg-muted"
+                            ? 'border-[#2563eb] bg-[#2563eb]/10 text-[#2563eb]'
+                            : 'hover:bg-muted'
                         }`}
                       >
                         <Icon className="h-5 w-5" />
@@ -412,7 +444,7 @@ export function Settings({ isClientView = false }: SettingsProps) {
                   <label className="text-sm font-medium">CSS Personnalisé (Avancé)</label>
                   <button
                     onClick={() => {
-                      setCustomCSS("");
+                      setCustomCSS('');
                       setHasChanges(true);
                     }}
                     className="text-xs text-muted-foreground hover:text-foreground"
@@ -459,14 +491,14 @@ export function Settings({ isClientView = false }: SettingsProps) {
                   disabled={!hasChanges || isSaving}
                   className={`px-6 py-2 rounded-lg transition-colors ${
                     hasChanges && !isSaving
-                      ? "text-white hover:opacity-90"
-                      : "bg-muted text-muted-foreground cursor-not-allowed"
+                      ? 'text-white hover:opacity-90'
+                      : 'bg-muted text-muted-foreground cursor-not-allowed'
                   }`}
                   style={{
                     backgroundColor: hasChanges && !isSaving ? primaryColor : undefined,
                   }}
                 >
-                  {isSaving ? "Enregistrement..." : "Enregistrer"}
+                  {isSaving ? 'Enregistrement...' : 'Enregistrer'}
                 </button>
               </div>
             </div>
@@ -495,7 +527,10 @@ export function Settings({ isClientView = false }: SettingsProps) {
                 <div className="text-xs text-muted-foreground space-y-1">
                   <p>• Navbar avec nouveau logo</p>
                   <p>• Boutons avec couleur personnalisée</p>
-                  <p>• Thème : {themeMode === "light" ? "Clair" : themeMode === "dark" ? "Sombre" : "Auto"}</p>
+                  <p>
+                    • Thème :{' '}
+                    {themeMode === 'light' ? 'Clair' : themeMode === 'dark' ? 'Sombre' : 'Auto'}
+                  </p>
                 </div>
               </div>
             </div>
@@ -507,7 +542,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
           <div ref={usersRef} className="scroll-mt-6">
             <div className="mb-4">
               <h1 className="text-2xl font-bold">Utilisateurs & Rôles</h1>
-              <p className="text-muted-foreground">Gérez les permissions et les politiques utilisateurs</p>
+              <p className="text-muted-foreground">
+                Gérez les permissions et les politiques utilisateurs
+              </p>
             </div>
 
             <div className="bg-card border rounded-lg p-6 space-y-6">
@@ -582,14 +619,18 @@ export function Settings({ isClientView = false }: SettingsProps) {
                   <tr>
                     <th className="px-6 py-3 text-left text-sm font-medium">Événement</th>
                     <th className="px-6 py-3 text-center text-sm font-medium">Email</th>
-                    <th className="px-6 py-3 text-center text-sm font-medium">Notification In-App</th>
+                    <th className="px-6 py-3 text-center text-sm font-medium">
+                      Notification In-App
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
                   <tr>
                     <td className="px-6 py-4">
                       <div className="font-medium">Nouvelle Commande</div>
-                      <div className="text-sm text-muted-foreground">Quand une nouvelle commande est créée</div>
+                      <div className="text-sm text-muted-foreground">
+                        Quand une nouvelle commande est créée
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-center">
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -607,7 +648,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
                   <tr>
                     <td className="px-6 py-4">
                       <div className="font-medium">Retard de Livraison</div>
-                      <div className="text-sm text-muted-foreground">Alerte en cas de retard détecté</div>
+                      <div className="text-sm text-muted-foreground">
+                        Alerte en cas de retard détecté
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-center">
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -625,7 +668,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
                   <tr>
                     <td className="px-6 py-4">
                       <div className="font-medium">Stock Faible</div>
-                      <div className="text-sm text-muted-foreground">Quand un produit atteint le seuil minimum</div>
+                      <div className="text-sm text-muted-foreground">
+                        Quand un produit atteint le seuil minimum
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-center">
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -643,7 +688,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
                   <tr>
                     <td className="px-6 py-4">
                       <div className="font-medium">Nouvel Utilisateur</div>
-                      <div className="text-sm text-muted-foreground">Quand un utilisateur s'inscrit</div>
+                      <div className="text-sm text-muted-foreground">
+                        Quand un utilisateur s'inscrit
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-center">
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -676,9 +723,13 @@ export function Settings({ isClientView = false }: SettingsProps) {
         {/* Billing / Account */}
         <div ref={billingRef} className="scroll-mt-6">
           <div className="mb-4">
-            <h1 className="text-2xl font-bold">{isClientView ? "Compte" : "Facturation & Abonnement"}</h1>
+            <h1 className="text-2xl font-bold">
+              {isClientView ? 'Compte' : 'Facturation & Abonnement'}
+            </h1>
             <p className="text-muted-foreground">
-              {isClientView ? "Gérez vos méthodes de paiement" : "Gérez votre abonnement et vos factures"}
+              {isClientView
+                ? 'Gérez vos méthodes de paiement'
+                : 'Gérez votre abonnement et vos factures'}
             </p>
           </div>
 
@@ -688,7 +739,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <h3 className="font-semibold text-lg">Plan Entreprise</h3>
-                    <p className="text-sm text-muted-foreground">Pour les équipes professionnelles et entreprises</p>
+                    <p className="text-sm text-muted-foreground">
+                      Pour les équipes professionnelles et entreprises
+                    </p>
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold">499€</div>
@@ -707,7 +760,8 @@ export function Settings({ isClientView = false }: SettingsProps) {
 
                 <div className="mt-4 pt-4 border-t text-sm">
                   <p className="text-muted-foreground">
-                    Prochain renouvellement : <span className="font-medium text-foreground">25 janvier 2026</span>
+                    Prochain renouvellement :{' '}
+                    <span className="font-medium text-foreground">25 janvier 2026</span>
                   </p>
                 </div>
               </div>
@@ -725,7 +779,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <button className="text-sm text-muted-foreground hover:text-foreground">Modifier</button>
+                    <button className="text-sm text-muted-foreground hover:text-foreground">
+                      Modifier
+                    </button>
                     <button className="text-sm text-red-600 hover:text-red-700">Supprimer</button>
                   </div>
                 </div>
@@ -764,7 +820,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <button className="text-sm text-[#2563eb] hover:underline">Télécharger</button>
+                          <button className="text-sm text-[#2563eb] hover:underline">
+                            Télécharger
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -779,7 +837,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
         <div ref={securityRef} className="scroll-mt-6">
           <div className="mb-4">
             <h1 className="text-2xl font-bold">Sécurité</h1>
-            <p className="text-muted-foreground">Protégez votre compte avec des paramètres de sécurité avancés</p>
+            <p className="text-muted-foreground">
+              Protégez votre compte avec des paramètres de sécurité avancés
+            </p>
           </div>
 
           <div className="space-y-4">
@@ -834,7 +894,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
                       </div>
                     </div>
                     {!session.current && (
-                      <button className="text-sm text-red-600 hover:text-red-700">Déconnecter</button>
+                      <button className="text-sm text-red-600 hover:text-red-700">
+                        Déconnecter
+                      </button>
                     )}
                   </div>
                 ))}
@@ -851,7 +913,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
                 >
                   <option value="weak">Faible (8 caractères minimum)</option>
                   <option value="medium">Moyenne (10 caractères, lettres + chiffres)</option>
-                  <option value="strong">Forte (12 caractères, lettres + chiffres + symboles)</option>
+                  <option value="strong">
+                    Forte (12 caractères, lettres + chiffres + symboles)
+                  </option>
                 </select>
               </div>
 
@@ -887,7 +951,7 @@ export function Settings({ isClientView = false }: SettingsProps) {
                   <div className="flex gap-2">
                     <div className="flex-1 relative">
                       <input
-                        type={showApiKey ? "text" : "password"}
+                        type={showApiKey ? 'text' : 'password'}
                         value={apiKey}
                         readOnly
                         className="w-full px-3 py-2 pr-10 border rounded-lg bg-muted font-mono text-sm"
@@ -923,8 +987,12 @@ export function Settings({ isClientView = false }: SettingsProps) {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-4 border rounded-lg">
                       <div>
-                        <p className="font-medium text-sm">https://api.exemple.com/webhooks/orders</p>
-                        <p className="text-xs text-muted-foreground">Événements : order.created, order.updated</p>
+                        <p className="font-medium text-sm">
+                          https://api.exemple.com/webhooks/orders
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Événements : order.created, order.updated
+                        </p>
                       </div>
                       <button className="text-sm text-red-600 hover:text-red-700">Supprimer</button>
                     </div>
@@ -952,7 +1020,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
           <div ref={auditRef} className="scroll-mt-6">
             <div className="mb-4">
               <h1 className="text-2xl font-bold">Journal d'Audit</h1>
-              <p className="text-muted-foreground">Consultez l'historique de toutes les actions importantes</p>
+              <p className="text-muted-foreground">
+                Consultez l'historique de toutes les actions importantes
+              </p>
             </div>
 
             <div className="bg-card border rounded-lg overflow-hidden">
@@ -991,7 +1061,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
                         <td className="px-6 py-4 text-sm">{log.date}</td>
                         <td className="px-6 py-4 text-sm font-medium">{log.user}</td>
                         <td className="px-6 py-4 text-sm">{log.action}</td>
-                        <td className="px-6 py-4 text-sm font-mono text-muted-foreground">{log.ip}</td>
+                        <td className="px-6 py-4 text-sm font-mono text-muted-foreground">
+                          {log.ip}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -1009,7 +1081,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
                 <Database className="h-7 w-7 text-[#2563eb]" />
                 Data Governance
               </h1>
-              <p className="text-muted-foreground">Gestion de la qualité, traçabilité et classification des données</p>
+              <p className="text-muted-foreground">
+                Gestion de la qualité, traçabilité et classification des données
+              </p>
             </div>
 
             {/* Data Quality Dashboard */}
@@ -1043,24 +1117,55 @@ export function Settings({ isClientView = false }: SettingsProps) {
 
               {/* Data Quality Issues */}
               <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-muted-foreground">Problèmes de Qualité Détectés (12)</h3>
+                <h3 className="text-sm font-semibold text-muted-foreground">
+                  Problèmes de Qualité Détectés (12)
+                </h3>
                 {[
-                  { severity: "high", count: 3, issue: "Doublons dans la table produits", table: "products", impact: "Haut" },
-                  { severity: "medium", count: 5, issue: "Valeurs manquantes dans descriptions", table: "products", impact: "Moyen" },
-                  { severity: "low", count: 4, issue: "Format téléphone non standardisé", table: "users", impact: "Faible" },
+                  {
+                    severity: 'high',
+                    count: 3,
+                    issue: 'Doublons dans la table produits',
+                    table: 'products',
+                    impact: 'Haut',
+                  },
+                  {
+                    severity: 'medium',
+                    count: 5,
+                    issue: 'Valeurs manquantes dans descriptions',
+                    table: 'products',
+                    impact: 'Moyen',
+                  },
+                  {
+                    severity: 'low',
+                    count: 4,
+                    issue: 'Format téléphone non standardisé',
+                    table: 'users',
+                    impact: 'Faible',
+                  },
                 ].map((item, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors"
+                  >
                     <div className="flex items-center gap-3">
-                      {item.severity === "high" && <XCircle className="h-5 w-5 text-red-500" />}
-                      {item.severity === "medium" && <AlertCircle className="h-5 w-5 text-orange-500" />}
-                      {item.severity === "low" && <AlertTriangle className="h-5 w-5 text-yellow-500" />}
+                      {item.severity === 'high' && <XCircle className="h-5 w-5 text-red-500" />}
+                      {item.severity === 'medium' && (
+                        <AlertCircle className="h-5 w-5 text-orange-500" />
+                      )}
+                      {item.severity === 'low' && (
+                        <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                      )}
                       <div>
                         <div className="font-medium">{item.issue}</div>
-                        <div className="text-xs text-muted-foreground">Table: {item.table} • Impact: {item.impact}</div>
+                        <div className="text-xs text-muted-foreground">
+                          Table: {item.table} • Impact: {item.impact}
+                        </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-700">{item.count} occurrences</span>
+                      <span className="px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-700">
+                        {item.count} occurrences
+                      </span>
                       <button className="px-3 py-1.5 text-xs font-medium bg-[#2563eb] text-white rounded hover:bg-[#1d4ed8] transition-colors">
                         Corriger
                       </button>
@@ -1079,28 +1184,31 @@ export function Settings({ isClientView = false }: SettingsProps) {
               <div className="space-y-4">
                 {[
                   {
-                    dataSet: "product_sales_analytics",
-                    source: "orders, products, users",
+                    dataSet: 'product_sales_analytics',
+                    source: 'orders, products, users',
                     transformations: 3,
-                    lastUpdate: "10/01/2026 14:30",
-                    owner: "Data Team",
+                    lastUpdate: '10/01/2026 14:30',
+                    owner: 'Data Team',
                   },
                   {
-                    dataSet: "customer_360_view",
-                    source: "users, orders, reviews, support_tickets",
+                    dataSet: 'customer_360_view',
+                    source: 'users, orders, reviews, support_tickets',
                     transformations: 5,
-                    lastUpdate: "10/01/2026 12:15",
-                    owner: "Marketing Team",
+                    lastUpdate: '10/01/2026 12:15',
+                    owner: 'Marketing Team',
                   },
                   {
-                    dataSet: "inventory_forecasting",
-                    source: "products, orders, suppliers",
+                    dataSet: 'inventory_forecasting',
+                    source: 'products, orders, suppliers',
                     transformations: 4,
-                    lastUpdate: "10/01/2026 09:00",
-                    owner: "Operations Team",
+                    lastUpdate: '10/01/2026 09:00',
+                    owner: 'Operations Team',
                   },
                 ].map((lineage, idx) => (
-                  <div key={idx} className="border rounded-lg p-4 hover:border-[#2563eb] transition-colors">
+                  <div
+                    key={idx}
+                    className="border rounded-lg p-4 hover:border-[#2563eb] transition-colors"
+                  >
                     <div className="flex items-center justify-between mb-3">
                       <div className="font-semibold text-[#2563eb]">{lineage.dataSet}</div>
                       <button className="text-xs px-2 py-1 border rounded hover:bg-muted transition-colors">
@@ -1144,7 +1252,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
                   </div>
                   <div className="text-2xl font-bold text-red-700">8,342</div>
                   <div className="text-xs text-red-600 mt-1">enregistrements</div>
-                  <div className="mt-2 text-xs text-muted-foreground">Données personnelles, finances</div>
+                  <div className="mt-2 text-xs text-muted-foreground">
+                    Données personnelles, finances
+                  </div>
                 </div>
                 <div className="bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-300 rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-2">
@@ -1168,14 +1278,27 @@ export function Settings({ isClientView = false }: SettingsProps) {
 
               {/* Classification Rules */}
               <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-muted-foreground">Règles de Classification Actives (6)</h3>
+                <h3 className="text-sm font-semibold text-muted-foreground">
+                  Règles de Classification Actives (6)
+                </h3>
                 {[
-                  { rule: "Données bancaires → Confidentiel", scope: "billing, payments", auto: true },
-                  { rule: "Informations personnelles → Confidentiel", scope: "users, profiles", auto: true },
-                  { rule: "Prix de vente → Interne", scope: "products, orders", auto: true },
-                  { rule: "Descriptions produits → Public", scope: "products", auto: true },
+                  {
+                    rule: 'Données bancaires → Confidentiel',
+                    scope: 'billing, payments',
+                    auto: true,
+                  },
+                  {
+                    rule: 'Informations personnelles → Confidentiel',
+                    scope: 'users, profiles',
+                    auto: true,
+                  },
+                  { rule: 'Prix de vente → Interne', scope: 'products, orders', auto: true },
+                  { rule: 'Descriptions produits → Public', scope: 'products', auto: true },
                 ].map((item, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-3 border rounded-lg"
+                  >
                     <div>
                       <div className="font-medium">{item.rule}</div>
                       <div className="text-xs text-muted-foreground">Scope: {item.scope}</div>
@@ -1203,7 +1326,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
                 <UserCheck className="h-7 w-7 text-green-600" />
                 RGPD Compliance
               </h1>
-              <p className="text-muted-foreground">Gestion des droits des personnes concernées et conformité RGPD</p>
+              <p className="text-muted-foreground">
+                Gestion des droits des personnes concernées et conformité RGPD
+              </p>
             </div>
 
             {/* RGPD Overview */}
@@ -1258,43 +1383,45 @@ export function Settings({ isClientView = false }: SettingsProps) {
 
             {/* Data Subject Rights Management */}
             <div className="bg-card border rounded-lg p-6 mb-6">
-              <h2 className="text-lg font-semibold mb-4">Gestion des Droits des Personnes Concernées</h2>
+              <h2 className="text-lg font-semibold mb-4">
+                Gestion des Droits des Personnes Concernées
+              </h2>
               <div className="space-y-4">
                 {[
                   {
-                    id: "REQ-2026-0143",
+                    id: 'REQ-2026-0143',
                     type: "Droit d'accès",
-                    user: "marie.durand@email.fr",
-                    date: "08/01/2026",
-                    status: "pending",
-                    deadline: "07/02/2026",
+                    user: 'marie.durand@email.fr',
+                    date: '08/01/2026',
+                    status: 'pending',
+                    deadline: '07/02/2026',
                     daysLeft: 28,
                   },
                   {
-                    id: "REQ-2026-0142",
+                    id: 'REQ-2026-0142',
                     type: "Droit à l'effacement",
-                    user: "jean.martin@email.fr",
-                    date: "05/01/2026",
-                    status: "in_progress",
-                    deadline: "04/02/2026",
+                    user: 'jean.martin@email.fr',
+                    date: '05/01/2026',
+                    status: 'in_progress',
+                    deadline: '04/02/2026',
                     daysLeft: 25,
                   },
                   {
-                    id: "REQ-2026-0141",
-                    type: "Droit à la rectification",
-                    user: "paul.bernard@email.fr",
-                    date: "03/01/2026",
-                    status: "completed",
-                    deadline: "02/02/2026",
+                    id: 'REQ-2026-0141',
+                    type: 'Droit à la rectification',
+                    user: 'paul.bernard@email.fr',
+                    date: '03/01/2026',
+                    status: 'completed',
+                    deadline: '02/02/2026',
                     daysLeft: null,
                   },
                   {
-                    id: "REQ-2026-0140",
-                    type: "Droit à la portabilité",
-                    user: "sophie.petit@email.fr",
-                    date: "01/01/2026",
-                    status: "completed",
-                    deadline: "31/01/2026",
+                    id: 'REQ-2026-0140',
+                    type: 'Droit à la portabilité',
+                    user: 'sophie.petit@email.fr',
+                    date: '01/01/2026',
+                    status: 'completed',
+                    deadline: '31/01/2026',
                     daysLeft: null,
                   },
                 ].map((request, idx) => (
@@ -1305,11 +1432,11 @@ export function Settings({ isClientView = false }: SettingsProps) {
                     <div className="flex items-center gap-4">
                       <div
                         className={`w-3 h-3 rounded-full ${
-                          request.status === "completed"
-                            ? "bg-green-500"
-                            : request.status === "in_progress"
-                            ? "bg-blue-500"
-                            : "bg-orange-500"
+                          request.status === 'completed'
+                            ? 'bg-green-500'
+                            : request.status === 'in_progress'
+                            ? 'bg-blue-500'
+                            : 'bg-orange-500'
                         }`}
                       />
                       <div>
@@ -1328,16 +1455,16 @@ export function Settings({ isClientView = false }: SettingsProps) {
                       <div className="text-sm">
                         <div className="text-muted-foreground">Échéance</div>
                         <div className="font-medium">
-                          {request.status === "completed" ? (
+                          {request.status === 'completed' ? (
                             <span className="text-green-600">✓ Traitée</span>
                           ) : (
-                            <span className={request.daysLeft! < 7 ? "text-red-600" : ""}>
+                            <span className={request.daysLeft! < 7 ? 'text-red-600' : ''}>
                               {request.deadline} ({request.daysLeft}j)
                             </span>
                           )}
                         </div>
                       </div>
-                      {request.status !== "completed" && (
+                      {request.status !== 'completed' && (
                         <button className="px-3 py-1.5 text-xs font-medium bg-[#2563eb] text-white rounded hover:bg-[#1d4ed8] transition-colors">
                           Traiter
                         </button>
@@ -1354,29 +1481,29 @@ export function Settings({ isClientView = false }: SettingsProps) {
               <div className="space-y-4">
                 {[
                   {
-                    purpose: "Marketing électronique",
-                    description: "Envoi de newsletters et offres promotionnelles",
+                    purpose: 'Marketing électronique',
+                    description: 'Envoi de newsletters et offres promotionnelles',
                     consented: 2453,
                     refused: 394,
                     rate: 86.2,
                   },
                   {
-                    purpose: "Analyse et statistiques",
+                    purpose: 'Analyse et statistiques',
                     description: "Collecte de données d'utilisation pour améliorer le service",
                     consented: 2687,
                     refused: 160,
                     rate: 94.4,
                   },
                   {
-                    purpose: "Personnalisation",
+                    purpose: 'Personnalisation',
                     description: "Adaptation de l'expérience utilisateur",
                     consented: 2591,
                     refused: 256,
                     rate: 91.0,
                   },
                   {
-                    purpose: "Partage avec partenaires",
-                    description: "Transmission de données à des partenaires commerciaux",
+                    purpose: 'Partage avec partenaires',
+                    description: 'Transmission de données à des partenaires commerciaux',
                     consented: 1423,
                     refused: 1424,
                     rate: 50.0,
@@ -1472,7 +1599,8 @@ export function Settings({ isClientView = false }: SettingsProps) {
                   <div>
                     <div className="font-semibold">Notifications de Violation</div>
                     <div className="text-sm text-muted-foreground">
-                      Notifier automatiquement la CNIL et les utilisateurs en cas de violation &lt; 72h
+                      Notifier automatiquement la CNIL et les utilisateurs en cas de violation &lt;
+                      72h
                     </div>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
@@ -1501,7 +1629,8 @@ export function Settings({ isClientView = false }: SettingsProps) {
                   </button>
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
-                  L'export inclut toutes les données personnelles, commandes, interactions et consentements de l'utilisateur.
+                  L'export inclut toutes les données personnelles, commandes, interactions et
+                  consentements de l'utilisateur.
                 </p>
               </div>
             </div>
@@ -1519,10 +1648,12 @@ export function Settings({ isClientView = false }: SettingsProps) {
             </div>
 
             <div className="p-6">
-              <p className="text-red-600 font-medium mb-2">⚠️ Attention : Cette action est irréversible</p>
+              <p className="text-red-600 font-medium mb-2">
+                ⚠️ Attention : Cette action est irréversible
+              </p>
               <p className="text-sm text-muted-foreground">
-                La régénération de votre clé API invalidera immédiatement l'ancienne clé.
-                Tous les services utilisant l'ancienne clé cesseront de fonctionner.
+                La régénération de votre clé API invalidera immédiatement l'ancienne clé. Tous les
+                services utilisant l'ancienne clé cesseront de fonctionner.
               </p>
             </div>
 
@@ -1566,7 +1697,7 @@ export function Settings({ isClientView = false }: SettingsProps) {
                       <div
                         key={i}
                         className={`w-2 h-2 ${
-                          Math.random() > 0.5 ? "bg-foreground" : "bg-transparent"
+                          Math.random() > 0.5 ? 'bg-foreground' : 'bg-transparent'
                         }`}
                       />
                     ))}
@@ -1574,7 +1705,8 @@ export function Settings({ isClientView = false }: SettingsProps) {
                 </div>
               </div>
               <p className="text-sm text-muted-foreground mb-4">
-                Scannez ce code QR avec votre application d'authentification (Google Authenticator, Authy, etc.)
+                Scannez ce code QR avec votre application d'authentification (Google Authenticator,
+                Authy, etc.)
               </p>
               <div className="flex gap-2">
                 <input
@@ -1596,7 +1728,7 @@ export function Settings({ isClientView = false }: SettingsProps) {
               <button
                 onClick={() => {
                   setShow2FAModal(false);
-                  toast.success("2FA activée avec succès");
+                  toast.success('2FA activée avec succès');
                 }}
                 className="px-4 py-2 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors"
               >
@@ -1612,7 +1744,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-card border rounded-lg shadow-xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex">
             {/* Left side - Roles List */}
-            <div className={`${editingRole ? "w-1/3" : "w-full"} border-r transition-all duration-300`}>
+            <div
+              className={`${editingRole ? 'w-1/3' : 'w-full'} border-r transition-all duration-300`}
+            >
               <div className="sticky top-0 bg-card px-6 py-4 border-b flex items-center justify-between">
                 <h2 className="text-xl font-bold">Gestionnaire de Rôles</h2>
                 {!editingRole && (
@@ -1630,11 +1764,11 @@ export function Settings({ isClientView = false }: SettingsProps) {
 
               <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
                 <div className="space-y-4">
-                  {["Admin", "Gestionnaire de Stock", "Vendeur"].map((role) => (
+                  {['Admin', 'Gestionnaire de Stock', 'Vendeur'].map((role) => (
                     <div
                       key={role}
                       className={`border rounded-lg p-4 transition-all ${
-                        editingRole === role ? "border-[#2563eb] bg-[#2563eb]/5" : ""
+                        editingRole === role ? 'border-[#2563eb] bg-[#2563eb]/5' : ''
                       }`}
                     >
                       <div className="flex items-center justify-between mb-3">
@@ -1649,13 +1783,18 @@ export function Settings({ isClientView = false }: SettingsProps) {
                       {!editingRole && (
                         <div className="grid grid-cols-2 gap-2 text-sm">
                           <label className="flex items-center gap-2">
-                            <input type="checkbox" defaultChecked={role === "Admin"} className="rounded" disabled />
+                            <input
+                              type="checkbox"
+                              defaultChecked={role === 'Admin'}
+                              className="rounded"
+                              disabled
+                            />
                             <span className="text-muted-foreground">Voir le stock</span>
                           </label>
                           <label className="flex items-center gap-2">
                             <input
                               type="checkbox"
-                              defaultChecked={["Admin", "Gestionnaire de Stock"].includes(role)}
+                              defaultChecked={['Admin', 'Gestionnaire de Stock'].includes(role)}
                               className="rounded"
                               disabled
                             />
@@ -1673,7 +1812,7 @@ export function Settings({ isClientView = false }: SettingsProps) {
                   <button
                     onClick={() => {
                       setShowRoleModal(false);
-                      toast.success("Permissions mises à jour");
+                      toast.success('Permissions mises à jour');
                     }}
                     className="px-4 py-2 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors"
                   >
@@ -1689,7 +1828,9 @@ export function Settings({ isClientView = false }: SettingsProps) {
                 <div className="px-6 py-4 border-b flex items-center justify-between bg-muted/30">
                   <div>
                     <h3 className="font-bold text-lg">Édition : {editingRole}</h3>
-                    <p className="text-sm text-muted-foreground">Configurez les permissions pour ce rôle</p>
+                    <p className="text-sm text-muted-foreground">
+                      Configurez les permissions pour ce rôle
+                    </p>
                   </div>
                   <button
                     onClick={() => setEditingRole(null)}
@@ -1702,7 +1843,7 @@ export function Settings({ isClientView = false }: SettingsProps) {
                 <div className="flex-1 p-6 overflow-y-auto">
                   <div className="space-y-6">
                     {/* Permissions détaillées pour Admin */}
-                    {editingRole === "Admin" && (
+                    {editingRole === 'Admin' && (
                       <>
                         <div>
                           <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -1788,7 +1929,7 @@ export function Settings({ isClientView = false }: SettingsProps) {
                     )}
 
                     {/* Permissions pour Gestionnaire de Stock */}
-                    {editingRole === "Gestionnaire de Stock" && (
+                    {editingRole === 'Gestionnaire de Stock' && (
                       <>
                         <div>
                           <h4 className="font-semibold mb-3">Gestion des Stocks</h4>
@@ -1829,7 +1970,7 @@ export function Settings({ isClientView = false }: SettingsProps) {
                     )}
 
                     {/* Permissions pour Vendeur */}
-                    {editingRole === "Vendeur" && (
+                    {editingRole === 'Vendeur' && (
                       <>
                         <div>
                           <h4 className="font-semibold mb-3">Produits</h4>

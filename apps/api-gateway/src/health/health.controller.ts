@@ -11,7 +11,7 @@ export class HealthController {
       status: 'ok',
       service: 'api-gateway',
       timestamp: new Date().toISOString(),
-      env: this.configService.get('NODE_ENV'),
+      env: this.configService.get<string>('NODE_ENV'),
     };
   }
 }

@@ -1,0 +1,65 @@
+# =============================================================================
+# Superset - Dataset Orders (metrics et dimensions)
+# =============================================================================
+# À importer après les datasources (même DB agrilogistic_oltp).
+# Import: superset import_datasources -p /app/pythonpath/datasets/orders_dataset.yaml -r
+# =============================================================================
+
+databases:
+  - database_name: agrilogistic_oltp
+    tables:
+      - table_name: orders
+        main_dttm_col: created_at
+        description: "Commandes - revenus, volumes, statuts"
+        filter_select_enabled: true
+        extra: '{"row_limit": 100000}'
+        columns:
+          - column_name: id
+            verbose_name: "ID Commande"
+            expression_type: COLUMN
+            is_dttm: false
+          - column_name: created_at
+            verbose_name: "Date création"
+            expression_type: COLUMN
+            is_dttm: true
+          - column_name: updated_at
+            verbose_name: "Date mise à jour"
+            expression_type: COLUMN
+            is_dttm: true
+          - column_name: status
+            verbose_name: "Statut"
+            expression_type: COLUMN
+            is_dttm: false
+          - column_name: total
+            verbose_name: "Montant total"
+            expression_type: COLUMN
+            is_dttm: false
+          - column_name: user_id
+            verbose_name: "ID Utilisateur"
+            expression_type: COLUMN
+            is_dttm: false
+          - column_name: entity_id
+            verbose_name: "ID Entité"
+            expression_type: COLUMN
+            is_dttm: false
+        metrics:
+          - metric_name: total_revenue
+            verbose_name: "Chiffre d'affaires total"
+            expression_type: SQL
+            expression: "SUM(total)"
+            description: "Somme des montants des commandes"
+          - metric_name: avg_order_value
+            verbose_name: "Panier moyen"
+            expression_type: SQL
+            expression: "AVG(total)"
+            description: "Montant moyen par commande"
+          - metric_name: order_count
+            verbose_name: "Nombre de commandes"
+            expression_type: SQL
+            expression: "COUNT(*)"
+            description: "Nombre de commandes"
+          - metric_name: distinct_customers
+            verbose_name: "Clients distincts"
+            expression_type: SQL
+            expression: "COUNT(DISTINCT user_id)"
+            description: "Nombre de clients uniques"

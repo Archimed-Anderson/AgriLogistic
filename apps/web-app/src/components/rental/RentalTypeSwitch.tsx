@@ -1,12 +1,12 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { EquipmentType } from '@/data/rental-equipment'
-import { ShoppingCart, Wrench } from 'lucide-react'
+import { useState } from 'react';
+import { EquipmentType } from '@/data/rental-equipment';
+import { ShoppingCart, Wrench } from 'lucide-react';
 
 interface RentalTypeSwitchProps {
-  selectedType: EquipmentType | 'ALL'
-  onSelectType: (type: EquipmentType | 'ALL') => void
+  selectedType: EquipmentType | 'ALL';
+  onSelectType: (type: EquipmentType | 'ALL') => void;
 }
 
 export function RentalTypeSwitch({ selectedType, onSelectType }: RentalTypeSwitchProps) {
@@ -18,7 +18,7 @@ export function RentalTypeSwitch({ selectedType, onSelectType }: RentalTypeSwitc
             Je cherche à
           </h2>
         </div>
-        
+
         {/* Giant Switch */}
         <div className="flex justify-center gap-6">
           {/* LOUER Button */}
@@ -27,9 +27,10 @@ export function RentalTypeSwitch({ selectedType, onSelectType }: RentalTypeSwitc
             className={`
               relative group px-16 py-8 rounded-2xl font-black text-3xl uppercase tracking-wider
               transition-all duration-300 border-4
-              ${selectedType === 'LOCATION' || selectedType === 'LOCATION_VENTE'
-                ? 'bg-gradient-to-br from-emerald-500 to-green-600 text-white border-emerald-400 shadow-2xl scale-110'
-                : 'bg-slate-700 text-slate-400 border-slate-600 hover:bg-slate-600 hover:scale-105'
+              ${
+                selectedType === 'LOCATION' || selectedType === 'LOCATION_VENTE'
+                  ? 'bg-gradient-to-br from-emerald-500 to-green-600 text-white border-emerald-400 shadow-2xl scale-110'
+                  : 'bg-slate-700 text-slate-400 border-slate-600 hover:bg-slate-600 hover:scale-105'
               }
             `}
           >
@@ -43,16 +44,17 @@ export function RentalTypeSwitch({ selectedType, onSelectType }: RentalTypeSwitc
               </div>
             )}
           </button>
-          
+
           {/* ACHETER Button */}
           <button
             onClick={() => onSelectType('VENTE')}
             className={`
               relative group px-16 py-8 rounded-2xl font-black text-3xl uppercase tracking-wider
               transition-all duration-300 border-4
-              ${selectedType === 'VENTE' || selectedType === 'LOCATION_VENTE'
-                ? 'bg-gradient-to-br from-blue-500 to-cyan-600 text-white border-blue-400 shadow-2xl scale-110'
-                : 'bg-slate-700 text-slate-400 border-slate-600 hover:bg-slate-600 hover:scale-105'
+              ${
+                selectedType === 'VENTE' || selectedType === 'LOCATION_VENTE'
+                  ? 'bg-gradient-to-br from-blue-500 to-cyan-600 text-white border-blue-400 shadow-2xl scale-110'
+                  : 'bg-slate-700 text-slate-400 border-slate-600 hover:bg-slate-600 hover:scale-105'
               }
             `}
           >
@@ -66,7 +68,7 @@ export function RentalTypeSwitch({ selectedType, onSelectType }: RentalTypeSwitc
               </div>
             )}
           </button>
-          
+
           {/* RESET/ALL Button */}
           {selectedType !== 'ALL' && (
             <button
@@ -77,7 +79,7 @@ export function RentalTypeSwitch({ selectedType, onSelectType }: RentalTypeSwitc
             </button>
           )}
         </div>
-        
+
         {/* Info text */}
         <div className="text-center mt-6">
           <p className="text-slate-400 font-medium">
@@ -88,5 +90,5 @@ export function RentalTypeSwitch({ selectedType, onSelectType }: RentalTypeSwitc
         </div>
       </div>
     </div>
-  )
+  );
 }

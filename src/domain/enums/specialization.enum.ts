@@ -8,7 +8,7 @@ export enum FarmerSpecialization {
   ORGANIC = 'organic', // Agriculture Biologique
   POULTRY = 'poultry', // Volaille
   MIXED = 'mixed', // Polyculture-Élevage
-  OTHER = 'other'
+  OTHER = 'other',
 }
 
 export enum LogisticsSpecialization {
@@ -19,5 +19,5 @@ export enum LogisticsSpecialization {
   HAZMAT = 'hazmat', // Matières Dangereuses
   LIVESTOCK_TRANSPORT = 'livestock_transport', // Transport d'Animaux
   MULTIMODAL = 'multimodal', // Transport Multimodal
-  OTHER = 'other'
+  OTHER = 'other',
 }

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from 'react';
 import {
   MessageCircle,
   Send,
@@ -19,8 +19,8 @@ import {
   Package,
   AlertCircle,
   Smile,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 interface B2BChatProps {
   contactId: string;
@@ -42,8 +42,8 @@ interface Message {
   senderId: string;
   content: string;
   timestamp: string;
-  type: "text" | "file" | "template" | "system";
-  status: "sending" | "sent" | "delivered" | "read";
+  type: 'text' | 'file' | 'template' | 'system';
+  status: 'sending' | 'sent' | 'delivered' | 'read';
   attachments?: {
     name: string;
     type: string;
@@ -69,36 +69,38 @@ export function B2BChat({
   contactAvatar,
   productContext,
   onClose,
-  className = "",
+  className = '',
   compact = false,
 }: B2BChatProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: "1",
+      id: '1',
       senderId: contactId,
-      content: "Bonjour ! Je suis intéressé par votre produit. Pouvez-vous me donner plus d'informations ?",
-      timestamp: "10:30",
-      type: "text",
-      status: "read",
+      content:
+        "Bonjour ! Je suis intéressé par votre produit. Pouvez-vous me donner plus d'informations ?",
+      timestamp: '10:30',
+      type: 'text',
+      status: 'read',
     },
     {
-      id: "2",
-      senderId: "me",
-      content: "Bien sûr ! Ce produit est de très haute qualité. Quelle quantité recherchez-vous ?",
-      timestamp: "10:32",
-      type: "text",
-      status: "read",
+      id: '2',
+      senderId: 'me',
+      content: 'Bien sûr ! Ce produit est de très haute qualité. Quelle quantité recherchez-vous ?',
+      timestamp: '10:32',
+      type: 'text',
+      status: 'read',
     },
     {
-      id: "3",
+      id: '3',
       senderId: contactId,
-      content: "J'aurais besoin d'environ 500kg. Quel serait votre meilleur prix pour cette quantité ?",
-      timestamp: "10:35",
-      type: "text",
-      status: "read",
+      content:
+        "J'aurais besoin d'environ 500kg. Quel serait votre meilleur prix pour cette quantité ?",
+      timestamp: '10:35',
+      type: 'text',
+      status: 'read',
     },
   ]);
-  const [inputMessage, setInputMessage] = useState("");
+  const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
@@ -106,29 +108,31 @@ export function B2BChat({
 
   const templates = [
     {
-      id: "1",
-      title: "Demande de devis",
+      id: '1',
+      title: 'Demande de devis',
       content: "Bonjour, pourriez-vous m'envoyer un devis détaillé pour ce produit ? Merci.",
     },
     {
-      id: "2",
-      title: "Négociation prix",
-      content: "Je suis très intéressé par votre produit. Seriez-vous ouvert à une négociation sur le prix ?",
+      id: '2',
+      title: 'Négociation prix',
+      content:
+        'Je suis très intéressé par votre produit. Seriez-vous ouvert à une négociation sur le prix ?',
     },
     {
-      id: "3",
-      title: "Question livraison",
-      content: "Quels sont vos délais de livraison et les options disponibles ?",
+      id: '3',
+      title: 'Question livraison',
+      content: 'Quels sont vos délais de livraison et les options disponibles ?',
     },
     {
-      id: "4",
-      title: "Commande en gros",
-      content: "Je souhaite passer une commande importante. Proposez-vous des réductions sur les volumes ?",
+      id: '4',
+      title: 'Commande en gros',
+      content:
+        'Je souhaite passer une commande importante. Proposez-vous des réductions sur les volumes ?',
     },
   ];
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
@@ -140,22 +144,20 @@ export function B2BChat({
 
     const newMessage: Message = {
       id: `msg-${Date.now()}`,
-      senderId: "me",
+      senderId: 'me',
       content: inputMessage,
-      timestamp: new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
-      type: "text",
-      status: "sending",
+      timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+      type: 'text',
+      status: 'sending',
     };
 
     setMessages([...messages, newMessage]);
-    setInputMessage("");
+    setInputMessage('');
 
     // Simulation d'envoi
     setTimeout(() => {
       setMessages((prev) =>
-        prev.map((msg) =>
-          msg.id === newMessage.id ? { ...msg, status: "sent" } : msg
-        )
+        prev.map((msg) => (msg.id === newMessage.id ? { ...msg, status: 'sent' } : msg))
       );
     }, 500);
 
@@ -169,17 +171,17 @@ export function B2BChat({
       const response: Message = {
         id: `msg-${Date.now()}-response`,
         senderId: contactId,
-        content: "Merci pour votre message ! Je reviens vers vous dans quelques instants.",
-        timestamp: new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
-        type: "text",
-        status: "sent",
+        content: 'Merci pour votre message ! Je reviens vers vous dans quelques instants.',
+        timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        type: 'text',
+        status: 'sent',
       };
       setMessages((prev) => [...prev, response]);
-      toast.success("Message reçu du vendeur");
+      toast.success('Message reçu du vendeur');
     }, 3000);
   };
 
-  const handleUseTemplate = (template: typeof templates[0]) => {
+  const handleUseTemplate = (template: (typeof templates)[0]) => {
     setInputMessage(template.content);
     setShowTemplates(false);
     toast.success(`Template "${template.title}" chargé`);
@@ -191,14 +193,14 @@ export function B2BChat({
   };
 
   const renderMessage = (message: Message) => {
-    const isMine = message.senderId === "me";
+    const isMine = message.senderId === 'me';
 
     return (
       <div
         key={message.id}
-        className={`flex ${isMine ? "justify-end" : "justify-start"} mb-4 group`}
+        className={`flex ${isMine ? 'justify-end' : 'justify-start'} mb-4 group`}
       >
-        <div className={`flex gap-2 max-w-[70%] ${isMine ? "flex-row-reverse" : "flex-row"}`}>
+        <div className={`flex gap-2 max-w-[70%] ${isMine ? 'flex-row-reverse' : 'flex-row'}`}>
           {!isMine && (
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
               <span className="text-white text-sm font-semibold">
@@ -206,26 +208,30 @@ export function B2BChat({
               </span>
             </div>
           )}
-          
+
           <div>
             <div
               className={`px-4 py-3 rounded-2xl ${
                 isMine
-                  ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white"
-                  : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
+                  ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
               }`}
             >
               <p className="text-sm break-words">{message.content}</p>
             </div>
-            
-            <div className={`flex items-center gap-1 mt-1 ${isMine ? "justify-end" : "justify-start"}`}>
+
+            <div
+              className={`flex items-center gap-1 mt-1 ${isMine ? 'justify-end' : 'justify-start'}`}
+            >
               <span className="text-xs text-gray-500 dark:text-gray-400">{message.timestamp}</span>
               {isMine && (
                 <>
-                  {message.status === "sending" && <Clock className="h-3 w-3 text-gray-400" />}
-                  {message.status === "sent" && <Check className="h-3 w-3 text-gray-400" />}
-                  {message.status === "delivered" && <CheckCheck className="h-3 w-3 text-gray-400" />}
-                  {message.status === "read" && <CheckCheck className="h-3 w-3 text-green-600" />}
+                  {message.status === 'sending' && <Clock className="h-3 w-3 text-gray-400" />}
+                  {message.status === 'sent' && <Check className="h-3 w-3 text-gray-400" />}
+                  {message.status === 'delivered' && (
+                    <CheckCheck className="h-3 w-3 text-gray-400" />
+                  )}
+                  {message.status === 'read' && <CheckCheck className="h-3 w-3 text-green-600" />}
                 </>
               )}
             </div>
@@ -237,10 +243,12 @@ export function B2BChat({
 
   if (compact) {
     return (
-      <div className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 ${className}`}>
+      <div
+        className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 ${className}`}
+      >
         <button
           className="w-full p-4 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-          onClick={() => toast.info("Ouverture du chat...")}
+          onClick={() => toast.info('Ouverture du chat...')}
         >
           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
             <MessageCircle className="h-5 w-5 text-white" />
@@ -255,7 +263,9 @@ export function B2BChat({
   }
 
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 flex flex-col ${className}`}>
+    <div
+      className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 flex flex-col ${className}`}
+    >
       {/* Header */}
       <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
@@ -276,7 +286,7 @@ export function B2BChat({
               <p className="text-xs text-green-600 dark:text-green-400">En ligne</p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <button
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
@@ -311,7 +321,9 @@ export function B2BChat({
           <div className="flex items-center gap-3">
             <Package className="h-5 w-5 text-blue-600" />
             <div className="flex-1">
-              <p className="text-sm font-semibold text-gray-900 dark:text-white">{productContext.name}</p>
+              <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                {productContext.name}
+              </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Prix: {productContext.price}€
               </p>
@@ -324,9 +336,9 @@ export function B2BChat({
       )}
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4" style={{ maxHeight: "500px" }}>
+      <div className="flex-1 overflow-y-auto p-6 space-y-4" style={{ maxHeight: '500px' }}>
         {messages.map(renderMessage)}
-        
+
         {isTyping && (
           <div className="flex gap-2 items-center">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
@@ -336,14 +348,23 @@ export function B2BChat({
             </div>
             <div className="bg-gray-100 dark:bg-gray-700 px-4 py-3 rounded-2xl">
               <div className="flex gap-1">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                <div
+                  className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                  style={{ animationDelay: '0ms' }}
+                />
+                <div
+                  className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                  style={{ animationDelay: '150ms' }}
+                />
+                <div
+                  className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                  style={{ animationDelay: '300ms' }}
+                />
               </div>
             </div>
           </div>
         )}
-        
+
         <div ref={messagesEndRef} />
       </div>
 
@@ -366,8 +387,12 @@ export function B2BChat({
                 onClick={() => handleUseTemplate(template)}
                 className="p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg text-left hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors"
               >
-                <p className="font-semibold text-sm text-gray-900 dark:text-white mb-1">{template.title}</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">{template.content}</p>
+                <p className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
+                  {template.title}
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
+                  {template.content}
+                </p>
               </button>
             ))}
           </div>
@@ -386,7 +411,7 @@ export function B2BChat({
             Templates
           </button>
           <button
-            onClick={() => toast.info("Fonction de négociation")}
+            onClick={() => toast.info('Fonction de négociation')}
             className="px-3 py-1.5 bg-purple-100 dark:bg-purple-900/30 hover:bg-purple-200 dark:hover:bg-purple-900/50 text-purple-700 dark:text-purple-400 rounded-lg text-sm font-semibold flex items-center gap-1"
           >
             <DollarSign className="h-3 w-3" />
@@ -403,18 +428,18 @@ export function B2BChat({
             >
               <Paperclip className="h-5 w-5 text-gray-600 dark:text-gray-400" />
             </button>
-            
+
             {showAttachmentMenu && (
               <div className="absolute bottom-full left-0 mb-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-2 w-48">
                 <button
-                  onClick={() => handleAttachment("image")}
+                  onClick={() => handleAttachment('image')}
                   className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-left"
                 >
                   <ImageIcon className="h-4 w-4 text-gray-600" />
                   <span className="text-sm text-gray-900 dark:text-white">Image</span>
                 </button>
                 <button
-                  onClick={() => handleAttachment("file")}
+                  onClick={() => handleAttachment('file')}
                   className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-left"
                 >
                   <File className="h-4 w-4 text-gray-600" />
@@ -428,7 +453,7 @@ export function B2BChat({
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
             placeholder="Écrivez votre message..."
             className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white"
           />

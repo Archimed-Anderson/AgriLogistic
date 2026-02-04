@@ -1,0 +1,41 @@
+# =============================================================================
+# Alertmanager - Configuration (Cahier Monitoring Technique)
+# =============================================================================
+# Routes : critical → PagerDuty, warning → Slack
+# Silences : pour maintenance planifiée
+# =============================================================================
+
+global:
+  resolve_timeout: 5m
+
+# Templates (optionnel, décommenter si dossier existe)
+# templates:
+#   - '/etc/alertmanager/templates/*.tmpl'
+
+# Routing tree
+route:
+  receiver: 'default'
+  group_by: ['alertname', 'cluster', 'service']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+
+  # Décommenter et configurer PAGERDUTY_ROUTING_KEY / SLACK_WEBHOOK_URL pour activer
+  # routes:
+  #   - match: { severity: critical }
+  #     receiver: pagerduty-critical
+  #   - match: { severity: warning }
+  #     receiver: slack-warnings
+
+# Receivers : default seul pour démarrage sans clés externes.
+# Ajouter pagerduty-critical et slack-warnings avec vraies clés pour prod.
+receivers:
+  - name: 'default'
+
+# Inhibitions (éviter alertes en cascade)
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'service']

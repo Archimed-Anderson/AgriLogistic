@@ -25,7 +25,9 @@ const EcoRoutePanel: React.FC<EcoRoutePanelProps> = ({ ecoData, onClose }) => {
     <div className="eco-route-panel floating-panel animate-slide-up">
       <div className="panel-header">
         <h3>🌱 Option "Route Verte"</h3>
-        <button className="close-button" onClick={onClose}>×</button>
+        <button className="close-button" onClick={onClose}>
+          ×
+        </button>
       </div>
 
       <div className="panel-content">
@@ -48,7 +50,7 @@ const EcoRoutePanel: React.FC<EcoRoutePanelProps> = ({ ecoData, onClose }) => {
               <span className="unit">kg CO2</span>
             </div>
             <div className="progress-bar">
-              <div className="fill" style={{ width: `${(ecoCO2/standardCO2*100)}%` }}></div>
+              <div className="fill" style={{ width: `${(ecoCO2 / standardCO2) * 100}%` }}></div>
             </div>
             <div className="badge">- {savings.toFixed(0)}% CO2</div>
           </div>
@@ -56,18 +58,19 @@ const EcoRoutePanel: React.FC<EcoRoutePanelProps> = ({ ecoData, onClose }) => {
 
         <div className="eco-impact">
           <div className="impact-text">
-            Cette route économise <strong>{treesEquivalent.toFixed(2)}</strong> équivalents arbres par an.
+            Cette route économise <strong>{treesEquivalent.toFixed(2)}</strong> équivalents arbres
+            par an.
           </div>
           <div className="impact-icons">
             {Array.from({ length: Math.min(5, Math.ceil(treesEquivalent)) }).map((_, i) => (
-              <span key={i} className="tree-icon">🌳</span>
+              <span key={i} className="tree-icon">
+                🌳
+              </span>
             ))}
           </div>
         </div>
 
-        <button className="confirm-eco-button">
-          Sélectionner Eco-Route
-        </button>
+        <button className="confirm-eco-button">Sélectionner Eco-Route</button>
       </div>
     </div>
   );

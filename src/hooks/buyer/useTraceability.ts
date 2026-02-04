@@ -37,7 +37,7 @@ const mockTraceabilityData: Traceability[] = [
         location: 'Ferme Bio Casamance, Ziguinchor',
         coordinates: [-16.2733, 12.5658],
         timestamp: new Date('2025-10-15T14:00:00'),
-        description: 'Traitement bio préventif - Purin d\'ortie',
+        description: "Traitement bio préventif - Purin d'ortie",
         actor: 'Abdou Ndiaye',
         documents: ['bio-treatment-cert.pdf'],
         verified: true,
@@ -56,7 +56,7 @@ const mockTraceabilityData: Traceability[] = [
         id: 'step-5',
         type: 'processing',
         location: 'Centre de conditionnement Casamance',
-        coordinates: [-16.2650, 12.5700],
+        coordinates: [-16.265, 12.57],
         timestamp: new Date('2026-01-10T10:00:00'),
         description: 'Tri, lavage et calibrage des tomates',
         actor: 'Centre de conditionnement',
@@ -66,7 +66,7 @@ const mockTraceabilityData: Traceability[] = [
         id: 'step-6',
         type: 'packaging',
         location: 'Centre de conditionnement Casamance',
-        coordinates: [-16.2650, 12.5700],
+        coordinates: [-16.265, 12.57],
         timestamp: new Date('2026-01-10T14:00:00'),
         description: 'Emballage en caisses de 10kg',
         actor: 'Centre de conditionnement',
@@ -76,7 +76,7 @@ const mockTraceabilityData: Traceability[] = [
         id: 'step-7',
         type: 'transport',
         location: 'Route Ziguinchor - Dakar',
-        coordinates: [-15.5000, 13.5000],
+        coordinates: [-15.5, 13.5],
         timestamp: new Date('2026-01-11T05:00:00'),
         description: 'Transport réfrigéré vers Dakar',
         actor: 'AgroTransport SN',
@@ -142,9 +142,9 @@ export function useTraceability(productId?: string) {
   const { data, isLoading, error } = useQuery({
     queryKey: ['buyer', 'traceability', productId],
     queryFn: async () => {
-      await new Promise(resolve => setTimeout(resolve, 600));
+      await new Promise((resolve) => setTimeout(resolve, 600));
       if (productId) {
-        return mockTraceabilityData.find(t => t.productId === productId) || null;
+        return mockTraceabilityData.find((t) => t.productId === productId) || null;
       }
       return mockTraceabilityData[0];
     },

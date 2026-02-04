@@ -36,7 +36,7 @@ export class Database {
 
   static getPool(): Pool { return pool; }
 
-  static async query(text: string, params?: any[]) {
+  static async query(text: string, params?: (string | number | boolean | null | undefined | Date)[]) {
     return pool.query(text, params);
   }
 

@@ -24,8 +24,22 @@ export interface SupplierWithPerformance extends Supplier {
 }
 
 const mockCertificates: Certificate[] = [
-  { id: 'c-1', type: 'organic', name: 'Agriculture Biologique', issuer: 'Ecocert', issuedAt: new Date('2024-01-15'), verified: true },
-  { id: 'c-2', type: 'global_gap', name: 'GlobalG.A.P.', issuer: 'GlobalG.A.P.', issuedAt: new Date('2023-06-01'), verified: true },
+  {
+    id: 'c-1',
+    type: 'organic',
+    name: 'Agriculture Biologique',
+    issuer: 'Ecocert',
+    issuedAt: new Date('2024-01-15'),
+    verified: true,
+  },
+  {
+    id: 'c-2',
+    type: 'global_gap',
+    name: 'GlobalG.A.P.',
+    issuer: 'GlobalG.A.P.',
+    issuedAt: new Date('2023-06-01'),
+    verified: true,
+  },
 ];
 
 const mockSuppliers: SupplierWithPerformance[] = [
@@ -62,7 +76,7 @@ const mockSuppliers: SupplierWithPerformance[] = [
     id: 's-002',
     name: 'Coopérative Niayes',
     location: 'Thiès, Sénégal',
-    coordinates: [-16.9260, 14.7886],
+    coordinates: [-16.926, 14.7886],
     rating: 4.6,
     totalOrders: 189,
     reliabilityScore: 92,
@@ -118,7 +132,7 @@ const mockSuppliers: SupplierWithPerformance[] = [
     id: 's-004',
     name: 'Ferme Kolda',
     location: 'Kolda, Sénégal',
-    coordinates: [-14.9500, 12.8833],
+    coordinates: [-14.95, 12.8833],
     rating: 4.7,
     totalOrders: 156,
     reliabilityScore: 94,
@@ -145,16 +159,20 @@ const mockSuppliers: SupplierWithPerformance[] = [
 ];
 
 export function useSuppliers() {
-  const { data: suppliers, isLoading, error } = useQuery({
+  const {
+    data: suppliers,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['buyer', 'suppliers'],
     queryFn: async () => {
-      await new Promise(resolve => setTimeout(resolve, 600));
+      await new Promise((resolve) => setTimeout(resolve, 600));
       return mockSuppliers;
     },
   });
 
-  const favoriteSuppliers = suppliers?.filter(s => s.isFavorite) || [];
-  const verifiedSuppliers = suppliers?.filter(s => s.isVerified) || [];
+  const favoriteSuppliers = suppliers?.filter((s) => s.isFavorite) || [];
+  const verifiedSuppliers = suppliers?.filter((s) => s.isVerified) || [];
 
   return {
     suppliers: suppliers || [],

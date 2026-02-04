@@ -23,7 +23,7 @@ import {
   ChevronRight,
   Search,
   Filter,
-  Leaf
+  Leaf,
 } from 'lucide-react';
 
 export default function BuyerSuppliersPage() {
@@ -40,8 +40,9 @@ export default function BuyerSuppliersPage() {
     }).format(amount);
   };
 
-  const filteredSuppliers = suppliers.filter(s => {
-    const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  const filteredSuppliers = suppliers.filter((s) => {
+    const matchesSearch =
+      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       s.location.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesFavorite = filterFavorites ? s.isFavorite : true;
     return matchesSearch && matchesFavorite;
@@ -80,7 +81,9 @@ export default function BuyerSuppliersPage() {
         <button
           onClick={() => setFilterFavorites(!filterFavorites)}
           className={`flex items-center gap-2 px-4 py-3 border rounded-xl text-sm font-medium transition-colors ${
-            filterFavorites ? 'bg-red-50 border-red-200 text-red-600' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+            filterFavorites
+              ? 'bg-red-50 border-red-200 text-red-600'
+              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
           }`}
         >
           <Heart className={`w-4 h-4 ${filterFavorites ? 'fill-current' : ''}`} />
@@ -102,15 +105,17 @@ export default function BuyerSuppliersPage() {
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 bg-gradient-to-br from-amber-100 to-amber-200 rounded-xl flex items-center justify-center">
                     <span className="text-lg font-bold text-amber-700">
-                      {supplier.name.split(' ').map(w => w[0]).join('').slice(0, 2)}
+                      {supplier.name
+                        .split(' ')
+                        .map((w) => w[0])
+                        .join('')
+                        .slice(0, 2)}
                     </span>
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-slate-900">{supplier.name}</h3>
-                      {supplier.isVerified && (
-                        <Shield className="w-4 h-4 text-blue-500" />
-                      )}
+                      {supplier.isVerified && <Shield className="w-4 h-4 text-blue-500" />}
                     </div>
                     <p className="text-sm text-slate-500 flex items-center gap-1">
                       <MapPin className="w-3 h-3" />
@@ -119,9 +124,7 @@ export default function BuyerSuppliersPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
-                  {supplier.isFavorite && (
-                    <Heart className="w-5 h-5 text-red-500 fill-current" />
-                  )}
+                  {supplier.isFavorite && <Heart className="w-5 h-5 text-red-500 fill-current" />}
                 </div>
               </div>
 
@@ -134,7 +137,9 @@ export default function BuyerSuppliersPage() {
                 <span className="text-slate-400">•</span>
                 <span className="text-sm text-slate-600">{supplier.totalOrders} commandes</span>
                 <span className="text-slate-400">•</span>
-                <span className="text-sm text-slate-600">{supplier.reliabilityScore}% fiabilité</span>
+                <span className="text-sm text-slate-600">
+                  {supplier.reliabilityScore}% fiabilité
+                </span>
               </div>
             </div>
 
@@ -142,15 +147,21 @@ export default function BuyerSuppliersPage() {
             <div className="p-4 bg-slate-50">
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center">
-                  <p className="text-lg font-bold text-emerald-600">{supplier.performance.deliveryOnTime}%</p>
+                  <p className="text-lg font-bold text-emerald-600">
+                    {supplier.performance.deliveryOnTime}%
+                  </p>
                   <p className="text-xs text-slate-500">Ponctualité</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-lg font-bold text-blue-600">{supplier.performance.responseTime}h</p>
+                  <p className="text-lg font-bold text-blue-600">
+                    {supplier.performance.responseTime}h
+                  </p>
                   <p className="text-xs text-slate-500">Réponse</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-lg font-bold text-purple-600">{supplier.performance.orderAccuracy}%</p>
+                  <p className="text-lg font-bold text-purple-600">
+                    {supplier.performance.orderAccuracy}%
+                  </p>
                   <p className="text-xs text-slate-500">Précision</p>
                 </div>
               </div>
@@ -160,7 +171,10 @@ export default function BuyerSuppliersPage() {
             <div className="p-4">
               <div className="flex flex-wrap gap-2">
                 {supplier.specialties.slice(0, 3).map((spec, i) => (
-                  <span key={i} className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-lg">
+                  <span
+                    key={i}
+                    className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-lg"
+                  >
                     {spec}
                   </span>
                 ))}
@@ -170,7 +184,10 @@ export default function BuyerSuppliersPage() {
             {/* Footer */}
             <div className="px-4 pb-4 flex items-center justify-between">
               <span className="text-sm text-slate-500">
-                Total: <span className="font-semibold text-slate-900">{formatCurrency(supplier.performance.totalSpent)}</span>
+                Total:{' '}
+                <span className="font-semibold text-slate-900">
+                  {formatCurrency(supplier.performance.totalSpent)}
+                </span>
               </span>
               <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-amber-500 transition-colors" />
             </div>
@@ -187,7 +204,11 @@ export default function BuyerSuppliersPage() {
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-amber-200 rounded-xl flex items-center justify-center">
                     <span className="text-xl font-bold text-amber-700">
-                      {selectedSupplier.name.split(' ').map(w => w[0]).join('').slice(0, 2)}
+                      {selectedSupplier.name
+                        .split(' ')
+                        .map((w) => w[0])
+                        .join('')
+                        .slice(0, 2)}
                     </span>
                   </div>
                   <div>
@@ -206,7 +227,10 @@ export default function BuyerSuppliersPage() {
                     </p>
                   </div>
                 </div>
-                <button onClick={() => setSelectedSupplier(null)} className="p-2 hover:bg-slate-100 rounded-lg">
+                <button
+                  onClick={() => setSelectedSupplier(null)}
+                  className="p-2 hover:bg-slate-100 rounded-lg"
+                >
                   <X className="w-5 h-5 text-slate-500" />
                 </button>
               </div>
@@ -219,22 +243,30 @@ export default function BuyerSuppliersPage() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="bg-emerald-50 rounded-xl p-4 text-center">
                     <Clock className="w-6 h-6 text-emerald-600 mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-emerald-700">{selectedSupplier.performance.deliveryOnTime}%</p>
+                    <p className="text-2xl font-bold text-emerald-700">
+                      {selectedSupplier.performance.deliveryOnTime}%
+                    </p>
                     <p className="text-sm text-emerald-600">Ponctualité</p>
                   </div>
                   <div className="bg-blue-50 rounded-xl p-4 text-center">
                     <TrendingUp className="w-6 h-6 text-blue-600 mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-blue-700">{selectedSupplier.performance.qualityScore}</p>
+                    <p className="text-2xl font-bold text-blue-700">
+                      {selectedSupplier.performance.qualityScore}
+                    </p>
                     <p className="text-sm text-blue-600">Note qualité</p>
                   </div>
                   <div className="bg-purple-50 rounded-xl p-4 text-center">
                     <Package className="w-6 h-6 text-purple-600 mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-purple-700">{selectedSupplier.performance.orderAccuracy}%</p>
+                    <p className="text-2xl font-bold text-purple-700">
+                      {selectedSupplier.performance.orderAccuracy}%
+                    </p>
                     <p className="text-sm text-purple-600">Précision</p>
                   </div>
                   <div className="bg-amber-50 rounded-xl p-4 text-center">
                     <MessageCircle className="w-6 h-6 text-amber-600 mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-amber-700">{selectedSupplier.performance.responseTime}h</p>
+                    <p className="text-2xl font-bold text-amber-700">
+                      {selectedSupplier.performance.responseTime}h
+                    </p>
                     <p className="text-sm text-amber-600">Temps réponse</p>
                   </div>
                 </div>
@@ -246,7 +278,10 @@ export default function BuyerSuppliersPage() {
                   <h3 className="font-semibold text-slate-900 mb-4">Certifications</h3>
                   <div className="flex flex-wrap gap-3">
                     {selectedSupplier.certifications.map((cert) => (
-                      <div key={cert.id} className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-xl">
+                      <div
+                        key={cert.id}
+                        className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-xl"
+                      >
                         <Leaf className="w-4 h-4 text-emerald-600" />
                         <span className="font-medium text-emerald-700">{cert.name}</span>
                         {cert.verified && <CheckCircle className="w-4 h-4 text-emerald-500" />}
@@ -275,7 +310,9 @@ export default function BuyerSuppliersPage() {
               {selectedSupplier.notes && (
                 <div>
                   <h3 className="font-semibold text-slate-900 mb-2">Notes personnelles</h3>
-                  <p className="text-slate-600 bg-slate-50 p-4 rounded-xl">{selectedSupplier.notes}</p>
+                  <p className="text-slate-600 bg-slate-50 p-4 rounded-xl">
+                    {selectedSupplier.notes}
+                  </p>
                 </div>
               )}
 
@@ -286,7 +323,11 @@ export default function BuyerSuppliersPage() {
                   Contacter
                 </button>
                 <button className="px-4 py-3 border border-slate-200 rounded-xl font-medium text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2">
-                  <Heart className={`w-5 h-5 ${selectedSupplier.isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
+                  <Heart
+                    className={`w-5 h-5 ${
+                      selectedSupplier.isFavorite ? 'fill-red-500 text-red-500' : ''
+                    }`}
+                  />
                   {selectedSupplier.isFavorite ? 'Favori' : 'Ajouter'}
                 </button>
               </div>

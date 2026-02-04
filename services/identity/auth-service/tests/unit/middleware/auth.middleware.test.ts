@@ -1,11 +1,13 @@
 import type { Request, Response, NextFunction } from 'express';
+import type { AuthenticatedRequest } from '../../../src/middleware/auth.middleware';
 
 const verifyAccessTokenMock = jest.fn();
 const mockRedisService = {
   isTokenBlacklisted: jest.fn().mockResolvedValue(false),
 };
 
-type AuthMiddlewareModule = typeof import('../../../src/middleware/auth.middleware');
+type AuthMiddlewareModule =
+  typeof import('../../../src/middleware/auth.middleware');
 
 describe('Authentication Middleware', () => {
   let authenticateToken: AuthMiddlewareModule['authenticateToken'];
@@ -32,7 +34,8 @@ describe('Authentication Middleware', () => {
 
     // Import after mocks
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const mod = require('../../../src/middleware/auth.middleware') as AuthMiddlewareModule;
+    const mod =
+      require('../../../src/middleware/auth.middleware') as AuthMiddlewareModule;
     authenticateToken = mod.authenticateToken;
     optionalAuth = mod.optionalAuth;
 
@@ -71,24 +74,24 @@ describe('Authentication Middleware', () => {
       mockRedisService.isTokenBlacklisted.mockResolvedValue(false);
 
       await authenticateToken(
-        mockRequest as Request,
+        mockRequest as AuthenticatedRequest,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       expect(mockNext).toHaveBeenCalled();
-      expect(mockRequest.user).toBeDefined();
-      expect(mockRequest.user?.id).toBe('user123');
-      expect(mockRequest.user?.permissions).toEqual(['product:browse']);
+      expect((mockRequest as AuthenticatedRequest).user).toBeDefined();
+      expect((mockRequest as AuthenticatedRequest).user?.id).toBe('user123');
+      expect((mockRequest as AuthenticatedRequest).user?.permissions).toEqual(['product:browse']);
     });
 
     it('should reject request without token', async () => {
       mockRequest.headers = {};
 
       await authenticateToken(
-        mockRequest as Request,
+        mockRequest as AuthenticatedRequest,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       expect(mockResponse.status).toHaveBeenCalledWith(401);
@@ -104,9 +107,9 @@ describe('Authentication Middleware', () => {
       mockRedisService.isTokenBlacklisted.mockResolvedValue(true);
 
       await authenticateToken(
-        mockRequest as Request,
+        mockRequest as AuthenticatedRequest,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       expect(mockResponse.status).toHaveBeenCalledWith(401);
@@ -125,9 +128,9 @@ describe('Authentication Middleware', () => {
       mockRedisService.isTokenBlacklisted.mockResolvedValue(false);
 
       await authenticateToken(
-        mockRequest as Request,
+        mockRequest as AuthenticatedRequest,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       expect(mockResponse.status).toHaveBeenCalledWith(403);
@@ -155,13 +158,13 @@ describe('Authentication Middleware', () => {
       mockRedisService.isTokenBlacklisted.mockResolvedValue(false);
 
       await optionalAuth(
-        mockRequest as Request,
+        mockRequest as AuthenticatedRequest,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       expect(mockNext).toHaveBeenCalled();
-      expect(mockRequest.user).toBeDefined();
+      expect((mockRequest as AuthenticatedRequest).user).toBeDefined();
     });
 
     it('should continue without user if no token', async () => {
@@ -170,7 +173,7 @@ describe('Authentication Middleware', () => {
       await optionalAuth(
         mockRequest as Request,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       expect(mockNext).toHaveBeenCalled();
@@ -188,13 +191,13 @@ describe('Authentication Middleware', () => {
       });
 
       await optionalAuth(
-        mockRequest as Request,
+        mockRequest as AuthenticatedRequest,
         mockResponse as Response,
-        mockNext
+        mockNext,
       );
 
       expect(mockNext).toHaveBeenCalled();
-      expect(mockRequest.user).toBeUndefined();
+      expect((mockRequest as AuthenticatedRequest).user).toBeUndefined();
     });
   });
 });

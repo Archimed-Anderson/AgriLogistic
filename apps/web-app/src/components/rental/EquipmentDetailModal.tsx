@@ -1,43 +1,50 @@
-'use client'
+'use client';
 
-import { X, Package, Euro, Calendar, MapPin, Star, TrendingUp, Award, CheckCircle } from 'lucide-react'
-import { RentalEquipment } from '@/data/rental-equipment'
-import { RatingStars } from './RatingStars'
-import { useState } from 'react'
+import {
+  X,
+  Package,
+  Euro,
+  Calendar,
+  MapPin,
+  Star,
+  TrendingUp,
+  Award,
+  CheckCircle,
+} from 'lucide-react';
+import { RentalEquipment } from '@/data/rental-equipment';
+import { RatingStars } from './RatingStars';
+import { useState } from 'react';
 
 interface EquipmentDetailModalProps {
-  equipment: RentalEquipment | null
-  isOpen: boolean
-  onClose: () => void
+  equipment: RentalEquipment | null;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export function EquipmentDetailModal({ equipment, isOpen, onClose }: EquipmentDetailModalProps) {
-  const [activeTab, setActiveTab] = useState<'details' | 'reservation' | 'purchase'>('details')
-  
-  if (!isOpen || !equipment) return null
-  
+  const [activeTab, setActiveTab] = useState<'details' | 'reservation' | 'purchase'>('details');
+
+  if (!isOpen || !equipment) return null;
+
   // Calculate rental pricing
   const getRentalPricing = () => {
-    if (!equipment.dailyRate) return null
-    
+    if (!equipment.dailyRate) return null;
+
     return {
       daily: equipment.dailyRate,
       weekly: equipment.weeklyRate || equipment.dailyRate * 7 * 0.85, // 15% discount
       monthly: equipment.monthlyRate || equipment.dailyRate * 30 * 0.75, // 25% discount
-      deposit: equipment.deposit || 0
-    }
-  }
-  
-  const pricing = getRentalPricing()
-  
+      deposit: equipment.deposit || 0,
+    };
+  };
+
+  const pricing = getRentalPricing();
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+
       {/* Modal */}
       <div className="relative min-h-screen flex items-center justify-center p-4">
         <div className="relative bg-white rounded-3xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
@@ -49,7 +56,7 @@ export function EquipmentDetailModal({ equipment, isOpen, onClose }: EquipmentDe
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
-            
+
             {/* Close button */}
             <button
               onClick={onClose}
@@ -57,7 +64,7 @@ export function EquipmentDetailModal({ equipment, isOpen, onClose }: EquipmentDe
             >
               <X className="h-6 w-6 text-white" />
             </button>
-            
+
             {/* Equipment info overlay */}
             <div className="absolute bottom-8 left-8 right-8">
               <div className="flex items-start justify-between gap-4 mb-4">
@@ -81,7 +88,7 @@ export function EquipmentDetailModal({ equipment, isOpen, onClose }: EquipmentDe
                     )}
                   </div>
                 </div>
-                
+
                 {equipment.rating && (
                   <div className="bg-white/20 backdrop-blur-sm px-6 py-4 rounded-2xl">
                     <RatingStars rating={equipment.rating} size="lg" showNumber={true} />
@@ -91,7 +98,7 @@ export function EquipmentDetailModal({ equipment, isOpen, onClose }: EquipmentDe
               </div>
             </div>
           </div>
-          
+
           {/* Content */}
           <div className="p-8 max-h-[50vh] overflow-y-auto">
             {/* Tabs */}
@@ -131,21 +138,21 @@ export function EquipmentDetailModal({ equipment, isOpen, onClose }: EquipmentDe
                 </button>
               )}
             </div>
-            
+
             {/* Tab Content */}
             {activeTab === 'details' && (
               <div className="space-y-8">
                 {/* Description */}
                 <div>
                   <h3 className="text-2xl font-black text-[#0A2619] mb-4">Description</h3>
-                  <p className="text-slate-700 leading-relaxed text-lg">
-                    {equipment.description}
-                  </p>
+                  <p className="text-slate-700 leading-relaxed text-lg">{equipment.description}</p>
                 </div>
-                
+
                 {/* Specifications Table */}
                 <div>
-                  <h3 className="text-2xl font-black text-[#0A2619] mb-4">Spécifications Techniques</h3>
+                  <h3 className="text-2xl font-black text-[#0A2619] mb-4">
+                    Spécifications Techniques
+                  </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {equipment.specs.power && (
                       <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200">
@@ -154,11 +161,13 @@ export function EquipmentDetailModal({ equipment, isOpen, onClose }: EquipmentDe
                         </div>
                         <div>
                           <p className="text-xs font-bold text-slate-500 uppercase">Puissance</p>
-                          <p className="text-lg font-black text-slate-800">{equipment.specs.power}</p>
+                          <p className="text-lg font-black text-slate-800">
+                            {equipment.specs.power}
+                          </p>
                         </div>
                       </div>
                     )}
-                    
+
                     {equipment.specs.weight && (
                       <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200">
                         <div className="p-2 rounded-lg bg-purple-100">
@@ -166,11 +175,13 @@ export function EquipmentDetailModal({ equipment, isOpen, onClose }: EquipmentDe
                         </div>
                         <div>
                           <p className="text-xs font-bold text-slate-500 uppercase">Poids</p>
-                          <p className="text-lg font-black text-slate-800">{equipment.specs.weight}</p>
+                          <p className="text-lg font-black text-slate-800">
+                            {equipment.specs.weight}
+                          </p>
                         </div>
                       </div>
                     )}
-                    
+
                     {equipment.specs.capacity && (
                       <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200">
                         <div className="p-2 rounded-lg bg-emerald-100">
@@ -178,11 +189,13 @@ export function EquipmentDetailModal({ equipment, isOpen, onClose }: EquipmentDe
                         </div>
                         <div>
                           <p className="text-xs font-bold text-slate-500 uppercase">Capacité</p>
-                          <p className="text-lg font-black text-slate-800">{equipment.specs.capacity}</p>
+                          <p className="text-lg font-black text-slate-800">
+                            {equipment.specs.capacity}
+                          </p>
                         </div>
                       </div>
                     )}
-                    
+
                     {equipment.specs.dimensions && (
                       <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200">
                         <div className="p-2 rounded-lg bg-orange-100">
@@ -190,11 +203,13 @@ export function EquipmentDetailModal({ equipment, isOpen, onClose }: EquipmentDe
                         </div>
                         <div>
                           <p className="text-xs font-bold text-slate-500 uppercase">Dimensions</p>
-                          <p className="text-lg font-black text-slate-800">{equipment.specs.dimensions}</p>
+                          <p className="text-lg font-black text-slate-800">
+                            {equipment.specs.dimensions}
+                          </p>
                         </div>
                       </div>
                     )}
-                    
+
                     {equipment.specs.fuelType && (
                       <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200">
                         <div className="p-2 rounded-lg bg-red-100">
@@ -202,11 +217,13 @@ export function EquipmentDetailModal({ equipment, isOpen, onClose }: EquipmentDe
                         </div>
                         <div>
                           <p className="text-xs font-bold text-slate-500 uppercase">Carburant</p>
-                          <p className="text-lg font-black text-slate-800">{equipment.specs.fuelType}</p>
+                          <p className="text-lg font-black text-slate-800">
+                            {equipment.specs.fuelType}
+                          </p>
                         </div>
                       </div>
                     )}
-                    
+
                     {equipment.specs.yearBuilt && (
                       <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200">
                         <div className="p-2 rounded-lg bg-blue-100">
@@ -214,19 +231,21 @@ export function EquipmentDetailModal({ equipment, isOpen, onClose }: EquipmentDe
                         </div>
                         <div>
                           <p className="text-xs font-bold text-slate-500 uppercase">Année</p>
-                          <p className="text-lg font-black text-slate-800">{equipment.specs.yearBuilt}</p>
+                          <p className="text-lg font-black text-slate-800">
+                            {equipment.specs.yearBuilt}
+                          </p>
                         </div>
                       </div>
                     )}
                   </div>
                 </div>
-                
+
                 {/* Tags */}
                 {equipment.tags && equipment.tags.length > 0 && (
                   <div>
                     <h3 className="text-xl font-black text-[#0A2619] mb-4">Mots-clés</h3>
                     <div className="flex flex-wrap gap-3">
-                      {equipment.tags.map(tag => (
+                      {equipment.tags.map((tag) => (
                         <span
                           key={tag}
                           className="px-4 py-2 rounded-full bg-sky-50 text-sky-700 text-sm font-bold border border-sky-200"
@@ -239,11 +258,11 @@ export function EquipmentDetailModal({ equipment, isOpen, onClose }: EquipmentDe
                 )}
               </div>
             )}
-            
+
             {activeTab === 'reservation' && pricing && (
               <div className="space-y-6">
                 <h3 className="text-2xl font-black text-[#0A2619] mb-4">Tarifs de Location</h3>
-                
+
                 {/* Pricing Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="p-6 rounded-2xl border-2 border-blue-200 bg-blue-50">
@@ -251,50 +270,62 @@ export function EquipmentDetailModal({ equipment, isOpen, onClose }: EquipmentDe
                     <p className="text-4xl font-black text-blue-700">{pricing.daily}€</p>
                     <p className="text-sm text-blue-600 mt-1">par jour</p>
                   </div>
-                  
+
                   <div className="p-6 rounded-2xl border-2 border-purple-200 bg-purple-50">
                     <p className="text-sm font-bold text-purple-600 mb-2">HEBDOMADAIRE</p>
-                    <p className="text-4xl font-black text-purple-700">{Math.round(pricing.weekly)}€</p>
+                    <p className="text-4xl font-black text-purple-700">
+                      {Math.round(pricing.weekly)}€
+                    </p>
                     <p className="text-sm text-purple-600 mt-1">par semaine</p>
                   </div>
-                  
+
                   <div className="p-6 rounded-2xl border-2 border-emerald-200 bg-emerald-50">
                     <p className="text-sm font-bold text-emerald-600 mb-2">MENSUEL</p>
-                    <p className="text-4xl font-black text-emerald-700">{Math.round(pricing.monthly)}€</p>
+                    <p className="text-4xl font-black text-emerald-700">
+                      {Math.round(pricing.monthly)}€
+                    </p>
                     <p className="text-sm text-emerald-600 mt-1">par mois</p>
                   </div>
                 </div>
-                
+
                 {/* Deposit Info */}
                 {pricing.deposit > 0 && (
                   <div className="p-4 rounded-xl bg-yellow-50 border-2 border-yellow-200">
                     <p className="text-sm font-bold text-yellow-800">
                       💰 Caution requise: <span className="text-2xl">{pricing.deposit}€</span>
                     </p>
-                    <p className="text-xs text-yellow-700 mt-1">Remboursée après restitution de l'équipement</p>
+                    <p className="text-xs text-yellow-700 mt-1">
+                      Remboursée après restitution de l'équipement
+                    </p>
                   </div>
                 )}
-                
+
                 {/* Reservation Form */}
                 <div className="p-6 rounded-2xl border-2 border-slate-200 bg-slate-50">
                   <h4 className="text-xl font-black text-slate-800 mb-4">Demande de Réservation</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-2">Date de début</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                        Date de début
+                      </label>
                       <input
                         type="date"
                         className="w-full px-4 py-3 rounded-xl border-2 border-slate-300 focus:border-sky-500 focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-2">Date de fin</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                        Date de fin
+                      </label>
                       <input
                         type="date"
                         className="w-full px-4 py-3 rounded-xl border-2 border-slate-300 focus:border-sky-500 focus:outline-none"
                       />
                     </div>
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-bold text-slate-700 mb-2">Vos coordonnées</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                        Vos coordonnées
+                      </label>
                       <input
                         type="text"
                         placeholder="Nom complet"
@@ -318,25 +349,29 @@ export function EquipmentDetailModal({ equipment, isOpen, onClose }: EquipmentDe
                 </div>
               </div>
             )}
-            
+
             {activeTab === 'purchase' && equipment.price && (
               <div className="space-y-6">
                 <div className="p-8 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200">
                   <p className="text-sm font-bold text-emerald-600 mb-2 uppercase">Prix d'Achat</p>
-                  <p className="text-6xl font-black text-emerald-700 mb-4">{equipment.price.toLocaleString()}€</p>
+                  <p className="text-6xl font-black text-emerald-700 mb-4">
+                    {equipment.price.toLocaleString()}€
+                  </p>
                   {equipment.discount && equipment.discount > 0 && (
                     <div className="inline-block px-4 py-2 rounded-full bg-red-500 text-white font-black text-sm">
                       -{equipment.discount}% de réduction!
                     </div>
                   )}
                 </div>
-                
+
                 {/* Purchase Form */}
                 <div className="p-6 rounded-2xl border-2 border-slate-200 bg-slate-50">
                   <h4 className="text-xl font-black text-slate-800 mb-4">Demande d'Achat</h4>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-2">Nom complet</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                        Nom complet
+                      </label>
                       <input
                         type="text"
                         className="w-full px-4 py-3 rounded-xl border-2 border-slate-300 focus:border-emerald-500 focus:outline-none"
@@ -350,14 +385,18 @@ export function EquipmentDetailModal({ equipment, isOpen, onClose }: EquipmentDe
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-2">Téléphone</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                        Téléphone
+                      </label>
                       <input
                         type="tel"
                         className="w-full px-4 py-3 rounded-xl border-2 border-slate-300 focus:border-emerald-500 focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-2">Message (optionnel)</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                        Message (optionnel)
+                      </label>
                       <textarea
                         rows={4}
                         className="w-full px-4 py-3 rounded-xl border-2 border-slate-300 focus:border-emerald-500 focus:outline-none"
@@ -369,7 +408,7 @@ export function EquipmentDetailModal({ equipment, isOpen, onClose }: EquipmentDe
                     Envoyer la demande d'achat
                   </button>
                 </div>
-                
+
                 {/* Benefits */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-start gap-3 p-4 rounded-xl bg-white border-2 border-emerald-200">
@@ -393,5 +432,5 @@ export function EquipmentDetailModal({ equipment, isOpen, onClose }: EquipmentDe
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   ArrowLeft,
   Rocket,
@@ -35,154 +35,138 @@ import {
   FileText,
   Mail,
   ExternalLink,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 export function VisionStrategy({ onNavigate }: { onNavigate: (route: string) => void }) {
   const [selectedPhase, setSelectedPhase] = useState<number | null>(null);
   const [selectedInnovation, setSelectedInnovation] = useState<string | null>(null);
-  const [userType, setUserType] = useState("");
-  const [email, setEmail] = useState("");
+  const [userType, setUserType] = useState('');
+  const [email, setEmail] = useState('');
   const [innovationVote, setInnovationVote] = useState<string | null>(null);
 
   // Phases roadmap
   const phases = [
     {
       id: 1,
-      badge: "🚀 EN COURS",
-      badgeColor: "bg-green-500",
-      title: "Lancement",
-      subtitle: "10 Cultures Majeures Complètes",
-      year: "Année 1",
+      badge: '🚀 EN COURS',
+      badgeColor: 'bg-green-500',
+      title: 'Lancement',
+      subtitle: '10 Cultures Majeures Complètes',
+      year: 'Année 1',
       progress: 85,
       targets: {
-        farmers: "100,000 agriculteurs formés",
-        cultures:
-          "Maïs, Riz, Blé, Manioc, Haricot, Pomme de terre, Tomate, Banane, Café, Coton",
-        features: "Cours de base, outils simples",
-        partners: "10 institutions académiques",
+        farmers: '100,000 agriculteurs formés',
+        cultures: 'Maïs, Riz, Blé, Manioc, Haricot, Pomme de terre, Tomate, Banane, Café, Coton',
+        features: 'Cours de base, outils simples',
+        partners: '10 institutions académiques',
       },
       icon: Rocket,
-      color: "green",
+      color: 'green',
     },
     {
       id: 2,
-      badge: "📅 PLANIFIÉ",
-      badgeColor: "bg-blue-500",
-      title: "Expansion",
-      subtitle: "Extension à 50 Cultures",
-      year: "Année 2-3",
+      badge: '📅 PLANIFIÉ',
+      badgeColor: 'bg-blue-500',
+      title: 'Expansion',
+      subtitle: 'Extension à 50 Cultures',
+      year: 'Année 2-3',
       progress: 0,
       targets: {
-        farmers: "500,000 agriculteurs",
-        new: "Cultures régionales spécifiques",
-        features: "Outils avancés, certification",
-        languages: "+5 langues africaines",
+        farmers: '500,000 agriculteurs',
+        new: 'Cultures régionales spécifiques',
+        features: 'Outils avancés, certification',
+        languages: '+5 langues africaines',
       },
       icon: Globe,
-      color: "blue",
+      color: 'blue',
     },
     {
       id: 3,
-      badge: "💡 À VENIR",
-      badgeColor: "bg-purple-500",
-      title: "Communauté",
-      subtitle: "Savoirs Locaux Crowdsourcés",
-      year: "Année 4-5",
+      badge: '💡 À VENIR',
+      badgeColor: 'bg-purple-500',
+      title: 'Communauté',
+      subtitle: 'Savoirs Locaux Crowdsourcés',
+      year: 'Année 4-5',
       progress: 0,
       targets: {
-        platform: "Plateforme collaborative ouverte",
-        validation: "Système de validation par les pairs",
-        library: "Bibliothèque de savoirs traditionnels",
+        platform: 'Plateforme collaborative ouverte',
+        validation: 'Système de validation par les pairs',
+        library: 'Bibliothèque de savoirs traditionnels',
         network: "Réseau d'experts locaux",
       },
       icon: Users,
-      color: "purple",
+      color: 'purple',
     },
     {
       id: 4,
-      badge: "🚀 FUTUR",
-      badgeColor: "bg-orange-500",
-      title: "Intelligence Collective",
-      subtitle: "Intelligence Collective Augmentée",
-      year: "Année 6+",
+      badge: '🚀 FUTUR',
+      badgeColor: 'bg-orange-500',
+      title: 'Intelligence Collective',
+      subtitle: 'Intelligence Collective Augmentée',
+      year: 'Année 6+',
       progress: 0,
       targets: {
-        ai: "IA agricole collaborative",
-        predictive: "Système prédictif global",
-        research: "Plateforme de recherche participative",
-        economy: "Économie de la connaissance agricole",
+        ai: 'IA agricole collaborative',
+        predictive: 'Système prédictif global',
+        research: 'Plateforme de recherche participative',
+        economy: 'Économie de la connaissance agricole',
       },
       icon: Brain,
-      color: "orange",
+      color: 'orange',
     },
   ];
 
   // Economic models
   const economicModels = [
     {
-      id: "free",
-      icon: "🌟",
-      title: "GRATUIT",
-      subtitle: "Base de Connaissances",
-      included: [
-        "Cours fondamentaux",
-        "Outils de base",
-        "Communauté",
-        "Contenu en open access",
-      ],
-      public: "Agriculteurs individuels, étudiants",
-      price: "Gratuit",
-      cta: "Commencer gratuitement",
-      color: "from-green-500 to-emerald-600",
+      id: 'free',
+      icon: '🌟',
+      title: 'GRATUIT',
+      subtitle: 'Base de Connaissances',
+      included: ['Cours fondamentaux', 'Outils de base', 'Communauté', 'Contenu en open access'],
+      public: 'Agriculteurs individuels, étudiants',
+      price: 'Gratuit',
+      cta: 'Commencer gratuitement',
+      color: 'from-green-500 to-emerald-600',
     },
     {
-      id: "premium",
-      icon: "⭐",
-      title: "PREMIUM",
-      subtitle: "Outils Avancés + Mentorat",
-      included: [
-        "Simulateurs avancés",
-        "Diagnostic IA",
-        "Mentorat personnalisé",
-        "Certifications",
-      ],
-      public: "Agriculteurs professionnels, coopératives",
-      price: "À partir de 10€/mois",
-      cta: "Passer à Premium",
-      color: "from-blue-500 to-purple-600",
+      id: 'premium',
+      icon: '⭐',
+      title: 'PREMIUM',
+      subtitle: 'Outils Avancés + Mentorat',
+      included: ['Simulateurs avancés', 'Diagnostic IA', 'Mentorat personnalisé', 'Certifications'],
+      public: 'Agriculteurs professionnels, coopératives',
+      price: 'À partir de 10€/mois',
+      cta: 'Passer à Premium',
+      color: 'from-blue-500 to-purple-600',
     },
     {
-      id: "institutional",
-      icon: "🏛️",
-      title: "INSTITUTIONNEL",
-      subtitle: "API + Données Agrégées",
+      id: 'institutional',
+      icon: '🏛️',
+      title: 'INSTITUTIONNEL',
+      subtitle: 'API + Données Agrégées',
       included: [
-        "API complète",
-        "Données anonymisées",
-        "Solutions sur mesure",
-        "Formation organisationnelle",
+        'API complète',
+        'Données anonymisées',
+        'Solutions sur mesure',
+        'Formation organisationnelle',
       ],
-      public: "ONG, gouvernements, institutions",
-      price: "Contactez-nous",
-      cta: "Devenir partenaire",
-      color: "from-orange-500 to-red-600",
+      public: 'ONG, gouvernements, institutions',
+      price: 'Contactez-nous',
+      cta: 'Devenir partenaire',
+      color: 'from-orange-500 to-red-600',
     },
     {
-      id: "partnerships",
-      icon: "🤝",
-      title: "PARTENARIATS",
-      subtitle: "Recherche & Innovation",
-      included: [
-        "Co-développement",
-        "Recherche appliquée",
-        "Études de cas",
-        "Visibilité mutuelle",
-      ],
-      public: "Universités, centres de recherche",
-      price: "Échange de valeur",
-      cta: "Proposer un partenariat",
-      color: "from-pink-500 to-rose-600",
+      id: 'partnerships',
+      icon: '🤝',
+      title: 'PARTENARIATS',
+      subtitle: 'Recherche & Innovation',
+      included: ['Co-développement', 'Recherche appliquée', 'Études de cas', 'Visibilité mutuelle'],
+      public: 'Universités, centres de recherche',
+      price: 'Échange de valeur',
+      cta: 'Proposer un partenariat',
+      color: 'from-pink-500 to-rose-600',
     },
   ];
 
@@ -190,38 +174,38 @@ export function VisionStrategy({ onNavigate }: { onNavigate: (route: string) => 
   const impactKPIs = [
     {
       icon: Users,
-      label: "Agriculteurs Certifiés",
+      label: 'Agriculteurs Certifiés',
       value: 12847,
       target: 100000,
-      unit: "",
-      trend: "+15% ce mois",
+      unit: '',
+      trend: '+15% ce mois',
       trendPositive: true,
     },
     {
       icon: TrendingUp,
-      label: "Augmentation des Rendements",
+      label: 'Augmentation des Rendements',
       value: 22,
       target: 30,
-      unit: "%",
-      trend: "Moyenne",
+      unit: '%',
+      trend: 'Moyenne',
       trendPositive: true,
     },
     {
       icon: Droplet,
-      label: "Adoption Pratiques Durables",
+      label: 'Adoption Pratiques Durables',
       value: 67,
       target: 80,
-      unit: "%",
-      trend: "des utilisateurs",
+      unit: '%',
+      trend: 'des utilisateurs',
       trendPositive: true,
     },
     {
       icon: MessageSquare,
-      label: "Communauté Active",
+      label: 'Communauté Active',
       value: 8942,
       target: 50000,
-      unit: "",
-      trend: "contributeurs",
+      unit: '',
+      trend: 'contributeurs',
       trendPositive: true,
     },
   ];
@@ -229,82 +213,82 @@ export function VisionStrategy({ onNavigate }: { onNavigate: (route: string) => 
   // Innovations
   const innovations = [
     {
-      id: "ar",
+      id: 'ar',
       icon: Glasses,
-      title: "Réalité Augmentée Agricole",
-      description: "Superposition de conseils en temps réel sur le champ",
-      status: "En développement",
-      impact: "Réduction erreurs de 40%",
-      timeline: "2025",
-      color: "from-cyan-500 to-blue-600",
+      title: 'Réalité Augmentée Agricole',
+      description: 'Superposition de conseils en temps réel sur le champ',
+      status: 'En développement',
+      impact: 'Réduction erreurs de 40%',
+      timeline: '2025',
+      color: 'from-cyan-500 to-blue-600',
       votes: 342,
     },
     {
-      id: "voice",
+      id: 'voice',
       icon: Mic,
-      title: "Assistant Vocal Agricole",
-      description: "Commandes vocales en langues locales",
-      status: "Prototype",
-      impact: "Accessibilité augmentée",
-      timeline: "2026",
-      color: "from-purple-500 to-pink-600",
+      title: 'Assistant Vocal Agricole',
+      description: 'Commandes vocales en langues locales',
+      status: 'Prototype',
+      impact: 'Accessibilité augmentée',
+      timeline: '2026',
+      color: 'from-purple-500 to-pink-600',
       votes: 287,
     },
     {
-      id: "blockchain",
+      id: 'blockchain',
       icon: Link2,
-      title: "Blockchain de Certification",
-      description: "Compétences vérifiées et infalsifiables",
-      status: "Recherche",
-      impact: "Reconnaissance internationale",
-      timeline: "2027",
-      color: "from-orange-500 to-red-600",
+      title: 'Blockchain de Certification',
+      description: 'Compétences vérifiées et infalsifiables',
+      status: 'Recherche',
+      impact: 'Reconnaissance internationale',
+      timeline: '2027',
+      color: 'from-orange-500 to-red-600',
       votes: 198,
     },
     {
-      id: "twins",
+      id: 'twins',
       icon: Boxes,
-      title: "Jumeaux Numériques de Fermes",
-      description: "Simulation précise avant implémentation",
-      status: "Concept",
-      impact: "Optimisation complète",
-      timeline: "2028",
-      color: "from-green-500 to-emerald-600",
+      title: 'Jumeaux Numériques de Fermes',
+      description: 'Simulation précise avant implémentation',
+      status: 'Concept',
+      impact: 'Optimisation complète',
+      timeline: '2028',
+      color: 'from-green-500 to-emerald-600',
       votes: 256,
     },
     {
-      id: "marketplace",
+      id: 'marketplace',
       icon: DollarSign,
-      title: "Marché des Connaissances",
-      description: "Micro-paiements pour expertise partagée",
-      status: "Idéation",
-      impact: "Économie circulaire du savoir",
-      timeline: "2029",
-      color: "from-yellow-500 to-orange-600",
+      title: 'Marché des Connaissances',
+      description: 'Micro-paiements pour expertise partagée',
+      status: 'Idéation',
+      impact: 'Économie circulaire du savoir',
+      timeline: '2029',
+      color: 'from-yellow-500 to-orange-600',
       votes: 176,
     },
   ];
 
   // Revenue allocation
   const revenueAllocation = [
-    { category: "Développement contenu", percentage: 60, color: "bg-blue-500" },
-    { category: "Infrastructure tech", percentage: 25, color: "bg-green-500" },
-    { category: "Équipe & opérations", percentage: 10, color: "bg-orange-500" },
-    { category: "Bourses agriculteurs", percentage: 5, color: "bg-purple-500" },
+    { category: 'Développement contenu', percentage: 60, color: 'bg-blue-500' },
+    { category: 'Infrastructure tech', percentage: 25, color: 'bg-green-500' },
+    { category: 'Équipe & opérations', percentage: 10, color: 'bg-orange-500' },
+    { category: 'Bourses agriculteurs', percentage: 5, color: 'bg-purple-500' },
   ];
 
   const handleVoteInnovation = (innovationId: string) => {
     setInnovationVote(innovationId);
-    toast.success("Merci pour votre vote !");
+    toast.success('Merci pour votre vote !');
   };
 
   const handleSubscribe = () => {
     if (email && userType) {
-      toast.success("Inscription confirmée ! Vous recevrez notre newsletter stratégique.");
-      setEmail("");
-      setUserType("");
+      toast.success('Inscription confirmée ! Vous recevrez notre newsletter stratégique.');
+      setEmail('');
+      setUserType('');
     } else {
-      toast.error("Veuillez remplir tous les champs");
+      toast.error('Veuillez remplir tous les champs');
     }
   };
 
@@ -312,7 +296,7 @@ export function VisionStrategy({ onNavigate }: { onNavigate: (route: string) => 
     <div className="space-y-16">
       {/* Back Button */}
       <button
-        onClick={() => onNavigate("/academy")}
+        onClick={() => onNavigate('/academy')}
         className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
@@ -330,9 +314,7 @@ export function VisionStrategy({ onNavigate }: { onNavigate: (route: string) => 
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto text-center">
-          <h1 className="text-6xl font-bold mb-4">
-            Notre Vision pour l'Agriculture Mondiale
-          </h1>
+          <h1 className="text-6xl font-bold mb-4">Notre Vision pour l'Agriculture Mondiale</h1>
           <p className="text-2xl opacity-90 mb-12">
             De la connaissance à l'action, de l'action à l'impact
           </p>
@@ -383,15 +365,15 @@ export function VisionStrategy({ onNavigate }: { onNavigate: (route: string) => 
                   <div className="hidden lg:flex justify-center mb-4">
                     <div
                       className={`w-16 h-16 rounded-full bg-gradient-to-br ${
-                        phase.color === "green"
-                          ? "from-green-500 to-emerald-600"
-                          : phase.color === "blue"
-                          ? "from-blue-500 to-cyan-600"
-                          : phase.color === "purple"
-                          ? "from-purple-500 to-pink-600"
-                          : "from-orange-500 to-red-600"
+                        phase.color === 'green'
+                          ? 'from-green-500 to-emerald-600'
+                          : phase.color === 'blue'
+                          ? 'from-blue-500 to-cyan-600'
+                          : phase.color === 'purple'
+                          ? 'from-purple-500 to-pink-600'
+                          : 'from-orange-500 to-red-600'
                       } flex items-center justify-center text-white shadow-lg relative z-10 transition-transform ${
-                        selectedPhase === phase.id ? "scale-125" : ""
+                        selectedPhase === phase.id ? 'scale-125' : ''
                       }`}
                     >
                       <Icon className="h-8 w-8" />
@@ -402,11 +384,13 @@ export function VisionStrategy({ onNavigate }: { onNavigate: (route: string) => 
                   <div
                     className={`bg-card border-2 rounded-xl p-6 transition-all cursor-pointer ${
                       selectedPhase === phase.id
-                        ? "border-[#2980B9] shadow-lg scale-105"
-                        : "border-transparent hover:border-gray-300"
+                        ? 'border-[#2980B9] shadow-lg scale-105'
+                        : 'border-transparent hover:border-gray-300'
                     }`}
                   >
-                    <div className={`${phase.badgeColor} text-white text-xs font-bold px-3 py-1 rounded-full inline-block mb-3`}>
+                    <div
+                      className={`${phase.badgeColor} text-white text-xs font-bold px-3 py-1 rounded-full inline-block mb-3`}
+                    >
                       {phase.badge}
                     </div>
 
@@ -469,7 +453,9 @@ export function VisionStrategy({ onNavigate }: { onNavigate: (route: string) => 
               key={model.id}
               className="bg-card border rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
             >
-              <div className={`h-32 bg-gradient-to-br ${model.color} p-6 flex items-center justify-between text-white`}>
+              <div
+                className={`h-32 bg-gradient-to-br ${model.color} p-6 flex items-center justify-between text-white`}
+              >
                 <div>
                   <div className="text-4xl mb-2">{model.icon}</div>
                   <h3 className="text-xl font-bold">{model.title}</h3>
@@ -545,7 +531,10 @@ export function VisionStrategy({ onNavigate }: { onNavigate: (route: string) => 
             const percentage = (kpi.value / kpi.target) * 100;
 
             return (
-              <div key={index} className="bg-card border rounded-xl p-6 hover:shadow-lg transition-all">
+              <div
+                key={index}
+                className="bg-card border rounded-xl p-6 hover:shadow-lg transition-all"
+              >
                 <div className="flex items-center justify-between mb-4">
                   <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
                     <Icon className="h-6 w-6 text-blue-600" />
@@ -591,25 +580,25 @@ export function VisionStrategy({ onNavigate }: { onNavigate: (route: string) => 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
-                name: "Jean-Baptiste K.",
-                country: "Burkina Faso",
-                achievement: "+45% rendement en 1 saison",
-                avatar: "👨‍🌾",
-                crop: "Maïs",
+                name: 'Jean-Baptiste K.',
+                country: 'Burkina Faso',
+                achievement: '+45% rendement en 1 saison',
+                avatar: '👨‍🌾',
+                crop: 'Maïs',
               },
               {
-                name: "Amina M.",
+                name: 'Amina M.',
                 country: "Côte d'Ivoire",
-                achievement: "Certification bio obtenue",
-                avatar: "👩‍🌾",
-                crop: "Cacao",
+                achievement: 'Certification bio obtenue',
+                avatar: '👩‍🌾',
+                crop: 'Cacao',
               },
               {
-                name: "Pierre L.",
-                country: "RDC",
-                achievement: "Stockage: 0% pertes",
-                avatar: "👨‍🌾",
-                crop: "Manioc",
+                name: 'Pierre L.',
+                country: 'RDC',
+                achievement: 'Stockage: 0% pertes',
+                avatar: '👨‍🌾',
+                crop: 'Manioc',
               },
             ].map((story, index) => (
               <div key={index} className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
@@ -648,12 +637,16 @@ export function VisionStrategy({ onNavigate }: { onNavigate: (route: string) => 
               <div
                 key={innovation.id}
                 className={`relative bg-card border-2 rounded-xl overflow-hidden hover:shadow-xl transition-all cursor-pointer ${
-                  selectedInnovation === innovation.id ? "border-[#2980B9] scale-105" : "border-transparent"
+                  selectedInnovation === innovation.id
+                    ? 'border-[#2980B9] scale-105'
+                    : 'border-transparent'
                 }`}
                 onMouseEnter={() => setSelectedInnovation(innovation.id)}
                 onMouseLeave={() => setSelectedInnovation(null)}
               >
-                <div className={`h-48 bg-gradient-to-br ${innovation.color} p-6 flex items-center justify-center text-white relative overflow-hidden`}>
+                <div
+                  className={`h-48 bg-gradient-to-br ${innovation.color} p-6 flex items-center justify-center text-white relative overflow-hidden`}
+                >
                   <Icon className="h-24 w-24 opacity-20 absolute" />
                   <Icon className="h-16 w-16 relative z-10" />
                 </div>
@@ -692,7 +685,9 @@ export function VisionStrategy({ onNavigate }: { onNavigate: (route: string) => 
                 className="bg-card border rounded-xl overflow-hidden hover:shadow-lg transition-all"
               >
                 <div className="flex">
-                  <div className={`w-32 bg-gradient-to-br ${innovation.color} flex items-center justify-center text-white`}>
+                  <div
+                    className={`w-32 bg-gradient-to-br ${innovation.color} flex items-center justify-center text-white`}
+                  >
                     <Icon className="h-12 w-12" />
                   </div>
                   <div className="flex-1 p-6">
@@ -717,9 +712,7 @@ export function VisionStrategy({ onNavigate }: { onNavigate: (route: string) => 
         {/* Innovation Poll */}
         <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-8 text-white">
           <h3 className="text-2xl font-bold mb-4 text-center">Sonde d'Innovation</h3>
-          <p className="text-center mb-6 opacity-90">
-            Quelle innovation vous intéresse le plus ?
-          </p>
+          <p className="text-center mb-6 opacity-90">Quelle innovation vous intéresse le plus ?</p>
 
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             {innovations.map((innovation) => (
@@ -728,11 +721,11 @@ export function VisionStrategy({ onNavigate }: { onNavigate: (route: string) => 
                 onClick={() => handleVoteInnovation(innovation.id)}
                 className={`p-4 rounded-lg transition-all ${
                   innovationVote === innovation.id
-                    ? "bg-white text-purple-600 scale-105"
-                    : "bg-white/10 backdrop-blur-sm hover:bg-white/20"
+                    ? 'bg-white text-purple-600 scale-105'
+                    : 'bg-white/10 backdrop-blur-sm hover:bg-white/20'
                 }`}
               >
-                <div className="font-bold mb-2">{innovation.title.split(" ")[0]}</div>
+                <div className="font-bold mb-2">{innovation.title.split(' ')[0]}</div>
                 <div className="text-2xl font-bold">{innovation.votes}</div>
                 <div className="text-xs opacity-75">votes</div>
               </button>
@@ -753,42 +746,47 @@ export function VisionStrategy({ onNavigate }: { onNavigate: (route: string) => 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
             {
-              title: "Agriculteurs",
-              subtitle: "Devenez un Ambassadeur",
-              benefits: "Accès premium, formation avancée, réseau",
-              cta: "Postuler",
+              title: 'Agriculteurs',
+              subtitle: 'Devenez un Ambassadeur',
+              benefits: 'Accès premium, formation avancée, réseau',
+              cta: 'Postuler',
               icon: Users,
-              color: "from-green-500 to-emerald-600",
+              color: 'from-green-500 to-emerald-600',
             },
             {
-              title: "Experts",
+              title: 'Experts',
               subtitle: "Contribuez à l'Académie",
-              benefits: "Rédaction, mentorat, validation",
-              cta: "Devenir contributeur",
+              benefits: 'Rédaction, mentorat, validation',
+              cta: 'Devenir contributeur',
               icon: Award,
-              color: "from-blue-500 to-cyan-600",
+              color: 'from-blue-500 to-cyan-600',
             },
             {
-              title: "Organisations",
-              subtitle: "Partenariats Stratégiques",
-              benefits: "Contenu, technologie, déploiement",
-              cta: "Nous contacter",
+              title: 'Organisations',
+              subtitle: 'Partenariats Stratégiques',
+              benefits: 'Contenu, technologie, déploiement',
+              cta: 'Nous contacter',
               icon: Building,
-              color: "from-orange-500 to-red-600",
+              color: 'from-orange-500 to-red-600',
             },
             {
-              title: "Citoyens",
+              title: 'Citoyens',
               subtitle: "Soutenez l'Agriculture Durable",
-              benefits: "Don, bénévolat, plaidoyer",
-              cta: "Faire un don",
+              benefits: 'Don, bénévolat, plaidoyer',
+              cta: 'Faire un don',
               icon: Heart,
-              color: "from-pink-500 to-rose-600",
+              color: 'from-pink-500 to-rose-600',
             },
           ].map((target, index) => {
             const Icon = target.icon;
             return (
-              <div key={index} className="bg-card border rounded-xl overflow-hidden hover:shadow-lg transition-all">
-                <div className={`h-32 bg-gradient-to-br ${target.color} p-6 flex items-center justify-center text-white`}>
+              <div
+                key={index}
+                className="bg-card border rounded-xl overflow-hidden hover:shadow-lg transition-all"
+              >
+                <div
+                  className={`h-32 bg-gradient-to-br ${target.color} p-6 flex items-center justify-center text-white`}
+                >
                   <Icon className="h-16 w-16" />
                 </div>
                 <div className="p-6">
@@ -849,24 +847,24 @@ export function VisionStrategy({ onNavigate }: { onNavigate: (route: string) => 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             {
-              label: "Livre blanc stratégique",
+              label: 'Livre blanc stratégique',
               icon: FileText,
-              action: "Télécharger",
+              action: 'Télécharger',
             },
             {
-              label: "Vidéo de présentation",
+              label: 'Vidéo de présentation',
               icon: Play,
-              action: "Regarder",
+              action: 'Regarder',
             },
             {
-              label: "Conseil consultatif",
+              label: 'Conseil consultatif',
               icon: Users,
-              action: "Découvrir",
+              action: 'Découvrir',
             },
             {
-              label: "Transparence financière",
+              label: 'Transparence financière',
               icon: Eye,
-              action: "Voir les rapports",
+              action: 'Voir les rapports',
             },
           ].map((resource, index) => {
             const Icon = resource.icon;

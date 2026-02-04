@@ -5,7 +5,8 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import Map, { Marker, Source, Layer, Popup } from 'react-map-gl';
+import ReactMapGL, { Marker, Source, Layer, Popup } from 'react-map-gl';
+const Map = ReactMapGL.Map as React.FC<Record<string, unknown>>;
 import { Map as MapIcon, Layers, Activity } from 'lucide-react';
 import type { FarmField, IoTSensor } from '@/types/farmer/operations';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -50,9 +51,7 @@ export function FarmMapInteractive({ fields, sensors, isLoading }: FarmMapIntera
         <div className="text-center">
           <MapIcon className="w-12 h-12 mx-auto mb-3 text-gray-400" />
           <p className="text-gray-600 font-medium">Mapbox Token Required</p>
-          <p className="text-sm text-gray-500 mt-1">
-            Set NEXT_PUBLIC_MAPBOX_TOKEN in .env.local
-          </p>
+          <p className="text-sm text-gray-500 mt-1">Set NEXT_PUBLIC_MAPBOX_TOKEN in .env.local</p>
         </div>
       </div>
     );
@@ -70,9 +69,7 @@ export function FarmMapInteractive({ fields, sensors, isLoading }: FarmMapIntera
           <button
             onClick={() => setShowSensors(!showSensors)}
             className={`flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg ${
-              showSensors
-                ? 'bg-blue-100 text-blue-700'
-                : 'bg-gray-100 text-gray-600'
+              showSensors ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
             }`}
           >
             <Activity className="w-4 h-4" />
@@ -95,7 +92,9 @@ export function FarmMapInteractive({ fields, sensors, isLoading }: FarmMapIntera
           onMove={(evt) => setViewport(evt.viewState)}
           mapboxAccessToken={mapboxToken}
           style={{ width: '100%', height: '100%' }}
-          mapStyle={`mapbox://styles/mapbox/${mapStyle === 'satellite' ? 'satellite-v9' : 'streets-v12'}`}
+          mapStyle={`mapbox://styles/mapbox/${
+            mapStyle === 'satellite' ? 'satellite-v9' : 'streets-v12'
+          }`}
         >
           {/* Field Polygons */}
           {fields.map((field) => (
@@ -131,24 +130,25 @@ export function FarmMapInteractive({ fields, sensors, isLoading }: FarmMapIntera
           ))}
 
           {/* Sensor Markers */}
-          {showSensors && sensors.map((sensor) => (
-            <Marker
-              key={sensor.id}
-              longitude={sensor.location.coordinates[0]}
-              latitude={sensor.location.coordinates[1]}
-              onClick={(e) => {
-                e.originalEvent.stopPropagation();
-                setSelectedSensor(sensor);
-              }}
-            >
-              <div
-                className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs cursor-pointer hover:scale-110 transition-transform"
-                style={{ backgroundColor: getSensorStatusColor(sensor.lastReading.status) }}
+          {showSensors &&
+            sensors.map((sensor) => (
+              <Marker
+                key={sensor.id}
+                longitude={sensor.location.coordinates[0]}
+                latitude={sensor.location.coordinates[1]}
+                onClick={(e) => {
+                  e.originalEvent.stopPropagation();
+                  setSelectedSensor(sensor);
+                }}
               >
-                📡
-              </div>
-            </Marker>
-          ))}
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs cursor-pointer hover:scale-110 transition-transform"
+                  style={{ backgroundColor: getSensorStatusColor(sensor.lastReading.status) }}
+                >
+                  📡
+                </div>
+              </Marker>
+            ))}
 
           {/* Sensor Popup */}
           {selectedSensor && (
@@ -173,9 +173,7 @@ export function FarmMapInteractive({ fields, sensors, isLoading }: FarmMapIntera
                   </p>
                 </div>
                 {selectedSensor.batteryLevel !== undefined && (
-                  <p className="text-xs text-gray-600">
-                    Batterie: {selectedSensor.batteryLevel}%
-                  </p>
+                  <p className="text-xs text-gray-600">Batterie: {selectedSensor.batteryLevel}%</p>
                 )}
               </div>
             </Popup>
@@ -188,7 +186,8 @@ export function FarmMapInteractive({ fields, sensors, isLoading }: FarmMapIntera
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-4">
             <span className="text-gray-600">
-              Surface totale: <span className="font-semibold text-gray-900">
+              Surface totale:{' '}
+              <span className="font-semibold text-gray-900">
                 {fields.reduce((sum, f) => sum + f.area, 0).toFixed(1)} ha
               </span>
             </span>

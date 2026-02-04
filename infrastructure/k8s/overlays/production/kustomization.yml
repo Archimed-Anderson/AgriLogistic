@@ -4,8 +4,7 @@ kind: Kustomization
 namespace: AgroLogistic
 
 resources:
-  - ../../base/frontend.yml
-  - ../../base/services.yml
+  - ../../base
   - configmap.yml
   - secrets.yml
 

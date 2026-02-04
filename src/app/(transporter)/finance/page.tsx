@@ -35,8 +35,8 @@ export default function FinancePage() {
     // Logic to create invoice
   };
 
-  const filteredInvoices = invoices?.filter((invoice) => 
-    filterStatus === 'all' || invoice.status === filterStatus
+  const filteredInvoices = invoices?.filter(
+    (invoice) => filterStatus === 'all' || invoice.status === filterStatus
   );
 
   if (isLoading) {
@@ -54,12 +54,8 @@ export default function FinancePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                💰 Hub Financier
-              </h1>
-              <p className="text-sm text-gray-600">
-                Vue d'ensemble et facturation
-              </p>
+              <h1 className="text-2xl font-bold text-gray-900">💰 Hub Financier</h1>
+              <p className="text-sm text-gray-600">Vue d'ensemble et facturation</p>
             </div>
             <div className="flex items-center gap-3">
               <button className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
@@ -87,7 +83,7 @@ export default function FinancePage() {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-900">Factures Récentes</h2>
-              
+
               <div className="flex items-center gap-2">
                 <Filter className="w-4 h-4 text-gray-400" />
                 <select

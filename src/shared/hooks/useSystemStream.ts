@@ -32,11 +32,11 @@ export function useSystemStream() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setMetrics(prev => {
+      setMetrics((prev) => {
         const newCpu = Math.max(5, Math.min(95, prev.cpu + (Math.random() * 10 - 5)));
         const newNetUp = Math.max(0.1, prev.network.up + (Math.random() * 0.5 - 0.25));
         const newNetDown = Math.max(0.5, prev.network.down + (Math.random() * 2 - 1));
-        
+
         let status: SystemMetrics['status'] = 'nominal';
         if (newCpu > 85) status = 'critical';
         else if (newCpu > 70) status = 'warning';
@@ -44,9 +44,9 @@ export function useSystemStream() {
         return {
           ...prev,
           cpu: Number(newCpu.toFixed(1)),
-          network: { 
-            up: Number(newNetUp.toFixed(2)), 
-            down: Number(newNetDown.toFixed(2)) 
+          network: {
+            up: Number(newNetUp.toFixed(2)),
+            down: Number(newNetDown.toFixed(2)),
           },
           status,
           timestamp: new Date().toLocaleTimeString(),

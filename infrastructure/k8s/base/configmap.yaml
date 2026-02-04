@@ -1,0 +1,21 @@
+# ConfigMap base - configurations applicatives non sensibles (Prompt 3.2)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agrilogistic-config
+  namespace: agrilogistic
+  labels:
+    app.kubernetes.io/name: agrilogistic
+data:
+  NODE_ENV: "production"
+  LOG_LEVEL: "info"
+  DB_HOST: "postgres.agrilogistic.svc.cluster.local"
+  DB_PORT: "5432"
+  DB_NAME: "AgriLogistic"
+  REDIS_HOST: "redis.agrilogistic.svc.cluster.local"
+  REDIS_PORT: "6379"
+  KAFKA_BROKERS: "kafka.agrilogistic.svc.cluster.local:9092"
+  CLICKHOUSE_HOST: "clickhouse.agrilogistic.svc.cluster.local"
+  CLICKHOUSE_PORT: "9000"
+  ELASTICSEARCH_URL: "http://elasticsearch.agrilogistic.svc.cluster.local:9200"
+  API_GATEWAY_URL: "http://kong-proxy.agrilogistic.svc.cluster.local:8000"

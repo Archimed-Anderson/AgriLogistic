@@ -26,7 +26,7 @@ export class ErrorHandler {
     if (error instanceof Error) {
       return {
         title: 'Erreur',
-        message: error.message || 'Une erreur inattendue s\'est produite.',
+        message: error.message || "Une erreur inattendue s'est produite.",
         actionable: 'Veuillez réessayer ou contactez le support si le problème persiste.',
         canRetry: true,
         severity: 'error',
@@ -36,7 +36,7 @@ export class ErrorHandler {
     // Handle unknown errors
     return {
       title: 'Erreur inconnue',
-      message: 'Une erreur inattendue s\'est produite.',
+      message: "Une erreur inattendue s'est produite.",
       actionable: 'Veuillez réessayer ou contactez le support.',
       canRetry: true,
       severity: 'error',
@@ -61,7 +61,7 @@ export class ErrorHandler {
     // Timeout errors
     if (error.isTimeout) {
       return {
-        title: 'Délai d\'attente dépassé',
+        title: "Délai d'attente dépassé",
         message: 'La requête a pris trop de temps.',
         actionable: 'Vérifiez votre connexion internet et réessayez.',
         canRetry: true,
@@ -103,8 +103,8 @@ export class ErrorHandler {
       case 403:
         return {
           title: 'Accès refusé',
-          message: 'Vous n\'avez pas les permissions nécessaires.',
-          actionable: 'Contactez l\'administrateur si vous pensez qu\'il s\'agit d\'une erreur.',
+          message: "Vous n'avez pas les permissions nécessaires.",
+          actionable: "Contactez l'administrateur si vous pensez qu'il s'agit d'une erreur.",
           canRetry: false,
           severity: 'error',
         };
@@ -112,8 +112,8 @@ export class ErrorHandler {
       case 404:
         return {
           title: 'Ressource introuvable',
-          message: 'La ressource demandée n\'existe pas.',
-          actionable: 'Vérifiez l\'URL ou contactez le support.',
+          message: "La ressource demandée n'existe pas.",
+          actionable: "Vérifiez l'URL ou contactez le support.",
           canRetry: false,
           severity: 'warning',
         };

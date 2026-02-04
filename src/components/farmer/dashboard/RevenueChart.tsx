@@ -5,7 +5,18 @@
 'use client';
 
 import React, { useState } from 'react';
-import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 import { TrendingUp } from 'lucide-react';
 import type { RevenueData } from '@/types/farmer/dashboard';
 
@@ -44,7 +55,9 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
           <div className="mt-2 pt-2 border-t border-gray-200">
             <div className="flex items-center justify-between gap-4 text-sm font-bold">
               <span>Total:</span>
-              <span>{formatCurrency(payload.reduce((sum: number, entry: any) => sum + entry.value, 0))}</span>
+              <span>
+                {formatCurrency(payload.reduce((sum: number, entry: any) => sum + entry.value, 0))}
+              </span>
             </div>
           </div>
         </div>
@@ -94,15 +107,9 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
               stroke="#9ca3af"
               style={{ fontSize: '12px' }}
             />
-            <YAxis
-              tickFormatter={formatCurrency}
-              stroke="#9ca3af"
-              style={{ fontSize: '12px' }}
-            />
+            <YAxis tickFormatter={formatCurrency} stroke="#9ca3af" style={{ fontSize: '12px' }} />
             <Tooltip content={<CustomTooltip />} />
-            <Legend
-              wrapperStyle={{ fontSize: '14px', paddingTop: '20px' }}
-            />
+            <Legend wrapperStyle={{ fontSize: '14px', paddingTop: '20px' }} />
             <Area
               type="monotone"
               dataKey="marketplace"
@@ -140,15 +147,9 @@ export function RevenueChart({ data, isLoading }: RevenueChartProps) {
               stroke="#9ca3af"
               style={{ fontSize: '12px' }}
             />
-            <YAxis
-              tickFormatter={formatCurrency}
-              stroke="#9ca3af"
-              style={{ fontSize: '12px' }}
-            />
+            <YAxis tickFormatter={formatCurrency} stroke="#9ca3af" style={{ fontSize: '12px' }} />
             <Tooltip content={<CustomTooltip />} />
-            <Legend
-              wrapperStyle={{ fontSize: '14px', paddingTop: '20px' }}
-            />
+            <Legend wrapperStyle={{ fontSize: '14px', paddingTop: '20px' }} />
             <Line
               type="monotone"
               dataKey="marketplace"

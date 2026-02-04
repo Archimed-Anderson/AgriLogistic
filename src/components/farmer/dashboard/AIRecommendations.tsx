@@ -92,9 +92,7 @@ export function AIRecommendations({ recommendations, isLoading }: AIRecommendati
                   {/* Impact */}
                   <div className="flex items-center gap-2 mb-3 p-2 bg-gray-50 rounded-lg">
                     <span className="text-lg">{getImpactIcon(rec.impact.type)}</span>
-                    <span className="text-sm font-medium text-gray-700">
-                      Impact estimé:
-                    </span>
+                    <span className="text-sm font-medium text-gray-700">Impact estimé:</span>
                     <span className="text-sm font-bold text-green-600">
                       +{rec.impact.value} {rec.impact.unit}
                     </span>

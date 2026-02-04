@@ -1,9 +1,12 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
+import { RegisterDto, LoginDto } from '../common/dto/auth.dto';
 import { Role } from '@prisma/client';
 
 @Injectable()
@@ -39,8 +42,8 @@ export class AuthService {
       include: { profile: true },
     });
 
-    delete user.password;
-    return user;
+    const { password: _password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 
   async login(dto: LoginDto) {
@@ -65,7 +68,7 @@ export class AuthService {
         id: user.id,
         email: user.email,
         role: user.role,
-      }
+      },
     };
   }
 }

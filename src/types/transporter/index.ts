@@ -13,19 +13,19 @@ export interface TransporterKPIs {
   weeklyRevenue: number;
   monthlyRevenue: number;
   revenueGrowth: number; // Percentage
-  
+
   // Delivery metrics
   activeDeliveries: number;
   completedToday: number;
   completedWeek: number;
   completedMonth: number;
-  
+
   // Distance & efficiency
   kmToday: number;
   kmWeek: number;
   kmMonth: number;
   fuelEfficiency: number; // L/100km
-  
+
   // Performance
   onTimeRate: number; // Percentage
   customerSatisfaction: number; // 1-5 stars
@@ -106,48 +106,48 @@ export interface VehicleConstraints {
 // Shipments & Deliveries
 // ============================================================================
 
-export type ShipmentStatus = 
-  | 'pending'      // À prendre
-  | 'in_transit'   // En route
-  | 'delivered'    // Livré
-  | 'problem';     // Problème
+export type ShipmentStatus =
+  | 'pending' // À prendre
+  | 'in_transit' // En route
+  | 'delivered' // Livré
+  | 'problem'; // Problème
 
 export interface Shipment {
   id: string;
   orderId: string;
   status: ShipmentStatus;
-  
+
   // Pickup details
   pickupAddress: string;
   pickupCoordinates: [number, number];
   pickupContact: Contact;
   pickupTimeWindow?: TimeWindow;
   pickupDate?: Date;
-  
+
   // Delivery details
   deliveryAddress: string;
   deliveryCoordinates: [number, number];
   deliveryContact: Contact;
   deliveryTimeWindow?: TimeWindow;
   deliveryDate?: Date;
-  
+
   // Cargo details
   cargo: CargoDetails;
-  
+
   // Documents
   documents: ShipmentDocument[];
-  
+
   // Proof of delivery
   proofOfDelivery?: DeliveryProof;
-  
+
   // Ratings
   rating?: ShipmentRating;
-  
+
   // Financial
   price: number;
   currency: string;
   paymentStatus: 'pending' | 'paid' | 'overdue';
-  
+
   // Metadata
   createdAt: Date;
   updatedAt: Date;
@@ -223,27 +223,27 @@ export interface Vehicle {
   name: string;
   type: 'truck' | 'van' | 'tractor' | 'refrigerated' | 'flatbed';
   licensePlate: string;
-  
+
   // Specifications
   specifications: VehicleConstraints;
-  
+
   // IoT & Tracking
   iotDevice?: IoTDevice;
   currentLocation?: [number, number];
-  
+
   // Status
   status: 'available' | 'in_use' | 'maintenance' | 'out_of_service';
-  
+
   // Maintenance
   maintenanceSchedule: MaintenanceSchedule[];
   nextMaintenance?: Date;
-  
+
   // Costs
   costs: VehicleCosts;
-  
+
   // Documents
   documents: VehicleDocument[];
-  
+
   // Metadata
   purchaseDate: Date;
   mileage: number; // km
@@ -304,7 +304,7 @@ export interface FinancialMetrics {
     bonuses: number;
     commissions: number;
   };
-  
+
   // Costs
   totalCosts: number;
   costsByType: {
@@ -314,12 +314,12 @@ export interface FinancialMetrics {
     tolls: number;
     other: number;
   };
-  
+
   // Profit
   grossProfit: number;
   netProfit: number;
   profitMargin: number; // Percentage
-  
+
   // Period
   period: 'day' | 'week' | 'month' | 'year';
   startDate: Date;
@@ -331,32 +331,32 @@ export interface Invoice {
   invoiceNumber: string;
   clientId: string;
   clientName: string;
-  
+
   // Line items
   items: InvoiceItem[];
-  
+
   // Amounts
   subtotal: number;
   tax: number;
   taxRate: number; // Percentage
   total: number;
   currency: string;
-  
+
   // Status
   status: 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled';
-  
+
   // Dates
   issueDate: Date;
   dueDate: Date;
   paidDate?: Date;
-  
+
   // Payment
   paymentMethod?: 'stripe' | 'mobile_money' | 'bank_transfer' | 'cash';
   paymentReference?: string;
-  
+
   // Documents
   pdfUrl?: string;
-  
+
   // Metadata
   notes?: string;
   createdAt: Date;
@@ -378,41 +378,41 @@ export interface Load {
   id: string;
   title: string;
   description: string;
-  
+
   // Locations
   pickupLocation: string;
   pickupCoordinates: [number, number];
   deliveryLocation: string;
   deliveryCoordinates: [number, number];
   distance: number; // km
-  
+
   // Cargo
   cargo: CargoDetails;
-  
+
   // Timing
   pickupDate: Date;
   deliveryDate: Date;
   timeWindow?: TimeWindow;
-  
+
   // Financial
   offeredPrice: number;
   currency: string;
   paymentTerms: string;
-  
+
   // Bidding
   biddingEnabled: boolean;
   currentBid?: number;
   minBid?: number;
   bids: Bid[];
-  
+
   // Shipper
   shipperId: string;
   shipperName: string;
   shipperRating: number;
-  
+
   // Status
   status: 'open' | 'assigned' | 'in_progress' | 'completed' | 'cancelled';
-  
+
   // Metadata
   postedAt: Date;
   expiresAt?: Date;
@@ -440,7 +440,7 @@ export interface PerformanceMetrics {
   lateDeliveries: number;
   onTimeRate: number; // Percentage
   averageDelay: number; // Minutes
-  
+
   // Customer satisfaction
   averageRating: number;
   totalRatings: number;
@@ -451,17 +451,17 @@ export interface PerformanceMetrics {
     4: number;
     5: number;
   };
-  
+
   // Efficiency
   averageKmPerDelivery: number;
   emptyKmRate: number; // Percentage
   fuelEfficiency: number; // L/100km
-  
+
   // Financial
   averageRevenuePerDelivery: number;
   averageCostPerKm: number;
   profitMargin: number; // Percentage
-  
+
   // Period
   period: 'day' | 'week' | 'month' | 'year';
   startDate: Date;

@@ -1,0 +1,226 @@
+# =============================================================================
+# Event Bus - Apache Kafka (Cahier des charges 1.2)
+# KRaft mode (sans Zookeeper), 3 brokers, Schema Registry, Kafka Connect, Kafka UI
+# =============================================================================
+# Port 19092 sur l'hôte pour éviter conflit avec Kafka du docker-compose principal (9092).
+# Depuis l'hôte : bootstrap localhost:19092. Dans le réseau Docker : kafka-broker-1:9092.
+# Usage:
+#   Standalone: docker compose -f infrastructure/docker-compose.kafka.yml up -d
+#   Avec la plateforme: docker compose -f docker-compose.yml -f infrastructure/docker-compose.kafka.yml up -d
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # Kafka Brokers (KRaft - 3 brokers)
+  # ---------------------------------------------------------------------------
+  kafka-broker-1:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka-broker-1
+    hostname: kafka-broker-1
+    environment:
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-1:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-broker-1:9093,2@kafka-broker-2:9093,3@kafka-broker-3:9093
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_LOG_RETENTION_HOURS: 168
+      KAFKA_LOG_SEGMENT_BYTES: 1073741824
+      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 300000
+      KAFKA_NUM_PARTITIONS: 6
+      KAFKA_HEAP_OPTS: "-Xmx2g -Xms2g"
+    volumes:
+      - kafka-broker-1-data:/var/lib/kafka/data
+    ports:
+      - "19092:9092"
+    networks:
+      - kafka-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 90s
+
+  # Brokers 2 et 3 : pas de depends_on condition: healthy pour éviter la boucle
+  # (broker 1 a besoin de résoudre kafka-broker-2/3 pour le quorum KRaft).
+  kafka-broker-2:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka-broker-2
+    hostname: kafka-broker-2
+    environment:
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_NODE_ID: 2
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-2:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-broker-1:9093,2@kafka-broker-2:9093,3@kafka-broker-3:9093
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_HEAP_OPTS: "-Xmx2g -Xms2g"
+    volumes:
+      - kafka-broker-2-data:/var/lib/kafka/data
+    networks:
+      - kafka-network
+    restart: unless-stopped
+
+  kafka-broker-3:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka-broker-3
+    hostname: kafka-broker-3
+    environment:
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_NODE_ID: 3
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-3:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-broker-1:9093,2@kafka-broker-2:9093,3@kafka-broker-3:9093
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_HEAP_OPTS: "-Xmx2g -Xms2g"
+    volumes:
+      - kafka-broker-3-data:/var/lib/kafka/data
+    networks:
+      - kafka-network
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Schema Registry (Confluent Community) - Gouvernance Avro
+  # ---------------------------------------------------------------------------
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.5.0
+    container_name: kafka-schema-registry
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka-broker-1:9092,kafka-broker-2:9092,kafka-broker-3:9092
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+    ports:
+      - "8081:8081"
+    networks:
+      - kafka-network
+    depends_on:
+      kafka-broker-1:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Kafka Connect (JDBC Source, JDBC Sink, HTTP Sink)
+  # ---------------------------------------------------------------------------
+  kafka-connect:
+    image: confluentinc/cp-kafka-connect:7.5.0
+    container_name: kafka-connect
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: kafka-broker-1:9092,kafka-broker-2:9092,kafka-broker-3:9092
+      CONNECT_GROUP_ID: agrilogistic-connect
+      CONNECT_CONFIG_STORAGE_TOPIC: _connect-configs
+      CONNECT_OFFSET_STORAGE_TOPIC: _connect-offsets
+      CONNECT_STATUS_STORAGE_TOPIC: _connect-status
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 3
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 3
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 3
+      CONNECT_KEY_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect
+      CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components
+      CONNECT_HEAP_OPTS: "-Xmx1g -Xms512m"
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./connectors:/etc/kafka-connect/connectors:ro
+    networks:
+      - kafka-network
+    depends_on:
+      schema-registry:
+        condition: service_started
+      kafka-broker-1:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Kafka UI (provectus/kafka-ui) - Monitoring topics
+  # ---------------------------------------------------------------------------
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    environment:
+      KAFKA_CLUSTERS_0_NAME: agrilogistic
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-broker-1:9092,kafka-broker-2:9092,kafka-broker-3:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: ""
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry:8081
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: connect
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://kafka-connect:8083
+      DYNAMIC_CONFIG_ENABLED: "true"
+    ports:
+      - "8080:8080"
+    networks:
+      - kafka-network
+    depends_on:
+      kafka-broker-1:
+        condition: service_healthy
+      schema-registry:
+        condition: service_started
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Init: format KRaft storage + create topics (partitions, retention)
+  # ---------------------------------------------------------------------------
+  kafka-init-topics:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka-init-topics
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "Waiting for Kafka broker 1..."
+        for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
+          kafka-topics --bootstrap-server kafka-broker-1:9092 --list 2>/dev/null && break
+          echo "Attempt $$i/20 - waiting 3s..."
+          sleep 3
+        done
+        kafka-topics --bootstrap-server kafka-broker-1:9092 --list 2>/dev/null || exit 1
+        echo "Creating AgriLogistic topics..."
+        kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic user.events       --partitions 3  --replication-factor 3 --config retention.ms=604800000
+        kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic order.events      --partitions 6  --replication-factor 3 --config retention.ms=2592000000
+        kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic logistics.events  --partitions 6  --replication-factor 3 --config retention.ms=604800000
+        kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic payment.events    --partitions 3  --replication-factor 3 --config retention.ms=31536000000
+        kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic iot.telemetry    --partitions 12 --replication-factor 3 --config retention.ms=259200000
+        kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic analytics.events --partitions 6  --replication-factor 3 --config retention.ms=7776000000
+        kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic incident.events  --partitions 3  --replication-factor 3 --config retention.ms=604800000
+        echo "Topics created."
+    networks:
+      - kafka-network
+    depends_on:
+      kafka-broker-1:
+        condition: service_healthy
+    restart: "no"
+
+networks:
+  kafka-network:
+    driver: bridge
+    name: kafka-network
+
+volumes:
+  kafka-broker-1-data:
+  kafka-broker-2-data:
+  kafka-broker-3-data:

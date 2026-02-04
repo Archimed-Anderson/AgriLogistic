@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { toast } from 'sonner';
 import {
   FileText,
   CheckCircle,
@@ -33,15 +33,17 @@ import {
   Tablet,
   Smartphone,
   Upload,
-} from "lucide-react";
+} from 'lucide-react';
 
 export function BlogAdmin({ onNavigate }: { onNavigate: (route: string) => void }) {
-  const [view, setView] = useState<"dashboard" | "articles" | "editor" | "comments" | "analytics">("dashboard");
+  const [view, setView] = useState<'dashboard' | 'articles' | 'editor' | 'comments' | 'analytics'>(
+    'dashboard'
+  );
   const [selectedArticles, setSelectedArticles] = useState<string[]>([]);
-  const [filterStatus, setFilterStatus] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [editorContent, setEditorContent] = useState("");
-  const [editorPreview, setEditorPreview] = useState<"desktop" | "tablet" | "mobile">("desktop");
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [editorContent, setEditorContent] = useState('');
+  const [editorPreview, setEditorPreview] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [showMetaPanel, setShowMetaPanel] = useState(true);
 
   // Dashboard stats
@@ -59,110 +61,110 @@ export function BlogAdmin({ onNavigate }: { onNavigate: (route: string) => void 
   // Recent articles
   const articles = [
     {
-      id: "1",
+      id: '1',
       title: "Comment réduire sa consommation d'eau de 30% avec l'IA",
-      status: "published",
-      author: "Marie Dubois",
-      category: "Technologies",
-      date: "2026-01-15",
+      status: 'published',
+      author: 'Marie Dubois',
+      category: 'Technologies',
+      date: '2026-01-15',
       views: 3240,
       comments: 47,
       likes: 189,
-      thumbnail: "💧",
+      thumbnail: '💧',
     },
     {
-      id: "2",
-      title: "Témoignage : La transformation numérique de la Ferme des 3 Vallées",
-      status: "published",
-      author: "Jean Dupont",
-      category: "Témoignages",
-      date: "2026-01-12",
+      id: '2',
+      title: 'Témoignage : La transformation numérique de la Ferme des 3 Vallées',
+      status: 'published',
+      author: 'Jean Dupont',
+      category: 'Témoignages',
+      date: '2026-01-12',
       views: 2180,
       comments: 32,
       likes: 124,
-      thumbnail: "🌾",
+      thumbnail: '🌾',
     },
     {
-      id: "3",
-      title: "Guide complet : Choisir ses capteurs IoT en 2026",
-      status: "draft",
-      author: "Sophie Martin",
-      category: "Guides",
-      date: "2026-01-10",
+      id: '3',
+      title: 'Guide complet : Choisir ses capteurs IoT en 2026',
+      status: 'draft',
+      author: 'Sophie Martin',
+      category: 'Guides',
+      date: '2026-01-10',
       views: 0,
       comments: 0,
       likes: 0,
-      thumbnail: "📡",
+      thumbnail: '📡',
     },
     {
-      id: "4",
-      title: "Impact du changement climatique sur les cultures céréalières",
-      status: "scheduled",
-      author: "Dr. Pierre Laurent",
-      category: "Recherche",
-      date: "2026-01-20",
+      id: '4',
+      title: 'Impact du changement climatique sur les cultures céréalières',
+      status: 'scheduled',
+      author: 'Dr. Pierre Laurent',
+      category: 'Recherche',
+      date: '2026-01-20',
       views: 0,
       comments: 0,
       likes: 0,
-      thumbnail: "🌡️",
+      thumbnail: '🌡️',
     },
     {
-      id: "5",
+      id: '5',
       title: "Tutoriel : Installer son système d'irrigation intelligent",
-      status: "review",
-      author: "Marc Legrand",
-      category: "Tutoriels",
-      date: "2026-01-08",
+      status: 'review',
+      author: 'Marc Legrand',
+      category: 'Tutoriels',
+      date: '2026-01-08',
       views: 0,
       comments: 3,
       likes: 8,
-      thumbnail: "🎥",
+      thumbnail: '🎥',
     },
   ];
 
   // Comments pending moderation
   const pendingComments = [
     {
-      id: "1",
-      author: "Jean Martin",
+      id: '1',
+      author: 'Jean Martin',
       article: "Comment réduire sa consommation d'eau...",
       text: "Excellent article ! J'ai une question sur les capteurs recommandés...",
-      date: "Il y a 2h",
-      status: "pending",
+      date: 'Il y a 2h',
+      status: 'pending',
     },
     {
-      id: "2",
-      author: "Sophie Durand",
-      article: "Témoignage : La transformation numérique...",
-      text: "Très inspirant ! Nous envisageons de faire de même sur notre exploitation.",
-      date: "Il y a 5h",
-      status: "pending",
+      id: '2',
+      author: 'Sophie Durand',
+      article: 'Témoignage : La transformation numérique...',
+      text: 'Très inspirant ! Nous envisageons de faire de même sur notre exploitation.',
+      date: 'Il y a 5h',
+      status: 'pending',
     },
   ];
 
   // Top performing articles
   const topArticles = [
-    { title: "IA en Agriculture", views: 12450, trend: 23 },
-    { title: "Drones Agricoles 2026", views: 9830, trend: -5 },
-    { title: "ROI Agriculture Connectée", views: 8640, trend: 12 },
+    { title: 'IA en Agriculture', views: 12450, trend: 23 },
+    { title: 'Drones Agricoles 2026', views: 9830, trend: -5 },
+    { title: 'ROI Agriculture Connectée', views: 8640, trend: 12 },
   ];
 
   const getStatusColor = (status: string) => {
     const colors: { [key: string]: string } = {
-      published: "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400",
-      draft: "bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400",
-      scheduled: "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400",
-      review: "bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400",
+      published: 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400',
+      draft: 'bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400',
+      scheduled: 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400',
+      review: 'bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400',
     };
     return colors[status] || colors.draft;
   };
 
   const getStatusLabel = (status: string) => {
     const labels: { [key: string]: string } = {
-      published: "Publié",
-      draft: "Brouillon",
-      scheduled: "Planifié",
-      review: "En révision",
+      published: 'Publié',
+      draft: 'Brouillon',
+      scheduled: 'Planifié',
+      review: 'En révision',
     };
     return labels[status] || status;
   };
@@ -173,15 +175,15 @@ export function BlogAdmin({ onNavigate }: { onNavigate: (route: string) => void 
   };
 
   const handleDeleteArticle = (id: string) => {
-    toast.success("Article supprimé");
+    toast.success('Article supprimé');
   };
 
   const handleApproveComment = (id: string) => {
-    toast.success("Commentaire approuvé");
+    toast.success('Commentaire approuvé');
   };
 
   const handleRejectComment = (id: string) => {
-    toast.success("Commentaire supprimé");
+    toast.success('Commentaire supprimé');
   };
 
   const renderDashboard = () => (
@@ -270,32 +272,32 @@ export function BlogAdmin({ onNavigate }: { onNavigate: (route: string) => void 
           <div className="space-y-4">
             {[
               {
-                type: "comment",
+                type: 'comment',
                 text: "Nouveau commentaire sur 'IA en Agriculture'",
-                time: "Il y a 5 min",
+                time: 'Il y a 5 min',
                 icon: MessageSquare,
-                color: "text-blue-600",
+                color: 'text-blue-600',
               },
               {
-                type: "article",
+                type: 'article',
                 text: "Article publié : 'Drones 2026'",
-                time: "Il y a 1h",
+                time: 'Il y a 1h',
                 icon: FileText,
-                color: "text-green-600",
+                color: 'text-green-600',
               },
               {
-                type: "like",
-                text: "12 nouveaux likes sur vos articles",
-                time: "Il y a 2h",
+                type: 'like',
+                text: '12 nouveaux likes sur vos articles',
+                time: 'Il y a 2h',
                 icon: Heart,
-                color: "text-pink-600",
+                color: 'text-pink-600',
               },
               {
-                type: "user",
-                text: "3 nouveaux abonnés newsletter",
-                time: "Il y a 3h",
+                type: 'user',
+                text: '3 nouveaux abonnés newsletter',
+                time: 'Il y a 3h',
                 icon: Users,
-                color: "text-purple-600",
+                color: 'text-purple-600',
               },
             ].map((activity, index) => {
               const Icon = activity.icon;
@@ -334,7 +336,7 @@ export function BlogAdmin({ onNavigate }: { onNavigate: (route: string) => void 
                 </div>
                 <div
                   className={`flex items-center gap-1 text-sm ${
-                    article.trend > 0 ? "text-green-600" : "text-red-600"
+                    article.trend > 0 ? 'text-green-600' : 'text-red-600'
                   }`}
                 >
                   {article.trend > 0 ? (
@@ -358,7 +360,7 @@ export function BlogAdmin({ onNavigate }: { onNavigate: (route: string) => void 
             Commentaires en attente de modération
           </h3>
           <button
-            onClick={() => setView("comments")}
+            onClick={() => setView('comments')}
             className="text-sm text-[#2ECC71] hover:underline"
           >
             Voir tous
@@ -431,7 +433,7 @@ export function BlogAdmin({ onNavigate }: { onNavigate: (route: string) => void 
             <option value="review">En révision</option>
           </select>
           <button
-            onClick={() => setView("editor")}
+            onClick={() => setView('editor')}
             className="px-6 py-2 bg-[#2ECC71] text-white rounded-lg hover:bg-[#27AE60] transition-colors flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
@@ -449,19 +451,19 @@ export function BlogAdmin({ onNavigate }: { onNavigate: (route: string) => void 
             </span>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => handleBulkAction("publish")}
+                onClick={() => handleBulkAction('publish')}
                 className="px-3 py-1.5 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
               >
                 Publier
               </button>
               <button
-                onClick={() => handleBulkAction("draft")}
+                onClick={() => handleBulkAction('draft')}
                 className="px-3 py-1.5 text-sm bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
               >
                 Brouillon
               </button>
               <button
-                onClick={() => handleBulkAction("delete")}
+                onClick={() => handleBulkAction('delete')}
                 className="px-3 py-1.5 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
               >
                 Supprimer
@@ -533,13 +535,19 @@ export function BlogAdmin({ onNavigate }: { onNavigate: (route: string) => void 
                     <div className="font-medium max-w-md">{article.title}</div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(article.status)}`}>
+                    <span
+                      className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(
+                        article.status
+                      )}`}
+                    >
                       {getStatusLabel(article.status)}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-sm">{article.author}</td>
                   <td className="px-4 py-3 text-sm">{article.category}</td>
-                  <td className="px-4 py-3 text-sm">{new Date(article.date).toLocaleDateString("fr-FR")}</td>
+                  <td className="px-4 py-3 text-sm">
+                    {new Date(article.date).toLocaleDateString('fr-FR')}
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3 text-xs text-muted-foreground">
                       <div className="flex items-center gap-1">
@@ -559,7 +567,7 @@ export function BlogAdmin({ onNavigate }: { onNavigate: (route: string) => void 
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1">
                       <button
-                        onClick={() => setView("editor")}
+                        onClick={() => setView('editor')}
                         className="p-1.5 hover:bg-muted rounded transition-colors"
                         title="Éditer"
                       >
@@ -601,7 +609,7 @@ export function BlogAdmin({ onNavigate }: { onNavigate: (route: string) => void 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setView("articles")}
+            onClick={() => setView('articles')}
             className="p-2 hover:bg-muted rounded-lg transition-colors"
           >
             <X className="h-5 w-5" />
@@ -678,22 +686,28 @@ export function BlogAdmin({ onNavigate }: { onNavigate: (route: string) => void 
             </button>
             <div className="ml-auto flex items-center gap-2">
               <button
-                onClick={() => setEditorPreview("desktop")}
-                className={`p-2 rounded transition-colors ${editorPreview === "desktop" ? "bg-muted" : "hover:bg-muted"}`}
+                onClick={() => setEditorPreview('desktop')}
+                className={`p-2 rounded transition-colors ${
+                  editorPreview === 'desktop' ? 'bg-muted' : 'hover:bg-muted'
+                }`}
                 title="Desktop"
               >
                 <Monitor className="h-4 w-4" />
               </button>
               <button
-                onClick={() => setEditorPreview("tablet")}
-                className={`p-2 rounded transition-colors ${editorPreview === "tablet" ? "bg-muted" : "hover:bg-muted"}`}
+                onClick={() => setEditorPreview('tablet')}
+                className={`p-2 rounded transition-colors ${
+                  editorPreview === 'tablet' ? 'bg-muted' : 'hover:bg-muted'
+                }`}
                 title="Tablet"
               >
                 <Tablet className="h-4 w-4" />
               </button>
               <button
-                onClick={() => setEditorPreview("mobile")}
-                className={`p-2 rounded transition-colors ${editorPreview === "mobile" ? "bg-muted" : "hover:bg-muted"}`}
+                onClick={() => setEditorPreview('mobile')}
+                className={`p-2 rounded transition-colors ${
+                  editorPreview === 'mobile' ? 'bg-muted' : 'hover:bg-muted'
+                }`}
                 title="Mobile"
               >
                 <Smartphone className="h-4 w-4" />
@@ -718,7 +732,7 @@ export function BlogAdmin({ onNavigate }: { onNavigate: (route: string) => void 
               <span className="text-2xl font-bold text-blue-600">72/100</span>
             </div>
             <div className="h-2 bg-muted rounded-full overflow-hidden mb-3">
-              <div className="h-full bg-blue-600" style={{ width: "72%" }} />
+              <div className="h-full bg-blue-600" style={{ width: '72%' }} />
             </div>
             <div className="space-y-2 text-sm">
               <div className="flex items-center gap-2">
@@ -791,7 +805,9 @@ export function BlogAdmin({ onNavigate }: { onNavigate: (route: string) => void 
                   placeholder="IA, irrigation, capteurs..."
                   className="w-full px-3 py-2 border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-[#2ECC71]"
                 />
-                <p className="text-xs text-muted-foreground mt-1">Séparez les tags par des virgules</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Séparez les tags par des virgules
+                </p>
               </div>
             </div>
           </div>
@@ -874,10 +890,10 @@ export function BlogAdmin({ onNavigate }: { onNavigate: (route: string) => void 
       <div className="border-b">
         <div className="flex gap-6">
           {[
-            { id: "dashboard", label: "Tableau de Bord", icon: BarChart3 },
-            { id: "articles", label: "Articles", icon: FileText },
-            { id: "comments", label: "Commentaires", icon: MessageSquare },
-            { id: "analytics", label: "Analytics", icon: TrendingUp },
+            { id: 'dashboard', label: 'Tableau de Bord', icon: BarChart3 },
+            { id: 'articles', label: 'Articles', icon: FileText },
+            { id: 'comments', label: 'Commentaires', icon: MessageSquare },
+            { id: 'analytics', label: 'Analytics', icon: TrendingUp },
           ].map((tab) => {
             const Icon = tab.icon;
             return (
@@ -886,8 +902,8 @@ export function BlogAdmin({ onNavigate }: { onNavigate: (route: string) => void 
                 onClick={() => setView(tab.id as any)}
                 className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors ${
                   view === tab.id
-                    ? "border-[#2ECC71] text-[#2ECC71]"
-                    : "border-transparent hover:border-gray-300"
+                    ? 'border-[#2ECC71] text-[#2ECC71]'
+                    : 'border-transparent hover:border-gray-300'
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -899,15 +915,15 @@ export function BlogAdmin({ onNavigate }: { onNavigate: (route: string) => void 
       </div>
 
       {/* Content */}
-      {view === "dashboard" && renderDashboard()}
-      {view === "articles" && renderArticlesList()}
-      {view === "editor" && renderEditor()}
-      {view === "comments" && (
+      {view === 'dashboard' && renderDashboard()}
+      {view === 'articles' && renderArticlesList()}
+      {view === 'editor' && renderEditor()}
+      {view === 'comments' && (
         <div className="text-center py-12 text-muted-foreground">
           Gestion des commentaires - En développement
         </div>
       )}
-      {view === "analytics" && (
+      {view === 'analytics' && (
         <div className="text-center py-12 text-muted-foreground">
           Analytics détaillés - En développement
         </div>

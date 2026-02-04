@@ -51,7 +51,8 @@ export class RealAuthAdapter implements AuthProvider {
       password,
     });
 
-    const accessToken: string | undefined = response?.access_token || response?.accessToken || response?.token;
+    const accessToken: string | undefined =
+      response?.access_token || response?.accessToken || response?.token;
     if (!accessToken) {
       // Legacy API had a `success` boolean; keep a readable error in both cases.
       throw new Error(response?.message || 'Login failed');
@@ -74,7 +75,12 @@ export class RealAuthAdapter implements AuthProvider {
     const derived =
       userPayload?.firstName && userPayload?.lastName
         ? { firstName: userPayload.firstName, lastName: userPayload.lastName }
-        : splitName(userPayload?.fullName || userPayload?.full_name || userPayload?.username || userPayload?.email);
+        : splitName(
+            userPayload?.fullName ||
+              userPayload?.full_name ||
+              userPayload?.username ||
+              userPayload?.email
+          );
 
     const user = User.create({
       firstName: derived.firstName,
@@ -128,7 +134,7 @@ export class RealAuthAdapter implements AuthProvider {
 
   async getCurrentUser(): Promise<User | null> {
     const token = localStorage.getItem('accessToken');
-    
+
     if (!token) {
       return null;
     }
@@ -141,8 +147,12 @@ export class RealAuthAdapter implements AuthProvider {
       if (!userPayload) return null;
 
       const user = User.create({
-        firstName: splitName(userPayload.full_name || userPayload.fullName || userPayload.username || userPayload.email).firstName,
-        lastName: splitName(userPayload.full_name || userPayload.fullName || userPayload.username || userPayload.email).lastName,
+        firstName: splitName(
+          userPayload.full_name || userPayload.fullName || userPayload.username || userPayload.email
+        ).firstName,
+        lastName: splitName(
+          userPayload.full_name || userPayload.fullName || userPayload.username || userPayload.email
+        ).lastName,
         email: new Email(userPayload.email),
         role: coerceRole(userPayload.role),
         avatarUrl: userPayload.avatarUrl,
@@ -185,7 +195,9 @@ export class RealAuthAdapter implements AuthProvider {
 
   async isConfigured(): Promise<boolean> {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_GATEWAY_URL || 'http://localhost:8000'}/health`);
+      const response = await fetch(
+        `${import.meta.env.VITE_API_GATEWAY_URL || 'http://localhost:8000'}/health`
+      );
       return response.ok;
     } catch (error) {
       return false;

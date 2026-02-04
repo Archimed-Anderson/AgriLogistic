@@ -23,6 +23,14 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
 
+  # cAdvisor - containers Docker
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+        labels:
+          service: 'cadvisor'
+    scrape_interval: 15s
+
   # Kong API Gateway (Status API /metrics)
   - job_name: 'kong'
     static_configs:

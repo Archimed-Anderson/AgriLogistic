@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { 
-  adminUsersRepository, 
+import {
+  adminUsersRepository,
   ListUsersParams,
   CreateUserDto,
-  UpdateUserDto 
+  UpdateUserDto,
 } from '@/infrastructure/api/admin/admin-users.repository';
 import { toast } from 'sonner';
 

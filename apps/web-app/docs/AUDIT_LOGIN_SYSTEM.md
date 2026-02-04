@@ -19,23 +19,27 @@ Cet audit a identifié **5 problèmes critiques** et **8 améliorations recomman
 ### 1.1 Structure des Rôles
 
 ✅ **Points Forts:**
+
 - Enum `UserRole` bien défini avec 4 rôles principaux : `ADMIN`, `FARMER`, `BUYER`, `TRANSPORTER`
 - Système de permissions basé sur les rôles (`Permissions.forRole()`)
 - Backend supporte les 4 rôles dans la base de données
 
 ❌ **Problèmes Identifiés:**
+
 - Incohérence dans les noms : le code utilise `farmer` mais la documentation mentionne "Agriculteur"
 - Pas de mapping explicite entre les rôles backend et frontend
 
 ### 1.2 Configuration et Routes
 
 **Fichiers Clés:**
+
 - `src/lib/hooks/use-auth.tsx` - Hook d'authentification
 - `src/lib/api/auth.ts` - Client API
 - `src/components/auth/LoginForm.tsx` - Formulaire de connexion
 - `src/app/login/page.tsx` - Page de login
 
 **Routes Dashboard Existantes:**
+
 ```
 ✅ /dashboard/farmer
 ❌ /dashboard/admin (MANQUANT)
@@ -52,12 +56,14 @@ Cet audit a identifié **5 problèmes critiques** et **8 améliorations recomman
 **Fichier:** `src/lib/hooks/use-auth.tsx:93`
 
 **Problème:**
+
 ```typescript
 // Rediriger vers le dashboard
-router.push("/dashboard/farmer")  // ❌ TOUJOURS farmer, peu importe le rôle
+router.push('/dashboard/farmer'); // ❌ TOUJOURS farmer, peu importe le rôle
 ```
 
 **Impact:**
+
 - Tous les utilisateurs (Admin, Acheteur, Transporteur, Agriculteur) sont redirigés vers `/dashboard/farmer`
 - Les utilisateurs non-agriculteurs accèdent à un dashboard qui ne leur est pas destiné
 - Violation de sécurité : accès non autorisé à des fonctionnalités
@@ -71,11 +77,13 @@ router.push("/dashboard/farmer")  // ❌ TOUJOURS farmer, peu importe le rôle
 **Fichier:** `src/components/auth/LoginForm.tsx`
 
 **Problème:**
+
 - Le formulaire de connexion ne permet pas de sélectionner le type de compte
 - Aucune indication visuelle des 4 types de comptes disponibles
 - L'utilisateur ne sait pas quel type de compte il utilise
 
 **Impact:**
+
 - Expérience utilisateur confuse
 - Pas de clarté sur les différents types de comptes
 - Conformité : ne répond pas aux exigences fonctionnelles
@@ -87,6 +95,7 @@ router.push("/dashboard/farmer")  // ❌ TOUJOURS farmer, peu importe le rôle
 ### 🔴 CRITIQUE #3: Routes Dashboard Manquantes pour 3 Rôles sur 4
 
 **Problème:**
+
 - Seule la route `/dashboard/farmer` existe
 - Routes manquantes :
   - `/dashboard/admin`
@@ -94,6 +103,7 @@ router.push("/dashboard/farmer")  // ❌ TOUJOURS farmer, peu importe le rôle
   - `/dashboard/transporter`
 
 **Impact:**
+
 - Impossible de rediriger correctement les utilisateurs après connexion
 - Erreurs 404 lors des tentatives de redirection
 - Système non fonctionnel pour 75% des types d'utilisateurs
@@ -105,11 +115,13 @@ router.push("/dashboard/farmer")  // ❌ TOUJOURS farmer, peu importe le rôle
 ### 🟡 MAJEUR #4: Absence de Middleware de Protection des Routes
 
 **Problème:**
+
 - Pas de middleware Next.js pour protéger les routes par rôle
 - Pas de vérification des permissions avant l'accès aux dashboards
 - Les utilisateurs peuvent accéder manuellement à des routes non autorisées
 
 **Impact:**
+
 - Risque de sécurité : accès non autorisé
 - Pas de protection au niveau route
 - Violation du principe de moindre privilège
@@ -123,11 +135,13 @@ router.push("/dashboard/farmer")  // ❌ TOUJOURS farmer, peu importe le rôle
 **Fichier:** `src/app/dashboard/layout.tsx`
 
 **Problème:**
+
 - Un seul layout générique pour tous les dashboards
 - Pas de personnalisation de la navigation selon le rôle
 - Pas de sidebar/menu adapté à chaque type d'utilisateur
 
 **Impact:**
+
 - Expérience utilisateur non optimisée
 - Navigation confuse pour les différents rôles
 - Manque de clarté dans l'interface
@@ -143,11 +157,13 @@ router.push("/dashboard/farmer")  // ❌ TOUJOURS farmer, peu importe le rôle
 **Fichier:** `src/lib/hooks/use-auth.tsx`
 
 **Problème:**
+
 - Gestion basique des erreurs (401, 429, 500)
 - Pas de gestion spécifique pour les erreurs de rôle
 - Messages d'erreur génériques
 
 **Recommandation:**
+
 - Ajouter des messages d'erreur plus spécifiques
 - Gérer les cas où un utilisateur n'a pas de rôle assigné
 
@@ -158,16 +174,19 @@ router.push("/dashboard/farmer")  // ❌ TOUJOURS farmer, peu importe le rôle
 **Fichier:** `src/lib/hooks/use-auth.tsx:59`
 
 **Problème:**
+
 ```typescript
 // TODO: Vérifier la validité du token avec l'API /auth/me
 // Pour l'instant, on considère que si le token existe, l'utilisateur est authentifié
 ```
 
 **Impact:**
+
 - Tokens expirés non détectés
 - Utilisateurs considérés comme authentifiés avec des tokens invalides
 
 **Recommandation:**
+
 - Implémenter l'appel à `/auth/me` pour valider le token
 - Gérer le refresh token automatiquement
 
@@ -176,11 +195,13 @@ router.push("/dashboard/farmer")  // ❌ TOUJOURS farmer, peu importe le rôle
 ### 🟢 MINEUR #8: Accessibilité du Formulaire
 
 **Points Positifs:**
+
 - ✅ Attributs ARIA présents
 - ✅ Labels accessibles
 - ✅ Messages d'erreur avec `role="alert"`
 
 **Améliorations Possibles:**
+
 - Ajouter des descriptions plus détaillées pour les lecteurs d'écran
 - Améliorer la navigation au clavier pour la sélection de rôle
 
@@ -236,12 +257,12 @@ const getDashboardPath = (role: string): string => {
     farmer: '/dashboard/farmer',
     buyer: '/dashboard/buyer',
     transporter: '/dashboard/transporter',
-  }
-  return roleMap[role.toLowerCase()] || '/dashboard/farmer'
-}
+  };
+  return roleMap[role.toLowerCase()] || '/dashboard/farmer';
+};
 
 // Dans la fonction login, après la connexion réussie:
-router.push(getDashboardPath(response.user.role))
+router.push(getDashboardPath(response.user.role));
 ```
 
 #### 1.2 Ajouter la Sélection de Rôle dans le Formulaire
@@ -255,6 +276,7 @@ router.push(getDashboardPath(response.user.role))
 #### 1.3 Créer les Routes Dashboard Manquantes
 
 **Fichiers à créer:**
+
 ```
 src/app/dashboard/admin/page.tsx
 src/app/dashboard/buyer/page.tsx
@@ -262,6 +284,7 @@ src/app/dashboard/transporter/page.tsx
 ```
 
 **Structure recommandée:**
+
 ```typescript
 // src/app/dashboard/admin/page.tsx
 export default function AdminDashboardPage() {
@@ -276,29 +299,29 @@ export default function AdminDashboardPage() {
 **Fichier:** `src/middleware.ts` (Next.js 14)
 
 ```typescript
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get('accessToken')?.value
-  
+  const token = request.cookies.get('accessToken')?.value;
+
   // Routes protégées par rôle
   const roleRoutes = {
     '/dashboard/admin': ['admin'],
     '/dashboard/farmer': ['farmer'],
     '/dashboard/buyer': ['buyer'],
     '/dashboard/transporter': ['transporter'],
-  }
-  
+  };
+
   // Vérifier l'accès selon le rôle
   // ...
-  
-  return NextResponse.next()
+
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: ['/dashboard/:path*'],
-}
+};
 ```
 
 #### 2.2 Implémenter la Validation du Token
@@ -309,30 +332,30 @@ export const config = {
 // Remplacer le TODO ligne 59
 React.useEffect(() => {
   const validateToken = async () => {
-    const token = getAccessToken()
+    const token = getAccessToken();
     if (token) {
       try {
-        const user = await fetchUserProfile() // Appel à /auth/me
+        const user = await fetchUserProfile(); // Appel à /auth/me
         setState({
           user,
           isAuthenticated: true,
           isLoading: false,
-        })
+        });
       } catch (error) {
         // Token invalide, déconnecter
-        clearTokens()
+        clearTokens();
         setState({
           user: null,
           isAuthenticated: false,
           isLoading: false,
-        })
+        });
       }
     } else {
-      setState((prev) => ({ ...prev, isLoading: false }))
+      setState((prev) => ({ ...prev, isLoading: false }));
     }
-  }
-  validateToken()
-}, [])
+  };
+  validateToken();
+}, []);
 ```
 
 ### Phase 3: Layouts et UX (Priorité 3) 🎨
@@ -340,6 +363,7 @@ React.useEffect(() => {
 #### 3.1 Créer des Layouts Spécifiques par Rôle
 
 **Fichiers à créer:**
+
 ```
 src/app/dashboard/admin/layout.tsx
 src/app/dashboard/buyer/layout.tsx
@@ -412,12 +436,12 @@ Le système d'authentification actuel présente **5 problèmes critiques** qui e
 
 ### A. Matrice des Rôles et Permissions
 
-| Rôle | Dashboard | Permissions Clés |
-|------|-----------|-----------------|
-| Admin | `/dashboard/admin` | Toutes les permissions |
-| Agriculteur | `/dashboard/farmer` | Gestion produits, ventes, analytics |
-| Acheteur | `/dashboard/buyer` | Marketplace, commandes, suivi |
-| Transporteur | `/dashboard/transporter` | Livraisons, tracking, flotte |
+| Rôle         | Dashboard                | Permissions Clés                    |
+| ------------ | ------------------------ | ----------------------------------- |
+| Admin        | `/dashboard/admin`       | Toutes les permissions              |
+| Agriculteur  | `/dashboard/farmer`      | Gestion produits, ventes, analytics |
+| Acheteur     | `/dashboard/buyer`       | Marketplace, commandes, suivi       |
+| Transporteur | `/dashboard/transporter` | Livraisons, tracking, flotte        |
 
 ### B. Checklist de Validation
 

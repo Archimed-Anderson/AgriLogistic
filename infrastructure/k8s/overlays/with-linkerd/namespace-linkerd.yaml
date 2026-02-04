@@ -1,0 +1,10 @@
+# Namespace AgroLogistic avec injection Linkerd automatique (Cahier Service Mesh)
+# Tous les pods créés dans ce namespace recevront le proxy Linkerd (mTLS, metrics, retry).
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: AgroLogistic
+  labels:
+    app.kubernetes.io/part-of: AgroLogistic
+  annotations:
+    linkerd.io/inject: enabled

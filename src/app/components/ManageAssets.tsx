@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Edit,
   EyeOff,
@@ -15,8 +15,8 @@ import {
   MessageCircle,
   FileText,
   FolderTree,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 interface ManageAssetsProps {
   onAddAsset: () => void;
@@ -25,49 +25,49 @@ interface ManageAssetsProps {
   onRejectReservation: (id: string) => void;
 }
 
-export function ManageAssets({ 
-  onAddAsset, 
+export function ManageAssets({
+  onAddAsset,
   reservations,
   onAcceptReservation,
-  onRejectReservation 
+  onRejectReservation,
 }: ManageAssetsProps) {
-  const [activeSubTab, setActiveSubTab] = useState<"equipment" | "calendar" | "reservations" | "revenue">(
-    "equipment"
-  );
+  const [activeSubTab, setActiveSubTab] = useState<
+    'equipment' | 'calendar' | 'reservations' | 'revenue'
+  >('equipment');
 
   // Mock data - Ferme de la Vallée equipment
   const myEquipments = [
     {
-      id: "MY-001",
-      name: "Tracteur John Deere 5090R",
-      category: "Tracteur",
-      icon: "🚜",
+      id: 'MY-001',
+      name: 'Tracteur John Deere 5090R',
+      category: 'Tracteur',
+      icon: '🚜',
       pricePerDay: 420,
-      status: "reserved" as const,
+      status: 'reserved' as const,
       revenue30d: 3360,
       totalRentals: 8,
       rating: 4.9,
-      nextBooking: "15-18 Jan",
+      nextBooking: '15-18 Jan',
     },
     {
-      id: "MY-002",
-      name: "Couveuse 300 Œufs",
-      category: "Couveuse",
-      icon: "🥚",
+      id: 'MY-002',
+      name: 'Couveuse 300 Œufs',
+      category: 'Couveuse',
+      icon: '🥚',
       pricePerDay: 28,
-      status: "available" as const,
+      status: 'available' as const,
       revenue30d: 420,
       totalRentals: 15,
       rating: 5.0,
       nextBooking: null,
     },
     {
-      id: "MY-003",
-      name: "Tronçonneuse Husqvarna",
-      category: "Scie",
-      icon: "🪚",
+      id: 'MY-003',
+      name: 'Tronçonneuse Husqvarna',
+      category: 'Scie',
+      icon: '🪚',
       pricePerDay: 38,
-      status: "maintenance" as const,
+      status: 'maintenance' as const,
       revenue30d: 152,
       totalRentals: 4,
       rating: 4.8,
@@ -79,41 +79,41 @@ export function ManageAssets({
   const calendarEvents = [
     {
       id: 1,
-      equipmentId: "MY-001",
-      equipmentName: "Tracteur John Deere",
-      startDate: "15 Jan",
-      endDate: "18 Jan",
-      renter: "Marc Dubois",
-      color: "bg-blue-500",
+      equipmentId: 'MY-001',
+      equipmentName: 'Tracteur John Deere',
+      startDate: '15 Jan',
+      endDate: '18 Jan',
+      renter: 'Marc Dubois',
+      color: 'bg-blue-500',
     },
     {
       id: 2,
-      equipmentId: "MY-002",
-      equipmentName: "Couveuse 300 Œufs",
-      startDate: "22 Jan",
-      endDate: "29 Jan",
-      renter: "Sophie Martin",
-      color: "bg-purple-500",
+      equipmentId: 'MY-002',
+      equipmentName: 'Couveuse 300 Œufs',
+      startDate: '22 Jan',
+      endDate: '29 Jan',
+      renter: 'Sophie Martin',
+      color: 'bg-purple-500',
     },
   ];
 
-  const getStatusBadge = (status: "available" | "reserved" | "maintenance") => {
+  const getStatusBadge = (status: 'available' | 'reserved' | 'maintenance') => {
     switch (status) {
-      case "available":
+      case 'available':
         return (
           <span className="flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-xs font-medium rounded-full">
             <CheckCircle2 className="h-3 w-3" />
             Disponible
           </span>
         );
-      case "reserved":
+      case 'reserved':
         return (
           <span className="flex items-center gap-1 px-2 py-1 bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 text-xs font-medium rounded-full">
             <Clock className="h-3 w-3" />
             En location
           </span>
         );
-      case "maintenance":
+      case 'maintenance':
         return (
           <span className="flex items-center gap-1 px-2 py-1 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 text-xs font-medium rounded-full">
             <AlertCircle className="h-3 w-3" />
@@ -125,31 +125,31 @@ export function ManageAssets({
 
   const getReservationStatusBadge = (status: string) => {
     switch (status) {
-      case "pending":
+      case 'pending':
         return (
           <span className="px-2 py-1 bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 text-xs font-medium rounded-full">
             En attente
           </span>
         );
-      case "confirmed":
+      case 'confirmed':
         return (
           <span className="px-2 py-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-xs font-medium rounded-full">
             Confirmée
           </span>
         );
-      case "active":
+      case 'active':
         return (
           <span className="px-2 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 text-xs font-medium rounded-full">
             En cours
           </span>
         );
-      case "completed":
+      case 'completed':
         return (
           <span className="px-2 py-1 bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400 text-xs font-medium rounded-full">
             Terminée
           </span>
         );
-      case "cancelled":
+      case 'cancelled':
         return (
           <span className="px-2 py-1 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 text-xs font-medium rounded-full">
             Annulée
@@ -166,11 +166,11 @@ export function ManageAssets({
       <div className="border-b">
         <nav className="flex gap-6">
           <button
-            onClick={() => setActiveSubTab("equipment")}
+            onClick={() => setActiveSubTab('equipment')}
             className={`px-4 py-3 border-b-2 transition-colors text-sm font-medium ${
-              activeSubTab === "equipment"
-                ? "border-[#2563eb] text-[#2563eb]"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+              activeSubTab === 'equipment'
+                ? 'border-[#2563eb] text-[#2563eb]'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             <span className="flex items-center gap-2">
@@ -179,11 +179,11 @@ export function ManageAssets({
             </span>
           </button>
           <button
-            onClick={() => setActiveSubTab("calendar")}
+            onClick={() => setActiveSubTab('calendar')}
             className={`px-4 py-3 border-b-2 transition-colors text-sm font-medium ${
-              activeSubTab === "calendar"
-                ? "border-[#2563eb] text-[#2563eb]"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+              activeSubTab === 'calendar'
+                ? 'border-[#2563eb] text-[#2563eb]'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             <span className="flex items-center gap-2">
@@ -192,29 +192,29 @@ export function ManageAssets({
             </span>
           </button>
           <button
-            onClick={() => setActiveSubTab("reservations")}
+            onClick={() => setActiveSubTab('reservations')}
             className={`px-4 py-3 border-b-2 transition-colors text-sm font-medium ${
-              activeSubTab === "reservations"
-                ? "border-[#2563eb] text-[#2563eb]"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+              activeSubTab === 'reservations'
+                ? 'border-[#2563eb] text-[#2563eb]'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             <span className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Réservations
-              {reservations.filter(r => r.status === "pending").length > 0 && (
+              {reservations.filter((r) => r.status === 'pending').length > 0 && (
                 <span className="px-1.5 py-0.5 bg-red-600 text-white text-xs rounded-full">
-                  {reservations.filter(r => r.status === "pending").length}
+                  {reservations.filter((r) => r.status === 'pending').length}
                 </span>
               )}
             </span>
           </button>
           <button
-            onClick={() => setActiveSubTab("revenue")}
+            onClick={() => setActiveSubTab('revenue')}
             className={`px-4 py-3 border-b-2 transition-colors text-sm font-medium ${
-              activeSubTab === "revenue"
-                ? "border-[#2563eb] text-[#2563eb]"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+              activeSubTab === 'revenue'
+                ? 'border-[#2563eb] text-[#2563eb]'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             <span className="flex items-center gap-2">
@@ -226,7 +226,7 @@ export function ManageAssets({
       </div>
 
       {/* Equipment Tab */}
-      {activeSubTab === "equipment" && (
+      {activeSubTab === 'equipment' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
@@ -272,7 +272,9 @@ export function ManageAssets({
                     <td className="px-6 py-4">
                       {getStatusBadge(equipment.status)}
                       {equipment.nextBooking && (
-                        <div className="text-xs text-muted-foreground mt-1">{equipment.nextBooking}</div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          {equipment.nextBooking}
+                        </div>
                       )}
                     </td>
                     <td className="px-6 py-4">
@@ -310,7 +312,7 @@ export function ManageAssets({
       )}
 
       {/* Calendar Tab */}
-      {activeSubTab === "calendar" && (
+      {activeSubTab === 'calendar' && (
         <div className="space-y-4">
           <div>
             <h2 className="text-xl font-bold">Calendrier de Réservations</h2>
@@ -320,7 +322,7 @@ export function ManageAssets({
           <div className="bg-card border rounded-lg p-6">
             {/* Calendar Header */}
             <div className="grid grid-cols-7 gap-2 mb-4">
-              {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day) => (
+              {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day) => (
                 <div key={day} className="text-center font-semibold text-sm py-2">
                   {day}
                 </div>
@@ -338,14 +340,14 @@ export function ManageAssets({
               {Array.from({ length: 31 }).map((_, i) => {
                 const day = i + 1;
                 const hasEvent = calendarEvents.some((event) => {
-                  const start = parseInt(event.startDate.split(" ")[0]);
-                  const end = parseInt(event.endDate.split(" ")[0]);
+                  const start = parseInt(event.startDate.split(' ')[0]);
+                  const end = parseInt(event.endDate.split(' ')[0]);
                   return day >= start && day <= end;
                 });
 
                 const event = calendarEvents.find((e) => {
-                  const start = parseInt(e.startDate.split(" ")[0]);
-                  const end = parseInt(e.endDate.split(" ")[0]);
+                  const start = parseInt(e.startDate.split(' ')[0]);
+                  const end = parseInt(e.endDate.split(' ')[0]);
                   return day >= start && day <= end;
                 });
 
@@ -353,19 +355,15 @@ export function ManageAssets({
                   <div
                     key={day}
                     className={`aspect-square border rounded-lg p-2 ${
-                      hasEvent ? event?.color : "hover:bg-muted"
+                      hasEvent ? event?.color : 'hover:bg-muted'
                     } transition-colors cursor-pointer relative`}
                   >
-                    <div
-                      className={`text-sm font-medium ${
-                        hasEvent ? "text-white" : ""
-                      }`}
-                    >
+                    <div className={`text-sm font-medium ${hasEvent ? 'text-white' : ''}`}>
                       {day}
                     </div>
                     {hasEvent && (
                       <div className="text-xs text-white/90 mt-1 truncate">
-                        {event?.equipmentName.split(" ")[0]}
+                        {event?.equipmentName.split(' ')[0]}
                       </div>
                     )}
                   </div>
@@ -383,7 +381,8 @@ export function ManageAssets({
                     <div>
                       <div className="text-sm font-medium">{eq.name}</div>
                       <div className="text-xs text-muted-foreground">
-                        {calendarEvents.filter((e) => e.equipmentId === eq.id).length} réservation(s)
+                        {calendarEvents.filter((e) => e.equipmentId === eq.id).length}{' '}
+                        réservation(s)
                       </div>
                     </div>
                   </div>
@@ -395,7 +394,7 @@ export function ManageAssets({
       )}
 
       {/* Reservations Tab */}
-      {activeSubTab === "reservations" && (
+      {activeSubTab === 'reservations' && (
         <div className="space-y-4">
           <div>
             <h2 className="text-xl font-bold">Gestion des Réservations</h2>
@@ -425,39 +424,41 @@ export function ManageAssets({
 
                       <div className="grid grid-cols-2 gap-4 text-sm mb-3">
                         <div>
-                          <span className="text-muted-foreground">Locataire :</span>{" "}
+                          <span className="text-muted-foreground">Locataire :</span>{' '}
                           <span className="font-medium">{reservation.renterName}</span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">Dates :</span>{" "}
+                          <span className="text-muted-foreground">Dates :</span>{' '}
                           <span className="font-medium">
-                            {new Date(reservation.startDate).toLocaleDateString("fr-FR")} -{" "}
-                            {new Date(reservation.endDate).toLocaleDateString("fr-FR")}
+                            {new Date(reservation.startDate).toLocaleDateString('fr-FR')} -{' '}
+                            {new Date(reservation.endDate).toLocaleDateString('fr-FR')}
                           </span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">Durée :</span>{" "}
+                          <span className="text-muted-foreground">Durée :</span>{' '}
                           <span className="font-medium">{reservation.days} jours</span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">Montant :</span>{" "}
-                          <span className="font-semibold text-[#2563eb]">{reservation.totalPrice}€</span>
+                          <span className="text-muted-foreground">Montant :</span>{' '}
+                          <span className="font-semibold text-[#2563eb]">
+                            {reservation.totalPrice}€
+                          </span>
                         </div>
                       </div>
 
                       <div className="text-xs text-muted-foreground">
-                        Demande envoyée le{" "}
-                        {new Date(reservation.requestDate).toLocaleDateString("fr-FR")}
+                        Demande envoyée le{' '}
+                        {new Date(reservation.requestDate).toLocaleDateString('fr-FR')}
                       </div>
                     </div>
 
                     <div className="flex gap-2 ml-4">
-                      {reservation.status === "pending" && (
+                      {reservation.status === 'pending' && (
                         <>
                           <button
                             onClick={() => {
                               onAcceptReservation(reservation.id);
-                              toast.success("Réservation acceptée !");
+                              toast.success('Réservation acceptée !');
                             }}
                             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium flex items-center gap-2"
                           >
@@ -467,7 +468,7 @@ export function ManageAssets({
                           <button
                             onClick={() => {
                               onRejectReservation(reservation.id);
-                              toast.error("Réservation refusée");
+                              toast.error('Réservation refusée');
                             }}
                             className="px-4 py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-sm font-medium flex items-center gap-2"
                           >
@@ -490,7 +491,7 @@ export function ManageAssets({
       )}
 
       {/* Revenue Tab */}
-      {activeSubTab === "revenue" && (
+      {activeSubTab === 'revenue' && (
         <div className="space-y-6">
           <div>
             <h2 className="text-xl font-bold">Tableau de Bord Financier</h2>
@@ -535,7 +536,7 @@ export function ManageAssets({
             <h3 className="font-semibold mb-4">Revenus des 6 derniers mois</h3>
             <div className="h-64 flex items-end justify-around gap-4">
               {[2100, 2800, 2400, 3200, 3500, 3932].map((value, index) => {
-                const months = ["Août", "Sept", "Oct", "Nov", "Déc", "Jan"];
+                const months = ['Août', 'Sept', 'Oct', 'Nov', 'Déc', 'Jan'];
                 const height = (value / 4000) * 100;
 
                 return (

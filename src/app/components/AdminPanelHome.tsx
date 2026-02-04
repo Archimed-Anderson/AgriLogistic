@@ -1,9 +1,9 @@
-import { 
-  Users, 
-  Package, 
-  ShoppingCart, 
-  TrendingUp, 
-  FileText, 
+import {
+  Users,
+  Package,
+  ShoppingCart,
+  TrendingUp,
+  FileText,
   Truck,
   Calculator,
   Navigation2,
@@ -16,9 +16,9 @@ import {
   MessageSquare,
   BarChart3,
   Award,
-  Sparkles
-} from "lucide-react";
-import { Card } from "./ui/card";
+  Sparkles,
+} from 'lucide-react';
+import { Card } from './ui/card';
 
 interface AdminPanelHomeProps {
   onNavigate: (route: string) => void;
@@ -27,146 +27,146 @@ interface AdminPanelHomeProps {
 const adminFeatures = [
   {
     icon: Users,
-    title: "Gestion Utilisateurs",
-    description: "Gérer les comptes et permissions",
-    route: "/admin/users",
-    color: "bg-blue-500",
-    stats: "245 utilisateurs"
+    title: 'Gestion Utilisateurs',
+    description: 'Gérer les comptes et permissions',
+    route: '/admin/users',
+    color: 'bg-blue-500',
+    stats: '245 utilisateurs',
   },
   {
     icon: Package,
-    title: "Produits",
-    description: "Inventaire et catalogue produits",
-    route: "/admin/products",
-    color: "bg-green-500",
-    stats: "1,234 produits"
+    title: 'Produits',
+    description: 'Inventaire et catalogue produits',
+    route: '/admin/products',
+    color: 'bg-green-500',
+    stats: '1,234 produits',
   },
   {
     icon: ShoppingCart,
-    title: "Commandes",
-    description: "Suivi et gestion des commandes",
-    route: "/admin/orders",
-    color: "bg-orange-500",
-    stats: "89 en cours"
+    title: 'Commandes',
+    description: 'Suivi et gestion des commandes',
+    route: '/admin/orders',
+    color: 'bg-orange-500',
+    stats: '89 en cours',
   },
   {
     icon: TrendingUp,
-    title: "Catégories",
-    description: "Organisation des produits",
-    route: "/admin/categories",
-    color: "bg-purple-500",
-    stats: "24 catégories"
+    title: 'Catégories',
+    description: 'Organisation des produits',
+    route: '/admin/categories',
+    color: 'bg-purple-500',
+    stats: '24 catégories',
   },
   {
     icon: FileText,
-    title: "Rapports",
-    description: "Analytics et rapports détaillés",
-    route: "/admin/reports",
-    color: "bg-indigo-500",
-    stats: "Beta",
-    badge: "Beta"
+    title: 'Rapports',
+    description: 'Analytics et rapports détaillés',
+    route: '/admin/reports',
+    color: 'bg-indigo-500',
+    stats: 'Beta',
+    badge: 'Beta',
   },
   {
     icon: Truck,
-    title: "Logistique",
-    description: "Suivi des livraisons et stocks",
-    route: "/admin/logistics",
-    color: "bg-cyan-500",
-    stats: "12 expéditions"
+    title: 'Logistique',
+    description: 'Suivi des livraisons et stocks',
+    route: '/admin/logistics',
+    color: 'bg-cyan-500',
+    stats: '12 expéditions',
   },
   {
     icon: Calculator,
-    title: "Calculateur Transport",
-    description: "Calcul de coûts de transport",
-    route: "/admin/transport-calculator",
-    color: "bg-emerald-500",
-    stats: "Nouveau",
-    badge: "New"
+    title: 'Calculateur Transport',
+    description: 'Calcul de coûts de transport',
+    route: '/admin/transport-calculator',
+    color: 'bg-emerald-500',
+    stats: 'Nouveau',
+    badge: 'New',
   },
   {
     icon: Navigation2,
-    title: "Suivi Livraison 3PL",
-    description: "Tracking en temps réel",
-    route: "/admin/tracking",
-    color: "bg-teal-500",
-    stats: "Nouveau",
-    badge: "New"
+    title: 'Suivi Livraison 3PL',
+    description: 'Tracking en temps réel',
+    route: '/admin/tracking',
+    color: 'bg-teal-500',
+    stats: 'Nouveau',
+    badge: 'New',
   },
   {
     icon: MessageSquare,
-    title: "Chat B2B",
-    description: "Messagerie professionnelle",
-    route: "/admin/b2b-chat",
-    color: "bg-pink-500",
-    stats: "Nouveau",
-    badge: "New"
+    title: 'Chat B2B',
+    description: 'Messagerie professionnelle',
+    route: '/admin/b2b-chat',
+    color: 'bg-pink-500',
+    stats: 'Nouveau',
+    badge: 'New',
   },
   {
     icon: BarChart3,
-    title: "Dashboard Transporteur",
-    description: "Gestion transporteurs",
-    route: "/admin/carrier-dashboard",
-    color: "bg-violet-500",
-    stats: "Nouveau",
-    badge: "New"
+    title: 'Dashboard Transporteur',
+    description: 'Gestion transporteurs',
+    route: '/admin/carrier-dashboard',
+    color: 'bg-violet-500',
+    stats: 'Nouveau',
+    badge: 'New',
   },
   {
     icon: Award,
-    title: "Affiliations",
-    description: "Revenus passifs et commissions",
-    route: "/admin/affiliate-dashboard",
-    color: "bg-yellow-500",
-    stats: "€45,890",
-    badge: "💰"
+    title: 'Affiliations',
+    description: 'Revenus passifs et commissions',
+    route: '/admin/affiliate-dashboard',
+    color: 'bg-yellow-500',
+    stats: '€45,890',
+    badge: '💰',
   },
   {
     icon: Sprout,
-    title: "Crop Intelligence",
-    description: "Analyse des cultures",
-    route: "/admin/crops",
-    color: "bg-lime-500",
-    stats: "AI-Powered"
+    title: 'Crop Intelligence',
+    description: 'Analyse des cultures',
+    route: '/admin/crops',
+    color: 'bg-lime-500',
+    stats: 'AI-Powered',
   },
   {
     icon: Cpu,
-    title: "IoT Hub",
-    description: "Capteurs et appareils connectés",
-    route: "/admin/iot",
-    color: "bg-sky-500",
-    stats: "45 appareils"
+    title: 'IoT Hub',
+    description: 'Capteurs et appareils connectés',
+    route: '/admin/iot',
+    color: 'bg-sky-500',
+    stats: '45 appareils',
   },
   {
     icon: Brain,
-    title: "AI Insights",
-    description: "Intelligence artificielle",
-    route: "/admin/ai-insights",
-    color: "bg-fuchsia-500",
-    stats: "ML Ready"
+    title: 'AI Insights',
+    description: 'Intelligence artificielle',
+    route: '/admin/ai-insights',
+    color: 'bg-fuchsia-500',
+    stats: 'ML Ready',
   },
   {
     icon: DollarSign,
-    title: "Finance",
-    description: "Gestion financière complète",
-    route: "/admin/finance",
-    color: "bg-amber-500",
-    stats: "€45,890"
+    title: 'Finance',
+    description: 'Gestion financière complète',
+    route: '/admin/finance',
+    color: 'bg-amber-500',
+    stats: '€45,890',
   },
   {
     icon: Zap,
-    title: "Automation",
-    description: "Workflows automatisés",
-    route: "/admin/automation",
-    color: "bg-yellow-500",
-    stats: "8 workflows"
+    title: 'Automation',
+    description: 'Workflows automatisés',
+    route: '/admin/automation',
+    color: 'bg-yellow-500',
+    stats: '8 workflows',
   },
   {
     icon: Settings,
-    title: "Paramètres",
-    description: "Configuration système",
-    route: "/admin/settings",
-    color: "bg-gray-500",
-    stats: "Système"
-  }
+    title: 'Paramètres',
+    description: 'Configuration système',
+    route: '/admin/settings',
+    color: 'bg-gray-500',
+    stats: 'Système',
+  },
 ];
 
 export function AdminPanelHome({ onNavigate }: AdminPanelHomeProps) {
@@ -254,15 +254,19 @@ export function AdminPanelHome({ onNavigate }: AdminPanelHomeProps) {
                 onClick={() => onNavigate(feature.route)}
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div className={`h-12 w-12 rounded-lg ${feature.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                  <div
+                    className={`h-12 w-12 rounded-lg ${feature.color} flex items-center justify-center group-hover:scale-110 transition-transform`}
+                  >
                     <Icon className="h-6 w-6 text-white" />
                   </div>
                   {feature.badge && (
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      feature.badge === "New" 
-                        ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
-                        : "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
-                    }`}>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        feature.badge === 'New'
+                          ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+                          : 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                      }`}
+                    >
                       {feature.badge}
                     </span>
                   )}
@@ -289,7 +293,7 @@ export function AdminPanelHome({ onNavigate }: AdminPanelHomeProps) {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <button
-            onClick={() => onNavigate("/admin/users")}
+            onClick={() => onNavigate('/admin/users')}
             className="p-4 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all text-left"
           >
             <Users className="h-8 w-8 mb-2" />
@@ -298,7 +302,7 @@ export function AdminPanelHome({ onNavigate }: AdminPanelHomeProps) {
           </button>
 
           <button
-            onClick={() => onNavigate("/admin/products")}
+            onClick={() => onNavigate('/admin/products')}
             className="p-4 bg-gradient-to-br from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all text-left"
           >
             <Package className="h-8 w-8 mb-2" />
@@ -307,7 +311,7 @@ export function AdminPanelHome({ onNavigate }: AdminPanelHomeProps) {
           </button>
 
           <button
-            onClick={() => onNavigate("/admin/reports")}
+            onClick={() => onNavigate('/admin/reports')}
             className="p-4 bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all text-left"
           >
             <FileText className="h-8 w-8 mb-2" />
@@ -316,7 +320,7 @@ export function AdminPanelHome({ onNavigate }: AdminPanelHomeProps) {
           </button>
 
           <button
-            onClick={() => onNavigate("/admin/settings")}
+            onClick={() => onNavigate('/admin/settings')}
             className="p-4 bg-gradient-to-br from-gray-500 to-gray-600 text-white rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all text-left"
           >
             <Settings className="h-8 w-8 mb-2" />
@@ -338,30 +342,30 @@ export function AdminPanelHome({ onNavigate }: AdminPanelHomeProps) {
               Nouvelles Fonctionnalités B2B Disponibles !
             </h3>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
-              Découvrez nos nouveaux outils de gestion logistique : Calculateur de transport, 
-              Suivi 3PL, Chat B2B professionnel, et Dashboard transporteur.
+              Découvrez nos nouveaux outils de gestion logistique : Calculateur de transport, Suivi
+              3PL, Chat B2B professionnel, et Dashboard transporteur.
             </p>
             <div className="flex flex-wrap gap-2">
               <button
-                onClick={() => onNavigate("/admin/transport-calculator")}
+                onClick={() => onNavigate('/admin/transport-calculator')}
                 className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors text-sm font-medium"
               >
                 Calculateur Transport
               </button>
               <button
-                onClick={() => onNavigate("/admin/tracking")}
+                onClick={() => onNavigate('/admin/tracking')}
                 className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors text-sm font-medium"
               >
                 Suivi Livraison
               </button>
               <button
-                onClick={() => onNavigate("/admin/b2b-chat")}
+                onClick={() => onNavigate('/admin/b2b-chat')}
                 className="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors text-sm font-medium"
               >
                 Chat B2B
               </button>
               <button
-                onClick={() => onNavigate("/admin/carrier-dashboard")}
+                onClick={() => onNavigate('/admin/carrier-dashboard')}
                 className="px-4 py-2 bg-violet-500 text-white rounded-lg hover:bg-violet-600 transition-colors text-sm font-medium"
               >
                 Dashboard Transporteur

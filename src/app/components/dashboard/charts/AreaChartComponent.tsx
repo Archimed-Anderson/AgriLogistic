@@ -1,4 +1,12 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
 interface AreaChartData {
   month: string;
@@ -15,14 +23,9 @@ interface AreaChartComponentProps {
 export function AreaChartComponent({ data, dataKeys, title, yAxisLabel }: AreaChartComponentProps) {
   return (
     <div className="w-full h-full flex flex-col">
-      {title && (
-        <h3 className="text-lg font-semibold text-slate-900 mb-4">{title}</h3>
-      )}
+      {title && <h3 className="text-lg font-semibold text-slate-900 mb-4">{title}</h3>}
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
-          data={data}
-          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-        >
+        <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
           <defs>
             {dataKeys.map((item, index) => (
               <linearGradient key={index} id={`color${item.key}`} x1="0" y1="0" x2="0" y2="1">
@@ -40,7 +43,16 @@ export function AreaChartComponent({ data, dataKeys, title, yAxisLabel }: AreaCh
           <YAxis
             tick={{ fill: '#64748b', fontSize: 12 }}
             tickLine={{ stroke: '#e2e8f0' }}
-            label={yAxisLabel ? { value: yAxisLabel, angle: -90, position: 'insideLeft', style: { fill: '#64748b', fontSize: 12 } } : undefined}
+            label={
+              yAxisLabel
+                ? {
+                    value: yAxisLabel,
+                    angle: -90,
+                    position: 'insideLeft',
+                    style: { fill: '#64748b', fontSize: 12 },
+                  }
+                : undefined
+            }
           />
           <Tooltip
             contentStyle={{

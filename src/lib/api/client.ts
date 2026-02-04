@@ -19,14 +19,12 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     // Get token from localStorage or cookie
-    const token = typeof window !== 'undefined' 
-      ? localStorage.getItem('auth_token') 
-      : null;
-    
+    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
+
     return config;
   },
   (error: AxiosError) => {
@@ -54,7 +52,7 @@ apiClient.interceptors.response.use(
       // Timeout
       console.error('Request timeout');
     }
-    
+
     return Promise.reject(error);
   }
 );

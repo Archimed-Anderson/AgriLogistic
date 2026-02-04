@@ -1,25 +1,19 @@
-import { Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { JWTService } from '../services/jwt.service';
 import { UserRole } from '../models/permission.model';
 import { getRedisService } from '../services/redis.service';
-import { Request } from 'express';
+import type { AuthUser } from '../types/express.d';
 
-// Extend Express Request to include user
 export interface AuthenticatedRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-    role: UserRole;
-    permissions: string[];
-  };
+  user?: AuthUser;
 }
 /**
  * Middleware to authenticate JWT tokens
  */
-export const authenticateToken = async (
-  req: AuthenticatedRequest,
+export const authenticateToken: RequestHandler = async (
+  req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -44,7 +38,7 @@ export const authenticateToken = async (
 
     const jwtService = new JWTService();
     const decoded = jwtService.verifyAccessToken(token);
-    req.user = {
+    (req as AuthenticatedRequest).user = {
       id: decoded.sub,
       email: decoded.email,
       role: decoded.role as UserRole,
@@ -61,10 +55,10 @@ export const authenticateToken = async (
 /**
  * Optional authentication - continues even if token is invalid
  */
-export const optionalAuth = async (
-  req: Request & { user?: AuthenticatedRequest['user'] },
+export const optionalAuth: RequestHandler = async (
+  req: Request,
   _res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -76,7 +70,7 @@ export const optionalAuth = async (
       if (!isBlacklisted) {
         const jwtService = new JWTService();
         const decoded = jwtService.verifyAccessToken(token);
-        req.user = {
+        (req as AuthenticatedRequest).user = {
           id: decoded.sub,
           email: decoded.email,
           role: decoded.role as UserRole,

@@ -16,14 +16,14 @@ export default function UsersPage() {
     role: '',
     status: '',
   });
-  
+
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 20,
   });
-  
+
   const { data, isLoading } = useAdminUsers({ ...filters, ...pagination });
-  
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -32,7 +32,7 @@ export default function UsersPage() {
       </div>
     );
   }
-  
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -45,7 +45,7 @@ export default function UsersPage() {
             {data?.total || 0} utilisateurs au total
           </p>
         </div>
-        
+
         <RequirePermission permission={AdminPermission.USERS_CREATE}>
           <Button asChild>
             <Link to="/admin/users/new">
@@ -55,14 +55,14 @@ export default function UsersPage() {
           </Button>
         </RequirePermission>
       </div>
-      
+
       {/* Filters */}
       <Card>
         <CardContent className="pt-6">
           <UserFilters filters={filters} onChange={setFilters} />
         </CardContent>
       </Card>
-      
+
       {/* Table */}
       <Card>
         <CardHeader>

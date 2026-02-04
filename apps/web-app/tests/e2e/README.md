@@ -1,13 +1,37 @@
-# Tests E2E Playwright - Dashboard de Connexion
+# Tests E2E Playwright - Auth & Connexion
 
 ## 📋 Vue d'ensemble
 
-Cette suite de tests E2E utilise Playwright pour valider complètement le dashboard de connexion de l'application AgroLogistic.
+Cette suite de tests E2E utilise Playwright pour valider l'authentification (Better Auth), l'inscription, les redirections par rôle et le dashboard de connexion de l'application AgroLogistic.
 
 ## 🧪 Fichiers de tests
 
+### `auth.spec.ts` — Scénarios E2E Auth (A à E)
+
+Scénarios détaillés :
+
+- **Scénario A** : Inscription & Connexion Agriculteur → `/register`, formulaire, redirection `/dashboard/agriculteur`, utilisateur connecté (Déconnexion ou contenu dashboard).
+- **Scénario B** : Connexion Administrateur → Accès Rapide Admin, `/admin/dashboard`, éléments War Room visibles.
+- **Scénario C** : Connexion Transporteur → Accès Rapide Transporteur, `/dashboard/transporter`, missions/flotte visibles.
+- **Scénario D** : Erreur de Connexion → mauvais mot de passe, message d’erreur, formulaire visible, pas de redirection.
+- **Scénario E** : Google Auth → clic « Se connecter avec Google », message explicite si non configuré (ou bouton désactivé).
+- **Étape 4 — Performance** : Clic « Se connecter » (Accès Rapide Admin) → Dashboard affiché en **< 2 secondes**.
+- **Étape 4 — Stabilité** : Après connexion Admin, clic « Déconnexion » → session détruite, retour sur page Login.
+
+### `auth-complete.spec.ts` — Suite Auth complète (recommandé)
+
+Valide **Sign In / Sign Up**, **redirections vers les bons dashboards** et **flux E2E** :
+
+- ✅ **Redirections par rôle (Accès Rapide)** : Admin → `/admin/dashboard`, Agriculteur → `/dashboard/agriculteur`, Transporteur → `/dashboard/transporter`, Acheteur → `/dashboard/buyer`
+- ✅ **Sign In** : erreur mauvais mot de passe ; connexion avec identifiants valides → redirection dashboard
+- ✅ **Sign Up** : inscription Agriculteur / Acheteur / Transporteur → redirection vers le bon dashboard
+- ✅ **OAuth** : message gracieux si Google non configuré
+- ✅ **Déconnexion** : Accès Rapide Admin puis Déconnexion → `/login`
+
 ### `login-dashboard.spec.ts`
+
 Tests complets du dashboard de connexion :
+
 - ✅ Affichage et structure de la page
 - ✅ Validation des champs (email, mot de passe)
 - ✅ Soumission du formulaire
@@ -17,14 +41,18 @@ Tests complets du dashboard de connexion :
 - ✅ Design et UI
 
 ### `login-api-integration.spec.ts`
+
 Tests d'intégration avec l'API backend :
+
 - ✅ Envoi des données correctes à l'API
 - ✅ Gestion des erreurs API (401, 429, 500)
 - ✅ Stockage des tokens après connexion
 - ✅ Intégration mot de passe oublié
 
 ### `login-accessibility.spec.ts`
+
 Tests d'accessibilité (WCAG AA) :
+
 - ✅ Contraste des couleurs
 - ✅ Labels accessibles
 - ✅ Navigation au clavier
@@ -41,6 +69,8 @@ cd apps/web-app
 pnpm install
 pnpm exec playwright install
 ```
+
+Les dépendances Playwright sont déjà déclarées dans `package.json` (`@playwright/test`). La configuration se trouve dans `playwright.config.ts` (racine de `apps/web-app`).
 
 ### Exécuter tous les tests
 
@@ -102,25 +132,25 @@ La configuration Playwright se trouve dans `playwright.config.ts`.
 
 ### Variables d'environnement
 
-- `BASE_URL`: URL de base de l'application (défaut: `http://localhost:3002`)
-- `CI`: Mode CI/CD (définit les retries et workers)
+- `PLAYWRIGHT_BASE_URL` : URL de base (défaut : `http://localhost:3000`, utilisé dans `playwright.config.ts`)
+- `CI` : Mode CI/CD (retries, workers, pas de `reuseExistingServer`)
 
 ## 📝 Écriture de nouveaux tests
 
 ### Structure d'un test
 
 ```typescript
-import { test, expect } from '@playwright/test'
+import { test, expect } from '@playwright/test';
 
 test('description du test', async ({ page }) => {
-  await page.goto('/login')
-  
+  await page.goto('/login');
+
   // Actions
-  await page.getByLabel('Email').fill('test@example.com')
-  
+  await page.getByLabel('Email').fill('test@example.com');
+
   // Assertions
-  await expect(page.getByText('Succès')).toBeVisible()
-})
+  await expect(page.getByText('Succès')).toBeVisible();
+});
 ```
 
 ### Bonnes pratiques
@@ -156,7 +186,7 @@ pnpm exec playwright show-trace test-results/path-to-trace.zip
 Pour ajouter des tests de régression visuelle, utilisez `toHaveScreenshot()` :
 
 ```typescript
-await expect(page).toHaveScreenshot('login-page.png')
+await expect(page).toHaveScreenshot('login-page.png');
 ```
 
 ## 📚 Ressources

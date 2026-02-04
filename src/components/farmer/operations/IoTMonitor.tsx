@@ -73,7 +73,7 @@ export function IoTMonitor({ sensors, isLoading }: IoTMonitorProps) {
     }
   };
 
-  const activeSensors = sensors.filter(s => s.status === 'active').length;
+  const activeSensors = sensors.filter((s) => s.status === 'active').length;
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -123,12 +123,8 @@ export function IoTMonitor({ sensors, isLoading }: IoTMonitorProps) {
               {/* Reading */}
               <div className={`p-3 rounded-lg mb-3 ${getReadingStatus(sensor.lastReading.status)}`}>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-3xl font-bold">
-                    {sensor.lastReading.value}
-                  </span>
-                  <span className="text-sm font-medium">
-                    {sensor.lastReading.unit}
-                  </span>
+                  <span className="text-3xl font-bold">{sensor.lastReading.value}</span>
+                  <span className="text-sm font-medium">{sensor.lastReading.unit}</span>
                 </div>
                 {sensor.threshold && (
                   <div className="mt-2 text-xs">

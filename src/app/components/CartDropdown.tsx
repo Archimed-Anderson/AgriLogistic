@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ShoppingCart, Plus, Minus, Trash2, X, ChevronRight } from "lucide-react";
+import { useState } from 'react';
+import { ShoppingCart, Plus, Minus, Trash2, X, ChevronRight } from 'lucide-react';
 
 interface CartItem {
   id: string;
@@ -9,43 +9,47 @@ interface CartItem {
   quantity: number;
 }
 
-export function CartDropdown({ onClose, onNavigate }: { onClose: () => void; onNavigate?: (route: string) => void }) {
+export function CartDropdown({
+  onClose,
+  onNavigate,
+}: {
+  onClose: () => void;
+  onNavigate?: (route: string) => void;
+}) {
   const [cartItems, setCartItems] = useState<CartItem[]>([
     {
-      id: "1",
-      name: "Tomates Bio",
-      image: "🍅",
+      id: '1',
+      name: 'Tomates Bio',
+      image: '🍅',
       price: 4.5,
       quantity: 2,
     },
     {
-      id: "2",
-      name: "Pommes Golden",
-      image: "🍎",
+      id: '2',
+      name: 'Pommes Golden',
+      image: '🍎',
       price: 3.8,
       quantity: 3,
     },
     {
-      id: "3",
-      name: "Fromage de Chèvre",
-      image: "🧀",
+      id: '3',
+      name: 'Fromage de Chèvre',
+      image: '🧀',
       price: 6.5,
       quantity: 1,
     },
   ]);
 
   const recommendedProducts = [
-    { id: "4", name: "Laitue Batavia", image: "🥬", price: 2.2 },
-    { id: "5", name: "Œufs Fermiers", image: "🥚", price: 4.2 },
+    { id: '4', name: 'Laitue Batavia', image: '🥬', price: 2.2 },
+    { id: '5', name: 'Œufs Fermiers', image: '🥚', price: 4.2 },
   ];
 
   const updateQuantity = (id: string, delta: number) => {
     setCartItems(
       cartItems
         .map((item) =>
-          item.id === id
-            ? { ...item, quantity: Math.max(0, item.quantity + delta) }
-            : item
+          item.id === id ? { ...item, quantity: Math.max(0, item.quantity + delta) } : item
         )
         .filter((item) => item.quantity > 0)
     );
@@ -86,7 +90,7 @@ export function CartDropdown({ onClose, onNavigate }: { onClose: () => void; onN
             </p>
             <button
               onClick={() => {
-                onNavigate?.("/market");
+                onNavigate?.('/market');
                 onClose();
               }}
               className="px-4 py-2 bg-[#0B7A4B] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors"
@@ -116,9 +120,7 @@ export function CartDropdown({ onClose, onNavigate }: { onClose: () => void; onN
                         >
                           <Minus className="h-3 w-3" />
                         </button>
-                        <span className="text-sm font-medium w-6 text-center">
-                          {item.quantity}
-                        </span>
+                        <span className="text-sm font-medium w-6 text-center">{item.quantity}</span>
                         <button
                           onClick={() => updateQuantity(item.id, 1)}
                           className="p-1 hover:bg-muted transition-colors"
@@ -132,9 +134,7 @@ export function CartDropdown({ onClose, onNavigate }: { onClose: () => void; onN
                         {(item.price * item.quantity).toFixed(2)}€
                       </div>
                     </div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {item.price}€ / unité
-                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">{item.price}€ / unité</div>
                   </div>
 
                   {/* Delete Button */}
@@ -156,8 +156,8 @@ export function CartDropdown({ onClose, onNavigate }: { onClose: () => void; onN
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Livraison</span>
-                <span className={shipping === 0 ? "text-green-600 font-medium" : "font-medium"}>
-                  {shipping === 0 ? "Gratuite" : `${shipping.toFixed(2)}€`}
+                <span className={shipping === 0 ? 'text-green-600 font-medium' : 'font-medium'}>
+                  {shipping === 0 ? 'Gratuite' : `${shipping.toFixed(2)}€`}
                 </span>
               </div>
               {savings > 0 && (
@@ -183,9 +183,7 @@ export function CartDropdown({ onClose, onNavigate }: { onClose: () => void; onN
                   >
                     <div className="text-4xl mb-2 text-center">{product.image}</div>
                     <div className="text-xs font-medium truncate">{product.name}</div>
-                    <div className="text-sm font-bold text-[#0B7A4B] mt-1">
-                      {product.price}€
-                    </div>
+                    <div className="text-sm font-bold text-[#0B7A4B] mt-1">{product.price}€</div>
                     <button className="w-full mt-2 px-2 py-1 bg-muted hover:bg-muted/80 rounded text-xs transition-colors">
                       Ajouter
                     </button>
@@ -198,7 +196,7 @@ export function CartDropdown({ onClose, onNavigate }: { onClose: () => void; onN
             <div className="p-4 border-t space-y-2">
               <button
                 onClick={() => {
-                  onNavigate?.("/cart");
+                  onNavigate?.('/cart');
                   onClose();
                 }}
                 className="w-full px-4 py-2 border rounded-lg hover:bg-muted transition-colors font-medium flex items-center justify-center gap-2"
@@ -208,7 +206,7 @@ export function CartDropdown({ onClose, onNavigate }: { onClose: () => void; onN
               </button>
               <button
                 onClick={() => {
-                  onNavigate?.("/checkout");
+                  onNavigate?.('/checkout');
                   onClose();
                 }}
                 className="w-full px-4 py-3 bg-[#0B7A4B] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors font-semibold"

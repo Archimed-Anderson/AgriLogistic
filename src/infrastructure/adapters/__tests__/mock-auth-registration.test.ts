@@ -199,9 +199,7 @@ describe('MockAuthAdapter - User Registration', () => {
         acceptTerms: true,
       };
 
-      await expect(authAdapter.register(invalidData)).rejects.toThrow(
-        'Prénom et nom requis'
-      );
+      await expect(authAdapter.register(invalidData)).rejects.toThrow('Prénom et nom requis');
     });
 
     it('should reject registration without last name', async () => {
@@ -216,9 +214,7 @@ describe('MockAuthAdapter - User Registration', () => {
         acceptTerms: true,
       };
 
-      await expect(authAdapter.register(invalidData)).rejects.toThrow(
-        'Prénom et nom requis'
-      );
+      await expect(authAdapter.register(invalidData)).rejects.toThrow('Prénom et nom requis');
     });
   });
 
@@ -298,9 +294,9 @@ describe('MockAuthAdapter - User Registration', () => {
     });
 
     it('should throw error for invalid test email', async () => {
-      await expect(
-        authAdapter.login('error@test.com', 'any-password')
-      ).rejects.toThrow('Identifiants invalides');
+      await expect(authAdapter.login('error@test.com', 'any-password')).rejects.toThrow(
+        'Identifiants invalides'
+      );
     });
   });
 

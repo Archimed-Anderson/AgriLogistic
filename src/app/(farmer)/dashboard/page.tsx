@@ -40,10 +40,40 @@ import {
 
 // Mock data
 const kpis = [
-  { label: 'Revenus ce mois', value: '1 850 000', suffix: 'FCFA', change: '+18%', trend: 'up', icon: DollarSign, color: 'from-emerald-500 to-emerald-600' },
-  { label: 'Cultures actives', value: '8', change: '+2', trend: 'up', icon: Sprout, color: 'from-green-500 to-green-600' },
-  { label: 'Stock disponible', value: '2.5', suffix: 'T', change: '-0.3T', trend: 'down', icon: Package, color: 'from-amber-500 to-amber-600' },
-  { label: 'Commandes', value: '12', change: '+5', trend: 'up', icon: ShoppingCart, color: 'from-blue-500 to-blue-600' },
+  {
+    label: 'Revenus ce mois',
+    value: '1 850 000',
+    suffix: 'FCFA',
+    change: '+18%',
+    trend: 'up',
+    icon: DollarSign,
+    color: 'from-emerald-500 to-emerald-600',
+  },
+  {
+    label: 'Cultures actives',
+    value: '8',
+    change: '+2',
+    trend: 'up',
+    icon: Sprout,
+    color: 'from-green-500 to-green-600',
+  },
+  {
+    label: 'Stock disponible',
+    value: '2.5',
+    suffix: 'T',
+    change: '-0.3T',
+    trend: 'down',
+    icon: Package,
+    color: 'from-amber-500 to-amber-600',
+  },
+  {
+    label: 'Commandes',
+    value: '12',
+    change: '+5',
+    trend: 'up',
+    icon: ShoppingCart,
+    color: 'from-blue-500 to-blue-600',
+  },
 ];
 
 const revenueData = [
@@ -56,21 +86,57 @@ const revenueData = [
 ];
 
 const crops = [
-  { name: 'Tomates Bio', area: '3 ha', status: 'growing', progress: 65, harvestDate: '15 Fév', health: 'excellent' },
-  { name: 'Oignons', area: '2 ha', status: 'ready', progress: 100, harvestDate: 'Prêt', health: 'good' },
-  { name: 'Carottes', area: '1.5 ha', status: 'growing', progress: 40, harvestDate: '28 Mar', health: 'excellent' },
-  { name: 'Maïs', area: '5 ha', status: 'planted', progress: 15, harvestDate: '10 Avr', health: 'good' },
+  {
+    name: 'Tomates Bio',
+    area: '3 ha',
+    status: 'growing',
+    progress: 65,
+    harvestDate: '15 Fév',
+    health: 'excellent',
+  },
+  {
+    name: 'Oignons',
+    area: '2 ha',
+    status: 'ready',
+    progress: 100,
+    harvestDate: 'Prêt',
+    health: 'good',
+  },
+  {
+    name: 'Carottes',
+    area: '1.5 ha',
+    status: 'growing',
+    progress: 40,
+    harvestDate: '28 Mar',
+    health: 'excellent',
+  },
+  {
+    name: 'Maïs',
+    area: '5 ha',
+    status: 'planted',
+    progress: 15,
+    harvestDate: '10 Avr',
+    health: 'good',
+  },
 ];
 
 const weatherForecast = [
-  { day: 'Aujourd\'hui', icon: Sun, temp: 28, condition: 'Ensoleillé' },
+  { day: "Aujourd'hui", icon: Sun, temp: 28, condition: 'Ensoleillé' },
   { day: 'Demain', icon: Cloud, temp: 26, condition: 'Nuageux' },
   { day: 'Vendredi', icon: CloudRain, temp: 24, condition: 'Pluie légère' },
 ];
 
 const alerts = [
-  { type: 'warning', message: 'Risque de sécheresse prévu - Irrigation recommandée pour les tomates', action: 'Planifier irrigation' },
-  { type: 'info', message: 'Prix du marché en hausse: Oignons +15% cette semaine', action: 'Voir opportunités' },
+  {
+    type: 'warning',
+    message: 'Risque de sécheresse prévu - Irrigation recommandée pour les tomates',
+    action: 'Planifier irrigation',
+  },
+  {
+    type: 'info',
+    message: 'Prix du marché en hausse: Oignons +15% cette semaine',
+    action: 'Voir opportunités',
+  },
 ];
 
 const upcomingTasks = [
@@ -123,13 +189,26 @@ export default function FarmerDashboardPage() {
         {kpis.map((kpi) => {
           const Icon = kpi.icon;
           return (
-            <div key={kpi.label} className="bg-white rounded-2xl border border-slate-200 p-6 hover:shadow-lg transition-all">
+            <div
+              key={kpi.label}
+              className="bg-white rounded-2xl border border-slate-200 p-6 hover:shadow-lg transition-all"
+            >
               <div className="flex items-start justify-between mb-4">
-                <div className={`w-12 h-12 bg-gradient-to-br ${kpi.color} rounded-xl flex items-center justify-center shadow-lg`}>
+                <div
+                  className={`w-12 h-12 bg-gradient-to-br ${kpi.color} rounded-xl flex items-center justify-center shadow-lg`}
+                >
                   <Icon className="w-6 h-6 text-white" />
                 </div>
-                <div className={`flex items-center gap-1 text-sm font-medium ${kpi.trend === 'up' ? 'text-emerald-600' : 'text-red-600'}`}>
-                  {kpi.trend === 'up' ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                <div
+                  className={`flex items-center gap-1 text-sm font-medium ${
+                    kpi.trend === 'up' ? 'text-emerald-600' : 'text-red-600'
+                  }`}
+                >
+                  {kpi.trend === 'up' ? (
+                    <TrendingUp className="w-4 h-4" />
+                  ) : (
+                    <TrendingDown className="w-4 h-4" />
+                  )}
                   {kpi.change}
                 </div>
               </div>
@@ -161,15 +240,21 @@ export default function FarmerDashboardPage() {
                 ) : (
                   <TrendingUp className="w-5 h-5 text-blue-600" />
                 )}
-                <p className={`text-sm ${alert.type === 'warning' ? 'text-amber-800' : 'text-blue-800'}`}>
+                <p
+                  className={`text-sm ${
+                    alert.type === 'warning' ? 'text-amber-800' : 'text-blue-800'
+                  }`}
+                >
                   {alert.message}
                 </p>
               </div>
-              <button className={`px-3 py-1 rounded-lg text-sm font-medium ${
-                alert.type === 'warning'
-                  ? 'bg-amber-100 text-amber-700 hover:bg-amber-200'
-                  : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-              }`}>
+              <button
+                className={`px-3 py-1 rounded-lg text-sm font-medium ${
+                  alert.type === 'warning'
+                    ? 'bg-amber-100 text-amber-700 hover:bg-amber-200'
+                    : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                }`}
+              >
                 {alert.action}
               </button>
             </div>
@@ -196,8 +281,14 @@ export default function FarmerDashboardPage() {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="#94a3b8" />
-                <YAxis tick={{ fontSize: 12 }} stroke="#94a3b8" tickFormatter={(v) => formatCurrency(v)} />
-                <Tooltip formatter={(value: number) => [`${formatCurrency(value)} FCFA`, 'Revenus']} />
+                <YAxis
+                  tick={{ fontSize: 12 }}
+                  stroke="#94a3b8"
+                  tickFormatter={(v) => formatCurrency(v)}
+                />
+                <Tooltip
+                  formatter={(value: number) => [`${formatCurrency(value)} FCFA`, 'Revenus']}
+                />
                 <Area
                   type="monotone"
                   dataKey="amount"
@@ -220,7 +311,12 @@ export default function FarmerDashboardPage() {
             {weatherForecast.map((day, i) => {
               const WeatherIcon = day.icon;
               return (
-                <div key={i} className={`flex items-center justify-between p-3 rounded-xl ${i === 0 ? 'bg-white/20' : 'bg-white/10'}`}>
+                <div
+                  key={i}
+                  className={`flex items-center justify-between p-3 rounded-xl ${
+                    i === 0 ? 'bg-white/20' : 'bg-white/10'
+                  }`}
+                >
                   <div className="flex items-center gap-3">
                     <WeatherIcon className="w-6 h-6" />
                     <div>
@@ -242,7 +338,10 @@ export default function FarmerDashboardPage() {
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
           <div className="flex items-center justify-between p-6 border-b border-slate-100">
             <h2 className="text-lg font-semibold text-slate-900">Mes Cultures</h2>
-            <Link to="/farmer/farm" className="text-sm text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1">
+            <Link
+              to="/farmer/farm"
+              className="text-sm text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1"
+            >
               Voir tout <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
@@ -304,7 +403,13 @@ export default function FarmerDashboardPage() {
                     {task.type === 'water' && <Droplets className="w-4 h-4" />}
                     {task.type === 'meeting' && <Calendar className="w-4 h-4" />}
                     {task.type === 'harvest' && <Package className="w-4 h-4" />}
-                    <span>{task.type === 'water' ? 'Irrigation' : task.type === 'meeting' ? 'Rendez-vous' : 'Récolte'}</span>
+                    <span>
+                      {task.type === 'water'
+                        ? 'Irrigation'
+                        : task.type === 'meeting'
+                        ? 'Rendez-vous'
+                        : 'Récolte'}
+                    </span>
                   </div>
                 </div>
                 <CheckCircle className="w-5 h-5 text-slate-300 hover:text-emerald-500 cursor-pointer" />
@@ -318,19 +423,31 @@ export default function FarmerDashboardPage() {
       <div className="bg-white rounded-2xl border border-slate-200 p-6">
         <h2 className="text-lg font-semibold text-slate-900 mb-4">Actions rapides</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Link to="/farmer/marketplace" className="flex flex-col items-center p-4 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition-colors">
+          <Link
+            to="/farmer/marketplace"
+            className="flex flex-col items-center p-4 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition-colors"
+          >
             <ShoppingCart className="w-8 h-8 text-emerald-600 mb-2" />
             <span className="text-sm font-medium text-slate-900">Nouvelle vente</span>
           </Link>
-          <Link to="/farmer/rental" className="flex flex-col items-center p-4 bg-amber-50 hover:bg-amber-100 rounded-xl transition-colors">
+          <Link
+            to="/farmer/rental"
+            className="flex flex-col items-center p-4 bg-amber-50 hover:bg-amber-100 rounded-xl transition-colors"
+          >
             <Tractor className="w-8 h-8 text-amber-600 mb-2" />
             <span className="text-sm font-medium text-slate-900">Louer matériel</span>
           </Link>
-          <Link to="/farmer/operations" className="flex flex-col items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors">
+          <Link
+            to="/farmer/operations"
+            className="flex flex-col items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors"
+          >
             <Package className="w-8 h-8 text-blue-600 mb-2" />
             <span className="text-sm font-medium text-slate-900">Gérer stock</span>
           </Link>
-          <Link to="/farmer/logistics" className="flex flex-col items-center p-4 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors">
+          <Link
+            to="/farmer/logistics"
+            className="flex flex-col items-center p-4 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors"
+          >
             <MapPin className="w-8 h-8 text-purple-600 mb-2" />
             <span className="text-sm font-medium text-slate-900">Logistique</span>
           </Link>

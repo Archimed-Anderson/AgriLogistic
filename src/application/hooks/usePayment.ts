@@ -51,19 +51,15 @@ interface ApiError {
 const paymentApi = {
   createStripeIntent: async (data: CreatePaymentRequest): Promise<PaymentIntent> => {
     const response: AxiosResponse<PaymentIntent> = await apiClient.post(
-      '/api/v1/payments/stripe/intent', 
+      '/api/v1/payments/stripe/intent',
       data
     );
     return response.data;
   },
 
-  createPayPalOrder: async (data: { 
-    amount: number; 
-    currency: string; 
-    order_id: string; 
-  }) => {
+  createPayPalOrder: async (data: { amount: number; currency: string; order_id: string }) => {
     const response: AxiosResponse = await apiClient.post(
-      '/api/v1/payments/paypal/create-order', 
+      '/api/v1/payments/paypal/create-order',
       data
     );
     return response.data;
@@ -77,58 +73,33 @@ const paymentApi = {
   },
 
   getWalletBalance: async (): Promise<WalletBalance> => {
-    const response: AxiosResponse<WalletBalance> = await apiClient.get(
-      '/api/v1/wallet'
-    );
+    const response: AxiosResponse<WalletBalance> = await apiClient.get('/api/v1/wallet');
     return response.data;
   },
 
   topUpWallet: async (data: { amount: number; payment_method_id: string }) => {
-    const response: AxiosResponse = await apiClient.post(
-      '/api/v1/wallet/top-up', 
-      data
-    );
+    const response: AxiosResponse = await apiClient.post('/api/v1/wallet/top-up', data);
     return response.data;
   },
 
   withdrawFromWallet: async (data: { amount: number; bank_account_id: string }) => {
-    const response: AxiosResponse = await apiClient.post(
-      '/api/v1/wallet/withdraw', 
-      data
-    );
+    const response: AxiosResponse = await apiClient.post('/api/v1/wallet/withdraw', data);
     return response.data;
   },
 
-  transferFunds: async (data: { 
-    recipient_user_id: string; 
-    amount: number; 
-    note?: string; 
-  }) => {
-    const response: AxiosResponse = await apiClient.post(
-      '/api/v1/wallet/transfer', 
-      data
-    );
+  transferFunds: async (data: { recipient_user_id: string; amount: number; note?: string }) => {
+    const response: AxiosResponse = await apiClient.post('/api/v1/wallet/transfer', data);
     return response.data;
   },
 
-  getWalletTransactions: async (params?: { 
-    limit?: number; 
-    offset?: number; 
-    type?: string; 
-  }) => {
-    const response: AxiosResponse = await apiClient.get(
-      '/api/v1/wallet/transactions', 
-      { params }
-    );
+  getWalletTransactions: async (params?: { limit?: number; offset?: number; type?: string }) => {
+    const response: AxiosResponse = await apiClient.get('/api/v1/wallet/transactions', { params });
     return response.data;
   },
 
-  createRefund: async (
-    transactionId: string, 
-    data: { amount?: number; reason: string }
-  ) => {
+  createRefund: async (transactionId: string, data: { amount?: number; reason: string }) => {
     const response: AxiosResponse = await apiClient.post(
-      `/api/v1/payments/stripe/${transactionId}/refund`, 
+      `/api/v1/payments/stripe/${transactionId}/refund`,
       data
     );
     return response.data;
@@ -155,7 +126,7 @@ export function useWalletTransactions(params?: { limit?: number; type?: string }
 
 export function useCreatePaymentIntent() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: paymentApi.createStripeIntent,
     onSuccess: () => {
@@ -170,7 +141,7 @@ export function useCreatePaymentIntent() {
 
 export function useTopUpWallet() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: paymentApi.topUpWallet,
     onSuccess: () => {
@@ -185,7 +156,7 @@ export function useTopUpWallet() {
 
 export function useWithdrawFromWallet() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: paymentApi.withdrawFromWallet,
     onSuccess: () => {
@@ -200,7 +171,7 @@ export function useWithdrawFromWallet() {
 
 export function useTransferFunds() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: paymentApi.transferFunds,
     onSuccess: () => {
@@ -215,11 +186,14 @@ export function useTransferFunds() {
 
 export function useCreateRefund() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: ({ transactionId, data }: { 
-      transactionId: string; 
-      data: { amount?: number; reason: string }; 
+    mutationFn: ({
+      transactionId,
+      data,
+    }: {
+      transactionId: string;
+      data: { amount?: number; reason: string };
     }) => paymentApi.createRefund(transactionId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });

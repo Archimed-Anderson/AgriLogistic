@@ -1,0 +1,83 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MissionStatus {
+  CREATED
+  ASSIGNED
+  PICKUP
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+  BILLED
+}
+
+enum Priority {
+  NORMAL
+  HIGH
+  CRITICAL
+}
+
+model Mission {
+  id              String         @id @default(uuid())
+  orderNumber     String         @unique
+  productName     String
+  quantity        Float
+  unit            String         @default("kg")
+  status          MissionStatus  @default(CREATED)
+  priority        Priority       @default(NORMAL)
+  
+  // Entities (IDs from other services)
+  shipperId       String
+  receiverId      String
+  driverId        String?
+  truckId         String?
+  
+  // Routes
+  originName      String
+  originLat       Float?
+  originLng       Float?
+  destinationName String
+  destinationLat  Float?
+  destinationLng  Float?
+  
+  // Timestamps
+  estimatedEta    DateTime?
+  actualPickup    DateTime?
+  actualDelivery  DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  checkpoints     Checkpoint[]
+  documents       Document[]
+}
+
+model Checkpoint {
+  id              String         @id @default(uuid())
+  missionId       String
+  mission         Mission        @relation(fields: [missionId], references: [id])
+  status          MissionStatus
+  timestamp       DateTime       @default(now())
+  locationName    String?
+  latitude        Float?
+  longitude       Float?
+  evidenceUrl     String?        // Photo / Signature
+  notes           String?
+}
+
+model Document {
+  id              String         @id @default(uuid())
+  missionId       String
+  mission         Mission        @relation(fields: [missionId], references: [id])
+  type            String         // e-CMR, Invoice, POD
+  fileUrl         String
+  hash            String?        // Blockchain verification hash
+  createdAt       DateTime       @default(now())
+}

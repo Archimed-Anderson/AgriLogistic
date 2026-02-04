@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   Truck,
   MapPin,
@@ -29,9 +29,17 @@ import {
   Send,
   Bell,
   Settings,
-} from "lucide-react";
-import { toast } from "sonner";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+} from 'lucide-react';
+import { toast } from 'sonner';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
 // Types
 interface Delivery {
@@ -41,7 +49,7 @@ interface Delivery {
   recipientCity: string;
   driverName: string;
   vehiclePlate: string;
-  status: "collected" | "in-transit" | "delivering" | "delivered" | "delayed" | "incident";
+  status: 'collected' | 'in-transit' | 'delivering' | 'delivered' | 'delayed' | 'incident';
   eta: string;
   isOnTime: boolean;
   latitude: number;
@@ -57,7 +65,7 @@ interface Delivery {
 interface Incident {
   id: number;
   deliveryId: string;
-  type: "delay" | "accident" | "damage" | "vehicle-issue";
+  type: 'delay' | 'accident' | 'damage' | 'vehicle-issue';
   description: string;
   timestamp: string;
   resolved: boolean;
@@ -66,14 +74,14 @@ interface Incident {
 // Mock data - 6 livraisons réalistes pour AgroLogistic
 const mockDeliveries: Delivery[] = [
   {
-    id: "DLV-001",
-    trackingNumber: "TRK-FR-2026-45872",
-    recipientName: "Ferme du Soleil Levant",
-    recipientCity: "Lyon",
-    driverName: "Pierre Moreau",
-    vehiclePlate: "AA-123-BB",
-    status: "in-transit",
-    eta: "14:30",
+    id: 'DLV-001',
+    trackingNumber: 'TRK-FR-2026-45872',
+    recipientName: 'Ferme du Soleil Levant',
+    recipientCity: 'Lyon',
+    driverName: 'Pierre Moreau',
+    vehiclePlate: 'AA-123-BB',
+    status: 'in-transit',
+    eta: '14:30',
     isOnTime: true,
     latitude: 45.75,
     longitude: 4.85,
@@ -82,21 +90,21 @@ const mockDeliveries: Delivery[] = [
       { lat: 47.2, lng: 3.5 },
       { lat: 45.75, lng: 4.85 },
     ],
-    orderId: "CMD-2026-002",
-    customerName: "Ferme du Soleil Levant",
+    orderId: 'CMD-2026-002',
+    customerName: 'Ferme du Soleil Levant',
     address: "125 Route des Monts d'Or, 69450 Lyon",
-    phone: "+33 4 78 45 67 89",
-    driverPhone: "+33 6 11 22 33 44",
+    phone: '+33 4 78 45 67 89',
+    driverPhone: '+33 6 11 22 33 44',
   },
   {
-    id: "DLV-002",
-    trackingNumber: "TRK-FR-2026-45801",
-    recipientName: "Les Jardins de Provence",
-    recipientCity: "Marseille",
-    driverName: "Sophie Laurent",
-    vehiclePlate: "CC-456-DD",
-    status: "delayed",
-    eta: "16:45",
+    id: 'DLV-002',
+    trackingNumber: 'TRK-FR-2026-45801',
+    recipientName: 'Les Jardins de Provence',
+    recipientCity: 'Marseille',
+    driverName: 'Sophie Laurent',
+    vehiclePlate: 'CC-456-DD',
+    status: 'delayed',
+    eta: '16:45',
     isOnTime: false,
     latitude: 43.2965,
     longitude: 5.3698,
@@ -105,21 +113,21 @@ const mockDeliveries: Delivery[] = [
       { lat: 45.5, lng: 4.2 },
       { lat: 43.2965, lng: 5.3698 },
     ],
-    orderId: "CMD-2026-004",
-    customerName: "Les Jardins de Provence",
-    address: "88 Avenue du Prado, 13008 Marseille",
-    phone: "+33 4 91 23 45 67",
-    driverPhone: "+33 6 22 33 44 55",
+    orderId: 'CMD-2026-004',
+    customerName: 'Les Jardins de Provence',
+    address: '88 Avenue du Prado, 13008 Marseille',
+    phone: '+33 4 91 23 45 67',
+    driverPhone: '+33 6 22 33 44 55',
   },
   {
-    id: "DLV-003",
-    trackingNumber: "TRK-FR-2026-45789",
-    recipientName: "Bio Terre Aquitaine",
-    recipientCity: "Bordeaux",
-    driverName: "Jean Dupont",
-    vehiclePlate: "EE-789-FF",
-    status: "delivering",
-    eta: "13:15",
+    id: 'DLV-003',
+    trackingNumber: 'TRK-FR-2026-45789',
+    recipientName: 'Bio Terre Aquitaine',
+    recipientCity: 'Bordeaux',
+    driverName: 'Jean Dupont',
+    vehiclePlate: 'EE-789-FF',
+    status: 'delivering',
+    eta: '13:15',
     isOnTime: true,
     latitude: 44.8378,
     longitude: -0.5792,
@@ -128,21 +136,21 @@ const mockDeliveries: Delivery[] = [
       { lat: 46.5, lng: 0.8 },
       { lat: 44.8378, lng: -0.5792 },
     ],
-    orderId: "CMD-2026-005",
-    customerName: "Bio Terre Aquitaine",
-    address: "Domaine des Vignes, 33700 Bordeaux",
-    phone: "+33 5 56 78 90 12",
-    driverPhone: "+33 6 33 44 55 66",
+    orderId: 'CMD-2026-005',
+    customerName: 'Bio Terre Aquitaine',
+    address: 'Domaine des Vignes, 33700 Bordeaux',
+    phone: '+33 5 56 78 90 12',
+    driverPhone: '+33 6 33 44 55 66',
   },
   {
-    id: "DLV-004",
-    trackingNumber: "TRK-FR-2026-45756",
-    recipientName: "Ferme du Val de Loire",
-    recipientCity: "Tours",
-    driverName: "Luc Bernard",
-    vehiclePlate: "GG-321-HH",
-    status: "in-transit",
-    eta: "15:00",
+    id: 'DLV-004',
+    trackingNumber: 'TRK-FR-2026-45756',
+    recipientName: 'Ferme du Val de Loire',
+    recipientCity: 'Tours',
+    driverName: 'Luc Bernard',
+    vehiclePlate: 'GG-321-HH',
+    status: 'in-transit',
+    eta: '15:00',
     isOnTime: true,
     latitude: 47.3941,
     longitude: 0.6848,
@@ -151,21 +159,21 @@ const mockDeliveries: Delivery[] = [
       { lat: 48.0, lng: 1.5 },
       { lat: 47.3941, lng: 0.6848 },
     ],
-    orderId: "CMD-2026-007",
-    customerName: "Ferme du Val de Loire",
-    address: "Château de la Loire, 37000 Tours",
-    phone: "+33 2 47 89 01 23",
-    driverPhone: "+33 6 44 55 66 77",
+    orderId: 'CMD-2026-007',
+    customerName: 'Ferme du Val de Loire',
+    address: 'Château de la Loire, 37000 Tours',
+    phone: '+33 2 47 89 01 23',
+    driverPhone: '+33 6 44 55 66 77',
   },
   {
-    id: "DLV-005",
-    trackingNumber: "TRK-FR-2026-45723",
-    recipientName: "Coopérative Agricole du Nord",
-    recipientCity: "Lille",
-    driverName: "Marie Petit",
-    vehiclePlate: "II-654-JJ",
-    status: "incident",
-    eta: "14:00",
+    id: 'DLV-005',
+    trackingNumber: 'TRK-FR-2026-45723',
+    recipientName: 'Coopérative Agricole du Nord',
+    recipientCity: 'Lille',
+    driverName: 'Marie Petit',
+    vehiclePlate: 'II-654-JJ',
+    status: 'incident',
+    eta: '14:00',
     isOnTime: false,
     latitude: 50.6292,
     longitude: 3.0573,
@@ -174,21 +182,21 @@ const mockDeliveries: Delivery[] = [
       { lat: 49.8, lng: 2.8 },
       { lat: 50.6292, lng: 3.0573 },
     ],
-    orderId: "CMD-2026-008",
-    customerName: "Coopérative Agricole du Nord",
-    address: "Zone Industrielle Nord, 59000 Lille",
-    phone: "+33 3 20 12 34 56",
-    driverPhone: "+33 6 55 66 77 88",
+    orderId: 'CMD-2026-008',
+    customerName: 'Coopérative Agricole du Nord',
+    address: 'Zone Industrielle Nord, 59000 Lille',
+    phone: '+33 3 20 12 34 56',
+    driverPhone: '+33 6 55 66 77 88',
   },
   {
-    id: "DLV-006",
-    trackingNumber: "TRK-FR-2026-45690",
-    recipientName: "Maraîchers de Bretagne",
-    recipientCity: "Rennes",
-    driverName: "Antoine Rousseau",
-    vehiclePlate: "KK-987-LL",
-    status: "collected",
-    eta: "17:30",
+    id: 'DLV-006',
+    trackingNumber: 'TRK-FR-2026-45690',
+    recipientName: 'Maraîchers de Bretagne',
+    recipientCity: 'Rennes',
+    driverName: 'Antoine Rousseau',
+    vehiclePlate: 'KK-987-LL',
+    status: 'collected',
+    eta: '17:30',
     isOnTime: true,
     latitude: 48.1173,
     longitude: -1.6778,
@@ -197,49 +205,49 @@ const mockDeliveries: Delivery[] = [
       { lat: 48.5, lng: 0.5 },
       { lat: 48.1173, lng: -1.6778 },
     ],
-    orderId: "CMD-2026-009",
-    customerName: "Maraîchers de Bretagne",
-    address: "Parc des Expositions, 35000 Rennes",
-    phone: "+33 2 99 87 65 43",
-    driverPhone: "+33 6 66 77 88 99",
+    orderId: 'CMD-2026-009',
+    customerName: 'Maraîchers de Bretagne',
+    address: 'Parc des Expositions, 35000 Rennes',
+    phone: '+33 2 99 87 65 43',
+    driverPhone: '+33 6 66 77 88 99',
   },
 ];
 
 const mockIncidents: Incident[] = [
   {
     id: 1,
-    deliveryId: "DLV-002",
-    type: "delay",
-    description: "Retard de 2h00 dû au trafic dense sur A7 vers Marseille",
-    timestamp: "10/01/2026 14:30",
+    deliveryId: 'DLV-002',
+    type: 'delay',
+    description: 'Retard de 2h00 dû au trafic dense sur A7 vers Marseille',
+    timestamp: '10/01/2026 14:30',
     resolved: false,
   },
   {
     id: 2,
-    deliveryId: "DLV-005",
-    type: "vehicle-issue",
-    description: "Véhicule immobilisé - panne moteur à proximité de Lille",
-    timestamp: "10/01/2026 13:45",
+    deliveryId: 'DLV-005',
+    type: 'vehicle-issue',
+    description: 'Véhicule immobilisé - panne moteur à proximité de Lille',
+    timestamp: '10/01/2026 13:45',
     resolved: false,
   },
   {
     id: 3,
-    deliveryId: "DLV-003",
-    type: "delay",
-    description: "Livraison Bio Terre Aquitaine - accès domaine viticole difficile",
-    timestamp: "10/01/2026 12:20",
+    deliveryId: 'DLV-003',
+    type: 'delay',
+    description: 'Livraison Bio Terre Aquitaine - accès domaine viticole difficile',
+    timestamp: '10/01/2026 12:20',
     resolved: true,
   },
 ];
 
 const performanceData = [
-  { day: "Lun", onTime: 92 },
-  { day: "Mar", onTime: 88 },
-  { day: "Mer", onTime: 95 },
-  { day: "Jeu", onTime: 87 },
-  { day: "Ven", onTime: 91 },
-  { day: "Sam", onTime: 94 },
-  { day: "Dim", onTime: 96 },
+  { day: 'Lun', onTime: 92 },
+  { day: 'Mar', onTime: 88 },
+  { day: 'Mer', onTime: 95 },
+  { day: 'Jeu', onTime: 87 },
+  { day: 'Ven', onTime: 91 },
+  { day: 'Sam', onTime: 94 },
+  { day: 'Dim', onTime: 96 },
 ];
 
 interface LogisticsTrackingProps {
@@ -249,20 +257,24 @@ interface LogisticsTrackingProps {
 export function LogisticsTracking({ isClientView = false }: LogisticsTrackingProps) {
   const [deliveries, setDeliveries] = useState<Delivery[]>(mockDeliveries);
   const [incidents, setIncidents] = useState<Incident[]>(mockIncidents);
-  const [activeTab, setActiveTab] = useState<"deliveries" | "incidents" | "performance">("deliveries");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState<'deliveries' | 'incidents' | 'performance'>(
+    'deliveries'
+  );
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedDelivery, setSelectedDelivery] = useState<Delivery | null>(null);
   const [showDetailPanel, setShowDetailPanel] = useState(false);
   const [showIncidentModal, setShowIncidentModal] = useState(false);
   const [mapZoom, setMapZoom] = useState(1);
   const [mapCenter, setMapCenter] = useState({ x: 0, y: 0 });
   const [hoveredDelivery, setHoveredDelivery] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [incidentType, setIncidentType] = useState<Incident["type"]>("delay");
-  const [incidentNote, setIncidentNote] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [incidentType, setIncidentType] = useState<Incident['type']>('delay');
+  const [incidentNote, setIncidentNote] = useState('');
   const [isRealTimeEnabled, setIsRealTimeEnabled] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
-  const [wsStatus, setWsStatus] = useState<"connected" | "disconnected" | "reconnecting">("connected");
+  const [wsStatus, setWsStatus] = useState<'connected' | 'disconnected' | 'reconnecting'>(
+    'connected'
+  );
   const [showRouteOptimizer, setShowRouteOptimizer] = useState(false);
   const [selectedDeliveries, setSelectedDeliveries] = useState<string[]>([]);
   const [optimizationResult, setOptimizationResult] = useState<{
@@ -275,12 +287,12 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
   } | null>(null);
   const [showNotificationSettings, setShowNotificationSettings] = useState(false);
   const [notificationPreferences, setNotificationPreferences] = useState(() => {
-    const saved = localStorage.getItem("AgroLogistic-notification-prefs");
+    const saved = localStorage.getItem('AgroLogistic-notification-prefs');
     if (saved) {
       try {
         return JSON.parse(saved);
       } catch (e) {
-        console.error("Failed to parse notification preferences", e);
+        console.error('Failed to parse notification preferences', e);
       }
     }
     return {
@@ -296,50 +308,70 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
       },
     };
   });
-  const [notificationHistory, setNotificationHistory] = useState<Array<{
-    id: string;
-    deliveryId: string;
-    type: "sms" | "email";
-    event: string;
-    recipient: string;
-    timestamp: string;
-    status: "sent" | "failed" | "pending";
-  }>>([]);
+  const [notificationHistory, setNotificationHistory] = useState<
+    Array<{
+      id: string;
+      deliveryId: string;
+      type: 'sms' | 'email';
+      event: string;
+      recipient: string;
+      timestamp: string;
+      status: 'sent' | 'failed' | 'pending';
+    }>
+  >([]);
 
   const activeDeliveriesCount = deliveries.filter((d) =>
-    ["collected", "in-transit", "delivering"].includes(d.status)
+    ['collected', 'in-transit', 'delivering'].includes(d.status)
   ).length;
 
   const unresolvedIncidents = incidents.filter((i) => !i.resolved).length;
 
-  const getStatusBadge = (status: Delivery["status"]) => {
+  const getStatusBadge = (status: Delivery['status']) => {
     const badges = {
-      collected: { label: "Collecté", class: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" },
-      "in-transit": { label: "En transit", class: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400" },
-      delivering: { label: "En livraison", class: "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400" },
-      delivered: { label: "Livré", class: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" },
-      delayed: { label: "Retard", class: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400" },
-      incident: { label: "Incident", class: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" },
+      collected: {
+        label: 'Collecté',
+        class: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+      },
+      'in-transit': {
+        label: 'En transit',
+        class: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+      },
+      delivering: {
+        label: 'En livraison',
+        class: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400',
+      },
+      delivered: {
+        label: 'Livré',
+        class: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+      },
+      delayed: {
+        label: 'Retard',
+        class: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
+      },
+      incident: {
+        label: 'Incident',
+        class: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+      },
     };
     return badges[status];
   };
 
-  const getTruckColor = (status: Delivery["status"]) => {
-    if (status === "incident") return "#dc2626";
-    if (status === "delayed") return "#f97316";
-    if (["in-transit", "delivering"].includes(status)) return "#10b981";
-    return "#9ca3af";
+  const getTruckColor = (status: Delivery['status']) => {
+    if (status === 'incident') return '#dc2626';
+    if (status === 'delayed') return '#f97316';
+    if (['in-transit', 'delivering'].includes(status)) return '#10b981';
+    return '#9ca3af';
   };
 
   const handleRefresh = () => {
     const updatedDeliveries = deliveries.map((d) => {
-      if (d.id === "DLV-001") {
-        return { ...d, eta: "15:15", isOnTime: false, status: "delayed" as const };
+      if (d.id === 'DLV-001') {
+        return { ...d, eta: '15:15', isOnTime: false, status: 'delayed' as const };
       }
       return d;
     });
     setDeliveries(updatedDeliveries);
-    toast.success("Carte actualisée - 1 livraison en retard détectée");
+    toast.success('Carte actualisée - 1 livraison en retard détectée');
   };
 
   const handleSearch = () => {
@@ -352,7 +384,7 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
       setMapZoom(1.5);
       toast.success(`Livraison ${found.trackingNumber} trouvée`);
     } else {
-      toast.error("Numéro de suivi introuvable");
+      toast.error('Numéro de suivi introuvable');
     }
   };
 
@@ -367,12 +399,12 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
       i.id === incidentId ? { ...i, resolved: true } : i
     );
     setIncidents(updatedIncidents);
-    toast.success("Incident résolu");
+    toast.success('Incident résolu');
   };
 
   const handleFilterStatus = (status: string) => {
     setStatusFilter(status);
-    if (status !== "all") {
+    if (status !== 'all') {
       setMapZoom(1.2);
     }
   };
@@ -387,28 +419,28 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
 
   const handleMarkAsDelivered = (deliveryId: string) => {
     const updatedDeliveries = deliveries.map((d) =>
-      d.id === deliveryId ? { ...d, status: "delivered" as const } : d
+      d.id === deliveryId ? { ...d, status: 'delivered' as const } : d
     );
     setDeliveries(updatedDeliveries);
-    toast.success("Livraison marquée comme livrée");
+    toast.success('Livraison marquée comme livrée');
   };
 
   const handleSubmitIncident = () => {
     if (!selectedDelivery) return;
-    
+
     const newIncident: Incident = {
       id: incidents.length + 1,
       deliveryId: selectedDelivery.id,
       type: incidentType,
       description: incidentNote,
-      timestamp: new Date().toLocaleString("fr-FR"),
+      timestamp: new Date().toLocaleString('fr-FR'),
       resolved: false,
     };
-    
+
     setIncidents([...incidents, newIncident]);
     setShowIncidentModal(false);
-    setIncidentNote("");
-    toast.success("Incident signalé avec succès");
+    setIncidentNote('');
+    toast.success('Incident signalé avec succès');
   };
 
   // Route optimization functions
@@ -420,7 +452,7 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
 
   const calculateOptimizedRoute = () => {
     if (selectedDeliveries.length < 2) {
-      toast.error("Selectionnez au moins 2 livraisons pour optimiser");
+      toast.error('Selectionnez au moins 2 livraisons pour optimiser');
       return;
     }
 
@@ -429,7 +461,7 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
 
     // Simple greedy algorithm for TSP (Traveling Salesman Problem)
     // Start from depot (assumed at Paris: 48.8566, 2.3522)
-    const depot = { lat: 48.8566, lng: 2.3522, city: "Depot Paris" };
+    const depot = { lat: 48.8566, lng: 2.3522, city: 'Depot Paris' };
     let currentPos = depot;
     const unvisited = [...selectedDeliveryObjects];
     const route: Array<{ deliveryId: string; order: number; city: string; distance: number }> = [];
@@ -438,10 +470,20 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
     // Greedy nearest-neighbor algorithm
     while (unvisited.length > 0) {
       let nearestIdx = 0;
-      let minDistance = calculateDistance(currentPos.lat, currentPos.lng, unvisited[0].latitude, unvisited[0].longitude);
+      let minDistance = calculateDistance(
+        currentPos.lat,
+        currentPos.lng,
+        unvisited[0].latitude,
+        unvisited[0].longitude
+      );
 
       for (let i = 1; i < unvisited.length; i++) {
-        const dist = calculateDistance(currentPos.lat, currentPos.lng, unvisited[i].latitude, unvisited[i].longitude);
+        const dist = calculateDistance(
+          currentPos.lat,
+          currentPos.lng,
+          unvisited[i].latitude,
+          unvisited[i].longitude
+        );
         if (dist < minDistance) {
           minDistance = dist;
           nearestIdx = i;
@@ -495,7 +537,10 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
     const dLon = ((lon2 - lon1) * Math.PI) / 180;
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
@@ -503,15 +548,22 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
   const resetOptimization = () => {
     setSelectedDeliveries([]);
     setOptimizationResult(null);
-    toast.info("Optimisation reinitialise e");
+    toast.info('Optimisation reinitialise e');
   };
 
   // Notification functions
-  const sendNotification = (delivery: Delivery, event: string, type: "sms" | "email") => {
-    const eventKey = event.toLowerCase().replace("-", "") as keyof typeof notificationPreferences.events;
+  const sendNotification = (delivery: Delivery, event: string, type: 'sms' | 'email') => {
+    const eventKey = event
+      .toLowerCase()
+      .replace('-', '') as keyof typeof notificationPreferences.events;
     const prefs = notificationPreferences.events[eventKey];
 
-    if (!prefs || !prefs.enabled || (type === "sms" && !prefs.sms) || (type === "email" && !prefs.email)) {
+    if (
+      !prefs ||
+      !prefs.enabled ||
+      (type === 'sms' && !prefs.sms) ||
+      (type === 'email' && !prefs.email)
+    ) {
       return;
     }
 
@@ -520,16 +572,16 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
       deliveryId: delivery.id,
       type,
       event,
-      recipient: type === "sms" ? delivery.phone : delivery.customerName,
+      recipient: type === 'sms' ? delivery.phone : delivery.customerName,
       timestamp: new Date().toISOString(),
-      status: Math.random() > 0.05 ? ("sent" as const) : ("failed" as const), // 95% success rate
+      status: Math.random() > 0.05 ? ('sent' as const) : ('failed' as const), // 95% success rate
     };
 
     setNotificationHistory((prev) => [notification, ...prev]);
 
-    if (notification.status === "sent") {
+    if (notification.status === 'sent') {
       const message =
-        type === "sms"
+        type === 'sms'
           ? `SMS envoye a ${delivery.phone}: Livraison ${delivery.trackingNumber} - ${event}`
           : `Email envoye a ${delivery.customerName}: Livraison ${delivery.trackingNumber} - ${event}`;
       toast.success(message, { duration: 3000 });
@@ -538,7 +590,7 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
     }
   };
 
-  const toggleNotificationEvent = (eventKey: string, field: "enabled" | "sms" | "email") => {
+  const toggleNotificationEvent = (eventKey: string, field: 'enabled' | 'sms' | 'email') => {
     setNotificationPreferences((prev: any) => ({
       ...prev,
       events: {
@@ -552,41 +604,47 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
   };
 
   const saveNotificationPreferences = () => {
-    localStorage.setItem("AgroLogistic-notification-prefs", JSON.stringify(notificationPreferences));
-    toast.success("Preferences de notification sauvegardees");
+    localStorage.setItem(
+      'AgroLogistic-notification-prefs',
+      JSON.stringify(notificationPreferences)
+    );
+    toast.success('Preferences de notification sauvegardees');
     setShowNotificationSettings(false);
   };
 
-  const simulateDeliveryStatusChange = (deliveryId: string, newStatus: Delivery["status"]) => {
+  const simulateDeliveryStatusChange = (deliveryId: string, newStatus: Delivery['status']) => {
     const delivery = deliveries.find((d) => d.id === deliveryId);
     if (!delivery) return;
 
-    setDeliveries((prev) => prev.map((d) => (d.id === deliveryId ? { ...d, status: newStatus } : d)));
+    setDeliveries((prev) =>
+      prev.map((d) => (d.id === deliveryId ? { ...d, status: newStatus } : d))
+    );
 
     // Auto-send notifications based on status change
-    const eventMap: Record<Delivery["status"], string> = {
-      collected: "Collectee",
-      "in-transit": "En transit",
-      delivering: "En livraison",
-      delivered: "Livree",
-      delayed: "Retard detecte",
-      incident: "Incident signale",
+    const eventMap: Record<Delivery['status'], string> = {
+      collected: 'Collectee',
+      'in-transit': 'En transit',
+      delivering: 'En livraison',
+      delivered: 'Livree',
+      delayed: 'Retard detecte',
+      incident: 'Incident signale',
     };
 
     const event = eventMap[newStatus];
     if (notificationPreferences.smsEnabled) {
-      sendNotification(delivery, event, "sms");
+      sendNotification(delivery, event, 'sms');
     }
     if (notificationPreferences.emailEnabled) {
-      setTimeout(() => sendNotification(delivery, event, "email"), 500);
+      setTimeout(() => sendNotification(delivery, event, 'email'), 500);
     }
 
     toast.success(`Statut change: ${delivery.trackingNumber} - ${event}`);
   };
 
   const filteredDeliveries = deliveries.filter((d) => {
-    if (statusFilter !== "all" && d.status !== statusFilter) return false;
-    if (searchQuery && !d.trackingNumber.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    if (statusFilter !== 'all' && d.status !== statusFilter) return false;
+    if (searchQuery && !d.trackingNumber.toLowerCase().includes(searchQuery.toLowerCase()))
+      return false;
     return true;
   });
 
@@ -597,12 +655,12 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
     // Simulate WebSocket connection
     const wsInterval = setInterval(() => {
       setLastUpdate(new Date());
-      setWsStatus("connected");
+      setWsStatus('connected');
 
       // Simulate random GPS position updates for active deliveries
       setDeliveries((prevDeliveries) =>
         prevDeliveries.map((delivery) => {
-          if (["in-transit", "delivering"].includes(delivery.status)) {
+          if (['in-transit', 'delivering'].includes(delivery.status)) {
             // Simulate GPS movement (small random changes)
             const latChange = (Math.random() - 0.5) * 0.02;
             const lngChange = (Math.random() - 0.5) * 0.02;
@@ -620,20 +678,21 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
       // Randomly detect delays or incidents (1% chance per update)
       if (Math.random() < 0.01) {
         const activeDeliveries = deliveries.filter((d) =>
-          ["in-transit", "delivering"].includes(d.status)
+          ['in-transit', 'delivering'].includes(d.status)
         );
         if (activeDeliveries.length > 0) {
-          const randomDelivery = activeDeliveries[Math.floor(Math.random() * activeDeliveries.length)];
-          
+          const randomDelivery =
+            activeDeliveries[Math.floor(Math.random() * activeDeliveries.length)];
+
           if (Math.random() < 0.5) {
             // Simulate delay
             toast.warning(`Retard detecte pour ${randomDelivery.trackingNumber}`, {
-              description: "Le vehicule est ralenti par le trafic",
+              description: 'Le vehicule est ralenti par le trafic',
             });
           } else {
             // Simulate incident
             toast.error(`Incident signale pour ${randomDelivery.trackingNumber}`, {
-              description: "Le chauffeur a signale un probleme",
+              description: 'Le chauffeur a signale un probleme',
             });
           }
         }
@@ -642,10 +701,10 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
 
     // Simulate occasional reconnection
     const reconnectInterval = setInterval(() => {
-      setWsStatus("reconnecting");
+      setWsStatus('reconnecting');
       setTimeout(() => {
-        setWsStatus("connected");
-        toast.success("Connexion GPS retablie");
+        setWsStatus('connected');
+        toast.success('Connexion GPS retablie');
       }, 1000);
     }, 120000); // Simulate reconnect every 2 minutes
 
@@ -659,11 +718,21 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
   if (isClientView) {
     const clientDelivery = deliveries[0];
     const trackingSteps = [
-      { label: "Commande préparée", completed: true, icon: Package },
-      { label: "Collectée", completed: true, icon: Check },
-      { label: "En transit", completed: true, icon: Truck, current: clientDelivery.status === "in-transit" },
-      { label: "En livraison", completed: clientDelivery.status === "delivering", icon: MapPin, current: clientDelivery.status === "delivering" },
-      { label: "Livrée", completed: clientDelivery.status === "delivered", icon: Check },
+      { label: 'Commande préparée', completed: true, icon: Package },
+      { label: 'Collectée', completed: true, icon: Check },
+      {
+        label: 'En transit',
+        completed: true,
+        icon: Truck,
+        current: clientDelivery.status === 'in-transit',
+      },
+      {
+        label: 'En livraison',
+        completed: clientDelivery.status === 'delivering',
+        icon: MapPin,
+        current: clientDelivery.status === 'delivering',
+      },
+      { label: 'Livrée', completed: clientDelivery.status === 'delivered', icon: Check },
     ];
 
     return (
@@ -682,7 +751,7 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
               placeholder="Ex: TRK-FR-2026-45872"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
             />
             <button
@@ -740,7 +809,9 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                   height="100%"
                   viewBox="0 0 800 600"
                   className="transition-transform duration-300"
-                  style={{ transform: `scale(${mapZoom}) translate(${mapCenter.x}px, ${mapCenter.y}px)` }}
+                  style={{
+                    transform: `scale(${mapZoom}) translate(${mapCenter.x}px, ${mapCenter.y}px)`,
+                  }}
                 >
                   {/* Map Grid Background */}
                   <defs>
@@ -761,7 +832,12 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
 
                   {/* Origin Marker */}
                   <circle cx="150" cy="300" r="8" fill="#2563eb" />
-                  <text x="150" y="330" textAnchor="middle" className="fill-gray-700 dark:fill-gray-300 text-xs font-medium">
+                  <text
+                    x="150"
+                    y="330"
+                    textAnchor="middle"
+                    className="fill-gray-700 dark:fill-gray-300 text-xs font-medium"
+                  >
                     Entrepôt
                   </text>
 
@@ -769,21 +845,25 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                   <g className="animate-pulse">
                     <circle cx="400" cy="200" r="20" fill="#10b981" opacity="0.3" />
                     <circle cx="400" cy="200" r="12" fill="#10b981" />
-                    <Truck
-                      x="388"
-                      y="188"
-                      width="24"
-                      height="24"
-                      className="fill-white"
-                    />
+                    <Truck x="388" y="188" width="24" height="24" className="fill-white" />
                   </g>
-                  <text x="400" y="240" textAnchor="middle" className="fill-gray-700 dark:fill-gray-300 text-xs font-medium">
+                  <text
+                    x="400"
+                    y="240"
+                    textAnchor="middle"
+                    className="fill-gray-700 dark:fill-gray-300 text-xs font-medium"
+                  >
                     Votre livraison
                   </text>
 
                   {/* Destination Marker */}
                   <circle cx="650" cy="350" r="8" fill="#dc2626" />
-                  <text x="650" y="380" textAnchor="middle" className="fill-gray-700 dark:fill-gray-300 text-xs font-medium">
+                  <text
+                    x="650"
+                    y="380"
+                    textAnchor="middle"
+                    className="fill-gray-700 dark:fill-gray-300 text-xs font-medium"
+                  >
                     Destination
                   </text>
                 </svg>
@@ -815,19 +895,17 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                         <div
                           className={`h-10 w-10 rounded-full flex items-center justify-center ${
                             isCurrent
-                              ? "bg-[#2563eb] text-white ring-4 ring-blue-100 dark:ring-blue-900/30"
+                              ? 'bg-[#2563eb] text-white ring-4 ring-blue-100 dark:ring-blue-900/30'
                               : isCompleted
-                              ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
-                              : "bg-muted text-muted-foreground"
+                              ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
+                              : 'bg-muted text-muted-foreground'
                           }`}
                         >
                           <StepIcon className="h-5 w-5" />
                         </div>
                         {idx < trackingSteps.length - 1 && (
                           <div
-                            className={`w-0.5 h-8 ${
-                              isCompleted ? "bg-green-500" : "bg-muted"
-                            }`}
+                            className={`w-0.5 h-8 ${isCompleted ? 'bg-green-500' : 'bg-muted'}`}
                           />
                         )}
                       </div>
@@ -835,10 +913,10 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                         <p
                           className={`font-medium ${
                             isCurrent
-                              ? "text-[#2563eb]"
+                              ? 'text-[#2563eb]'
                               : isCompleted
-                              ? ""
-                              : "text-muted-foreground"
+                              ? ''
+                              : 'text-muted-foreground'
                           }`}
                         >
                           {step.label}
@@ -894,7 +972,8 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Suivi Logistique en Direct</h1>
           <p className="text-muted-foreground mt-2">
-            <span className="font-medium text-[#2563eb]">{activeDeliveriesCount}</span> livraisons actives
+            <span className="font-medium text-[#2563eb]">{activeDeliveriesCount}</span> livraisons
+            actives
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -903,31 +982,37 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
             <div className="flex items-center gap-1.5">
               <div
                 className={`h-2 w-2 rounded-full ${
-                  wsStatus === "connected"
-                    ? "bg-green-500 animate-pulse"
-                    : wsStatus === "reconnecting"
-                    ? "bg-orange-500 animate-pulse"
-                    : "bg-red-500"
+                  wsStatus === 'connected'
+                    ? 'bg-green-500 animate-pulse'
+                    : wsStatus === 'reconnecting'
+                    ? 'bg-orange-500 animate-pulse'
+                    : 'bg-red-500'
                 }`}
               />
               <span className="text-xs font-medium">
-                {wsStatus === "connected" ? "En direct" : wsStatus === "reconnecting" ? "Reconnexion..." : "Hors ligne"}
+                {wsStatus === 'connected'
+                  ? 'En direct'
+                  : wsStatus === 'reconnecting'
+                  ? 'Reconnexion...'
+                  : 'Hors ligne'}
               </span>
             </div>
             <button
               onClick={() => {
                 setIsRealTimeEnabled(!isRealTimeEnabled);
-                toast.success(isRealTimeEnabled ? "Suivi temps reel desactive" : "Suivi temps reel active");
+                toast.success(
+                  isRealTimeEnabled ? 'Suivi temps reel desactive' : 'Suivi temps reel active'
+                );
               }}
               className={`px-2 py-1 text-xs rounded transition-colors ${
-                isRealTimeEnabled ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"
+                isRealTimeEnabled ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
               }`}
             >
-              {isRealTimeEnabled ? "ON" : "OFF"}
+              {isRealTimeEnabled ? 'ON' : 'OFF'}
             </button>
           </div>
           <div className="text-xs text-muted-foreground">
-            Derniere MAJ: {lastUpdate.toLocaleTimeString("fr-FR")}
+            Derniere MAJ: {lastUpdate.toLocaleTimeString('fr-FR')}
           </div>
           <button
             onClick={handleRefresh}
@@ -973,7 +1058,7 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
               placeholder="Rechercher par numéro de suivi..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
             />
           </div>
@@ -997,17 +1082,17 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                 Carte Interactive
               </h2>
               <div className="flex gap-2">
-                {["all", "delayed", "incident"].map((filter) => (
+                {['all', 'delayed', 'incident'].map((filter) => (
                   <button
                     key={filter}
                     onClick={() => handleFilterStatus(filter)}
                     className={`px-3 py-1 text-xs rounded-full transition-colors ${
                       statusFilter === filter
-                        ? "bg-[#2563eb] text-white"
-                        : "bg-muted hover:bg-muted/80"
+                        ? 'bg-[#2563eb] text-white'
+                        : 'bg-muted hover:bg-muted/80'
                     }`}
                   >
-                    {filter === "all" ? "Tous" : filter === "delayed" ? "Retards" : "Incidents"}
+                    {filter === 'all' ? 'Tous' : filter === 'delayed' ? 'Retards' : 'Incidents'}
                   </button>
                 ))}
               </div>
@@ -1072,7 +1157,9 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                 height="100%"
                 viewBox="0 0 1000 600"
                 className="transition-transform duration-300"
-                style={{ transform: `scale(${mapZoom}) translate(${mapCenter.x}px, ${mapCenter.y}px)` }}
+                style={{
+                  transform: `scale(${mapZoom}) translate(${mapCenter.x}px, ${mapCenter.y}px)`,
+                }}
               >
                 {/* Map Grid Background */}
                 <defs>
@@ -1091,19 +1178,56 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
 
                 {/* Zone Agricole Nord */}
                 <rect x="50" y="50" width="280" height="200" fill="#22c55e" opacity="0.08" rx="8" />
-                <text x="190" y="80" textAnchor="middle" className="fill-gray-700 dark:fill-gray-300 text-sm font-semibold">
+                <text
+                  x="190"
+                  y="80"
+                  textAnchor="middle"
+                  className="fill-gray-700 dark:fill-gray-300 text-sm font-semibold"
+                >
                   Zone Agricole Nord
                 </text>
-                <rect x="50" y="50" width="280" height="200" fill="none" stroke="#22c55e" strokeWidth="2" strokeDasharray="8,4" rx="8" />
+                <rect
+                  x="50"
+                  y="50"
+                  width="280"
+                  height="200"
+                  fill="none"
+                  stroke="#22c55e"
+                  strokeWidth="2"
+                  strokeDasharray="8,4"
+                  rx="8"
+                />
 
                 {/* Dépôt Centre */}
-                <rect x="420" y="250" width="160" height="100" fill="#2563eb" opacity="0.12" rx="8" />
-                <text x="500" y="285" textAnchor="middle" className="fill-gray-700 dark:fill-gray-300 text-sm font-semibold">
+                <rect
+                  x="420"
+                  y="250"
+                  width="160"
+                  height="100"
+                  fill="#2563eb"
+                  opacity="0.12"
+                  rx="8"
+                />
+                <text
+                  x="500"
+                  y="285"
+                  textAnchor="middle"
+                  className="fill-gray-700 dark:fill-gray-300 text-sm font-semibold"
+                >
                   Dépôt Centre
                 </text>
                 <circle cx="500" cy="300" r="12" fill="#2563eb" />
                 <circle cx="500" cy="300" r="6" fill="white" />
-                <rect x="420" y="250" width="160" height="100" fill="none" stroke="#2563eb" strokeWidth="2" rx="8" />
+                <rect
+                  x="420"
+                  y="250"
+                  width="160"
+                  height="100"
+                  fill="none"
+                  stroke="#2563eb"
+                  strokeWidth="2"
+                  rx="8"
+                />
 
                 {/* Route Principale (reliant Zone Nord au Dépôt) */}
                 <path
@@ -1128,7 +1252,7 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                 {filteredDeliveries.map((delivery, idx) => {
                   // Positionnement personnalisé pour chaque camion
                   let truckX, truckY, destX, destY;
-                  
+
                   // Camion 1 (Vert - en route) - Lyon
                   if (idx === 0) {
                     truckX = 650;
@@ -1193,7 +1317,7 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                       <path
                         d={`M ${truckX} ${truckY} L ${destX} ${destY}`}
                         fill="none"
-                        stroke={isSelected ? "#2563eb" : "#d1d5db"}
+                        stroke={isSelected ? '#2563eb' : '#d1d5db'}
                         strokeWidth={isSelected ? 3 : 2}
                         strokeDasharray="5,5"
                       />
@@ -1210,7 +1334,7 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                         className="cursor-pointer"
                       >
                         {/* Pulsing Circle for Active Deliveries */}
-                        {["in-transit", "delivering"].includes(delivery.status) && (
+                        {['in-transit', 'delivering'].includes(delivery.status) && (
                           <circle r="20" fill={getTruckColor(delivery.status)} opacity="0.3">
                             <animate
                               attributeName="r"
@@ -1233,7 +1357,7 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                         <circle
                           r={isHovered || isSelected ? 16 : 14}
                           fill={getTruckColor(delivery.status)}
-                          filter={isHovered || isSelected ? "url(#glow)" : undefined}
+                          filter={isHovered || isSelected ? 'url(#glow)' : undefined}
                         />
 
                         {/* Truck Icon Simulation */}
@@ -1297,21 +1421,21 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
             {/* Tabs Header */}
             <div className="flex border-b">
               <button
-                onClick={() => setActiveTab("deliveries")}
+                onClick={() => setActiveTab('deliveries')}
                 className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-                  activeTab === "deliveries"
-                    ? "border-b-2 border-[#2563eb] text-[#2563eb]"
-                    : "text-muted-foreground hover:text-foreground"
+                  activeTab === 'deliveries'
+                    ? 'border-b-2 border-[#2563eb] text-[#2563eb]'
+                    : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 Livraisons
               </button>
               <button
-                onClick={() => setActiveTab("incidents")}
+                onClick={() => setActiveTab('incidents')}
                 className={`flex-1 px-4 py-3 text-sm font-medium transition-colors relative ${
-                  activeTab === "incidents"
-                    ? "border-b-2 border-[#2563eb] text-[#2563eb]"
-                    : "text-muted-foreground hover:text-foreground"
+                  activeTab === 'incidents'
+                    ? 'border-b-2 border-[#2563eb] text-[#2563eb]'
+                    : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 Incidents
@@ -1322,11 +1446,11 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                 )}
               </button>
               <button
-                onClick={() => setActiveTab("performance")}
+                onClick={() => setActiveTab('performance')}
                 className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-                  activeTab === "performance"
-                    ? "border-b-2 border-[#2563eb] text-[#2563eb]"
-                    : "text-muted-foreground hover:text-foreground"
+                  activeTab === 'performance'
+                    ? 'border-b-2 border-[#2563eb] text-[#2563eb]'
+                    : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 Performances
@@ -1335,7 +1459,7 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
 
             {/* Tab Content */}
             <div className="p-4 overflow-y-auto max-h-[600px]">
-              {activeTab === "deliveries" && (
+              {activeTab === 'deliveries' && (
                 <div className="space-y-3">
                   {filteredDeliveries.map((delivery) => {
                     const statusBadge = getStatusBadge(delivery.status);
@@ -1354,7 +1478,9 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                               {delivery.recipientName} • {delivery.recipientCity}
                             </p>
                           </div>
-                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusBadge.class}`}>
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusBadge.class}`}
+                          >
                             {statusBadge.label}
                           </span>
                         </div>
@@ -1421,7 +1547,7 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                 </div>
               )}
 
-              {activeTab === "incidents" && (
+              {activeTab === 'incidents' && (
                 <div className="space-y-3">
                   {incidents.length === 0 ? (
                     <div className="text-center py-8 text-muted-foreground">
@@ -1435,7 +1561,7 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                         <div
                           key={incident.id}
                           className={`border rounded-lg p-3 ${
-                            incident.resolved ? "opacity-50" : ""
+                            incident.resolved ? 'opacity-50' : ''
                           }`}
                         >
                           <div className="flex items-start justify-between mb-2">
@@ -1443,9 +1569,10 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                               <div className="flex items-center gap-2 mb-1">
                                 <AlertTriangle
                                   className={`h-4 w-4 ${
-                                    incident.type === "accident" || incident.type === "vehicle-issue"
-                                      ? "text-red-500"
-                                      : "text-orange-500"
+                                    incident.type === 'accident' ||
+                                    incident.type === 'vehicle-issue'
+                                      ? 'text-red-500'
+                                      : 'text-orange-500'
                                   }`}
                                 />
                                 <span className="font-medium text-sm">
@@ -1477,14 +1604,16 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                 </div>
               )}
 
-              {activeTab === "performance" && (
+              {activeTab === 'performance' && (
                 <div className="space-y-6">
                   {/* KPIs */}
                   <div className="space-y-3">
                     <div className="border rounded-lg p-3">
                       <div className="flex items-center gap-2 mb-1">
                         <TrendingUp className="h-4 w-4 text-green-600" />
-                        <span className="text-sm font-medium">Taux de livraison dans les temps</span>
+                        <span className="text-sm font-medium">
+                          Taux de livraison dans les temps
+                        </span>
                       </div>
                       <p className="text-2xl font-bold">91.5%</p>
                       <p className="text-xs text-muted-foreground">Cette semaine</p>
@@ -1523,7 +1652,7 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                           dataKey="onTime"
                           stroke="#2563eb"
                           strokeWidth={2}
-                          dot={{ fill: "#2563eb", r: 4 }}
+                          dot={{ fill: '#2563eb', r: 4 }}
                         />
                       </LineChart>
                     </ResponsiveContainer>
@@ -1657,7 +1786,8 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                       <div>
                         <p className="font-medium">Position actuelle</p>
                         <p className="text-muted-foreground">
-                          {selectedDelivery.latitude.toFixed(4)}, {selectedDelivery.longitude.toFixed(4)}
+                          {selectedDelivery.latitude.toFixed(4)},{' '}
+                          {selectedDelivery.longitude.toFixed(4)}
                         </p>
                         <p className="text-muted-foreground">Aujourd'hui à 14:30</p>
                       </div>
@@ -1720,7 +1850,7 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                 <label className="block text-sm font-medium mb-2">Type d'incident</label>
                 <select
                   value={incidentType}
-                  onChange={(e) => setIncidentType(e.target.value as Incident["type"])}
+                  onChange={(e) => setIncidentType(e.target.value as Incident['type'])}
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
                 >
                   <option value="delay">Retard</option>
@@ -1790,14 +1920,14 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {deliveries
-                    .filter((d) => ["collected", "in-transit", "delivering"].includes(d.status))
+                    .filter((d) => ['collected', 'in-transit', 'delivering'].includes(d.status))
                     .map((delivery) => (
                       <label
                         key={delivery.id}
                         className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${
                           selectedDeliveries.includes(delivery.id)
-                            ? "bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-800"
-                            : "hover:bg-muted/50"
+                            ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-800'
+                            : 'hover:bg-muted/50'
                         }`}
                       >
                         <input
@@ -1812,7 +1942,11 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                             {delivery.trackingNumber} • {delivery.recipientName}
                           </div>
                         </div>
-                        <div className={`px-2 py-1 text-xs rounded-full ${getStatusBadge(delivery.status).class}`}>
+                        <div
+                          className={`px-2 py-1 text-xs rounded-full ${
+                            getStatusBadge(delivery.status).class
+                          }`}
+                        >
                           {getStatusBadge(delivery.status).label}
                         </div>
                       </label>
@@ -1879,7 +2013,9 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
 
                   {/* Optimized Route */}
                   <div className="bg-muted/50 rounded-lg p-4">
-                    <h4 className="font-semibold mb-3">Itineraire optimise (algorithme Greedy TSP)</h4>
+                    <h4 className="font-semibold mb-3">
+                      Itineraire optimise (algorithme Greedy TSP)
+                    </h4>
                     <div className="space-y-2">
                       <div className="flex items-center gap-3 text-sm">
                         <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
@@ -1980,7 +2116,10 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                           type="checkbox"
                           checked={notificationPreferences.smsEnabled}
                           onChange={() =>
-                            setNotificationPreferences((prev: any) => ({ ...prev, smsEnabled: !prev.smsEnabled }))
+                            setNotificationPreferences((prev: any) => ({
+                              ...prev,
+                              smsEnabled: !prev.smsEnabled,
+                            }))
                           }
                           className="h-4 w-4 rounded border-gray-300 text-[#27AE60] focus:ring-[#27AE60]"
                         />
@@ -1994,7 +2133,10 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                           type="checkbox"
                           checked={notificationPreferences.emailEnabled}
                           onChange={() =>
-                            setNotificationPreferences((prev: any) => ({ ...prev, emailEnabled: !prev.emailEnabled }))
+                            setNotificationPreferences((prev: any) => ({
+                              ...prev,
+                              emailEnabled: !prev.emailEnabled,
+                            }))
                           }
                           className="h-4 w-4 rounded border-gray-300 text-[#27AE60] focus:ring-[#27AE60]"
                         />
@@ -2005,47 +2147,51 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                   <div>
                     <h3 className="font-semibold mb-3">Evenements de Livraison</h3>
                     <div className="space-y-2">
-                      {Object.entries(notificationPreferences.events).map(([key, value]: [string, any]) => (
-                        <div key={key} className="bg-muted/50 rounded-lg p-3">
-                          <div className="flex items-center justify-between mb-2">
-                            <label className="flex items-center gap-2 cursor-pointer">
-                              <input
-                                type="checkbox"
-                                checked={value.enabled}
-                                onChange={() => toggleNotificationEvent(key, "enabled")}
-                                className="h-4 w-4 rounded border-gray-300 text-[#27AE60] focus:ring-[#27AE60]"
-                              />
-                              <span className="font-medium capitalize">
-                                {key === "inTransit" ? "En Transit" : key.charAt(0).toUpperCase() + key.slice(1)}
-                              </span>
-                            </label>
-                          </div>
-                          {value.enabled && (
-                            <div className="flex gap-4 ml-6 text-sm">
-                              <label className="flex items-center gap-1.5 cursor-pointer">
+                      {Object.entries(notificationPreferences.events).map(
+                        ([key, value]: [string, any]) => (
+                          <div key={key} className="bg-muted/50 rounded-lg p-3">
+                            <div className="flex items-center justify-between mb-2">
+                              <label className="flex items-center gap-2 cursor-pointer">
                                 <input
                                   type="checkbox"
-                                  checked={value.sms}
-                                  onChange={() => toggleNotificationEvent(key, "sms")}
-                                  className="h-3 w-3 rounded border-gray-300 text-[#27AE60] focus:ring-[#27AE60]"
+                                  checked={value.enabled}
+                                  onChange={() => toggleNotificationEvent(key, 'enabled')}
+                                  className="h-4 w-4 rounded border-gray-300 text-[#27AE60] focus:ring-[#27AE60]"
                                 />
-                                <Phone className="h-3 w-3" />
-                                SMS
-                              </label>
-                              <label className="flex items-center gap-1.5 cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  checked={value.email}
-                                  onChange={() => toggleNotificationEvent(key, "email")}
-                                  className="h-3 w-3 rounded border-gray-300 text-[#27AE60] focus:ring-[#27AE60]"
-                                />
-                                <Mail className="h-3 w-3" />
-                                Email
+                                <span className="font-medium capitalize">
+                                  {key === 'inTransit'
+                                    ? 'En Transit'
+                                    : key.charAt(0).toUpperCase() + key.slice(1)}
+                                </span>
                               </label>
                             </div>
-                          )}
-                        </div>
-                      ))}
+                            {value.enabled && (
+                              <div className="flex gap-4 ml-6 text-sm">
+                                <label className="flex items-center gap-1.5 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={value.sms}
+                                    onChange={() => toggleNotificationEvent(key, 'sms')}
+                                    className="h-3 w-3 rounded border-gray-300 text-[#27AE60] focus:ring-[#27AE60]"
+                                  />
+                                  <Phone className="h-3 w-3" />
+                                  SMS
+                                </label>
+                                <label className="flex items-center gap-1.5 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={value.email}
+                                    onChange={() => toggleNotificationEvent(key, 'email')}
+                                    className="h-3 w-3 rounded border-gray-300 text-[#27AE60] focus:ring-[#27AE60]"
+                                  />
+                                  <Mail className="h-3 w-3" />
+                                  Email
+                                </label>
+                              </div>
+                            )}
+                          </div>
+                        )
+                      )}
                     </div>
                   </div>
 
@@ -2059,7 +2205,12 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                       {deliveries.slice(0, 2).map((delivery) => (
                         <select
                           key={delivery.id}
-                          onChange={(e) => simulateDeliveryStatusChange(delivery.id, e.target.value as Delivery["status"])}
+                          onChange={(e) =>
+                            simulateDeliveryStatusChange(
+                              delivery.id,
+                              e.target.value as Delivery['status']
+                            )
+                          }
                           value={delivery.status}
                           className="text-xs px-2 py-1 border rounded bg-background"
                         >
@@ -2093,16 +2244,16 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                           <div
                             key={notif.id}
                             className={`p-3 rounded-lg border ${
-                              notif.status === "sent"
-                                ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
-                                : notif.status === "failed"
-                                ? "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
-                                : "bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800"
+                              notif.status === 'sent'
+                                ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+                                : notif.status === 'failed'
+                                ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+                                : 'bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800'
                             }`}
                           >
                             <div className="flex items-start gap-2">
                               <div className="mt-0.5">
-                                {notif.type === "sms" ? (
+                                {notif.type === 'sms' ? (
                                   <Phone className="h-4 w-4 text-muted-foreground" />
                                 ) : (
                                   <Mail className="h-4 w-4 text-muted-foreground" />
@@ -2110,17 +2261,23 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between gap-2 mb-1">
-                                  <span className="text-xs font-medium uppercase">{notif.type}</span>
+                                  <span className="text-xs font-medium uppercase">
+                                    {notif.type}
+                                  </span>
                                   <span
                                     className={`text-xs px-2 py-0.5 rounded-full ${
-                                      notif.status === "sent"
-                                        ? "bg-green-100 text-green-700"
-                                        : notif.status === "failed"
-                                        ? "bg-red-100 text-red-700"
-                                        : "bg-orange-100 text-orange-700"
+                                      notif.status === 'sent'
+                                        ? 'bg-green-100 text-green-700'
+                                        : notif.status === 'failed'
+                                        ? 'bg-red-100 text-red-700'
+                                        : 'bg-orange-100 text-orange-700'
                                     }`}
                                   >
-                                    {notif.status === "sent" ? "Envoye" : notif.status === "failed" ? "Echec" : "En cours"}
+                                    {notif.status === 'sent'
+                                      ? 'Envoye'
+                                      : notif.status === 'failed'
+                                      ? 'Echec'
+                                      : 'En cours'}
                                   </span>
                                 </div>
                                 <p className="text-sm font-medium">{notif.event}</p>
@@ -2128,7 +2285,7 @@ export function LogisticsTracking({ isClientView = false }: LogisticsTrackingPro
                                   {notif.deliveryId} → {notif.recipient}
                                 </p>
                                 <p className="text-xs text-muted-foreground mt-1">
-                                  {new Date(notif.timestamp).toLocaleString("fr-FR")}
+                                  {new Date(notif.timestamp).toLocaleString('fr-FR')}
                                 </p>
                               </div>
                             </div>

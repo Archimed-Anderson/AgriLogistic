@@ -1,0 +1,58 @@
+{
+  "namespace": "com.agrilogistic.events.order",
+  "type": "record",
+  "name": "OrderEvent",
+  "doc": "Event sourcing order events (market-service) - Cahier des charges 1.2",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": "string",
+      "doc": "Unique event identifier (UUID)"
+    },
+    {
+      "name": "orderId",
+      "type": "string",
+      "doc": "Order identifier"
+    },
+    {
+      "name": "userId",
+      "type": ["string", "null"],
+      "doc": "Buyer user identifier"
+    },
+    {
+      "name": "type",
+      "type": "string",
+      "doc": "Event type: order_created, order_confirmed, order_shipped, order_completed, order_cancelled, etc."
+    },
+    {
+      "name": "data",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "doc": "Additional payload (e.g. items, totals, delivery)"
+    },
+    {
+      "name": "items",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "OrderItem",
+          "fields": [
+            { "name": "productId", "type": "string" },
+            { "name": "quantity", "type": "int" },
+            { "name": "price", "type": "double" },
+            { "name": "category", "type": ["string", "null"] }
+          ]
+        }
+      },
+      "doc": "Order line items for analytics"
+    },
+    {
+      "name": "timestamp",
+      "type": "string",
+      "doc": "ISO-8601 timestamp"
+    }
+  ]
+}

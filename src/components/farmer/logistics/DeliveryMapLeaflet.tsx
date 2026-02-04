@@ -24,10 +24,7 @@ interface DeliveryMapLeafletProps {
 }
 
 export function DeliveryMapLeaflet({ delivery }: DeliveryMapLeafletProps) {
-  const center: [number, number] = [
-    delivery.pickup.coordinates[1],
-    delivery.pickup.coordinates[0],
-  ];
+  const center: [number, number] = [delivery.pickup.coordinates[1], delivery.pickup.coordinates[0]];
 
   // Create custom icons
   const createMarkerIcon = (label: string, color: string) => {
@@ -61,7 +58,7 @@ export function DeliveryMapLeaflet({ delivery }: DeliveryMapLeafletProps) {
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='© OpenStreetMap contributors'
+          attribution="© OpenStreetMap contributors"
         />
 
         {/* Pickup Marker */}
@@ -97,10 +94,7 @@ export function DeliveryMapLeaflet({ delivery }: DeliveryMapLeafletProps) {
         {/* Current Location */}
         {delivery.tracking.currentLocation && (
           <Marker
-            position={[
-              delivery.tracking.currentLocation[1],
-              delivery.tracking.currentLocation[0],
-            ]}
+            position={[delivery.tracking.currentLocation[1], delivery.tracking.currentLocation[0]]}
             icon={currentLocationIcon}
           >
             <Popup>
@@ -139,7 +133,8 @@ export function DeliveryMapLeaflet({ delivery }: DeliveryMapLeafletProps) {
           </div>
           {delivery.tracking.eta && (
             <p className="text-xs text-gray-600">
-              ETA: {new Date(delivery.tracking.eta).toLocaleTimeString('fr-FR', {
+              ETA:{' '}
+              {new Date(delivery.tracking.eta).toLocaleTimeString('fr-FR', {
                 hour: '2-digit',
                 minute: '2-digit',
               })}
@@ -161,19 +156,17 @@ export function DeliveryMapLeaflet({ delivery }: DeliveryMapLeafletProps) {
         </div>
       )}
 
-      <style jsx global>{`
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         @keyframes pulse {
-          0% {
-            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-          }
-          70% {
-            box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
-          }
-          100% {
-            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
-          }
+          0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+          70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
-      `}</style>
+      `,
+        }}
+      />
     </div>
   );
 }

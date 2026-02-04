@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Package,
   DollarSign,
@@ -37,8 +37,8 @@ import {
   Truck,
   Tractor,
   Home,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 interface AffiliateProduct {
   id: string;
@@ -46,10 +46,10 @@ interface AffiliateProduct {
   name: string;
   brand: string;
   brandLogo: string;
-  sector: "parts" | "appliances" | "construction" | "agricultural" | "other";
-  status: "active" | "outOfStock" | "expired" | "pending";
+  sector: 'parts' | 'appliances' | 'construction' | 'agricultural' | 'other';
+  status: 'active' | 'outOfStock' | 'expired' | 'pending';
   commission: number;
-  commissionType: "percentage" | "fixed";
+  commissionType: 'percentage' | 'fixed';
   clicks: number;
   conversions: number;
   revenue: number;
@@ -57,201 +57,256 @@ interface AffiliateProduct {
 }
 
 export function IndustrialAffiliations() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedSector, setSelectedSector] = useState<string>("all");
-  const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedSector, setSelectedSector] = useState<string>('all');
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<string>("reference");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [sortBy, setSortBy] = useState<string>('reference');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [showNewPartnerModal, setShowNewPartnerModal] = useState(false);
 
   // KPI Data
   const kpis = [
     {
-      id: "commission",
-      label: "Commission Totale",
-      value: "24,850€",
-      period: "Ce mois",
+      id: 'commission',
+      label: 'Commission Totale',
+      value: '24,850€',
+      period: 'Ce mois',
       change: 12.5,
       icon: DollarSign,
-      color: "green",
-      trend: "up",
+      color: 'green',
+      trend: 'up',
     },
     {
-      id: "clicks",
-      label: "Clics Affiliés",
-      value: "3,842",
-      subtitle: "Taux conversion: 4.2%",
+      id: 'clicks',
+      label: 'Clics Affiliés',
+      value: '3,842',
+      subtitle: 'Taux conversion: 4.2%',
       change: 8.3,
       icon: MousePointer,
-      color: "blue",
-      trend: "up",
+      color: 'blue',
+      trend: 'up',
     },
     {
-      id: "products",
-      label: "Produits Actifs",
-      value: "156/200",
-      subtitle: "Rupture: 12 | Expirés: 32",
+      id: 'products',
+      label: 'Produits Actifs',
+      value: '156/200',
+      subtitle: 'Rupture: 12 | Expirés: 32',
       change: -2.1,
       icon: Package,
-      color: "orange",
-      trend: "down",
+      color: 'orange',
+      trend: 'down',
     },
     {
-      id: "partners",
-      label: "Partenaires Actifs",
-      value: "24",
-      subtitle: "Nouveaux ce mois: 3",
+      id: 'partners',
+      label: 'Partenaires Actifs',
+      value: '24',
+      subtitle: 'Nouveaux ce mois: 3',
       change: 15.0,
       icon: Users,
-      color: "purple",
-      trend: "up",
+      color: 'purple',
+      trend: 'up',
     },
   ];
 
   // Products Data
   const products: AffiliateProduct[] = [
     {
-      id: "1",
-      reference: "PDI-2024-001",
-      name: "Roulement à billes industriel SKF",
-      brand: "SKF",
-      brandLogo: "🔩",
-      sector: "parts",
-      status: "active",
+      id: '1',
+      reference: 'PDI-2024-001',
+      name: 'Roulement à billes industriel SKF',
+      brand: 'SKF',
+      brandLogo: '🔩',
+      sector: 'parts',
+      status: 'active',
       commission: 8,
-      commissionType: "percentage",
+      commissionType: 'percentage',
       clicks: 342,
       conversions: 28,
       revenue: 2840,
-      image: "⚙️",
+      image: '⚙️',
     },
     {
-      id: "2",
-      reference: "MEC-2024-045",
-      name: "Lave-linge industriel 15kg",
-      brand: "Miele Professional",
-      brandLogo: "🏠",
-      sector: "appliances",
-      status: "active",
+      id: '2',
+      reference: 'MEC-2024-045',
+      name: 'Lave-linge industriel 15kg',
+      brand: 'Miele Professional',
+      brandLogo: '🏠',
+      sector: 'appliances',
+      status: 'active',
       commission: 5,
-      commissionType: "percentage",
+      commissionType: 'percentage',
       clicks: 567,
       conversions: 34,
       revenue: 5890,
-      image: "🔄",
+      image: '🔄',
     },
     {
-      id: "3",
-      reference: "CON-2024-128",
-      name: "Bétonnière 350L diesel",
-      brand: "IMER Group",
-      brandLogo: "🏗️",
-      sector: "construction",
-      status: "active",
+      id: '3',
+      reference: 'CON-2024-128',
+      name: 'Bétonnière 350L diesel',
+      brand: 'IMER Group',
+      brandLogo: '🏗️',
+      sector: 'construction',
+      status: 'active',
       commission: 12,
-      commissionType: "percentage",
+      commissionType: 'percentage',
       clicks: 234,
       conversions: 18,
       revenue: 4320,
-      image: "🚧",
+      image: '🚧',
     },
     {
-      id: "4",
-      reference: "AGR-2024-056",
-      name: "Pulvérisateur tracteur 2000L",
-      brand: "Berthoud",
-      brandLogo: "🚜",
-      sector: "agricultural",
-      status: "active",
+      id: '4',
+      reference: 'AGR-2024-056',
+      name: 'Pulvérisateur tracteur 2000L',
+      brand: 'Berthoud',
+      brandLogo: '🚜',
+      sector: 'agricultural',
+      status: 'active',
       commission: 10,
-      commissionType: "percentage",
+      commissionType: 'percentage',
       clicks: 445,
       conversions: 42,
       revenue: 8400,
-      image: "💧",
+      image: '💧',
     },
     {
-      id: "5",
-      reference: "PDI-2024-089",
-      name: "Kit courroie de distribution",
-      brand: "Gates",
-      brandLogo: "🔩",
-      sector: "parts",
-      status: "outOfStock",
+      id: '5',
+      reference: 'PDI-2024-089',
+      name: 'Kit courroie de distribution',
+      brand: 'Gates',
+      brandLogo: '🔩',
+      sector: 'parts',
+      status: 'outOfStock',
       commission: 7,
-      commissionType: "percentage",
+      commissionType: 'percentage',
       clicks: 156,
       conversions: 0,
       revenue: 0,
-      image: "⚙️",
+      image: '⚙️',
     },
     {
-      id: "6",
-      reference: "CON-2024-201",
-      name: "Marteau piqueur électrique",
-      brand: "Makita",
-      brandLogo: "🔨",
-      sector: "construction",
-      status: "expired",
+      id: '6',
+      reference: 'CON-2024-201',
+      name: 'Marteau piqueur électrique',
+      brand: 'Makita',
+      brandLogo: '🔨',
+      sector: 'construction',
+      status: 'expired',
       commission: 8.5,
-      commissionType: "percentage",
+      commissionType: 'percentage',
       clicks: 89,
       conversions: 3,
       revenue: 270,
-      image: "🔨",
+      image: '🔨',
     },
   ];
 
   // Partners Data
   const partners = [
-    { name: "Caterpillar", level: "gold", products: 45, score: 98 },
-    { name: "Siemens", level: "gold", products: 38, score: 95 },
-    { name: "Bosch Professional", level: "gold", products: 52, score: 93 },
-    { name: "SKF", level: "silver", products: 28, score: 88 },
-    { name: "ABB", level: "silver", products: 31, score: 85 },
-    { name: "Schneider Electric", level: "silver", products: 24, score: 82 },
-    { name: "Makita", level: "bronze", products: 18, score: 78 },
-    { name: "Metabo", level: "bronze", products: 15, score: 75 },
+    { name: 'Caterpillar', level: 'gold', products: 45, score: 98 },
+    { name: 'Siemens', level: 'gold', products: 38, score: 95 },
+    { name: 'Bosch Professional', level: 'gold', products: 52, score: 93 },
+    { name: 'SKF', level: 'silver', products: 28, score: 88 },
+    { name: 'ABB', level: 'silver', products: 31, score: 85 },
+    { name: 'Schneider Electric', level: 'silver', products: 24, score: 82 },
+    { name: 'Makita', level: 'bronze', products: 18, score: 78 },
+    { name: 'Metabo', level: 'bronze', products: 15, score: 75 },
   ];
 
   const getSectorConfig = (sector: string) => {
-    const configs: { [key: string]: { icon: any; label: string; color: string; bgColor: string } } = {
-      parts: { icon: Wrench, label: "Pièces", color: "text-gray-700", bgColor: "bg-gray-100 dark:bg-gray-800" },
-      appliances: { icon: Home, label: "Électroménager", color: "text-purple-700", bgColor: "bg-purple-100 dark:bg-purple-900/20" },
-      construction: { icon: Hammer, label: "Construction", color: "text-orange-700", bgColor: "bg-orange-100 dark:bg-orange-900/20" },
-      agricultural: { icon: Tractor, label: "Agricole", color: "text-green-700", bgColor: "bg-green-100 dark:bg-green-900/20" },
-      other: { icon: Package, label: "Autre", color: "text-blue-700", bgColor: "bg-blue-100 dark:bg-blue-900/20" },
-    };
+    const configs: { [key: string]: { icon: any; label: string; color: string; bgColor: string } } =
+      {
+        parts: {
+          icon: Wrench,
+          label: 'Pièces',
+          color: 'text-gray-700',
+          bgColor: 'bg-gray-100 dark:bg-gray-800',
+        },
+        appliances: {
+          icon: Home,
+          label: 'Électroménager',
+          color: 'text-purple-700',
+          bgColor: 'bg-purple-100 dark:bg-purple-900/20',
+        },
+        construction: {
+          icon: Hammer,
+          label: 'Construction',
+          color: 'text-orange-700',
+          bgColor: 'bg-orange-100 dark:bg-orange-900/20',
+        },
+        agricultural: {
+          icon: Tractor,
+          label: 'Agricole',
+          color: 'text-green-700',
+          bgColor: 'bg-green-100 dark:bg-green-900/20',
+        },
+        other: {
+          icon: Package,
+          label: 'Autre',
+          color: 'text-blue-700',
+          bgColor: 'bg-blue-100 dark:bg-blue-900/20',
+        },
+      };
     return configs[sector] || configs.other;
   };
 
   const getStatusConfig = (status: string) => {
-    const configs: { [key: string]: { icon: any; label: string; color: string; bgColor: string } } = {
-      active: { icon: CheckCircle, label: "Actif", color: "text-green-700", bgColor: "bg-green-100 dark:bg-green-900/20" },
-      outOfStock: { icon: AlertTriangle, label: "Rupture", color: "text-orange-700", bgColor: "bg-orange-100 dark:bg-orange-900/20" },
-      expired: { icon: XCircle, label: "Expiré", color: "text-red-700", bgColor: "bg-red-100 dark:bg-red-900/20" },
-      pending: { icon: Clock, label: "En attente", color: "text-gray-700", bgColor: "bg-gray-100 dark:bg-gray-800" },
-    };
+    const configs: { [key: string]: { icon: any; label: string; color: string; bgColor: string } } =
+      {
+        active: {
+          icon: CheckCircle,
+          label: 'Actif',
+          color: 'text-green-700',
+          bgColor: 'bg-green-100 dark:bg-green-900/20',
+        },
+        outOfStock: {
+          icon: AlertTriangle,
+          label: 'Rupture',
+          color: 'text-orange-700',
+          bgColor: 'bg-orange-100 dark:bg-orange-900/20',
+        },
+        expired: {
+          icon: XCircle,
+          label: 'Expiré',
+          color: 'text-red-700',
+          bgColor: 'bg-red-100 dark:bg-red-900/20',
+        },
+        pending: {
+          icon: Clock,
+          label: 'En attente',
+          color: 'text-gray-700',
+          bgColor: 'bg-gray-100 dark:bg-gray-800',
+        },
+      };
     return configs[status] || configs.pending;
   };
 
   const getPartnerLevelBadge = (level: string) => {
     const configs: { [key: string]: { icon: string; color: string; bgColor: string } } = {
-      gold: { icon: "🥇", color: "text-yellow-700", bgColor: "bg-yellow-100 dark:bg-yellow-900/20" },
-      silver: { icon: "🥈", color: "text-gray-700", bgColor: "bg-gray-100 dark:bg-gray-800" },
-      bronze: { icon: "🥉", color: "text-orange-700", bgColor: "bg-orange-100 dark:bg-orange-900/20" },
+      gold: {
+        icon: '🥇',
+        color: 'text-yellow-700',
+        bgColor: 'bg-yellow-100 dark:bg-yellow-900/20',
+      },
+      silver: { icon: '🥈', color: 'text-gray-700', bgColor: 'bg-gray-100 dark:bg-gray-800' },
+      bronze: {
+        icon: '🥉',
+        color: 'text-orange-700',
+        bgColor: 'bg-orange-100 dark:bg-orange-900/20',
+      },
     };
     return configs[level] || configs.bronze;
   };
 
   const handleSort = (column: string) => {
     if (sortBy === column) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
       setSortBy(column);
-      setSortOrder("asc");
+      setSortOrder('asc');
     }
   };
 
@@ -259,13 +314,13 @@ export function IndustrialAffiliations() {
     if (selectedProducts.length === products.length) {
       setSelectedProducts([]);
     } else {
-      setSelectedProducts(products.map(p => p.id));
+      setSelectedProducts(products.map((p) => p.id));
     }
   };
 
   const handleSelectProduct = (id: string) => {
     if (selectedProducts.includes(id)) {
-      setSelectedProducts(selectedProducts.filter(p => p !== id));
+      setSelectedProducts(selectedProducts.filter((p) => p !== id));
     } else {
       setSelectedProducts([...selectedProducts, id]);
     }
@@ -287,7 +342,9 @@ export function IndustrialAffiliations() {
           <div className="text-sm text-muted-foreground mb-2">
             Admin &gt; Affiliations Industrielles
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">Gestion des Partenariats Industriels</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Gestion des Partenariats Industriels
+          </h1>
           <p className="text-muted-foreground mt-1">
             Tableau de bord B2B - Pièces, Machines, Construction
           </p>
@@ -297,7 +354,7 @@ export function IndustrialAffiliations() {
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={`px-4 py-2 border rounded-lg hover:bg-muted transition-colors flex items-center gap-2 ${
-              showFilters ? "bg-muted" : ""
+              showFilters ? 'bg-muted' : ''
             }`}
           >
             <Filter className="h-4 w-4" />
@@ -305,7 +362,7 @@ export function IndustrialAffiliations() {
           </button>
 
           <button
-            onClick={() => handleExport("csv")}
+            onClick={() => handleExport('csv')}
             className="px-4 py-2 border rounded-lg hover:bg-muted transition-colors flex items-center gap-2"
           >
             <Download className="h-4 w-4" />
@@ -343,11 +400,11 @@ export function IndustrialAffiliations() {
               <label className="block text-sm font-medium mb-3">Secteur Industriel</label>
               <div className="space-y-2">
                 {[
-                  { value: "all", label: "Tous les secteurs" },
-                  { value: "parts", label: "Pièces détachées" },
-                  { value: "appliances", label: "Électroménager" },
-                  { value: "construction", label: "Construction" },
-                  { value: "agricultural", label: "Agricole" },
+                  { value: 'all', label: 'Tous les secteurs' },
+                  { value: 'parts', label: 'Pièces détachées' },
+                  { value: 'appliances', label: 'Électroménager' },
+                  { value: 'construction', label: 'Construction' },
+                  { value: 'agricultural', label: 'Agricole' },
                 ].map((option) => (
                   <label key={option.value} className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -369,11 +426,11 @@ export function IndustrialAffiliations() {
               <label className="block text-sm font-medium mb-3">Statut Produit</label>
               <div className="space-y-2">
                 {[
-                  { value: "all", label: "Tous les statuts" },
-                  { value: "active", label: "Actif" },
-                  { value: "outOfStock", label: "En rupture" },
-                  { value: "expired", label: "Expiré" },
-                  { value: "pending", label: "En attente" },
+                  { value: 'all', label: 'Tous les statuts' },
+                  { value: 'active', label: 'Actif' },
+                  { value: 'outOfStock', label: 'En rupture' },
+                  { value: 'expired', label: 'Expiré' },
+                  { value: 'pending', label: 'En attente' },
                 ].map((option) => (
                   <label key={option.value} className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -396,23 +453,11 @@ export function IndustrialAffiliations() {
               <div className="space-y-3">
                 <div>
                   <label className="text-xs text-muted-foreground">Minimum: 1%</label>
-                  <input
-                    type="range"
-                    min="1"
-                    max="20"
-                    defaultValue="1"
-                    className="w-full"
-                  />
+                  <input type="range" min="1" max="20" defaultValue="1" className="w-full" />
                 </div>
                 <div>
                   <label className="text-xs text-muted-foreground">Maximum: 20%</label>
-                  <input
-                    type="range"
-                    min="1"
-                    max="20"
-                    defaultValue="20"
-                    className="w-full"
-                  />
+                  <input type="range" min="1" max="20" defaultValue="20" className="w-full" />
                 </div>
               </div>
             </div>
@@ -435,8 +480,8 @@ export function IndustrialAffiliations() {
             </button>
             <button
               onClick={() => {
-                setSelectedSector("all");
-                setSelectedStatus("all");
+                setSelectedSector('all');
+                setSelectedStatus('all');
               }}
               className="px-6 py-2 border rounded-lg hover:bg-muted transition-colors"
             >
@@ -461,10 +506,10 @@ export function IndustrialAffiliations() {
                 </div>
                 <div
                   className={`flex items-center gap-1 text-sm font-semibold ${
-                    kpi.trend === "up" ? "text-green-600" : "text-red-600"
+                    kpi.trend === 'up' ? 'text-green-600' : 'text-red-600'
                   }`}
                 >
-                  {kpi.trend === "up" ? (
+                  {kpi.trend === 'up' ? (
                     <TrendingUp className="h-4 w-4" />
                   ) : (
                     <TrendingDown className="h-4 w-4" />
@@ -479,9 +524,7 @@ export function IndustrialAffiliations() {
                 {kpi.subtitle && (
                   <div className="text-xs text-muted-foreground">{kpi.subtitle}</div>
                 )}
-                {kpi.period && (
-                  <div className="text-xs text-muted-foreground">{kpi.period}</div>
-                )}
+                {kpi.period && <div className="text-xs text-muted-foreground">{kpi.period}</div>}
               </div>
             </div>
           );
@@ -529,10 +572,16 @@ export function IndustrialAffiliations() {
 
           <div className="space-y-4">
             {[
-              { sector: "Pièces", clicks: 892, conversions: 78, revenue: 8950, color: "gray" },
-              { sector: "Machines", clicks: 567, conversions: 34, revenue: 5890, color: "purple" },
-              { sector: "Construction", clicks: 445, conversions: 42, revenue: 8400, color: "orange" },
-              { sector: "Agricole", clicks: 678, conversions: 51, revenue: 12450, color: "green" },
+              { sector: 'Pièces', clicks: 892, conversions: 78, revenue: 8950, color: 'gray' },
+              { sector: 'Machines', clicks: 567, conversions: 34, revenue: 5890, color: 'purple' },
+              {
+                sector: 'Construction',
+                clicks: 445,
+                conversions: 42,
+                revenue: 8400,
+                color: 'orange',
+              },
+              { sector: 'Agricole', clicks: 678, conversions: 51, revenue: 12450, color: 'green' },
             ].map((item, index) => (
               <div key={index}>
                 <div className="flex items-center justify-between mb-2">
@@ -585,7 +634,7 @@ export function IndustrialAffiliations() {
                 <th className="px-4 py-3 text-left text-sm font-medium">Produit</th>
                 <th
                   className="px-4 py-3 text-left text-sm font-medium cursor-pointer hover:bg-muted-foreground/10"
-                  onClick={() => handleSort("reference")}
+                  onClick={() => handleSort('reference')}
                 >
                   Référence
                 </th>
@@ -608,7 +657,7 @@ export function IndustrialAffiliations() {
                   <tr
                     key={product.id}
                     className={`border-t hover:bg-muted/50 transition-colors ${
-                      selectedProducts.includes(product.id) ? "bg-blue-50 dark:bg-blue-900/10" : ""
+                      selectedProducts.includes(product.id) ? 'bg-blue-50 dark:bg-blue-900/10' : ''
                     }`}
                   >
                     <td className="px-4 py-3">
@@ -659,7 +708,7 @@ export function IndustrialAffiliations() {
                     <td className="px-4 py-3">
                       <div className="text-sm font-semibold">
                         {product.commission}
-                        {product.commissionType === "percentage" ? "%" : "€"}
+                        {product.commissionType === 'percentage' ? '%' : '€'}
                       </div>
                     </td>
                     <td className="px-4 py-3">
@@ -730,7 +779,9 @@ export function IndustrialAffiliations() {
                 className="relative group border rounded-lg p-4 hover:shadow-lg transition-all cursor-pointer"
               >
                 <div className="text-center">
-                  <div className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold mb-2 ${badge.color} ${badge.bgColor}`}>
+                  <div
+                    className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold mb-2 ${badge.color} ${badge.bgColor}`}
+                  >
                     <span>{badge.icon}</span>
                     <span className="uppercase">{partner.level}</span>
                   </div>
@@ -779,9 +830,9 @@ export function IndustrialAffiliations() {
                 <label className="block text-sm font-medium mb-3">Type de partenariat</label>
                 <div className="grid grid-cols-3 gap-4">
                   {[
-                    { value: "b2b", label: "Partenariat B2B", icon: Building2 },
-                    { value: "product", label: "Produit individuel", icon: Package },
-                    { value: "program", label: "Programme affiliation", icon: Award },
+                    { value: 'b2b', label: 'Partenariat B2B', icon: Building2 },
+                    { value: 'product', label: 'Produit individuel', icon: Package },
+                    { value: 'program', label: 'Programme affiliation', icon: Award },
                   ].map((type) => {
                     const Icon = type.icon;
                     return (
@@ -894,7 +945,7 @@ export function IndustrialAffiliations() {
               </button>
               <button
                 onClick={() => {
-                  toast.success("Partenariat créé avec succès !");
+                  toast.success('Partenariat créé avec succès !');
                   setShowNewPartnerModal(false);
                 }}
                 className="px-6 py-2 bg-[#2A5C8B] text-white rounded-lg hover:bg-[#1F4566] transition-colors font-semibold"

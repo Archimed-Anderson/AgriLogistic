@@ -6,7 +6,11 @@ interface CertificationBadgeProps {
   description: string;
 }
 
-export default function CertificationBadge({ icon: Icon, label, description }: CertificationBadgeProps) {
+export default function CertificationBadge({
+  icon: Icon,
+  label,
+  description,
+}: CertificationBadgeProps) {
   return (
     <div className="flex items-start gap-3 p-4 bg-white rounded-lg border border-emerald-100 hover:border-emerald-300 hover:shadow-md transition-all duration-300">
       <div className="flex-shrink-0">

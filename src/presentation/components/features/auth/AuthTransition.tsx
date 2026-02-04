@@ -16,9 +16,7 @@ export function AuthTransition({ children, isLogin, className }: AuthTransitionP
       className={cn(
         'transition-all duration-300 ease-in-out',
         'transform',
-        isLogin
-          ? 'translate-x-0 opacity-100'
-          : 'translate-x-0 opacity-100',
+        isLogin ? 'translate-x-0 opacity-100' : 'translate-x-0 opacity-100',
         className
       )}
       style={{

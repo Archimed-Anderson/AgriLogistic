@@ -16,8 +16,8 @@ export default function LogisticsHubPage() {
 
   const stats = {
     totalDeliveries: deliveries?.length || 0,
-    inTransit: deliveries?.filter(d => d.status === 'in_transit').length || 0,
-    delivered: deliveries?.filter(d => d.status === 'delivered').length || 0,
+    inTransit: deliveries?.filter((d) => d.status === 'in_transit').length || 0,
+    delivered: deliveries?.filter((d) => d.status === 'delivered').length || 0,
     totalCost: deliveries?.reduce((sum, d) => sum + d.cost.total, 0) || 0,
   };
 
@@ -28,7 +28,10 @@ export default function LogisticsHubPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
-              <Link to="/farmer/dashboard" className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
+              <Link
+                to="/farmer/dashboard"
+                className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
                 <ArrowLeft className="w-5 h-5" />
               </Link>
               <div>

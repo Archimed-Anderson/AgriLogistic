@@ -101,7 +101,7 @@ describe('API Client Enhanced', () => {
         ok: false,
         status: 400,
         headers: {
-          get: (name: string) => name === 'content-type' ? 'application/json' : null,
+          get: (name: string) => (name === 'content-type' ? 'application/json' : null),
         },
         json: async () => ({ error: 'Invalid credentials' }),
       });
@@ -122,7 +122,7 @@ describe('API Client Enhanced', () => {
         ok: false,
         status: 500,
         headers: {
-          get: (name: string) => name === 'content-type' ? 'application/json' : null,
+          get: (name: string) => (name === 'content-type' ? 'application/json' : null),
         },
         json: async () => ({ error: 'Internal server error' }),
       });
@@ -233,12 +233,14 @@ describe('API Client Enhanced', () => {
       const refreshCall = mockFetch.mock.calls[1];
       expect(String(refreshCall[0])).toContain('/auth/refresh');
       expect(refreshCall[1]?.method).toBe('POST');
-      expect(refreshCall[1]?.body).toBe(JSON.stringify({ refresh_token: 'rt-123', refreshToken: 'rt-123' }));
+      expect(refreshCall[1]?.body).toBe(
+        JSON.stringify({ refresh_token: 'rt-123', refreshToken: 'rt-123' })
+      );
     });
 
     it('should include Authorization header when token exists', async () => {
       localStorage.setItem('accessToken', 'test-token-123');
-      
+
       mockFetch.mockResolvedValueOnce({
         ok: true,
         status: 200,

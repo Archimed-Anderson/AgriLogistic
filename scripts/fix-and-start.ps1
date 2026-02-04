@@ -1,4 +1,4 @@
-﻿# Script de correction et demarrage complet
+# Script de correction et demarrage complet
 # Corrige les problemes Docker et lance tous les services
 
 $ErrorActionPreference = "Continue"
@@ -10,7 +10,7 @@ Write-Host "======================================================" -ForegroundC
 Write-Host ""
 
 # Etape 1: Demarrer Docker Desktop
-Write-Host "[1/5] Verification et demarrage de Docker Desktop..." -ForegroundColor Yellow
+Write-Host "[1/6] Verification et demarrage de Docker Desktop..." -ForegroundColor Yellow
 
 $dockerPath = "C:\Program Files\Docker\Docker\Docker Desktop.exe"
 if (!(Test-Path $dockerPath)) {
@@ -60,7 +60,7 @@ if ($dockerTest -like "*cannot find the file*") {
 Write-Host ""
 
 # Etape 2: Nettoyer les conteneurs arretes
-Write-Host "[2/5] Nettoyage des conteneurs obsoletes..." -ForegroundColor Yellow
+Write-Host "[2/6] Nettoyage des conteneurs obsoletes..." -ForegroundColor Yellow
 $oldContainers = docker ps -a --filter "status=exited" --filter "name=AgriLogistic" -q 2>$null
 if ($oldContainers) {
     docker rm $oldContainers 2>&1 | Out-Null
@@ -72,7 +72,7 @@ if ($oldContainers) {
 Write-Host ""
 
 # Etape 3: Demarrer les services principaux
-Write-Host "[3/5] Demarrage des services (PostgreSQL, Redis, Kong)..." -ForegroundColor Yellow
+Write-Host "[3/6] Demarrage des services (PostgreSQL, Redis, Kong)..." -ForegroundColor Yellow
 
 # RÃ©soudre le chemin de faÃ§on portable (script dans AgriLogistic\scripts)
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
@@ -109,8 +109,13 @@ if ($kongRunning) {
 
 Write-Host ""
 
-# Etape 4: Attendre l'initialisation
-Write-Host "[4/5] Attente initialisation des services (30s)..." -ForegroundColor Yellow
+# Etape 4: Creer les bases manquantes (productions_db, etc.)
+Write-Host "[4/6] Creation des bases PostgreSQL manquantes..." -ForegroundColor Yellow
+& (Join-Path $PSScriptRoot "ensure-databases.ps1")
+if ($LASTEXITCODE -ne 0) { $LASTEXITCODE = 0 }
+
+# Etape 5: Attendre l'initialisation
+Write-Host "[5/6] Attente initialisation des services (30s)..." -ForegroundColor Yellow
 Start-Sleep -Seconds 30
 
 # Verifier la sante
@@ -131,8 +136,8 @@ if ($redisReady -like "*PONG*") {
 
 Write-Host ""
 
-# Etape 5: VÃ©rifier PostgreSQL (SANS abaisser la sÃ©curitÃ©)
-Write-Host "[5/5] VÃ©rification PostgreSQL..." -ForegroundColor Yellow
+# Etape 6: Verifier PostgreSQL (SANS abaisser la securite)
+Write-Host "[6/6] Verification PostgreSQL..." -ForegroundColor Yellow
 
 $testConnection = docker exec AgriLogistic-postgres psql -U AgriLogistic -d AgriLogistic_auth -c "SELECT 1;" 2>&1 | Out-String
 if ($LASTEXITCODE -eq 0) {
@@ -158,8 +163,9 @@ Write-Host "  - Redis:       localhost:6379" -ForegroundColor White
 Write-Host "  - Kong:        localhost:8000" -ForegroundColor White
 Write-Host ""
 Write-Host "Prochaine etape:" -ForegroundColor Yellow
-Write-Host "  cd services\auth-service" -ForegroundColor White
+Write-Host "  cd services" -ForegroundColor White
 Write-Host "  .\start-dev.ps1" -ForegroundColor White
+Write-Host "  (ou: cd services\identity\auth-service-legacy puis .\start-dev.ps1)" -ForegroundColor Gray
 Write-Host ""
 Write-Host "Ou utilisez le script complet:" -ForegroundColor Yellow
 Write-Host "  .\scripts\start-all.ps1" -ForegroundColor White

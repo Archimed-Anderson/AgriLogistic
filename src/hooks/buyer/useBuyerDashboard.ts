@@ -3,15 +3,15 @@
  * Manages dashboard data with React Query
  */
 import { useQuery } from '@tanstack/react-query';
-import type { 
-  BuyerDashboard, 
-  BuyerStats, 
-  PriceAlert, 
-  SeasonalProduct, 
+import type {
+  BuyerDashboard,
+  BuyerStats,
+  PriceAlert,
+  SeasonalProduct,
   SpendingCategory,
   Product,
   Order,
-  Supplier
+  Supplier,
 } from '@/types/buyer';
 
 // Mock data
@@ -153,7 +153,7 @@ export function useBuyerDashboard() {
     queryKey: ['buyer', 'dashboard'],
     queryFn: async (): Promise<BuyerDashboard> => {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 800));
+      await new Promise((resolve) => setTimeout(resolve, 800));
       return {
         stats: mockStats,
         priceAlerts: mockPriceAlerts,

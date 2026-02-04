@@ -3,7 +3,14 @@
  */
 
 import apiClient from './client';
-import type { FarmField, IoTSensor, CropRotationPlan, InventoryItem, BudgetEntry, CropProfitability } from '@/types/farmer/operations';
+import type {
+  FarmField,
+  IoTSensor,
+  CropRotationPlan,
+  InventoryItem,
+  BudgetEntry,
+  CropProfitability,
+} from '@/types/farmer/operations';
 
 export const operationsAPI = {
   /**

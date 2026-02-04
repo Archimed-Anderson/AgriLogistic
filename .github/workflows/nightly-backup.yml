@@ -1,0 +1,75 @@
+# Nightly database backup
+# Runs pg_dump and uploads to artifact (and optionally S3)
+name: Nightly Backup
+
+on:
+  schedule:
+    # 2:00 UTC daily
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+env:
+  BACKUP_RETENTION_DAYS: 7
+
+jobs:
+  backup:
+    name: Database backup
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql-client
+
+      - name: Parse DATABASE_URL and run pg_dump
+        id: backup
+        run: |
+          # Parse DATABASE_URL (postgres://user:pass@host:port/dbname)
+          URL="${{ secrets.DATABASE_URL }}"
+          if [ -z "$URL" ]; then
+            echo "::warning::DATABASE_URL not set; skipping backup"
+            echo "created=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          # Extract components (simple parsing, no special chars in password)
+          export PGPASSWORD=$(echo "$URL" | sed -n 's/.*:\/\/[^:]*:\([^@]*\)@.*/\1/p')
+          HOST=$(echo "$URL" | sed -n 's/.*@\([^:]*\):.*/\1/p')
+          PORT=$(echo "$URL" | sed -n 's/.*:\([0-9]*\)\/.*/\1/p')
+          DB=$(echo "$URL" | sed -n 's/.*\/\([^?]*\).*/\1/p')
+          USER=$(echo "$URL" | sed -n 's/.*\/\/\([^:]*\):.*/\1/p')
+          STAMP=$(date +%Y%m%d_%H%M%S)
+          mkdir -p backup
+          FILE="backup/${DB}_${STAMP}.sql.gz"
+          pg_dump -h "$HOST" -p "${PORT:-5432}" -U "$USER" -d "$DB" \
+            --no-owner --no-acl --clean --if-exists \
+            | gzip -9 > "$FILE"
+          echo "BACKUP_FILE=$FILE" >> $GITHUB_ENV
+          echo "file=$FILE" >> $GITHUB_OUTPUT
+          echo "created=true" >> $GITHUB_OUTPUT
+          echo "Backup created: $FILE"
+
+      - name: Upload backup artifact
+        if: steps.backup.outputs.created == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-backup-${{ github.run_number }}
+          path: ${{ env.BACKUP_FILE }}
+          retention-days: ${{ env.BACKUP_RETENTION_DAYS }}
+
+      - name: Configure AWS CLI
+        if: steps.backup.outputs.created == 'true' && vars.S3_BACKUP_BUCKET != ''
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Upload to S3 (optional)
+        if: steps.backup.outputs.created == 'true' && vars.S3_BACKUP_BUCKET != ''
+        run: |
+          aws s3 cp "$BACKUP_FILE" "s3://${{ vars.S3_BACKUP_BUCKET }}/backups/$(basename $BACKUP_FILE)"
+          echo "Uploaded to s3://${{ vars.S3_BACKUP_BUCKET }}/backups/$(basename $BACKUP_FILE)"

@@ -1,11 +1,14 @@
-
 export function StatsSection() {
   return (
     <section className="bg-slate-900 py-24 sm:py-32 relative overflow-hidden">
-        {/* Background lattice/grid effect */}
-        <div className="absolute inset-0 z-0 opacity-10" 
-             style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '40px 40px' }}>
-        </div>
+      {/* Background lattice/grid effect */}
+      <div
+        className="absolute inset-0 z-0 opacity-10"
+        style={{
+          backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
+          backgroundSize: '40px 40px',
+        }}
+      ></div>
 
       <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 gap-y-16 gap-x-8 text-center lg:grid-cols-3">

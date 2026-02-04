@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   TrendingUp,
   TrendingDown,
@@ -57,89 +57,135 @@ import {
   Smartphone,
   Globe,
   Wifi,
-} from "lucide-react";
-import { Card } from "./ui/card";
-import { Button } from "./ui/button";
-import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
+} from 'lucide-react';
+import { Card } from './ui/card';
+import { Button } from './ui/button';
+import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 
 export function ModernDashboard() {
-  const [selectedPeriod, setSelectedPeriod] = useState("today");
+  const [selectedPeriod, setSelectedPeriod] = useState('today');
   const [contactForm, setContactForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    message: "",
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
   });
 
   const handleSubmitContact = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Contact form submitted:", contactForm);
+    console.log('Contact form submitted:', contactForm);
   };
 
   // Stats principales
   const stats = {
-    revenue: { value: 45890, change: 23, label: "Revenus Mensuels", icon: DollarSign, color: "green" },
-    orders: { value: 127, change: 12, label: "Commandes Actives", icon: ShoppingCart, color: "blue" },
-    products: { value: 1234, change: 8, label: "Produits en Stock", icon: Package, color: "purple" },
-    users: { value: 245, change: 15, label: "Utilisateurs Actifs", icon: Users, color: "orange" },
+    revenue: {
+      value: 45890,
+      change: 23,
+      label: 'Revenus Mensuels',
+      icon: DollarSign,
+      color: 'green',
+    },
+    orders: {
+      value: 127,
+      change: 12,
+      label: 'Commandes Actives',
+      icon: ShoppingCart,
+      color: 'blue',
+    },
+    products: {
+      value: 1234,
+      change: 8,
+      label: 'Produits en Stock',
+      icon: Package,
+      color: 'purple',
+    },
+    users: { value: 245, change: 15, label: 'Utilisateurs Actifs', icon: Users, color: 'orange' },
   };
 
   // Activités récentes
   const recentActivities = [
     {
-      id: "1",
-      type: "order",
+      id: '1',
+      type: 'order',
       icon: ShoppingCart,
-      title: "Nouvelle commande #1245",
-      description: "Tracteur John Deere - €45,000",
-      time: "Il y a 5 min",
-      color: "text-green-600",
-      bgColor: "bg-green-100 dark:bg-green-900/20"
+      title: 'Nouvelle commande #1245',
+      description: 'Tracteur John Deere - €45,000',
+      time: 'Il y a 5 min',
+      color: 'text-green-600',
+      bgColor: 'bg-green-100 dark:bg-green-900/20',
     },
     {
-      id: "2",
-      type: "alert",
+      id: '2',
+      type: 'alert',
       icon: AlertTriangle,
-      title: "Stock faible - Pièces détachées",
-      description: "15 articles nécessitent réapprovisionnement",
-      time: "Il y a 15 min",
-      color: "text-orange-600",
-      bgColor: "bg-orange-100 dark:bg-orange-900/20"
+      title: 'Stock faible - Pièces détachées',
+      description: '15 articles nécessitent réapprovisionnement',
+      time: 'Il y a 15 min',
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-100 dark:bg-orange-900/20',
     },
     {
-      id: "3",
-      type: "user",
+      id: '3',
+      type: 'user',
       icon: Users,
-      title: "5 nouveaux utilisateurs",
-      description: "Inscription via la marketplace",
-      time: "Il y a 1h",
-      color: "text-blue-600",
-      bgColor: "bg-blue-100 dark:bg-blue-900/20"
+      title: '5 nouveaux utilisateurs',
+      description: 'Inscription via la marketplace',
+      time: 'Il y a 1h',
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-100 dark:bg-blue-900/20',
     },
     {
-      id: "4",
-      type: "delivery",
+      id: '4',
+      type: 'delivery',
       icon: Truck,
-      title: "Livraison effectuée",
+      title: 'Livraison effectuée',
       description: "Système d'irrigation automatique",
-      time: "Il y a 2h",
-      color: "text-purple-600",
-      bgColor: "bg-purple-100 dark:bg-purple-900/20"
+      time: 'Il y a 2h',
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-100 dark:bg-purple-900/20',
     },
   ];
 
   // Top produits
   const topProducts = [
-    { id: "1", name: "Tracteur John Deere 6M", sales: 45, revenue: 890000, trend: 12, icon: Tractor },
-    { id: "2", name: "Système Irrigation Automatique", sales: 89, revenue: 456000, trend: 23, icon: Droplet },
-    { id: "3", name: "Kit Capteurs IoT Agriculture", sales: 156, revenue: 234000, trend: -5, icon: Wifi },
-    { id: "4", name: "Pièces Détachées Moissonneuse", sales: 234, revenue: 189000, trend: 8, icon: Settings },
+    {
+      id: '1',
+      name: 'Tracteur John Deere 6M',
+      sales: 45,
+      revenue: 890000,
+      trend: 12,
+      icon: Tractor,
+    },
+    {
+      id: '2',
+      name: 'Système Irrigation Automatique',
+      sales: 89,
+      revenue: 456000,
+      trend: 23,
+      icon: Droplet,
+    },
+    {
+      id: '3',
+      name: 'Kit Capteurs IoT Agriculture',
+      sales: 156,
+      revenue: 234000,
+      trend: -5,
+      icon: Wifi,
+    },
+    {
+      id: '4',
+      name: 'Pièces Détachées Moissonneuse',
+      sales: 234,
+      revenue: 189000,
+      trend: 8,
+      icon: Settings,
+    },
   ];
 
   // Métriques météo
   const weatherMetrics = {
     temp: 24,
-    condition: "Ensoleillé",
+    condition: 'Ensoleillé',
     wind: 12,
     humidity: 65,
     precipitation: 0,
@@ -147,10 +193,34 @@ export function ModernDashboard() {
 
   // Quick actions
   const quickActions = [
-    { id: "1", label: "Nouvelle Commande", icon: ShoppingCart, color: "bg-green-500", route: "/admin/orders" },
-    { id: "2", label: "Ajouter Produit", icon: Package, color: "bg-blue-500", route: "/admin/products" },
-    { id: "3", label: "Gérer Stock", icon: Warehouse, color: "bg-purple-500", route: "/admin/logistics" },
-    { id: "4", label: "Voir Rapports", icon: BarChart3, color: "bg-orange-500", route: "/admin/reports" },
+    {
+      id: '1',
+      label: 'Nouvelle Commande',
+      icon: ShoppingCart,
+      color: 'bg-green-500',
+      route: '/admin/orders',
+    },
+    {
+      id: '2',
+      label: 'Ajouter Produit',
+      icon: Package,
+      color: 'bg-blue-500',
+      route: '/admin/products',
+    },
+    {
+      id: '3',
+      label: 'Gérer Stock',
+      icon: Warehouse,
+      color: 'bg-purple-500',
+      route: '/admin/logistics',
+    },
+    {
+      id: '4',
+      label: 'Voir Rapports',
+      icon: BarChart3,
+      color: 'bg-orange-500',
+      route: '/admin/reports',
+    },
   ];
 
   return (
@@ -171,9 +241,7 @@ export function ModernDashboard() {
                   <Sprout className="h-7 w-7 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-bold text-white">
-                    Bienvenue sur AgroLogistic
-                  </h1>
+                  <h1 className="text-4xl font-bold text-white">Bienvenue sur AgroLogistic</h1>
                   <p className="text-white/90 text-lg mt-1">
                     Votre plateforme intelligente pour l'agriculture moderne
                   </p>
@@ -181,11 +249,21 @@ export function ModernDashboard() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20">
+              <Button
+                variant="outline"
+                className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+              >
                 <Calendar className="h-4 w-4 mr-2" />
-                {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                {new Date().toLocaleDateString('fr-FR', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                })}
               </Button>
-              <Button variant="outline" className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20">
+              <Button
+                variant="outline"
+                className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+              >
                 <Bell className="h-4 w-4 mr-2" />
                 Notifications
               </Button>
@@ -203,7 +281,9 @@ export function ModernDashboard() {
                   <MapPin className="h-3 w-3" />
                   Conditions Actuelles
                 </p>
-                <p className="text-white text-2xl font-bold">{weatherMetrics.temp}°C • {weatherMetrics.condition}</p>
+                <p className="text-white text-2xl font-bold">
+                  {weatherMetrics.temp}°C • {weatherMetrics.condition}
+                </p>
               </div>
             </div>
             <div className="h-12 w-px bg-white/20" />
@@ -232,32 +312,37 @@ export function ModernDashboard() {
         {Object.values(stats).map((stat, index) => {
           const Icon = stat.icon;
           const colorClass = {
-            green: "bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400",
-            blue: "bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400",
-            purple: "bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400",
-            orange: "bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400",
+            green: 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400',
+            blue: 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400',
+            purple: 'bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400',
+            orange: 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400',
           }[stat.color];
           const badgeColor = {
-            green: "text-green-600 bg-green-100 dark:bg-green-900/20",
-            blue: "text-blue-600 bg-blue-100 dark:bg-blue-900/20",
-            purple: "text-purple-600 bg-purple-100 dark:bg-purple-900/20",
-            orange: "text-orange-600 bg-orange-100 dark:bg-orange-900/20",
+            green: 'text-green-600 bg-green-100 dark:bg-green-900/20',
+            blue: 'text-blue-600 bg-blue-100 dark:bg-blue-900/20',
+            purple: 'text-purple-600 bg-purple-100 dark:bg-purple-900/20',
+            orange: 'text-orange-600 bg-orange-100 dark:bg-orange-900/20',
           }[stat.color];
-          
+
           return (
             <Card key={index} className="p-6 hover:shadow-xl transition-all group">
               <div className="flex items-center justify-between mb-4">
-                <div className={`h-12 w-12 rounded-full ${colorClass} flex items-center justify-center`}>
+                <div
+                  className={`h-12 w-12 rounded-full ${colorClass} flex items-center justify-center`}
+                >
                   <Icon className="h-6 w-6" />
                 </div>
-                <span className={`text-xs font-semibold ${badgeColor} px-2 py-1 rounded-full flex items-center gap-1`}>
-                  <TrendingUp className="h-3 w-3" />
-                  +{stat.change}%
+                <span
+                  className={`text-xs font-semibold ${badgeColor} px-2 py-1 rounded-full flex items-center gap-1`}
+                >
+                  <TrendingUp className="h-3 w-3" />+{stat.change}%
                 </span>
               </div>
               <p className="text-sm text-muted-foreground mb-1">{stat.label}</p>
               <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                {typeof stat.value === 'number' && stat.value > 1000 ? `€${stat.value.toLocaleString()}` : stat.value}
+                {typeof stat.value === 'number' && stat.value > 1000
+                  ? `€${stat.value.toLocaleString()}`
+                  : stat.value}
               </p>
               <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
                 <MoveRight className="h-3 w-3" />
@@ -313,7 +398,10 @@ export function ModernDashboard() {
               {topProducts.map((product, index) => {
                 const ProductIcon = product.icon;
                 return (
-                  <div key={product.id} className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-800/30 rounded-xl hover:shadow-md transition-all group">
+                  <div
+                    key={product.id}
+                    className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-800/30 rounded-xl hover:shadow-md transition-all group"
+                  >
                     <div className="flex items-center gap-4 flex-1">
                       <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-[#0B7A4B] to-[#1A5F7A] flex items-center justify-center text-white shadow-lg">
                         <ProductIcon className="h-6 w-6" />
@@ -332,8 +420,16 @@ export function ModernDashboard() {
                       <p className="font-bold text-gray-900 dark:text-white">
                         €{product.revenue.toLocaleString()}
                       </p>
-                      <div className={`flex items-center gap-1 text-sm ${product.trend > 0 ? "text-green-600" : "text-red-600"}`}>
-                        {product.trend > 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                      <div
+                        className={`flex items-center gap-1 text-sm ${
+                          product.trend > 0 ? 'text-green-600' : 'text-red-600'
+                        }`}
+                      >
+                        {product.trend > 0 ? (
+                          <TrendingUp className="h-3 w-3" />
+                        ) : (
+                          <TrendingDown className="h-3 w-3" />
+                        )}
                         {Math.abs(product.trend)}%
                       </div>
                     </div>
@@ -385,8 +481,13 @@ export function ModernDashboard() {
               {recentActivities.map((activity) => {
                 const Icon = activity.icon;
                 return (
-                  <div key={activity.id} className="flex gap-3 group hover:bg-gray-50 dark:hover:bg-gray-800/50 p-2 rounded-lg transition-colors">
-                    <div className={`h-10 w-10 rounded-full ${activity.bgColor} flex items-center justify-center flex-shrink-0`}>
+                  <div
+                    key={activity.id}
+                    className="flex gap-3 group hover:bg-gray-50 dark:hover:bg-gray-800/50 p-2 rounded-lg transition-colors"
+                  >
+                    <div
+                      className={`h-10 w-10 rounded-full ${activity.bgColor} flex items-center justify-center flex-shrink-0`}
+                    >
                       <Icon className={`h-5 w-5 ${activity.color}`} />
                     </div>
                     <div className="flex-1">
@@ -431,9 +532,7 @@ export function ModernDashboard() {
                   Intelligence Artificielle
                 </span>
               </div>
-              <h3 className="text-white font-bold text-xl mb-2">
-                Agriculture Intelligente
-              </h3>
+              <h3 className="text-white font-bold text-xl mb-2">Agriculture Intelligente</h3>
               <p className="text-white/90 text-sm mb-4">
                 Optimisez vos rendements avec nos outils IA et IoT de dernière génération
               </p>
@@ -461,9 +560,7 @@ export function ModernDashboard() {
                   Développement Durable
                 </span>
               </div>
-              <h3 className="text-white font-bold text-xl mb-2">
-                Agriculture Durable
-              </h3>
+              <h3 className="text-white font-bold text-xl mb-2">Agriculture Durable</h3>
               <p className="text-white/90 text-sm mb-4">
                 Solutions écologiques pour un avenir agricole respectueux de l'environnement
               </p>
@@ -489,11 +586,9 @@ export function ModernDashboard() {
                 Nouveau
               </span>
             </div>
-            <h3 className="text-3xl font-bold mb-3">
-              Programme d'Affiliation AgroLogistic
-            </h3>
+            <h3 className="text-3xl font-bold mb-3">Programme d'Affiliation AgroLogistic</h3>
             <p className="text-white/90 mb-6 max-w-2xl text-lg">
-              Générez des revenus passifs en partageant nos produits agricoles de qualité. 
+              Générez des revenus passifs en partageant nos produits agricoles de qualité.
               Commissions jusqu'à 25% sur chaque vente !
             </p>
             <div className="flex gap-3">
@@ -536,24 +631,20 @@ export function ModernDashboard() {
               <div className="inline-flex items-center justify-center h-14 w-14 rounded-full bg-gray-100 dark:bg-gray-800 mb-4">
                 <Sprout className="h-7 w-7 text-gray-600 dark:text-gray-400" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                Starter
-              </h3>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Starter</h3>
               <div className="flex items-baseline justify-center gap-2">
                 <span className="text-5xl font-bold text-gray-900 dark:text-white">€49</span>
                 <span className="text-gray-600 dark:text-gray-400">/mois</span>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                Parfait pour débuter
-              </p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Parfait pour débuter</p>
             </div>
             <ul className="space-y-4 mb-8">
               {[
                 "Jusqu'à 10 utilisateurs",
-                "Marketplace complète",
-                "Support email",
-                "5 Go de stockage",
-                "Rapports basiques",
+                'Marketplace complète',
+                'Support email',
+                '5 Go de stockage',
+                'Rapports basiques',
               ].map((feature, index) => (
                 <li key={index} className="flex items-center gap-3">
                   <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
@@ -561,9 +652,7 @@ export function ModernDashboard() {
                 </li>
               ))}
             </ul>
-            <Button className="w-full bg-gray-900 hover:bg-gray-800 text-white">
-              Commencer
-            </Button>
+            <Button className="w-full bg-gray-900 hover:bg-gray-800 text-white">Commencer</Button>
           </Card>
 
           {/* Plan Pro (Recommandé) */}
@@ -578,9 +667,7 @@ export function ModernDashboard() {
               <div className="inline-flex items-center justify-center h-14 w-14 rounded-full bg-green-100 dark:bg-green-900/20 mb-4">
                 <Tractor className="h-7 w-7 text-[#0B7A4B]" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                Pro
-              </h3>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Pro</h3>
               <div className="flex items-baseline justify-center gap-2">
                 <span className="text-5xl font-bold text-[#0B7A4B]">€99</span>
                 <span className="text-gray-600 dark:text-gray-400">/mois</span>
@@ -591,14 +678,14 @@ export function ModernDashboard() {
             </div>
             <ul className="space-y-4 mb-8">
               {[
-                "Utilisateurs illimités",
-                "Toutes les fonctionnalités Starter",
-                "IoT Device Hub",
-                "AI Insights avancés",
-                "Support prioritaire 24/7",
-                "50 Go de stockage",
-                "Rapports personnalisés",
-                "Automatisation workflows",
+                'Utilisateurs illimités',
+                'Toutes les fonctionnalités Starter',
+                'IoT Device Hub',
+                'AI Insights avancés',
+                'Support prioritaire 24/7',
+                '50 Go de stockage',
+                'Rapports personnalisés',
+                'Automatisation workflows',
               ].map((feature, index) => (
                 <li key={index} className="flex items-center gap-3">
                   <Check className="h-5 w-5 text-[#0B7A4B] flex-shrink-0" />
@@ -617,9 +704,7 @@ export function ModernDashboard() {
               <div className="inline-flex items-center justify-center h-14 w-14 rounded-full bg-blue-100 dark:bg-blue-900/20 mb-4">
                 <Building2 className="h-7 w-7 text-blue-600 dark:text-blue-400" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                Enterprise
-              </h3>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Enterprise</h3>
               <div className="flex items-baseline justify-center gap-2">
                 <span className="text-4xl font-bold text-gray-900 dark:text-white">Sur mesure</span>
               </div>
@@ -629,14 +714,14 @@ export function ModernDashboard() {
             </div>
             <ul className="space-y-4 mb-8">
               {[
-                "Tout du plan Pro",
-                "Crop Intelligence illimité",
-                "API dédiée",
-                "Gestionnaire de compte dédié",
-                "Stockage illimité",
-                "Formation personnalisée",
-                "SLA garanti 99.9%",
-                "Intégrations sur mesure",
+                'Tout du plan Pro',
+                'Crop Intelligence illimité',
+                'API dédiée',
+                'Gestionnaire de compte dédié',
+                'Stockage illimité',
+                'Formation personnalisée',
+                'SLA garanti 99.9%',
+                'Intégrations sur mesure',
               ].map((feature, index) => (
                 <li key={index} className="flex items-center gap-3">
                   <Check className="h-5 w-5 text-blue-600 flex-shrink-0" />
@@ -660,9 +745,7 @@ export function ModernDashboard() {
               <MessageSquare className="h-6 w-6 text-[#0B7A4B]" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Contactez-nous
-              </h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Contactez-nous</h2>
               <p className="text-gray-600 dark:text-gray-400 text-sm">
                 Nous sommes là pour répondre à toutes vos questions
               </p>
@@ -750,8 +833,12 @@ export function ModernDashboard() {
                 </div>
                 <div>
                   <p className="font-medium text-gray-900 dark:text-white">Email</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">contact@AgroLogistic.com</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">support@AgroLogistic.com</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    contact@AgroLogistic.com
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    support@AgroLogistic.com
+                  </p>
                 </div>
               </div>
 
@@ -791,8 +878,8 @@ export function ModernDashboard() {
               Support 24/7
             </h3>
             <p className="text-white/90 text-sm mb-4">
-              Notre équipe est disponible pour vous accompagner à tout moment. 
-              Support technique, questions commerciales ou simples demandes d'information.
+              Notre équipe est disponible pour vous accompagner à tout moment. Support technique,
+              questions commerciales ou simples demandes d'information.
             </p>
             <Button className="w-full bg-white text-[#0B7A4B] hover:bg-gray-100">
               <MessageSquare className="h-4 w-4 mr-2" />
@@ -833,10 +920,16 @@ export function ModernDashboard() {
               La plateforme complète pour l'agriculture intelligente et durable
             </p>
             <div className="flex gap-3">
-              <a href="#" className="h-9 w-9 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-[#0B7A4B] hover:text-white transition-colors">
+              <a
+                href="#"
+                className="h-9 w-9 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-[#0B7A4B] hover:text-white transition-colors"
+              >
                 <Globe className="h-4 w-4" />
               </a>
-              <a href="#" className="h-9 w-9 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-[#0B7A4B] hover:text-white transition-colors">
+              <a
+                href="#"
+                className="h-9 w-9 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-[#0B7A4B] hover:text-white transition-colors"
+              >
                 <Smartphone className="h-4 w-4" />
               </a>
             </div>
@@ -850,25 +943,37 @@ export function ModernDashboard() {
             </h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2">
+                <a
+                  href="#"
+                  className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2"
+                >
                   <ChevronRight className="h-3 w-3" />
                   Crop Intelligence
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2">
+                <a
+                  href="#"
+                  className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2"
+                >
                   <ChevronRight className="h-3 w-3" />
                   IoT Device Hub
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2">
+                <a
+                  href="#"
+                  className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2"
+                >
                   <ChevronRight className="h-3 w-3" />
                   AI Insights
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2">
+                <a
+                  href="#"
+                  className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2"
+                >
                   <ChevronRight className="h-3 w-3" />
                   Automation
                 </a>
@@ -884,25 +989,37 @@ export function ModernDashboard() {
             </h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2">
+                <a
+                  href="#"
+                  className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2"
+                >
                   <ChevronRight className="h-3 w-3" />
                   Comment ça marche
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2">
+                <a
+                  href="#"
+                  className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2"
+                >
                   <ChevronRight className="h-3 w-3" />
                   Tarifs
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2">
+                <a
+                  href="#"
+                  className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2"
+                >
                   <ChevronRight className="h-3 w-3" />
                   Blog
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2">
+                <a
+                  href="#"
+                  className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2"
+                >
                   <ChevronRight className="h-3 w-3" />
                   Contact
                 </a>
@@ -918,19 +1035,28 @@ export function ModernDashboard() {
             </h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2">
+                <a
+                  href="#"
+                  className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2"
+                >
                   <ChevronRight className="h-3 w-3" />
                   Académie
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2">
+                <a
+                  href="#"
+                  className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2"
+                >
                   <ChevronRight className="h-3 w-3" />
                   Documentation API
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2">
+                <a
+                  href="#"
+                  className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors flex items-center gap-2"
+                >
                   <ChevronRight className="h-3 w-3" />
                   Support
                 </a>
@@ -943,17 +1069,25 @@ export function ModernDashboard() {
         <div className="pt-8 border-t border-gray-200 dark:border-gray-800">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              © 2026 AgroLogistic. Tous droits réservés.
+              <Shield className="h-4 w-4" />© 2026 AgroLogistic. Tous droits réservés.
             </p>
             <div className="flex gap-6 text-sm">
-              <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors">
+              <a
+                href="#"
+                className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors"
+              >
                 Politique de confidentialité
               </a>
-              <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors">
+              <a
+                href="#"
+                className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors"
+              >
                 Conditions d'utilisation
               </a>
-              <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors">
+              <a
+                href="#"
+                className="text-gray-600 dark:text-gray-400 hover:text-[#0B7A4B] transition-colors"
+              >
                 Mentions légales
               </a>
             </div>

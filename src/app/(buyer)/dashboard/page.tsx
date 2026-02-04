@@ -17,7 +17,7 @@ import {
   Bell,
   ArrowRight,
   Leaf,
-  AlertCircle
+  AlertCircle,
 } from 'lucide-react';
 import {
   BarChart,
@@ -29,7 +29,7 @@ import {
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell
+  Cell,
 } from 'recharts';
 
 const COLORS = ['#f59e0b', '#10b981', '#3b82f6', '#ef4444', '#8b5cf6'];
@@ -42,7 +42,20 @@ const categoryLabels: Record<string, string> = {
   cereals: 'Céréales',
 };
 
-const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+const monthNames = [
+  'Jan',
+  'Fév',
+  'Mar',
+  'Avr',
+  'Mai',
+  'Juin',
+  'Juil',
+  'Août',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Déc',
+];
 
 export default function BuyerDashboardPage() {
   const { stats, priceAlerts, seasonalProducts, spending, isLoading } = useBuyerDashboard();
@@ -63,7 +76,7 @@ export default function BuyerDashboardPage() {
     }).format(amount);
   };
 
-  const spendingChartData = spending.map(s => ({
+  const spendingChartData = spending.map((s) => ({
     name: categoryLabels[s.category] || s.category,
     value: s.amount,
   }));
@@ -97,7 +110,9 @@ export default function BuyerDashboardPage() {
               <Wallet className="w-5 h-5 text-amber-600" />
             </div>
           </div>
-          <p className="text-2xl font-bold text-slate-900">{formatCurrency(stats?.totalSpent || 0)}</p>
+          <p className="text-2xl font-bold text-slate-900">
+            {formatCurrency(stats?.totalSpent || 0)}
+          </p>
           <p className="text-sm text-green-600 flex items-center gap-1 mt-2">
             <TrendingUp className="w-4 h-4" />
             +12% ce mois
@@ -112,9 +127,7 @@ export default function BuyerDashboardPage() {
             </div>
           </div>
           <p className="text-2xl font-bold text-slate-900">{stats?.totalOrders}</p>
-          <p className="text-sm text-slate-500 mt-2">
-            {stats?.pendingOrders} en attente
-          </p>
+          <p className="text-sm text-slate-500 mt-2">{stats?.pendingOrders} en attente</p>
         </div>
 
         <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
@@ -125,9 +138,7 @@ export default function BuyerDashboardPage() {
             </div>
           </div>
           <p className="text-2xl font-bold text-slate-900">{stats?.suppliersCount}</p>
-          <p className="text-sm text-slate-500 mt-2">
-            Actifs ce mois
-          </p>
+          <p className="text-sm text-slate-500 mt-2">Actifs ce mois</p>
         </div>
 
         <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
@@ -137,10 +148,10 @@ export default function BuyerDashboardPage() {
               <TrendingDown className="w-5 h-5 text-green-600" />
             </div>
           </div>
-          <p className="text-2xl font-bold text-green-600">{formatCurrency(stats?.savedThisMonth || 0)}</p>
-          <p className="text-sm text-slate-500 mt-2">
-            Grâce aux alertes prix
+          <p className="text-2xl font-bold text-green-600">
+            {formatCurrency(stats?.savedThisMonth || 0)}
           </p>
+          <p className="text-sm text-slate-500 mt-2">Grâce aux alertes prix</p>
         </div>
       </div>
 
@@ -210,7 +221,10 @@ export default function BuyerDashboardPage() {
           </div>
           <div className="p-4 space-y-4">
             {seasonalProducts.map((sp) => (
-              <div key={sp.product.id} className="flex items-center gap-4 p-3 bg-slate-50 rounded-xl">
+              <div
+                key={sp.product.id}
+                className="flex items-center gap-4 p-3 bg-slate-50 rounded-xl"
+              >
                 <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">
                   <Leaf className="w-5 h-5 text-emerald-600" />
                 </div>
@@ -219,7 +233,9 @@ export default function BuyerDashboardPage() {
                   <p className="text-xs text-slate-500">{sp.product.origin}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold text-slate-900 text-sm">{formatCurrency(sp.product.pricePerKg)}/kg</p>
+                  <p className="font-semibold text-slate-900 text-sm">
+                    {formatCurrency(sp.product.pricePerKg)}/kg
+                  </p>
                   {sp.isCurrentlySeasonal && (
                     <span className="text-xs text-emerald-600 font-medium">En saison</span>
                   )}

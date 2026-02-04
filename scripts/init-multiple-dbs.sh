@@ -30,7 +30,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 EOSQL
 
 # Apply extensions to each database
-for db in agrodeep_auth agrodeep_products agrodeep_orders agrodeep_payments; do
+for db in AgriLogistic_auth AgriLogistic_products AgriLogistic_orders AgriLogistic_payments admin_db productions_db; do
     psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$db" <<-EOSQL
         CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
         CREATE EXTENSION IF NOT EXISTS "pgcrypto";

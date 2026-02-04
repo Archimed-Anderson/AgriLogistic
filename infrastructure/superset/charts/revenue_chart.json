@@ -1,0 +1,29 @@
+{
+  "version": "1.0",
+  "description": "Chart Revenus (CA) - template form_data pour dataset orders. À importer via UI ou API après création du dataset orders.",
+  "slice_name": "Chiffre d'affaires - Vue mensuelle",
+  "viz_type": "line",
+  "params": {
+    "datasource": "agrilogistic_oltp.orders",
+    "granularity_sqla": "created_at",
+    "time_grain_sqla": "P1M",
+    "time_range": "No filter",
+    "metrics": ["total_revenue"],
+    "groupby": [],
+    "x_axis_label": "Mois",
+    "y_axis_label": "CA (€)",
+    "row_limit": 10000
+  },
+  "form_data": {
+    "datasource": "agrilogistic_oltp.__tid__",
+    "viz_type": "line",
+    "granularity_sqla": "created_at",
+    "time_grain_sqla": "P1M",
+    "time_range": "No filter",
+    "metrics": [{"expressionType": "SQL", "sqlExpression": "SUM(total)", "label": "Chiffre d'affaires total"}],
+    "groupby": [],
+    "x_axis_label": "Mois",
+    "y_axis_label": "CA (€)",
+    "row_limit": 10000
+  }
+}

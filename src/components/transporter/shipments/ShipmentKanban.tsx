@@ -52,14 +52,20 @@ function DraggableShipmentCard({ shipment, onCardClick }: DraggableShipmentCardP
           <Package className="w-5 h-5 text-gray-600" />
           <span className="font-semibold text-gray-900">#{shipment.orderId}</span>
         </div>
-        <span className={`px-2 py-1 text-xs font-medium rounded ${
-          shipment.paymentStatus === 'paid' ? 'bg-green-100 text-green-700' :
-          shipment.paymentStatus === 'overdue' ? 'bg-red-100 text-red-700' :
-          'bg-yellow-100 text-yellow-700'
-        }`}>
-          {shipment.paymentStatus === 'paid' ? '✓ Payé' :
-           shipment.paymentStatus === 'overdue' ? '⚠ Impayé' :
-           '⏳ En attente'}
+        <span
+          className={`px-2 py-1 text-xs font-medium rounded ${
+            shipment.paymentStatus === 'paid'
+              ? 'bg-green-100 text-green-700'
+              : shipment.paymentStatus === 'overdue'
+              ? 'bg-red-100 text-red-700'
+              : 'bg-yellow-100 text-yellow-700'
+          }`}
+        >
+          {shipment.paymentStatus === 'paid'
+            ? '✓ Payé'
+            : shipment.paymentStatus === 'overdue'
+            ? '⚠ Impayé'
+            : '⏳ En attente'}
         </span>
       </div>
 
@@ -69,7 +75,9 @@ function DraggableShipmentCard({ shipment, onCardClick }: DraggableShipmentCardP
         <div className="flex items-center gap-3 text-xs text-gray-600">
           <span>{shipment.cargo.weight} kg</span>
           <span>•</span>
-          <span>{shipment.cargo.quantity} {shipment.cargo.unit}</span>
+          <span>
+            {shipment.cargo.quantity} {shipment.cargo.unit}
+          </span>
           {shipment.cargo.requiresRefrigeration && (
             <>
               <span>•</span>
@@ -149,7 +157,15 @@ interface KanbanColumnProps {
   onCardClick: (shipment: Shipment) => void;
 }
 
-function KanbanColumn({ title, status, shipments, count, color, onDrop, onCardClick }: KanbanColumnProps) {
+function KanbanColumn({
+  title,
+  status,
+  shipments,
+  count,
+  color,
+  onDrop,
+  onCardClick,
+}: KanbanColumnProps) {
   const [{ isOver }, drop] = useDrop({
     accept: ItemType,
     drop: (item: { id: string; status: ShipmentStatus }) => {
@@ -164,7 +180,11 @@ function KanbanColumn({ title, status, shipments, count, color, onDrop, onCardCl
 
   return (
     <div className="flex-1 min-w-[300px]">
-      <div className={`bg-white rounded-xl border-2 ${isOver ? 'border-blue-500 bg-blue-50' : 'border-gray-200'} transition-all`}>
+      <div
+        className={`bg-white rounded-xl border-2 ${
+          isOver ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+        } transition-all`}
+      >
         {/* Column Header */}
         <div className={`p-4 border-b-4 ${color}`}>
           <div className="flex items-center justify-between">
@@ -176,7 +196,10 @@ function KanbanColumn({ title, status, shipments, count, color, onDrop, onCardCl
         </div>
 
         {/* Cards */}
-        <div ref={drop} className="p-4 space-y-3 min-h-[600px] max-h-[calc(100vh-300px)] overflow-y-auto">
+        <div
+          ref={drop}
+          className="p-4 space-y-3 min-h-[600px] max-h-[calc(100vh-300px)] overflow-y-auto"
+        >
           {shipments.map((shipment) => (
             <DraggableShipmentCard
               key={shipment.id}
@@ -202,7 +225,11 @@ interface ShipmentKanbanProps {
   onShipmentClick: (shipment: Shipment) => void;
 }
 
-export function ShipmentKanban({ shipments, onStatusChange, onShipmentClick }: ShipmentKanbanProps) {
+export function ShipmentKanban({
+  shipments,
+  onStatusChange,
+  onShipmentClick,
+}: ShipmentKanbanProps) {
   const columns = [
     {
       title: 'À prendre',

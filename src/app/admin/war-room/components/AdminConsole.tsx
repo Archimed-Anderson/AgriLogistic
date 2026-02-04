@@ -27,27 +27,42 @@ export function AdminConsole() {
     if (!input.trim()) return;
 
     const cmd = input.trim().toLowerCase();
-    const newHistory: ConsoleLine[] = [...history, { text: `root@agrologistic:~# ${cmd}`, type: 'prompt' }];
+    const newHistory: ConsoleLine[] = [
+      ...history,
+      { text: `root@agrologistic:~# ${cmd}`, type: 'prompt' },
+    ];
 
     switch (cmd) {
       case 'help':
-        newHistory.push({ text: 'AVAILABLE COMMANDS: [ help, status, clear, restart <svc>, whoami, health ]', type: 'info' });
+        newHistory.push({
+          text: 'AVAILABLE COMMANDS: [ help, status, clear, restart <svc>, whoami, health ]',
+          type: 'info',
+        });
         break;
       case 'status':
         newHistory.push({ text: 'SYSTEM STATUS: [ NOMINAL ]', type: 'success' });
-        newHistory.push({ text: 'LATENCY: [ 12ms ] | CPU: [ 14% ] | MEM: [ 2.4GB ]', type: 'info' });
+        newHistory.push({
+          text: 'LATENCY: [ 12ms ] | CPU: [ 14% ] | MEM: [ 2.4GB ]',
+          type: 'info',
+        });
         break;
       case 'clear':
         setHistory([]);
         setInput('');
         return;
       case 'whoami':
-        newHistory.push({ text: 'CURRENT USER: [ admin_root ] | ROLE: [ superadmin ]', type: 'info' });
+        newHistory.push({
+          text: 'CURRENT USER: [ admin_root ] | ROLE: [ superadmin ]',
+          type: 'info',
+        });
         break;
       case 'health':
         newHistory.push({ text: 'CHECKING MICROSERVICES...', type: 'info' });
         setTimeout(() => {
-          setHistory(prev => [...prev, { text: 'ALL SERVICES HEALTHY (200 OK)', type: 'success' }]);
+          setHistory((prev) => [
+            ...prev,
+            { text: 'ALL SERVICES HEALTHY (200 OK)', type: 'success' },
+          ]);
         }, 800);
         break;
       default:
@@ -55,7 +70,10 @@ export function AdminConsole() {
           const svc = cmd.split(' ')[1];
           newHistory.push({ text: `INITIATING RESTART: [ ${svc} ]...`, type: 'warn' });
           setTimeout(() => {
-            setHistory(prev => [...prev, { text: `RESTART COMPLETE: [ ${svc} ] successfully reloaded.`, type: 'success' }]);
+            setHistory((prev) => [
+              ...prev,
+              { text: `RESTART COMPLETE: [ ${svc} ] successfully reloaded.`, type: 'success' },
+            ]);
           }, 1500);
         } else {
           newHistory.push({ text: `COMMAND NOT RECOGNIZED: "${cmd}"`, type: 'error' });
@@ -95,29 +113,40 @@ export function AdminConsole() {
 
       <div className="flex-1 flex flex-col p-4 overflow-hidden relative">
         {/* Command Output */}
-        <div 
+        <div
           ref={scrollRef}
           className="flex-1 overflow-y-auto space-y-1.5 pr-2 scrollbar-thin scrollbar-thumb-foreground/10 scroll-smooth mb-4"
         >
           {history.map((line, i) => (
-            <div key={i} className={cn(
-              "text-[11px] font-medium leading-relaxed break-all",
-              line.type === 'prompt' ? 'text-foreground font-bold' : 
-              line.type === 'info' ? 'text-blue-500 dark:text-blue-400/90' :
-              line.type === 'warn' ? 'text-amber-600 dark:text-amber-400/90' :
-              line.type === 'error' ? 'text-rose-600 dark:text-rose-400/90' :
-              line.type === 'success' ? 'text-emerald-600 dark:text-emerald-400/90' : 'text-muted-foreground'
-            )}>
+            <div
+              key={i}
+              className={cn(
+                'text-[11px] font-medium leading-relaxed break-all',
+                line.type === 'prompt'
+                  ? 'text-foreground font-bold'
+                  : line.type === 'info'
+                  ? 'text-blue-500 dark:text-blue-400/90'
+                  : line.type === 'warn'
+                  ? 'text-amber-600 dark:text-amber-400/90'
+                  : line.type === 'error'
+                  ? 'text-rose-600 dark:text-rose-400/90'
+                  : line.type === 'success'
+                  ? 'text-emerald-600 dark:text-emerald-400/90'
+                  : 'text-muted-foreground'
+              )}
+            >
               {line.type === 'prompt' ? (
                 <div className="flex gap-2">
                   <span className="text-primary tracking-tighter shrink-0 font-black">~</span>
                   <span>{line.text.split('#')[1]}</span>
                 </div>
-              ) : line.text}
+              ) : (
+                line.text
+              )}
             </div>
           ))}
         </div>
-        
+
         {/* Command Input Area */}
         <form onSubmit={handleCommand} className="relative group">
           <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
@@ -138,7 +167,10 @@ export function AdminConsole() {
               spellCheck={false}
               aria-label="Admin command input"
             />
-            <ChevronRight size={14} className="text-muted-foreground group-within:text-primary transition-colors" />
+            <ChevronRight
+              size={14}
+              className="text-muted-foreground group-within:text-primary transition-colors"
+            />
           </div>
         </form>
       </div>

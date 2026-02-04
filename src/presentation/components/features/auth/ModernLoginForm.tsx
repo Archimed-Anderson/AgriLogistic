@@ -25,7 +25,7 @@ export function ModernLoginForm({
   const { login, isLoading, error: loginError } = useLogin();
   const { validateField, validateAll, errors, clearErrors } = useFormValidation(false);
   useCSRFToken();
-  
+
   const [email, setEmail] = useState(() => {
     const rememberedEmail = getCookie('rememberMe_email');
     return rememberedEmail || '';
@@ -52,7 +52,7 @@ export function ModernLoginForm({
   };
 
   const clearFieldError = (fieldName: string) => {
-    setFieldErrors(prev => {
+    setFieldErrors((prev) => {
       const newErrors = { ...prev };
       delete newErrors[fieldName];
       return newErrors;
@@ -73,7 +73,7 @@ export function ModernLoginForm({
     try {
       // Password is sent in clear over HTTPS; server hashes with bcrypt
       await login({ email, password });
-      
+
       if (rememberMe) {
         setSecureCookie('rememberMe', 'true', { maxAge: 30 });
         setSecureCookie('rememberMe_email', email, { maxAge: 30 });
@@ -106,7 +106,7 @@ export function ModernLoginForm({
           Connectez-vous à votre compte pour continuer
         </CardDescription>
       </CardHeader>
-      
+
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           {displayError && (
@@ -141,7 +141,11 @@ export function ModernLoginForm({
               />
             </div>
             {emailError && (
-              <p id="login-email-error" className="text-xs text-red-600 dark:text-red-400" role="alert">
+              <p
+                id="login-email-error"
+                className="text-xs text-red-600 dark:text-red-400"
+                role="alert"
+              >
                 {emailError}
               </p>
             )}
@@ -164,7 +168,9 @@ export function ModernLoginForm({
                 required
                 aria-invalid={!!passwordError}
                 aria-describedby={passwordError ? 'login-password-error' : undefined}
-                className={passwordError ? 'border-red-500 focus-visible:ring-red-500/20 pr-10' : 'pr-10'}
+                className={
+                  passwordError ? 'border-red-500 focus-visible:ring-red-500/20 pr-10' : 'pr-10'
+                }
                 autoComplete="current-password"
               />
               <button
@@ -182,7 +188,11 @@ export function ModernLoginForm({
               </button>
             </div>
             {passwordError && (
-              <p id="login-password-error" className="text-xs text-red-600 dark:text-red-400" role="alert">
+              <p
+                id="login-password-error"
+                className="text-xs text-red-600 dark:text-red-400"
+                role="alert"
+              >
                 {passwordError}
               </p>
             )}

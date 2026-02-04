@@ -21,10 +21,8 @@ export function ExportPanel({ route, onExportGPX, onExportGoogleMaps }: ExportPa
   };
 
   const handleCopyToClipboard = async () => {
-    const routeText = route.waypoints
-      .map((wp, i) => `${i + 1}. ${wp.address}`)
-      .join('\n');
-    
+    const routeText = route.waypoints.map((wp, i) => `${i + 1}. ${wp.address}`).join('\n');
+
     try {
       await navigator.clipboard.writeText(routeText);
       alert('Route copiée dans le presse-papiers !');
@@ -62,9 +60,7 @@ export function ExportPanel({ route, onExportGPX, onExportGoogleMaps }: ExportPa
           </div>
           <div className="flex-1 text-left">
             <h3 className="font-semibold text-gray-900">Fichier GPX</h3>
-            <p className="text-sm text-gray-600">
-              Pour GPS Garmin, TomTom, etc.
-            </p>
+            <p className="text-sm text-gray-600">Pour GPS Garmin, TomTom, etc.</p>
           </div>
           <Navigation className="w-5 h-5 text-green-600" />
         </button>
@@ -79,9 +75,7 @@ export function ExportPanel({ route, onExportGPX, onExportGoogleMaps }: ExportPa
           </div>
           <div className="flex-1 text-left">
             <h3 className="font-semibold text-gray-900">Google Maps</h3>
-            <p className="text-sm text-gray-600">
-              Ouvrir dans Google Maps
-            </p>
+            <p className="text-sm text-gray-600">Ouvrir dans Google Maps</p>
           </div>
           <Navigation className="w-5 h-5 text-blue-600" />
         </button>
@@ -96,9 +90,7 @@ export function ExportPanel({ route, onExportGPX, onExportGoogleMaps }: ExportPa
           </div>
           <div className="flex-1 text-left">
             <h3 className="font-semibold text-gray-900">Waze</h3>
-            <p className="text-sm text-gray-600">
-              Ouvrir dans Waze
-            </p>
+            <p className="text-sm text-gray-600">Ouvrir dans Waze</p>
           </div>
           <Navigation className="w-5 h-5 text-purple-600" />
         </button>

@@ -20,7 +20,7 @@ import {
   RefreshCw,
   Clock,
   ChevronRight,
-  X
+  X,
 } from 'lucide-react';
 
 const statusConfig = {
@@ -52,8 +52,9 @@ export default function BuyerInventoryPage() {
     }).format(new Date(date));
   };
 
-  const filteredItems = items.filter(item => {
-    const matchesSearch = item.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  const filteredItems = items.filter((item) => {
+    const matchesSearch =
+      item.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.sku.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = filterStatus === 'all' || item.status === filterStatus;
     return matchesSearch && matchesStatus;
@@ -123,10 +124,12 @@ export default function BuyerInventoryPage() {
                 <span className="font-semibold text-amber-800">Stocks bas ou critiques</span>
               </div>
               <div className="space-y-2">
-                {lowStockItems.map(item => (
+                {lowStockItems.map((item) => (
                   <div key={item.id} className="flex items-center justify-between text-sm">
                     <span className="text-amber-700">{item.productName}</span>
-                    <span className="font-mono text-amber-800">{item.currentStock} {item.unit}</span>
+                    <span className="font-mono text-amber-800">
+                      {item.currentStock} {item.unit}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -139,10 +142,12 @@ export default function BuyerInventoryPage() {
                 <span className="font-semibold text-red-800">Expiration proche (7 jours)</span>
               </div>
               <div className="space-y-2">
-                {expiringItems.map(item => (
+                {expiringItems.map((item) => (
                   <div key={item.id} className="flex items-center justify-between text-sm">
                     <span className="text-red-700">{item.productName}</span>
-                    <span className="font-mono text-red-800">{item.expiryDate && formatDate(item.expiryDate)}</span>
+                    <span className="font-mono text-red-800">
+                      {item.expiryDate && formatDate(item.expiryDate)}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -186,7 +191,9 @@ export default function BuyerInventoryPage() {
               <th className="text-left px-6 py-4 text-sm font-medium text-slate-600">Stock</th>
               <th className="text-left px-6 py-4 text-sm font-medium text-slate-600">Statut</th>
               <th className="text-left px-6 py-4 text-sm font-medium text-slate-600">Valeur</th>
-              <th className="text-left px-6 py-4 text-sm font-medium text-slate-600">Fournisseur</th>
+              <th className="text-left px-6 py-4 text-sm font-medium text-slate-600">
+                Fournisseur
+              </th>
               <th className="px-6 py-4"></th>
             </tr>
           </thead>
@@ -213,14 +220,20 @@ export default function BuyerInventoryPage() {
                   <td className="px-6 py-4">
                     <div className="w-32">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-medium text-slate-900">{item.currentStock} {item.unit}</span>
+                        <span className="text-sm font-medium text-slate-900">
+                          {item.currentStock} {item.unit}
+                        </span>
                       </div>
                       <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full ${
-                            stockPercent < 25 ? 'bg-red-500' :
-                            stockPercent < 50 ? 'bg-amber-500' :
-                            stockPercent > 100 ? 'bg-blue-500' : 'bg-emerald-500'
+                            stockPercent < 25
+                              ? 'bg-red-500'
+                              : stockPercent < 50
+                              ? 'bg-amber-500'
+                              : stockPercent > 100
+                              ? 'bg-blue-500'
+                              : 'bg-emerald-500'
                           }`}
                           style={{ width: `${Math.min(stockPercent, 100)}%` }}
                         />
@@ -228,12 +241,16 @@ export default function BuyerInventoryPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-3 py-1 text-xs font-medium rounded-lg border ${config.color}`}>
+                    <span
+                      className={`px-3 py-1 text-xs font-medium rounded-lg border ${config.color}`}
+                    >
                       {config.label}
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="font-medium text-slate-900">{formatCurrency(item.totalValue)}</span>
+                    <span className="font-medium text-slate-900">
+                      {formatCurrency(item.totalValue)}
+                    </span>
                   </td>
                   <td className="px-6 py-4">
                     <span className="text-sm text-slate-600">{item.supplier}</span>
@@ -258,7 +275,10 @@ export default function BuyerInventoryPage() {
                   <h2 className="text-xl font-bold text-slate-900">{selectedItem.productName}</h2>
                   <p className="text-slate-500 font-mono">{selectedItem.sku}</p>
                 </div>
-                <button onClick={() => setSelectedItem(null)} className="p-2 hover:bg-slate-100 rounded-lg">
+                <button
+                  onClick={() => setSelectedItem(null)}
+                  className="p-2 hover:bg-slate-100 rounded-lg"
+                >
                   <X className="w-5 h-5 text-slate-500" />
                 </button>
               </div>
@@ -276,11 +296,20 @@ export default function BuyerInventoryPage() {
                   <div className="h-4 bg-slate-200 rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all ${
-                        selectedItem.status === 'critical' ? 'bg-red-500' :
-                        selectedItem.status === 'low' ? 'bg-amber-500' :
-                        selectedItem.status === 'overstock' ? 'bg-blue-500' : 'bg-emerald-500'
+                        selectedItem.status === 'critical'
+                          ? 'bg-red-500'
+                          : selectedItem.status === 'low'
+                          ? 'bg-amber-500'
+                          : selectedItem.status === 'overstock'
+                          ? 'bg-blue-500'
+                          : 'bg-emerald-500'
                       }`}
-                      style={{ width: `${Math.min((selectedItem.currentStock / selectedItem.maxStock) * 100, 100)}%` }}
+                      style={{
+                        width: `${Math.min(
+                          (selectedItem.currentStock / selectedItem.maxStock) * 100,
+                          100
+                        )}%`,
+                      }}
                     />
                   </div>
                   <p className="text-center mt-2 text-2xl font-bold text-slate-900">
@@ -293,11 +322,15 @@ export default function BuyerInventoryPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-slate-50 p-4 rounded-xl">
                   <p className="text-sm text-slate-500">Prix unitaire</p>
-                  <p className="font-semibold text-slate-900">{formatCurrency(selectedItem.unitPrice)}</p>
+                  <p className="font-semibold text-slate-900">
+                    {formatCurrency(selectedItem.unitPrice)}
+                  </p>
                 </div>
                 <div className="bg-slate-50 p-4 rounded-xl">
                   <p className="text-sm text-slate-500">Valeur totale</p>
-                  <p className="font-semibold text-slate-900">{formatCurrency(selectedItem.totalValue)}</p>
+                  <p className="font-semibold text-slate-900">
+                    {formatCurrency(selectedItem.totalValue)}
+                  </p>
                 </div>
                 <div className="bg-slate-50 p-4 rounded-xl">
                   <p className="text-sm text-slate-500">Emplacement</p>
@@ -318,7 +351,9 @@ export default function BuyerInventoryPage() {
               {selectedItem.expiryDate && (
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
                   <p className="text-sm text-amber-600">Date d'expiration</p>
-                  <p className="font-semibold text-amber-800">{formatDate(selectedItem.expiryDate)}</p>
+                  <p className="font-semibold text-amber-800">
+                    {formatDate(selectedItem.expiryDate)}
+                  </p>
                 </div>
               )}
 

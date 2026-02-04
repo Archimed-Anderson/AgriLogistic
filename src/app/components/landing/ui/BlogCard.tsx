@@ -10,7 +10,15 @@ interface BlogCardProps {
   gradient: string;
 }
 
-export default function BlogCard({ title, excerpt, date, category, imageSrc, imageAlt, gradient }: BlogCardProps) {
+export default function BlogCard({
+  title,
+  excerpt,
+  date,
+  category,
+  imageSrc,
+  imageAlt,
+  gradient,
+}: BlogCardProps) {
   return (
     <article className="group bg-white rounded-xl overflow-hidden border border-gray-100 hover:border-emerald-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
       {/* Image */}
@@ -43,9 +51,7 @@ export default function BlogCard({ title, excerpt, date, category, imageSrc, ima
         </h3>
 
         {/* Excerpt */}
-        <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
-          {excerpt}
-        </p>
+        <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">{excerpt}</p>
 
         {/* Read More */}
         <button className="inline-flex items-center text-emerald-600 font-semibold text-sm group-hover:gap-2 transition-all duration-300">

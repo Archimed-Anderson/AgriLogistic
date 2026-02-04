@@ -1,4 +1,12 @@
-import { Search, Book, MessageCircle, Phone, FileText, ChevronRight, HelpCircle } from 'lucide-react';
+import {
+  Search,
+  Book,
+  MessageCircle,
+  Phone,
+  FileText,
+  ChevronRight,
+  HelpCircle,
+} from 'lucide-react';
 
 const faqCategories = [
   { icon: Book, title: 'Guide de démarrage', count: 12 },
@@ -10,7 +18,7 @@ const faqCategories = [
 const popularArticles = [
   { title: 'Comment configurer mes capteurs IoT ?', views: '2.5k' },
   { title: 'Comprendre les prévisions de rendement IA', views: '1.8k' },
-  { title: 'Guide d\'irrigation optimisée', views: '1.2k' },
+  { title: "Guide d'irrigation optimisée", views: '1.2k' },
   { title: 'Exporter mes données comptables', views: '950' },
 ];
 
@@ -22,8 +30,10 @@ export function HelpSupport() {
         <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
         <div className="relative z-10 max-w-2xl mx-auto">
           <h1 className="text-3xl font-bold mb-4">Comment pouvons-nous vous aider ?</h1>
-          <p className="text-blue-100 mb-8">Recherchez dans notre documentation ou contactez le support</p>
-          
+          <p className="text-blue-100 mb-8">
+            Recherchez dans notre documentation ou contactez le support
+          </p>
+
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
@@ -40,7 +50,10 @@ export function HelpSupport() {
         {faqCategories.map((cat, index) => {
           const Icon = cat.icon;
           return (
-            <button key={index} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all text-left group">
+            <button
+              key={index}
+              className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all text-left group"
+            >
               <div className="w-12 h-12 rounded-lg bg-green-50 flex items-center justify-center mb-4 group-hover:bg-[#0B7A4B] transition-colors">
                 <Icon className="w-6 h-6 text-[#0B7A4B] group-hover:text-white transition-colors" />
               </div>
@@ -57,7 +70,10 @@ export function HelpSupport() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Articles Populaires</h2>
           <div className="space-y-2">
             {popularArticles.map((article, index) => (
-              <button key={index} className="w-full flex items-center justify-between p-4 rounded-xl hover:bg-gray-50 transition-colors text-left">
+              <button
+                key={index}
+                className="w-full flex items-center justify-between p-4 rounded-xl hover:bg-gray-50 transition-colors text-left"
+              >
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-sm">
                     {index + 1}

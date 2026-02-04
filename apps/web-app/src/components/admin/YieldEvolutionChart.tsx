@@ -1,36 +1,49 @@
-'use client'
+'use client';
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts'
-import { TrendingUp, Calendar, Activity, Download, FileText } from 'lucide-react'
-import { yieldEvolutionData } from '@/data/crop-intelligence-data'
-import { useRef } from 'react'
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  Area,
+  AreaChart,
+} from 'recharts';
+import { TrendingUp, Calendar, Activity, Download, FileText } from 'lucide-react';
+import { yieldEvolutionData } from '@/data/crop-intelligence-data';
+import { useRef } from 'react';
 
 export function YieldEvolutionChart() {
-  const chartRef = useRef<HTMLDivElement>(null)
+  const chartRef = useRef<HTMLDivElement>(null);
 
   // Export PNG function
   const handleExportPNG = async () => {
-    if (!chartRef.current) return
-    
+    if (!chartRef.current) return;
+
     // Using html2canvas library would be ideal, but for now we'll use a simple approach
-    alert('Export PNG: Cette fonctionnalité nécessite html2canvas. Pour l\'implémenter complètement, installer: pnpm add html2canvas')
-  }
+    alert(
+      "Export PNG: Cette fonctionnalité nécessite html2canvas. Pour l'implémenter complètement, installer: pnpm add html2canvas"
+    );
+  };
 
   // Export CSV function
   const handleExportCSV = () => {
     const csvContent = [
       ['Mois', 'Rendement Réel (t/ha)', 'Prédiction IA (t/ha)'],
-      ...yieldEvolutionData.map(d => [d.month, d.rendement, d.prediction])
+      ...yieldEvolutionData.map((d) => [d.month, d.rendement, d.prediction]),
     ]
-      .map(row => row.join(','))
-      .join('\n')
+      .map((row) => row.join(','))
+      .join('\n');
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-    const link = document.createElement('a')
-    link.href = URL.createObjectURL(blob)
-    link.download = `rendement_evolution_${new Date().toISOString().split('T')[0]}.csv`
-    link.click()
-  }
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `rendement_evolution_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+  };
 
   return (
     <div className="bg-white rounded-3xl p-8 border border-slate-200 hover:shadow-2xl transition-all duration-300">
@@ -43,7 +56,9 @@ export function YieldEvolutionChart() {
             </div>
             <h3 className="text-2xl font-black text-[#0A2619]">Évolution du Rendement</h3>
           </div>
-          <p className="text-sm text-slate-600 font-medium">Rendement moyen prévu sur les 6 derniers mois</p>
+          <p className="text-sm text-slate-600 font-medium">
+            Rendement moyen prévu sur les 6 derniers mois
+          </p>
         </div>
         <div className="flex gap-2">
           <button
@@ -75,40 +90,45 @@ export function YieldEvolutionChart() {
           <AreaChart data={yieldEvolutionData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="colorRendement" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="colorPrediction" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+                <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-            <XAxis 
-              dataKey="month" 
+            <XAxis
+              dataKey="month"
               stroke="#64748b"
               style={{ fontSize: '12px', fontWeight: '600' }}
             />
-            <YAxis 
+            <YAxis
               stroke="#64748b"
               style={{ fontSize: '12px', fontWeight: '600' }}
-              label={{ value: 't/ha', angle: -90, position: 'insideLeft', style: { fontSize: '12px', fontWeight: '700', fill: '#64748b' } }}
+              label={{
+                value: 't/ha',
+                angle: -90,
+                position: 'insideLeft',
+                style: { fontSize: '12px', fontWeight: '700', fill: '#64748b' },
+              }}
             />
-            <Tooltip 
+            <Tooltip
               contentStyle={{
                 backgroundColor: 'white',
                 border: '2px solid #e2e8f0',
                 borderRadius: '12px',
                 padding: '12px',
-                fontWeight: '600'
+                fontWeight: '600',
               }}
               labelStyle={{ color: '#0A2619', fontWeight: '700', marginBottom: '8px' }}
             />
-            <Legend 
-              wrapperStyle={{ 
-                fontSize: '14px', 
+            <Legend
+              wrapperStyle={{
+                fontSize: '14px',
                 fontWeight: '700',
-                paddingTop: '20px'
+                paddingTop: '20px',
               }}
             />
             <Area
@@ -151,5 +171,5 @@ export function YieldEvolutionChart() {
         </div>
       </div>
     </div>
-  )
+  );
 }

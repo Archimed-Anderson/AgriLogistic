@@ -21,21 +21,23 @@ export function useLogin() {
       return response;
     } catch (err) {
       setIsLoading(false);
-      
+
       // Use enhanced error handler
       const friendlyError = ErrorHandler.toUserFriendly(err);
       setError(friendlyError.message);
-      
+
       // Show error toast with actionable advice
       toast.error(friendlyError.title, {
         description: `${friendlyError.message}\n${friendlyError.actionable}`,
         duration: 5000,
-        action: friendlyError.canRetry ? {
-          label: 'Réessayer',
-          onClick: () => login(credentials),
-        } : undefined,
+        action: friendlyError.canRetry
+          ? {
+              label: 'Réessayer',
+              onClick: () => login(credentials),
+            }
+          : undefined,
       });
-      
+
       throw err;
     }
   };

@@ -8,7 +8,9 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import type { Shipment } from '@/types/transporter';
 
 // Set Mapbox access token (should be in environment variables)
-mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoiYWdyb2xvZ2lzdGljIiwiYSI6ImNsZGV4YW1wbGUifQ.example';
+mapboxgl.accessToken =
+  import.meta.env.VITE_MAPBOX_TOKEN ||
+  'pk.eyJ1IjoiYWdyb2xvZ2lzdGljIiwiYSI6ImNsZGV4YW1wbGUifQ.example';
 
 interface LiveMapProps {
   shipments: Shipment[];
@@ -55,7 +57,8 @@ export function LiveMap({ shipments, height = '400px' }: LiveMapProps) {
 
       // Pickup marker (green)
       const pickupEl = document.createElement('div');
-      pickupEl.className = 'w-8 h-8 bg-green-500 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white font-bold text-xs';
+      pickupEl.className =
+        'w-8 h-8 bg-green-500 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white font-bold text-xs';
       pickupEl.innerHTML = 'P';
 
       const pickupMarker = new mapboxgl.Marker(pickupEl)
@@ -75,7 +78,8 @@ export function LiveMap({ shipments, height = '400px' }: LiveMapProps) {
 
       // Delivery marker (blue)
       const deliveryEl = document.createElement('div');
-      deliveryEl.className = 'w-8 h-8 bg-blue-500 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white font-bold text-xs';
+      deliveryEl.className =
+        'w-8 h-8 bg-blue-500 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white font-bold text-xs';
       deliveryEl.innerHTML = 'D';
 
       const deliveryMarker = new mapboxgl.Marker(deliveryEl)
@@ -111,7 +115,8 @@ export function LiveMap({ shipments, height = '400px' }: LiveMapProps) {
         <div>
           <h2 className="text-lg font-semibold text-gray-900">Carte en Temps Réel</h2>
           <p className="text-sm text-gray-600 mt-1">
-            {shipments.length} livraison{shipments.length > 1 ? 's' : ''} active{shipments.length > 1 ? 's' : ''}
+            {shipments.length} livraison{shipments.length > 1 ? 's' : ''} active
+            {shipments.length > 1 ? 's' : ''}
           </p>
         </div>
         <div className="flex items-center gap-4">

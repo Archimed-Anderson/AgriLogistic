@@ -1,19 +1,29 @@
-'use client'
+'use client';
 
-import { X, MapPin, Calendar, TrendingUp, Droplets, Sun, AlertTriangle, CheckCircle, Satellite } from 'lucide-react'
-import { type CropZone, getHealthStatus } from '@/data/crop-intelligence-data'
-import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts'
+import {
+  X,
+  MapPin,
+  Calendar,
+  TrendingUp,
+  Droplets,
+  Sun,
+  AlertTriangle,
+  CheckCircle,
+  Satellite,
+} from 'lucide-react';
+import { type CropZone, getHealthStatus } from '@/data/crop-intelligence-data';
+import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 
 interface ZoneDetailModalProps {
-  zone: CropZone | null
-  isOpen: boolean
-  onClose: () => void
+  zone: CropZone | null;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export function ZoneDetailModal({ zone, isOpen, onClose }: ZoneDetailModalProps) {
-  if (!isOpen || !zone) return null
+  if (!isOpen || !zone) return null;
 
-  const healthStatus = getHealthStatus(zone.healthScore)
+  const healthStatus = getHealthStatus(zone.healthScore);
 
   // Simuler historique de santé (7 derniers jours)
   const healthHistory = [
@@ -23,28 +33,31 @@ export function ZoneDetailModal({ zone, isOpen, onClose }: ZoneDetailModalProps)
     { day: 'J-3', score: Math.max(20, zone.healthScore - 4) },
     { day: 'J-2', score: Math.max(20, zone.healthScore - 2) },
     { day: 'J-1', score: Math.max(20, zone.healthScore - 1) },
-    { day: 'Auj.', score: zone.healthScore }
-  ]
+    { day: 'Auj.', score: zone.healthScore },
+  ];
 
   const getWeatherIcon = () => {
     switch (zone.weatherCondition) {
-      case 'Ensoleillé': return <Sun className="h-6 w-6 text-yellow-500" />
-      case 'Sec': return <Sun className="h-6 w-6 text-orange-500" />
-      default: return <Sun className="h-6 w-6" />
+      case 'Ensoleillé':
+        return <Sun className="h-6 w-6 text-yellow-500" />;
+      case 'Sec':
+        return <Sun className="h-6 w-6 text-orange-500" />;
+      default:
+        return <Sun className="h-6 w-6" />;
     }
-  }
+  };
 
   return (
     <>
       {/* Backdrop */}
-      <div 
+      <div
         className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 animate-in fade-in duration-200"
         onClick={onClose}
       />
 
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div 
+        <div
           className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-300"
           onClick={(e) => e.stopPropagation()}
         >
@@ -56,7 +69,7 @@ export function ZoneDetailModal({ zone, isOpen, onClose }: ZoneDetailModalProps)
               className="w-full h-full object-cover rounded-t-3xl"
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent" />
-            
+
             {/* Close Button */}
             <button
               onClick={onClose}
@@ -98,7 +111,12 @@ export function ZoneDetailModal({ zone, isOpen, onClose }: ZoneDetailModalProps)
               </div>
               <div className="text-center p-4 rounded-2xl bg-purple-50 border border-purple-200">
                 <p className="text-xs font-medium text-purple-600 mb-1">Production Totale</p>
-                <p className="text-2xl font-black text-purple-900">{(zone.estimatedYield * zone.area).toLocaleString('fr-FR', { maximumFractionDigits: 0 })} t</p>
+                <p className="text-2xl font-black text-purple-900">
+                  {(zone.estimatedYield * zone.area).toLocaleString('fr-FR', {
+                    maximumFractionDigits: 0,
+                  })}{' '}
+                  t
+                </p>
               </div>
             </div>
 
@@ -106,27 +124,29 @@ export function ZoneDetailModal({ zone, isOpen, onClose }: ZoneDetailModalProps)
             <div className="mb-8 p-6 rounded-2xl bg-slate-50 border border-slate-200">
               <div className="flex items-center gap-2 mb-4">
                 <TrendingUp className="h-5 w-5 text-emerald-600" />
-                <h3 className="text-lg font-bold text-slate-900">Évolution Santé (7 derniers jours)</h3>
+                <h3 className="text-lg font-bold text-slate-900">
+                  Évolution Santé (7 derniers jours)
+                </h3>
               </div>
               <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={healthHistory}>
-                    <XAxis 
-                      dataKey="day" 
+                    <XAxis
+                      dataKey="day"
                       stroke="#64748b"
                       style={{ fontSize: '12px', fontWeight: '600' }}
                     />
-                    <YAxis 
+                    <YAxis
                       stroke="#64748b"
                       domain={[0, 100]}
                       style={{ fontSize: '12px', fontWeight: '600' }}
                     />
-                    <Tooltip 
+                    <Tooltip
                       contentStyle={{
                         backgroundColor: 'white',
                         border: '2px solid #e2e8f0',
                         borderRadius: '8px',
-                        padding: '8px'
+                        padding: '8px',
                       }}
                     />
                     <Line
@@ -158,8 +178,10 @@ export function ZoneDetailModal({ zone, isOpen, onClose }: ZoneDetailModalProps)
             <div className="grid md:grid-cols-2 gap-6">
               {/* Weather & Irrigation */}
               <div className="p-6 rounded-2xl bg-white border-2 border-slate-200">
-                <h3 className="text-lg font-bold text-slate-900 mb-4">Conditions Environnementales</h3>
-                
+                <h3 className="text-lg font-bold text-slate-900 mb-4">
+                  Conditions Environnementales
+                </h3>
+
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -174,11 +196,15 @@ export function ZoneDetailModal({ zone, isOpen, onClose }: ZoneDetailModalProps)
                       <Droplets className="h-6 w-6 text-blue-500" />
                       <span className="font-medium text-slate-700">Irrigation</span>
                     </div>
-                    <span className={`px-3 py-1 rounded-lg font-bold text-sm ${
-                      zone.irrigationStatus === 'Optimal' ? 'bg-emerald-100 text-emerald-700' :
-                      zone.irrigationStatus === 'Insuffisant' ? 'bg-orange-100 text-orange-700' :
-                      'bg-blue-100 text-blue-700'
-                    }`}>
+                    <span
+                      className={`px-3 py-1 rounded-lg font-bold text-sm ${
+                        zone.irrigationStatus === 'Optimal'
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : zone.irrigationStatus === 'Insuffisant'
+                            ? 'bg-orange-100 text-orange-700'
+                            : 'bg-blue-100 text-blue-700'
+                      }`}
+                    >
                       {zone.irrigationStatus}
                     </span>
                   </div>
@@ -188,7 +214,7 @@ export function ZoneDetailModal({ zone, isOpen, onClose }: ZoneDetailModalProps)
               {/* Last Scan */}
               <div className="p-6 rounded-2xl bg-white border-2 border-slate-200">
                 <h3 className="text-lg font-bold text-slate-900 mb-4">Informations de Scan</h3>
-                
+
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <Calendar className="h-6 w-6 text-purple-500" />
@@ -200,7 +226,7 @@ export function ZoneDetailModal({ zone, isOpen, onClose }: ZoneDetailModalProps)
                           month: 'long',
                           year: 'numeric',
                           hour: '2-digit',
-                          minute: '2-digit'
+                          minute: '2-digit',
                         })}
                       </p>
                     </div>
@@ -211,7 +237,8 @@ export function ZoneDetailModal({ zone, isOpen, onClose }: ZoneDetailModalProps)
                     <div>
                       <p className="text-xs text-slate-500 font-medium">Coordonnées GPS</p>
                       <p className="font-mono font-bold text-slate-900 text-sm">
-                        {zone.location.coordinates.lat.toFixed(4)}°N, {zone.location.coordinates.lng.toFixed(4)}°E
+                        {zone.location.coordinates.lat.toFixed(4)}°N,{' '}
+                        {zone.location.coordinates.lng.toFixed(4)}°E
                       </p>
                     </div>
                   </div>
@@ -222,5 +249,5 @@ export function ZoneDetailModal({ zone, isOpen, onClose }: ZoneDetailModalProps)
         </div>
       </div>
     </>
-  )
+  );
 }

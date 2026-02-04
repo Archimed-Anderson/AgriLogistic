@@ -1,8 +1,8 @@
-import type { ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
-import { AccessDenied } from "@components/AccessDenied";
-import type { UserRole } from "@domain/enums/user-role.enum";
-import { useAuth } from "@presentation/contexts/AuthContext";
+import type { ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AccessDenied } from '@components/AccessDenied';
+import type { UserRole } from '@domain/enums/user-role.enum';
+import { useAuth } from '@presentation/contexts/AuthContext';
 
 type RequireRoleProps = {
   anyOf: UserRole[];
@@ -19,7 +19,7 @@ export function RequireRole({ anyOf, moduleLabel, fallbackRoute, children }: Req
   const allowed = !!role && anyOf.includes(role);
 
   if (!allowed) {
-    const onBack = () => navigate(fallbackRoute || "/admin/dashboard");
+    const onBack = () => navigate(fallbackRoute || '/admin/dashboard');
     return (
       <AccessDenied
         title="Accès refusé"
@@ -31,4 +31,3 @@ export function RequireRole({ anyOf, moduleLabel, fallbackRoute, children }: Req
 
   return <>{children}</>;
 }
-

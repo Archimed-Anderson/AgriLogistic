@@ -3,7 +3,14 @@
  */
 
 import apiClient from './client';
-import type { DashboardKPIs, RevenueData, AgriTask, WeatherData, WeatherAlert, AIRecommendation } from '@/types/farmer/dashboard';
+import type {
+  DashboardKPIs,
+  RevenueData,
+  AgriTask,
+  WeatherData,
+  WeatherAlert,
+  AIRecommendation,
+} from '@/types/farmer/dashboard';
 
 export const dashboardAPI = {
   /**

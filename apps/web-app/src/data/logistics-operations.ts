@@ -112,14 +112,14 @@ export interface LogisticsMatch {
   distance: number; // en km
   estimatedDuration: number; // en heures
   estimatedCost: number; // en FCFA
-  
+
   // Financial Metrics
   platformMargin: number; // Marge de la plateforme (10-15%)
   carrierRevenue: number; // Revenu du transporteur
-  
+
   // Ecological Metrics
   co2Saved: number; // kg de CO2 économisé vs trajet standard
-  
+
   matchFactors: {
     capacityMatch: number;
     locationProximity: number;
@@ -616,12 +616,12 @@ export const mockMatches: LogisticsMatch[] = mockLoads
       distance,
       estimatedDuration,
       estimatedCost,
-      
+
       // New Metrics
       platformMargin: estimatedCost * 0.12, // 12% margin
       carrierRevenue: estimatedCost * 0.88,
       co2Saved: distance * 0.15, // 0.15kg saved per km optimized
-      
+
       matchFactors: {
         capacityMatch: (load.quantity / truck.capacity) * 25,
         locationProximity: Math.max(
@@ -675,7 +675,7 @@ export const mockIoTAlerts: IoTAlert[] = [
     const truck = mockTrucks[Math.floor(Math.random() * mockTrucks.length)];
     const types: IoTAlert['type'][] = ['Engine', 'Tire', 'Temperature', 'Fuel'];
     const type = types[Math.floor(Math.random() * types.length)];
-    
+
     let severity: IoTAlert['severity'] = 'info';
     if (type === 'Engine') severity = 'critical';
     if (type === 'Tire' || type === 'Temperature') severity = 'warning';
@@ -692,11 +692,16 @@ export const mockIoTAlerts: IoTAlert[] = [
       category: type === 'Temperature' ? 'IoT' : 'Vehicle',
       severity,
       type,
-      message: type === 'Engine' ? 'Surchauffe moteur détectée' : 
-               type === 'Tire' ? 'Pression anormale pneu AG' :
-               type === 'Temperature' ? 'Rupture chaîne de froid' : 'Niveau carburant bas',
+      message:
+        type === 'Engine'
+          ? 'Surchauffe moteur détectée'
+          : type === 'Tire'
+            ? 'Pression anormale pneu AG'
+            : type === 'Temperature'
+              ? 'Rupture chaîne de froid'
+              : 'Niveau carburant bas',
       timestamp: new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000).toISOString(),
-      status: 'Open'
+      status: 'Open',
     } as IoTAlert;
   }),
   // Generate System Alerts
@@ -706,27 +711,27 @@ export const mockIoTAlerts: IoTAlert[] = [
       category: 'System',
       severity: 'info',
       type: 'Match',
-      message: "Nouveau chargement compatible détecté pour la zone Abidjan",
+      message: 'Nouveau chargement compatible détecté pour la zone Abidjan',
       timestamp: new Date(Date.now() - Math.random() * 4 * 60 * 60 * 1000).toISOString(),
-      status: 'Open'
+      status: 'Open',
     } as IoTAlert;
-  })
+  }),
 ];
 
 // Predictive Data Generation (Last 7 days + Next 7 days)
 export const mockPredictiveData: PredictiveData[] = Array.from({ length: 14 }, (_, i) => {
   const date = new Date();
   date.setDate(date.getDate() - 7 + i);
-  
+
   // Trend: Slight increase
   const baseDemand = 40 + i * 2;
   const baseSupply = 45 + Math.sin(i) * 5;
-  
+
   return {
     date: date.toISOString().split('T')[0],
     demand: Math.round(baseDemand + Math.random() * 10),
     supply: Math.round(baseSupply + Math.random() * 10),
-    priceIndex: 100 + (baseDemand / baseSupply - 1) * 20
+    priceIndex: 100 + (baseDemand / baseSupply - 1) * 20,
   };
 });
 

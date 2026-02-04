@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Joi from 'joi';
 import stripeService from '../services/stripe.service';
 import { Database } from '../config/database';
+import { PaymentController } from '../controllers/payment.controller';
 
 const router = Router();
 
@@ -305,5 +306,11 @@ router.get('/:orderId/transactions', async (req: Request, res: Response) => {
     });
   }
 });
+
+// hub de paiements afrique
+router.get('/hub/summary', PaymentController.getSummary);
+router.get('/hub/operators', PaymentController.getOperatorStatus);
+router.post('/hub/deposit', PaymentController.deposit);
+router.post('/hub/withdraw', PaymentController.withdraw);
 
 export default router;

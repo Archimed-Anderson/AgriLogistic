@@ -5,7 +5,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useQualityControl, QualityInspection, NonConformity } from '@/hooks/buyer/useQualityControl';
+import {
+  useQualityControl,
+  QualityInspection,
+  NonConformity,
+} from '@/hooks/buyer/useQualityControl';
 import {
   ShieldCheck,
   CheckCircle,
@@ -19,14 +23,26 @@ import {
   Filter,
   TrendingUp,
   TrendingDown,
-  Package
+  Package,
 } from 'lucide-react';
 
 const statusConfig = {
-  passed: { label: 'Conforme', color: 'bg-emerald-100 text-emerald-700 border-emerald-200', icon: CheckCircle },
+  passed: {
+    label: 'Conforme',
+    color: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+    icon: CheckCircle,
+  },
   failed: { label: 'Non-conforme', color: 'bg-red-100 text-red-700 border-red-200', icon: XCircle },
-  warning: { label: 'Accepté avec réserves', color: 'bg-amber-100 text-amber-700 border-amber-200', icon: AlertTriangle },
-  pending: { label: 'En attente', color: 'bg-slate-100 text-slate-700 border-slate-200', icon: Clock },
+  warning: {
+    label: 'Accepté avec réserves',
+    color: 'bg-amber-100 text-amber-700 border-amber-200',
+    icon: AlertTriangle,
+  },
+  pending: {
+    label: 'En attente',
+    color: 'bg-slate-100 text-slate-700 border-slate-200',
+    icon: Clock,
+  },
 };
 
 const severityConfig = {
@@ -43,7 +59,14 @@ const ncStatusConfig = {
 };
 
 export default function BuyerQualityPage() {
-  const { inspections, nonConformities, passedInspections, failedInspections, openNonConformities, isLoading } = useQualityControl();
+  const {
+    inspections,
+    nonConformities,
+    passedInspections,
+    failedInspections,
+    openNonConformities,
+    isLoading,
+  } = useQualityControl();
   const [selectedInspection, setSelectedInspection] = useState<QualityInspection | null>(null);
   const [activeTab, setActiveTab] = useState<'inspections' | 'nonConformities'>('inspections');
 
@@ -65,9 +88,10 @@ export default function BuyerQualityPage() {
     );
   }
 
-  const avgScore = inspections.length > 0
-    ? Math.round(inspections.reduce((acc, i) => acc + i.overallScore, 0) / inspections.length)
-    : 0;
+  const avgScore =
+    inspections.length > 0
+      ? Math.round(inspections.reduce((acc, i) => acc + i.overallScore, 0) / inspections.length)
+      : 0;
 
   return (
     <div className="space-y-6">
@@ -116,7 +140,9 @@ export default function BuyerQualityPage() {
         <button
           onClick={() => setActiveTab('inspections')}
           className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-            activeTab === 'inspections' ? 'bg-slate-900 text-white' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+            activeTab === 'inspections'
+              ? 'bg-slate-900 text-white'
+              : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
           }`}
         >
           Inspections
@@ -124,7 +150,9 @@ export default function BuyerQualityPage() {
         <button
           onClick={() => setActiveTab('nonConformities')}
           className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-2 ${
-            activeTab === 'nonConformities' ? 'bg-slate-900 text-white' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+            activeTab === 'nonConformities'
+              ? 'bg-slate-900 text-white'
+              : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
           }`}
         >
           Non-conformités
@@ -152,13 +180,17 @@ export default function BuyerQualityPage() {
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${config.color}`}>
+                      <div
+                        className={`w-12 h-12 rounded-xl flex items-center justify-center ${config.color}`}
+                      >
                         <StatusIcon className="w-6 h-6" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
                           <h3 className="font-semibold text-slate-900">{inspection.productName}</h3>
-                          <span className={`px-2 py-1 text-xs font-medium rounded-lg border ${config.color}`}>
+                          <span
+                            className={`px-2 py-1 text-xs font-medium rounded-lg border ${config.color}`}
+                          >
                             {config.label}
                           </span>
                         </div>
@@ -169,13 +201,20 @@ export default function BuyerQualityPage() {
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="text-right">
-                        <p className={`text-xl font-bold ${
-                          inspection.overallScore >= 80 ? 'text-emerald-600' :
-                          inspection.overallScore >= 60 ? 'text-amber-600' : 'text-red-600'
-                        }`}>
+                        <p
+                          className={`text-xl font-bold ${
+                            inspection.overallScore >= 80
+                              ? 'text-emerald-600'
+                              : inspection.overallScore >= 60
+                              ? 'text-amber-600'
+                              : 'text-red-600'
+                          }`}
+                        >
                           {inspection.overallScore}%
                         </p>
-                        <p className="text-xs text-slate-500">{formatDate(inspection.inspectionDate)}</p>
+                        <p className="text-xs text-slate-500">
+                          {formatDate(inspection.inspectionDate)}
+                        </p>
                       </div>
                       <ChevronRight className="w-5 h-5 text-slate-400" />
                     </div>
@@ -200,15 +239,21 @@ export default function BuyerQualityPage() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className={`px-2 py-1 text-xs font-medium rounded-lg ${sevConfig.color}`}>
+                        <span
+                          className={`px-2 py-1 text-xs font-medium rounded-lg ${sevConfig.color}`}
+                        >
                           {sevConfig.label}
                         </span>
-                        <span className={`px-2 py-1 text-xs font-medium rounded-lg ${statConfig.color}`}>
+                        <span
+                          className={`px-2 py-1 text-xs font-medium rounded-lg ${statConfig.color}`}
+                        >
                           {statConfig.label}
                         </span>
                       </div>
                       <p className="font-medium text-slate-900">{nc.description}</p>
-                      <p className="text-sm text-slate-500 mt-1">Signalé le {formatDate(nc.reportedAt)}</p>
+                      <p className="text-sm text-slate-500 mt-1">
+                        Signalé le {formatDate(nc.reportedAt)}
+                      </p>
                       {nc.resolution && (
                         <div className="mt-3 p-3 bg-emerald-50 rounded-lg">
                           <p className="text-sm text-emerald-700">{nc.resolution}</p>
@@ -230,10 +275,15 @@ export default function BuyerQualityPage() {
             <div className="p-6 border-b border-slate-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-bold text-slate-900">{selectedInspection.productName}</h2>
+                  <h2 className="text-xl font-bold text-slate-900">
+                    {selectedInspection.productName}
+                  </h2>
                   <p className="text-slate-500">{selectedInspection.orderNumber}</p>
                 </div>
-                <button onClick={() => setSelectedInspection(null)} className="p-2 hover:bg-slate-100 rounded-lg">
+                <button
+                  onClick={() => setSelectedInspection(null)}
+                  className="p-2 hover:bg-slate-100 rounded-lg"
+                >
                   <X className="w-5 h-5 text-slate-500" />
                 </button>
               </div>
@@ -242,14 +292,24 @@ export default function BuyerQualityPage() {
             <div className="p-6 space-y-6">
               {/* Score Global */}
               <div className="text-center">
-                <div className={`inline-flex items-center justify-center w-24 h-24 rounded-full ${
-                  selectedInspection.overallScore >= 80 ? 'bg-emerald-100' :
-                  selectedInspection.overallScore >= 60 ? 'bg-amber-100' : 'bg-red-100'
-                }`}>
-                  <span className={`text-3xl font-bold ${
-                    selectedInspection.overallScore >= 80 ? 'text-emerald-600' :
-                    selectedInspection.overallScore >= 60 ? 'text-amber-600' : 'text-red-600'
-                  }`}>
+                <div
+                  className={`inline-flex items-center justify-center w-24 h-24 rounded-full ${
+                    selectedInspection.overallScore >= 80
+                      ? 'bg-emerald-100'
+                      : selectedInspection.overallScore >= 60
+                      ? 'bg-amber-100'
+                      : 'bg-red-100'
+                  }`}
+                >
+                  <span
+                    className={`text-3xl font-bold ${
+                      selectedInspection.overallScore >= 80
+                        ? 'text-emerald-600'
+                        : selectedInspection.overallScore >= 60
+                        ? 'text-amber-600'
+                        : 'text-red-600'
+                    }`}
+                  >
                     {selectedInspection.overallScore}%
                   </span>
                 </div>
@@ -261,7 +321,10 @@ export default function BuyerQualityPage() {
                 <h3 className="font-semibold text-slate-900 mb-4">Critères d'évaluation</h3>
                 <div className="space-y-3">
                   {selectedInspection.criteria.map((criteria, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                    <div
+                      key={i}
+                      className="flex items-center justify-between p-3 bg-slate-50 rounded-xl"
+                    >
                       <div className="flex-1">
                         <p className="font-medium text-slate-900">{criteria.name}</p>
                         {criteria.comment && (
@@ -272,8 +335,11 @@ export default function BuyerQualityPage() {
                         <div className="w-24 h-2 bg-slate-200 rounded-full overflow-hidden">
                           <div
                             className={`h-full rounded-full ${
-                              criteria.score / criteria.maxScore >= 0.8 ? 'bg-emerald-500' :
-                              criteria.score / criteria.maxScore >= 0.6 ? 'bg-amber-500' : 'bg-red-500'
+                              criteria.score / criteria.maxScore >= 0.8
+                                ? 'bg-emerald-500'
+                                : criteria.score / criteria.maxScore >= 0.6
+                                ? 'bg-amber-500'
+                                : 'bg-red-500'
                             }`}
                             style={{ width: `${(criteria.score / criteria.maxScore) * 100}%` }}
                           />
@@ -290,7 +356,9 @@ export default function BuyerQualityPage() {
               {/* Comments */}
               <div>
                 <h3 className="font-semibold text-slate-900 mb-2">Commentaires</h3>
-                <p className="text-slate-600 bg-slate-50 p-4 rounded-xl">{selectedInspection.comments}</p>
+                <p className="text-slate-600 bg-slate-50 p-4 rounded-xl">
+                  {selectedInspection.comments}
+                </p>
               </div>
 
               {/* Action Required */}
@@ -314,7 +382,9 @@ export default function BuyerQualityPage() {
                 </div>
                 <div className="bg-slate-50 p-3 rounded-xl">
                   <p className="text-slate-500">Date</p>
-                  <p className="font-medium text-slate-900">{formatDate(selectedInspection.inspectionDate)}</p>
+                  <p className="font-medium text-slate-900">
+                    {formatDate(selectedInspection.inspectionDate)}
+                  </p>
                 </div>
               </div>
             </div>

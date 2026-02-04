@@ -36,7 +36,8 @@ const mockDiscussions: Discussion[] = [
   {
     id: 'd-1',
     title: 'Meilleures pratiques pour le stockage des tomates',
-    content: 'Quelles sont vos techniques pour conserver les tomates plus longtemps sans perte de qualité ?',
+    content:
+      'Quelles sont vos techniques pour conserver les tomates plus longtemps sans perte de qualité ?',
     author: { name: 'Amadou Diallo', role: 'Acheteur' },
     category: 'quality',
     createdAt: new Date('2026-01-22T10:30:00'),
@@ -47,7 +48,8 @@ const mockDiscussions: Discussion[] = [
   {
     id: 'd-2',
     title: 'Évolution des prix du manioc ce mois',
-    content: 'Je constate une hausse significative des prix. Quelqu\'un a des infos sur les causes ?',
+    content:
+      "Je constate une hausse significative des prix. Quelqu'un a des infos sur les causes ?",
     author: { name: 'Fatou Seck', role: 'Acheteur' },
     category: 'prices',
     createdAt: new Date('2026-01-21T14:15:00'),
@@ -69,7 +71,8 @@ const mockDiscussions: Discussion[] = [
   {
     id: 'd-4',
     title: 'Astuce: Négocier avec les coopératives',
-    content: 'Partage de mon expérience sur comment obtenir de meilleurs prix avec les coopératives agricoles.',
+    content:
+      'Partage de mon expérience sur comment obtenir de meilleurs prix avec les coopératives agricoles.',
     author: { name: 'Ibrahima Fall', role: 'Acheteur Pro' },
     category: 'tips',
     createdAt: new Date('2026-01-19T16:45:00'),
@@ -82,7 +85,7 @@ const mockDiscussions: Discussion[] = [
 const mockEvents: CommunityEvent[] = [
   {
     id: 'e-1',
-    title: 'Webinar: Optimiser sa chaîne d\'approvisionnement',
+    title: "Webinar: Optimiser sa chaîne d'approvisionnement",
     description: 'Formation en ligne sur les meilleures pratiques logistiques',
     type: 'webinar',
     date: new Date('2026-01-25T14:00:00'),
@@ -119,7 +122,7 @@ export function useCommunity() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['buyer', 'community'],
     queryFn: async () => {
-      await new Promise(resolve => setTimeout(resolve, 600));
+      await new Promise((resolve) => setTimeout(resolve, 600));
       return {
         discussions: mockDiscussions,
         events: mockEvents,

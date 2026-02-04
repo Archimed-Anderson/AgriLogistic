@@ -19,6 +19,9 @@
 6. [Architecture Technique](#6️⃣-architecture-technique)
 7. [Sécurité & Accès](#7️⃣-sécurité--accès)
 8. [Vision Future](#8️⃣-vision-future)
+9. [Installation & Déploiement](#-installation--déploiement) (incl. [CI/CD GitHub Actions](#-cicd--github-actions--script-local))
+10. [Configuration Auth](#-configuration-auth) (DB, variables d'env, migration Better Auth, Google OAuth)
+11. [Implémentations Récentes (2025)](#-implémentations-récentes-2025)
 
 ---
 
@@ -645,6 +648,7 @@ sequenceDiagram
 | **Rural Network Guardian** | Monitoring Connectivité, Cartographie Zone Blanche, SLA Opérateurs | P0 |
 | **AgroContent CMS (BETA)** | Gestion articles (Notion-style), Calendrier événements, Médiathèque, SEO | P0 |
 | **Satellite Imagery Center** | Catalogage, Indices Végétation (NDVI), Détection Changement (IA) | P0 |
+| **Digital Twin Global (Vue Satellite)** | Cartographie multi-couches (NDVI, Yield, Diseases, Météo), Split slider 2023 vs 2024, MapLibre GL JS, RainViewer/OpenWeatherMap précipitations | P0 |
 | **Gestion des Missions** | CRUD workflow complet (Creation -> Optimization -> POD -> e-CMR) | P0 |
 | **Predictive Forecasting Lab**| Prédictions IA Rendement/Prix/Demande, Simulations What-If, Scénarios | P0 |
 | **Supervision Financière** | Cashflow temps réel, Monitoring transactions, Anomaly Detection (IA) | P0 |
@@ -682,7 +686,7 @@ sequenceDiagram
 | ----------------------- | --------------------------------------------------- | -------------------------- |
 | **Fraud Detection AI**  | Détection automatique comportements suspects        | -80% fraudes               |
 | **Content Moderation**  | Modération automatique images/descriptions          | Conformité légale          |
-| **Blockchain Explorer** | Visualisation transactions Hyperledger Fabric       | Transparence totale        |
+| **Blockchain Explorer** | Visualisation transactions Hyperledger Fabric, recherche par hash/wallet, filtres avancés, vérification intégrité | Transparence totale        |
 | **NFT Trust Seals**     | Génération de certificats de conformité NFT         | Immuabilité preuve         |
 | **Loan Architect**      | Simulateur de prêts dynamiques basé sur les risques | Optimisation yield         |
 | **Multi-tenant Config** | Configuration par pays/région                       | Scalabilité internationale |
@@ -1022,6 +1026,8 @@ sequenceDiagram
 | **Icons**         | Lucide React    | Latest  | Icons modernes, consistent             |
 | **Forms**         | React Hook Form | 7.x     | Gestion formulaires performante        |
 | **Validation**    | Zod             | 3.x     | Validation schémas TypeScript          |
+| **Command Palette** | cmdk          | Latest  | Quick Actions Hub (Ctrl+K), recherche floue |
+| **Hotkeys**       | react-hotkeys-hook | 5.x  | Raccourcis mnémoniques (K=KYC, T=Transport, F=Finance) |
 
 #### Data Visualization
 
@@ -1036,8 +1042,10 @@ sequenceDiagram
 
 | Technologie       | Usage                            | Avantage               |
 | ----------------- | -------------------------------- | ---------------------- |
-| **Leaflet**       | Cartes de base, markers          | Léger, open-source     |
-| **MapLibre GL**   | Cartes vectorielles performantes | Style personnalisable  |
+| **Leaflet**       | Cartes de base, markers, heatmap | Léger, open-source     |
+| **MapLibre GL**   | Digital Twin (optionnel), cartes vectorielles performantes, tuiles NDVI | Style personnalisable, open-source |
+| **leaflet.heat**  | Heatmap zones à risque (War Room) | BSD-2-Clause           |
+| **RainViewer API**| Overlay précipitations temps réel (Digital Twin) | Gratuit, sans clé      |
 | **Turf.js**       | Calculs géospatiaux              | Analyses spatiales     |
 | **OpenStreetMap** | Tuiles de fond                   | Gratuit, communautaire |
 
@@ -1068,6 +1076,8 @@ sequenceDiagram
 | **Kong**    | API Gateway principal         | Rate limiting, auth, routing |
 | **Nginx**   | Reverse proxy, load balancing | Haute performance            |
 
+**Configuration Kong (cahier des charges 1.1)** : déploiement via `infrastructure/docker-compose.kong.yml` avec PostgreSQL ; configuration dans `infrastructure/kong/kong.conf` (logs, listen, plugins) et `infrastructure/kong/kong.yml` (services, routes, consumers JWT + API Key). Initialisation : `infrastructure/scripts/init-kong.sh` (délègue à `kong-init.sh`). Table des routes et ports (8001–8011) : `infrastructure/docs/routing-table.md`. Validation : `infrastructure/scripts/validate-kong-cahier.sh` (GET /services, GET /api/v1/users avec JWT). Rate limiting : 100 req/min anonyme (IP), 1000 req/min authentifié (consumer). Bootstrap idempotent : en cas d’erreur UNIQUE sur les JWT déjà en base, le bootstrap sort en succès pour ne pas bloquer le démarrage.
+
 #### AI Services
 
 | Technologie      | Usage            | Modèles                      |
@@ -1094,7 +1104,7 @@ sequenceDiagram
 
 | Technologie            | Usage                      | Latence                  |
 | ---------------------- | -------------------------- | ------------------------ |
-| **Socket.io**          | WebSockets bidirectionnels | <100ms                   |
+| **Socket.io**          | WebSockets bidirectionnels (War Room: `NEXT_PUBLIC_WAR_ROOM_WS_URL`) | <100ms                   |
 | **Server-Sent Events** | Push serveur → client      | Unidirectionnel efficace |
 | **Redis Pub/Sub**      | Messagerie temps réel      | Sub-ms                   |
 
@@ -1291,6 +1301,7 @@ AgriLogistic repose sur une architecture **Microservices Hybride** orchestrée p
 │                                                                          │
 │   Topics: user.events | order.events | logistics.events | payment.events │
 │           analytics.events | notification.events | blockchain.events     │
+│           incident-events (War Room)                                      │
 │                                                                          │
 └─────────────────────────────────────────────────────────────────────────┘
           │
@@ -1519,6 +1530,20 @@ export const config = {
 
 ### ⚡ Scalabilité & Performance
 
+#### Optimisations Frontend (Next.js 14)
+
+| Optimisation            | Implémentation                                | Impact                    |
+| ----------------------- | --------------------------------------------- | ------------------------- |
+| **Bundle Analyzer**     | `@next/bundle-analyzer` (ANALYZE=true)         | Identification modules lourds |
+| **Lazy Loading**        | `next/dynamic` (QuickCommand, AG-Grid, Leaflet, Three.js, FleetCommander) | Réduction bundle initial  |
+| **Loading States**      | `loading.tsx` (admin, dashboard)               | Feedback navigation <100ms |
+| **Prefetch ciblé**      | `prefetch={false}` sur routes secondaires      | Moins de requêtes réseau  |
+| **modularizeImports**   | lucide-react, @radix-ui/react-icons            | Réduction ~30KB icônes    |
+| **ClientProviders**     | Wrapper AuthProvider/CartProvider/Toaster      | Fix hydration SSR         |
+| **Font display: swap**  | Inter, Plus Jakarta Sans                      | Évite FOIT                |
+
+#### Infrastructure
+
 | Stratégie                | Implémentation          | Impact                 |
 | ------------------------ | ----------------------- | ---------------------- |
 | **Horizontal Scaling**   | Kubernetes HPA          | Auto-scale 2-50 pods   |
@@ -1644,16 +1669,64 @@ cp apps/web-app/.env.example apps/web-app/.env.local
 pnpm dev
 ```
 
+### Démarrage dev avec PostgreSQL
+Les services **incident-service** et **production-service** (et d’autres) se connectent à PostgreSQL. Pour que `pnpm dev` fonctionne :
+
+1. **Démarrer PostgreSQL** (port **5435** par défaut) :
+   ```bash
+   docker compose up -d postgres
+   ```
+   Pour un démarrage propre (sans conteneurs orphelins) : `docker compose up -d postgres --remove-orphans`. Pour tout réinitialiser : `docker compose down --remove-orphans` puis `docker compose up -d postgres`.
+2. **Optionnel** : copier `.env.example` vers `.env` à la racine et vérifier `DB_PORT=5435` et `DB_PASSWORD=AgriLogistic_secure_2026`. Définir `INFLUXDB_TOKEN=` (ou un token réel si vous utilisez InfluxDB/Telegraf) évite le warning Docker Compose.
+3. **Si vous voyez "password authentication failed for user AgriLogistic"** : le mot de passe dans le conteneur ne correspond pas. Réinitialiser :
+   ```bash
+   docker exec -it AgriLogistic-postgres psql -U AgriLogistic -d postgres -c "ALTER USER AgriLogistic WITH PASSWORD 'AgriLogistic_secure_2026';"
+   ```
+4. **Si vous voyez "Bind for 0.0.0.0:5435 failed: port is already allocated"** : définir `POSTGRES_PORT=5436` dans `.env` à la racine, puis `DB_PORT=5436` (et `DATABASE_URL=...@localhost:5436/productions_db` pour production-service) dans les `.env` des services concernés.
+   - **Option A – Libérer le port** : trouver le processus (PowerShell : `Get-NetTCPConnection -LocalPort 5433`) ou un conteneur (`docker ps -a`), puis arrêter le conteneur qui utilise 5433 (`docker stop <container_id>`) ou l’autre instance PostgreSQL.
+### ▲ Déploiement Vercel (Web App)
+La web-app Next.js (`apps/web-app`) peut être déployée sur [Vercel](https://vercel.com). Configuration et variables d'environnement (Production / Preview) : voir **[docs/VERCEL_DEPLOYMENT.md](docs/VERCEL_DEPLOYMENT.md)**. Dans Vercel, définir **Root Directory** = `apps/web-app`.
+
 ### 🐳 Déploiement Docker (Production)
-L'application est conteneurisée et prête pour le déploiement (Kubernetes/ECS/Cloud Run).
+L'application est conteneurisée et prête pour le déploiement (Kubernetes/ECS/Cloud Run). Le workflow CD construit l'image avec le contexte `apps/web-app` et pousse vers GHCR.
 
 ```bash
-# 1. Construire l'image Docker
-docker build -t agrologistic-web -f apps/web-app/Dockerfile .
+# 1. Construire l'image Docker (contexte = apps/web-app)
+docker build -t ghcr.io/votre-org/agrologistic-platform/web-app:latest -f apps/web-app/Dockerfile apps/web-app
 
 # 2. Lancer le conteneur
-docker run -p 3000:3000 -e NEXT_PUBLIC_API_URL="https://api.agrologistic.com" agrologistic-web
+docker run -p 3000:3000 -e NEXT_PUBLIC_API_URL="https://api.agrologistic.com" ghcr.io/votre-org/agrologistic-platform/web-app:latest
 ```
+
+### 🔧 Variables d'Environnement Clés
+
+| Variable | Usage | Obligatoire |
+| -------- | ----- | ----------- |
+| `NEXT_PUBLIC_API_URL` | URL API Gateway | Oui |
+| `NEXT_PUBLIC_WAR_ROOM_WS_URL` | WebSocket War Room (incidents temps réel) | Non |
+| `NEXT_PUBLIC_ADMIN_API_URL` | Admin API (Quick Actions, Audit, Workflows) | Non |
+| `NEXT_PUBLIC_OPENWEATHERMAP_API_KEY` | Couche précipitations Digital Twin (sinon RainViewer gratuit) | Non |
+| `NEXT_PUBLIC_DIGITAL_TWIN_USE_MAPLIBRE` | Moteur carte Digital Twin (MapLibre vs Leaflet) | Non |
+
+### 📡 API Admin (Quick Actions & Workflows)
+
+| Endpoint | Méthode | Usage |
+| -------- | ------- | ----- |
+| `/api/admin/quick-actions/:action` | POST | Exécution actions rapides (bypass cache) |
+| `/api/admin/audit` | POST | Persistance audit trail |
+| `/admin/workflows/emergency-stop` | POST | Emergency Stop (suspension corridor logistique) |
+| `/admin/workflows/reroute-fleet` | POST | Reroute Fleet (recalcul VRP zone météo) |
+
+### 🗺️ Geospatial - Tile Service (Digital Twin)
+
+| Composant | Technologie | Usage |
+| --------- | ----------- | ----- |
+| **Tile Service** | Python FastAPI, rasterio, rio-tiler | Tuiles NDVI depuis COG (MinIO) |
+| **PostGIS** | PostgreSQL + PostGIS | Stockage géométries parcelles |
+| **COG** | Cloud Optimized GeoTIFF (MinIO) | Stockage images Sentinel-2 |
+| **IA Anomalie** | PyTorch, CNN | Détection maladies/zonage Digital Twin |
+
+---
 
 ### ✅ Checklist de Mise en Production (Pre-Flight)
 - [ ] **Environnement**: Toutes les variables `NEXT_PUBLIC_` sont définies dans le CI/CD.
@@ -1662,6 +1735,355 @@ docker run -p 3000:3000 -e NEXT_PUBLIC_API_URL="https://api.agrologistic.com" ag
 - [ ] **Build**: `pnpm build` compile sans erreur bloquante.
 - [ ] **Assets**: Les images statiques sont optimisées ou sur CDN.
 - [ ] **Sécurité**: Headers de sécurité (CSP, HSTS) configurés dans `next.config.mjs`.
+
+### 🔄 CI/CD – GitHub Actions & script local
+
+| Fichier | Rôle |
+| ------- | ----- |
+| **`.github/workflows/ci.yml`** | **CI** : sur PR/push `main`/`develop` – lint, typecheck, format:check, tests unitaires, tests d’intégration (optionnel avec Docker), build monorepo ; job **Security** : scan Trivy (filesystem) + upload SARIF. |
+| **`.github/workflows/cd.yml`** | **CD** : push `main` → build image web-app, push GHCR, déploiement **staging** (EKS) ; tag `v*` → déploiement **production** ; rollback automatique + notification Slack en cas d’échec. |
+| **`.github/workflows/migrate.yml`** | **Migrations DB** : déclenchement manuel (`workflow_dispatch`) – choix d’environnement (staging/production), exécution `prisma migrate deploy` pour auth-service et mission-service. Secrets : `DATABASE_URL`, optionnel `DATABASE_URL_MISSION`. |
+| **`.github/workflows/nightly-backup.yml`** | **Backup DB** : planifié 2h UTC quotidien + manuel – `pg_dump` depuis `DATABASE_URL`, compression, upload en artifact (7 jours) et optionnellement vers S3 si `S3_BACKUP_BUCKET` est défini. |
+| **`scripts/deploy.sh`** | **Script local de secours** : `./scripts/deploy.sh [staging\|production]` – install deps, validation (typecheck, lint, format, tests), build, migrations Prisma si `DATABASE_URL` défini. Variables : `SKIP_VALIDATE=1`, `SKIP_MIGRATE=1`. |
+
+**Secrets / variables utiles pour les workflows :**
+
+| Contexte | Secret / Variable | Usage |
+| -------- | ----------------- | ----- |
+| CD staging/production | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` | EKS |
+| CD | `AWS_REGION`, `EKS_CLUSTER_NAME` | Cluster EKS |
+| CD (optionnel) | `SLACK_WEBHOOK_URL` | Notifications déploiement / rollback |
+| Migrate | `DATABASE_URL` | Prisma (auth-service) |
+| Migrate (optionnel) | `DATABASE_URL_MISSION` | Prisma (mission-service) |
+| Nightly backup | `DATABASE_URL` | pg_dump |
+| Nightly backup (optionnel) | `S3_BACKUP_BUCKET`, AWS credentials | Upload S3 |
+
+**Overlay Kubernetes staging :** `infrastructure/k8s/overlays/staging/` (namespace `AgriLogistic-staging`, configmap, secrets, 1 replica web). Production : `infrastructure/k8s/overlays/production/`.
+
+---
+
+## 📌 Implémentations Récentes (2025)
+
+### Digital Twin Global (Vue Satellite)
+
+| Fonctionnalité | Technologie | Statut |
+| -------------- | ----------- | ------ |
+| Overlays Yield (heatmap rendements) | Leaflet, couleurs par T/ha | ✅ |
+| Overlays Diseases (zones maladies IA) | Cercles MapLibre/Leaflet, diseaseZones | ✅ |
+| Couche Précipitations | RainViewer API (gratuit) / OpenWeatherMap (clé optionnelle) | ✅ |
+| Split slider 2023 vs 2024 | CompareMapSlider, clip-path | ✅ |
+| MapLibre GL JS (optionnel) | maplibre-gl, react-map-gl/maplibre | ✅ |
+| Tile Service (backend) | Python FastAPI, rasterio, rio-tiler | 🏗️ Structure |
+| PostGIS + COG + IA Anomalie | Roadmap docs/DIGITAL_TWIN_BACKEND_ROADMAP.md | 📋 Planifié |
+
+### War Room & Quick Actions
+
+| Composant | Implémentation |
+| --------- | -------------- |
+| Kafka topics (cahier 1.2) | user.events, order.events, logistics.events, payment.events, iot.telemetry, analytics.events, incident.events ; analytics-service et incident-service alignés |
+| API Incidents + Redis Pub/Sub | incident-service |
+| `NEXT_PUBLIC_WAR_ROOM_WS_URL` | WebSocket temps réel |
+| Quick Actions API | POST quick-actions/:action, audit, workflows |
+| cmdk + react-hotkeys-hook | Palette Ctrl+K, raccourcis mnémoniques |
+
+### Performance Frontend
+
+| Optimisation | Impact |
+| ------------ | ------ |
+| Bundle Analyzer | ANALYZE=true pnpm build |
+| Lazy loading (QuickCommand, AG-Grid, Leaflet, Three.js, FleetCommander) | Réduction bundle initial |
+| loading.tsx (admin, dashboard) | Feedback navigation |
+| Prefetch ciblé | Moins de requêtes secondaires |
+| modularizeImports (lucide-react) | ~30KB économisés |
+| ClientProviders | Fix hydration SSR |
+
+### API Gateway Kong (Cahier des charges 1.1)
+
+| Élément | Détail |
+| ------- | ------ |
+| **docker-compose.kong.yml** | Stack Kong + PostgreSQL ; montage `kong.conf` et démarrage Kong avec `-c /usr/local/kong/kong.conf` |
+| **kong.conf** | `infrastructure/kong/kong.conf` : proxy_listen, admin_listen, database, plugins, logs |
+| **kong.yml** | Config déclarative : services (ports 8001–8011), routes, JWT + consumers API Key (key-auth) |
+| **init-kong.sh** | `infrastructure/scripts/init-kong.sh` appelle `kong-init.sh` pour l’initialisation |
+| **routing-table.md** | `infrastructure/docs/routing-table.md` : tableau routes, services, plugins, commandes de validation |
+| **validate-kong-cahier.sh** | Script de validation : GET /services, GET /api/v1/users avec JWT, GET /status |
+| **Rate limiting** | 100 req/min par IP (anonyme), 1000 req/min par consumer (authentifié) |
+| **Bootstrap** | Idempotent : si UNIQUE violation (JWT déjà en base), sortie en succès ; `restart: "no"` pour éviter la boucle |
+| **PostgreSQL** | Même `KONG_PG_PASSWORD` (ou défaut `kong_secure_2026`) pour kong-database, kong-bootstrap, kong-gateway |
+
+### Event Bus Apache Kafka (Cahier des charges 1.2)
+
+| Élément | Détail |
+| ------- | ------ |
+| **docker-compose.kafka.yml** | Cluster KRaft (sans Zookeeper), 3 brokers, Schema Registry Confluent, Kafka Connect, Kafka UI (provectus/kafka-ui) ; `infrastructure/docker-compose.kafka.yml` ; broker 1 exposé sur le port **19092** (évite conflit avec Kafka du compose principal sur 9092) |
+| **Topics** | user.events (3 p, 7 j), order.events (6 p, 30 j), logistics.events (6 p, 7 j), payment.events (3 p, 1 an), iot.telemetry (12 p, 3 j), analytics.events (6 p, 90 j), incident.events (3 p, 7 j) ; création automatique au démarrage (kafka-init-topics) |
+| **kafka/config/server.properties** | Réglages optimisés 8 GB RAM (log, réseau, réplication) ; heap brokers 2g, Connect 1g |
+| **Schema Registry** | Port 8081 ; gouvernance Avro |
+| **Connecteurs** | `infrastructure/connectors/` : postgres-source.json (JDBC Source PostgreSQL), clickhouse-sink.json (analytics.events → ClickHouse), jdbc-sink.json (réplication), http-sink.json (webhooks) ; voir `infrastructure/connectors/README.md` pour installation ClickHouse/HTTP Sink |
+| **Schémas Avro** | `infrastructure/kafka/schemas/avro/user-event-v1.avsc`, `order-event-v1.avsc` |
+| **Scripts** | `infrastructure/kafka/scripts/create-topics.sh` (création manuelle topics) ; `infrastructure/scripts/validate-kafka-cahier.sh` (Linux/macOS), `infrastructure/scripts/validate-kafka-cahier.ps1` (Windows) |
+| **Validation** | Après démarrage du stack : `docker exec kafka-broker-1 kafka-topics --bootstrap-server localhost:9092 --list` ; `docker exec kafka-broker-1 kafka-console-consumer --bootstrap-server localhost:9092 --topic order.events --from-beginning` ; ou exécuter `./infrastructure/scripts/validate-kafka-cahier.sh` / `.\infrastructure\scripts\validate-kafka-cahier.ps1` |
+| **Documentation** | `infrastructure/docs/kafka-cahier-1.2.md` (déploiement, topics, connecteurs, validation) ; section Kafka dans `infrastructure/QUICK_START.md` |
+| **Services alignés** | analytics-service : abonnement user.events, order.events, logistics.events, payment.events, analytics.events, iot.telemetry + compatibilité noms en tirets ; incident-service : production/consommation incident.events |
+
+### Service Mesh Linkerd (Optionnel – Phase 2)
+
+| Élément | Détail |
+| ------- | ------ |
+| **Contexte** | Observabilité réseau et mTLS entre micro-services sans modifier le code applicatif. |
+| **install.sh** | `infrastructure/linkerd/install.sh` : installation CLI Linkerd2 (CNCF), control plane, extension Viz (dashboard) ; prérequis `linkerd check --pre`. |
+| **Fonctionnalités** | mTLS automatique entre pods meshés ; métriques réseau (latence, erreurs) ; load balancing avancé ; retry et circuit breaker (proxy). |
+| **Injection** | Annotation `linkerd.io/inject: enabled` sur le namespace AgroLogistic ; injection automatique via `infrastructure/k8s-manifests/with-linkerd/`. |
+| **k8s-manifests/with-linkerd/** | `namespace-linkerd.yaml` (namespace avec annotation) ; `kustomization.yaml` (inclut l’overlay production) ; déploiement : `kubectl apply -k infrastructure/k8s/overlays/with-linkerd/`. Validation : `.\infrastructure\scripts\validate-linkerd.ps1`. |
+| **Dashboard** | Extension Viz : `linkerd viz dashboard` (proxy local) pour visualisation du mesh. |
+| **Alerting p99** | `infrastructure/linkerd/prometheus-rules-p99.yaml` : PrometheusRule alerte si latence p99 > 500 ms (métrique `response_latency_ms_bucket`). |
+| **Documentation** | `infrastructure/linkerd/README.md` ; `infrastructure/k8s-manifests/with-linkerd/README.md`. |
+
+### Monitoring Métier - Apache Superset (Cahier des charges)
+
+| Élément | Détail |
+| ------- | ------ |
+| **Contexte** | Remplacement solution analytics propriétaire par Apache Superset 100 % open source pour monitoring métier plateforme agricole. |
+| **Tâche** | Authentification intégrée (admin/admin ; SSO Keycloak optionnel) ; connexion PostgreSQL (données métier) et ClickHouse (analytics) ; dashboards prédéfinis par rôle ; Row Level Security (RLS) par rôle utilisateur. |
+| **docker-compose.superset.yml** | Stack complète avec init automatique (db upgrade, admin, init.sh) : Superset 3.x, PostgreSQL (metadata superset-db), Redis (cache + Celery), Celery worker/beat, Flower ; `infrastructure/docker-compose.superset.yml`. Volumes : superset_config.py, datasources/, datasets/, charts/. |
+| **Stack** | Superset 3.x (port 8088), PostgreSQL (superset-db), Redis (cache requêtes + broker Celery), Celery worker (tâches async), Celery beat (planification), Flower (monitoring Celery, port 5555). |
+| **Configuration requise** | Docker Compose complet avec init auto ; datasources agrilogistic_prod (PostgreSQL), analytics_warehouse (ClickHouse), kafka_streams (optionnel) ; RLS par rôle (agriculteur, transporteur, admin). |
+| **superset/superset_config.py** | Configuration Python : DB metadata, Redis, Celery, RLS, CORS, feature flags ; cache données (1h historique, 5min temps réel) ; RESULTS_BACKEND Redis pour requêtes async ; GLOBAL_ASYNC_QUERIES. |
+| **superset/init.sh** | Post-migration : création admin, préparation datasources ; import YAML à lancer après création des bases dans l’UI. |
+| **superset/datasources/** | Connecteurs YAML : postgres.yaml (OLTP agrilogistic, tables users/entities/products/orders/contracts/missions, cache 1h), clickhouse.yaml (OLAP analytics, events/iot_telemetry/funnel_analysis, cache 5min), trino.yaml (federated optionnel). Voir `infrastructure/superset/datasources/README.md`. |
+| **superset/datasets/** | Datasets optimisés : orders_dataset.yaml (métriques total_revenue, avg_order_value, order_count, distinct_customers ; dimensions created_at, status, total, user_id, entity_id). Cache 1h/5min ; async pour datasets > 1M lignes. Voir `infrastructure/superset/datasets/README.md`. |
+| **superset/charts/** | Templates charts : revenue_chart.json (form_data line chart CA mensuel sur dataset orders). |
+| **superset/dashboards/exports/** | Exports JSON des dashboards (à remplir après création dans l’UI). Import : `superset import-dashboards -p /app/pythonpath/dashboards/exports/*.json`. Voir `infrastructure/superset/dashboards/exports/README.md`. |
+| **Datasources (UI)** | À configurer dans Data > Connect Database : agrilogistic_oltp (PostgreSQL), agrilogistic_analytics (ClickHouse), agrilogistic_federated (Trino optionnel). Puis import YAML : `superset import_datasources -p /app/pythonpath/datasources/postgres.yaml -r -u admin` (idem clickhouse, datasets/orders_dataset.yaml). |
+| **Dashboard Executive** | GMV Temps Réel (Big Number + Trend, orders, date_range) ; Carte Transactions (Deck.GL Scatter, orders+parcels, product_type, date) ; Funnel Conversion (Funnel, events, cohort_date) ; Top Produits (Bar, products, region, date) ; Satisfaction NPS (Gauge, feedbacks). |
+| **Dashboard Opérations Logistiques** | Carte Flotte Temps Réel (Deck.GL Path, missions+iot, status, transporter) ; Performance Transport (Mixed, missions, date_range) ; Taux Remplissage (Pie, vehicles, type) ; Alertes Temps Réel (Table Log, incidents, severity). |
+| **Dashboard Agriculteur** | Revenus Mensuels (Line, payments, farmer_id, date) ; Rendement vs Prévision (Bar, parcels+predictions, crop_type, season) ; Qualité Produits (Box Plot, quality_scores, product_category). |
+| **RLS (Sécurité)** | Agriculteur : filtre farmer_id / user_id ; Transporteur : filtre transporter_id ; Admin : UNFILTERED. Configurer dans Settings > List RLS (ou API) pour chaque rôle et dataset. |
+| **Validation** | UI http://localhost:8088 (login admin/admin) ; Flower http://localhost:5555 ; test SQL (après connexion datasource) : `SELECT COUNT(*) FROM orders WHERE created_at > NOW() - INTERVAL '7 days'` ; script `.\infrastructure\scripts\validate-superset.ps1`. |
+| **Documentation** | `infrastructure/superset/README.md` (complet) ; `infrastructure/docs/superset-monitoring-metier.md`. |
+
+### Monitoring Technique - Observabilité complète (Prometheus + Grafana)
+
+| Élément | Détail |
+| ------- | ------ |
+| **Contexte** | Monitoring technique infrastructure et applications pour SLA 99.95% et détection proactive des incidents. |
+| **Tâche** | Déployer la stack complète Prometheus + Grafana + Alertmanager + Loki + Tempo. |
+| **docker-compose.monitoring.yml** | Stack : Prometheus (15s scrape, 15j retention), Grafana, Alertmanager, Loki (7j retention), Tempo (OTLP/Jaeger), Node Exporter, cAdvisor ; `infrastructure/docker-compose.monitoring.yml`. Déploiement : `cd infrastructure && docker compose -f docker-compose.monitoring.yml up -d`. |
+| **Prometheus** | Scraping 15s ; retention 15j ; targets : Node Exporter (OS), cAdvisor (containers Docker), Prometheus itself, application metrics (/metrics NestJS). Config : `infrastructure/monitoring/prometheus/prometheus.yml` ; règles : `infrastructure/monitoring/prometheus/rules/alerts.yml`. |
+| **Grafana** | Datasources : Prometheus, Loki, Tempo, PostgreSQL (+ Jaeger, Elasticsearch, ClickHouse). Provisioning : `infrastructure/monitoring/grafana/provisioning/datasources/datasources.yml`, `dashboards/dashboards.yml`. Dashboards prédéfinis : `infrastructure/monitoring/grafana/dashboards/*.json` (services-overview, security-dashboard). Alerting vers Slack/PagerDuty. |
+| **Loki** | Logs aggregation ; collecte logs Docker (driver loki) ; labels container_name, service, level ; retention 7j. Config : `infrastructure/monitoring/loki/loki-config.yml`. |
+| **Tempo** | Distributed tracing ; receiving Jaeger format, OTLP ; stockage local (S3 pour prod). Config : `infrastructure/monitoring/tempo/tempo.yml`. |
+| **Alertmanager** | Routes : critical → PagerDuty, warning → Slack ; silences pour maintenance. Config : `infrastructure/monitoring/alertmanager/config.yml`. Variables : `PAGERDUTY_ROUTING_KEY`, `SLACK_WEBHOOK_URL`. |
+| **Dashboards Grafana (cahier)** | **Infrastructure - Cluster Overview** : CPU/Memory/Disks par node, Network I/O, Container resource usage (cAdvisor), Kubernetes (si applicable). **Application - API Performance** : Request rate par endpoint, latence p50/p95/p99, error rate 4xx/5xx, top slowest queries PostgreSQL. **Business - SRE Golden Signals** : Traffic (req/sec), Latency, Errors, Saturation. |
+| **Instrumentation NestJS** | Endpoint `/metrics` exposé via `packages/microservice-core` (metricsMiddleware, metricsEndpoint) ; format Prometheus compatible (http_requests_total, http_request_duration_seconds). Exemple cahier prom-client : Counter `http_requests_total` (method, route, status_code), Histogram `http_request_duration_seconds` (buckets 0.1, 0.5, 1, 2, 5). Voir `infrastructure/monitoring/README.md`. |
+| **Validation** | Prometheus http://localhost:9090 ; Grafana http://localhost:3000 (admin/admin) ; Loki http://localhost:3100 ; requête test `rate(http_requests_total[5m])`. Script : `.\infrastructure\scripts\validate-monitoring.ps1`. |
+| **Documentation** | `infrastructure/monitoring/README.md`. |
+
+### Kubernetes pour Orchestration (Option Production – Cahier 3.2)
+
+| Élément | Détail |
+| ------- | ------ |
+| **Contexte** | Migration vers Kubernetes pour auto-scaling et haute disponibilité AgriLogistic. |
+| **Namespace** | `agrilogistic` ; ConfigMaps pour configurations non sensibles ; Secrets (Sealed Secrets ou Vault) pour données sensibles. |
+| **Deployments** | web-app, user-service (auth), market-service, logistics-service, payment-service, ai-service ; définis dans `infrastructure/k8s/base/frontend.yml`, `base/services.yml`, `deployments/*.yaml`. |
+| **StatefulSets** | postgres, redis, clickhouse, kafka, zookeeper ; `infrastructure/k8s/statefulsets/*.yaml`. |
+| **Services & Ingress** | ClusterIP pour communication interne ; Ingress NGINX avec cert-manager (Let's Encrypt) ; `infrastructure/k8s/ingress/ingress.yaml`. |
+| **HPA** | Horizontal Pod Autoscaler (CPU 70 %, min 2 / max 10) pour market-service, web-app, user-service ; `infrastructure/k8s/hpa/*.yaml`. |
+| **Monitoring** | ServiceMonitors Prometheus Operator pour scraping `/metrics` ; `infrastructure/k8s/monitoring/servicemonitors.yaml`. |
+| **Déploiement** | `kubectl apply -f infrastructure/k8s/base/namespace.yaml` puis ConfigMap, StatefulSets, Deployments, Ingress, HPA ; ou `kubectl apply -k infrastructure/k8s/overlays/production`. |
+| **Validation** | `kubectl get pods -n agrilogistic` ; `kubectl top pods -n agrilogistic` ; `kubectl logs -f deployment/market-service -n agrilogistic`. |
+| **Documentation** | `infrastructure/k8s/README.md`. |
+
+### Database – Optimisation PostgreSQL (Cahier 4.1)
+
+| Élément | Détail |
+| ------- | ------ |
+| **Contexte** | PostgreSQL 15+ optimisé pour charges OLTP (transactions) + OLAP (requêtes analytics). |
+| **Fichier** | `infrastructure/postgres/postgresql-production.conf` : configuration de production à monter ou merger avec `postgresql.conf`. |
+| **Mémoire (16 GB RAM)** | shared_buffers = 4GB ; effective_cache_size = 12GB ; work_mem = 20MB ; maintenance_work_mem = 512MB. |
+| **WAL & Réplication** | wal_level = replica ; max_wal_size = 2GB ; min_wal_size = 512MB ; archive_mode = on ; archive_command pour sauvegarde WAL. |
+| **Query Planning** | random_page_cost = 1.1 (SSD) ; effective_io_concurrency = 200 ; default_statistics_target = 100 ; JIT activé si besoin. |
+| **Logging** | log_min_duration_statement = 1000 (requêtes > 1s) ; log_checkpoints, log_connections, log_lock_waits. |
+| **Extensions** | shared_preload_libraries = 'pg_stat_statements, auto_explain' pour analyse des requêtes lentes. |
+| **Connexions & Parallélisme** | max_connections, max_parallel_workers_per_gather, max_parallel_workers. |
+| **Timeouts** | statement_timeout, lock_timeout, idle_in_transaction_session_timeout pour éviter les blocages. |
+| **Usage** | Copier/merger le fichier dans le répertoire de données PostgreSQL et redémarrer le serveur ; adapter les chemins d’archive selon l’environnement. |
+
+| **Partitionnement** | Table `orders` : partitionnement par mois (RANGE sur created_at) ; fonction `create_orders_partition_for_month(month_date)` ; index BRIN sur created_at, GIN sur JSONB. Voir `services/marketplace/order-service/migrations/002_orders_partitioning.sql`. Génération automatique des partitions : cron ou pg_partman. |
+| **Indexation** | BRIN (created_at), GIN (JSONB metadata), GiST (PostGIS géométries). |
+| **Réplication** | Streaming Replication : 1 primaire, 2 réplicas (lecture + backups/analytics) ; slots nommés ; vérification lag `pg_stat_replication` ; failover manuel ou Patroni. |
+| **Maintenance** | VACUUM ANALYZE hebdomadaire, REINDEX mensuel : `infrastructure/scripts/maintenance/vacuum.sh`. pg_dump quotidien vers S3/MinIO : `infrastructure/scripts/backup/s3-backup.sh`. |
+| **Fichiers** | `infrastructure/postgres/initdb/01-extensions.sql`, `pg_hba.conf.example`, `migrations/` (analytics_events, notifications, feature_flags, audit_logs). Voir `infrastructure/postgres/README.md`. |
+
+### Database – Migrations complémentaires (Cahier 4.2)
+
+| Élément | Détail |
+| ------- | ------ |
+| **analytics_events** | Table pour sync ClickHouse : event_type, user_id, session_id, properties (JSONB), sent_to_clickhouse. Index sur event_type, created_at, sent (partiel). `infrastructure/postgres/migrations/001_analytics_events.sql`. |
+| **notifications** | Schéma plateforme : type (push, email, sms, whatsapp), title, content, data (JSONB), read_at, sent_at, delivered_at, failed_at. Index user_unread (partiel). `infrastructure/postgres/migrations/002_notifications_platform.sql`. |
+| **feature_flags** | key, description, enabled, rules (JSONB). Seed : new_dashboard_ui, ai_price_prediction, advanced_routing. `infrastructure/postgres/migrations/003_feature_flags.sql`. |
+| **audit_logs** | Immutable (fillfactor=100), partitionnée par mois (RANGE changed_at). table_name, record_id, action (INSERT/UPDATE/DELETE), old_data/new_data (JSONB), changed_by, changed_at, ip_address, user_agent. Fonction `create_audit_logs_partition_for_month`. `infrastructure/postgres/migrations/004_audit_logs.sql`. |
+| **Exécution** | `psql -d agrilogistic -f infrastructure/postgres/initdb/01-extensions.sql` puis `.../migrations/001_*.sql` à `004_*.sql`. Voir `infrastructure/postgres/README.md`. |
+
+### Migrations Prisma (auth-service)
+
+| Migration | Contenu |
+| --------- | ------- |
+| `20240115120000_add_analytics` | Table `analytics_events` (sync ClickHouse). |
+| `20240115130000_add_notifications` | Table `notifications` (push, email, sms, whatsapp). |
+| `20240115140000_add_feature_flags` | Table `feature_flags` + seed. |
+| `20240115150000_add_audit_logs` | Table `audit_logs` partitionnée par mois + fonction `create_audit_logs_partition_for_month`. |
+| **Emplacement** | `services/identity/auth-service/prisma/migrations/`. |
+| **Commande** | `cd services/identity/auth-service && pnpm prisma:migrate` (dev) ou `prisma migrate deploy` (prod). |
+
+### Observabilité – OpenTelemetry (Prompt 5.1)
+
+| Élément | Détail |
+| ------- | ------ |
+| **Contexte** | Tracing distribué end-to-end (API → DB → Cache → External). |
+| **Stack OTLP / Jaeger** | `infrastructure/docker-compose.otel.yml` : Jaeger all-in-one (OTLP gRPC 4317, OTLP HTTP 4318, thrift 6831). Collector optionnel (profil `with-collector`). Démarrage : `cd infrastructure && docker compose -f docker-compose.otel.yml up -d`. |
+| **Visualisation Jaeger UI** | http://localhost:16686 — Recherche par traceID, service, durée ; graph de dépendances entre services (« System Architecture »). |
+| **NestJS** | `packages/microservice-core/middleware/tracing.ts` ; export `@agrologistic/microservice-core/tracing`. Instrumentation HTTP, pg, Redis, kafkajs. OTLP HTTP vers Jaeger/Tempo (défaut `http://localhost:4318`). En première ligne de `main.ts` : `import '@agrologistic/microservice-core/tracing';` (auth-service, mission-service). |
+| **Express (user-service)** | `services/identity/user-service/src/tracing.ts` ; en première ligne de `index.ts` : `import './tracing';`. OTLP HTTP, auto-instrumentation Express/pg. Variables : `OTEL_SDK_DISABLED`, `OTEL_EXPORTER_OTLP_ENDPOINT`, `OTEL_SERVICE_NAME`. |
+| **Frontend (Next.js)** | `apps/web-app/instrumentation.ts` : spans côté serveur (navigation, API routes). Utilise @vercel/otel si installé, sinon instrumentation manuelle (Node SDK OTLP). `next.config.mjs` : `experimental.instrumentationHook: true`. Variables : `OTEL_SERVICE_NAME` (défaut `agrilogistic-web-app`), `OTEL_EXPORTER_OTLP_ENDPOINT`. |
+| **Python (FastAPI AI Service)** | `services/ai-service/src/tracing.py` : TracerProvider, JaegerExporter (thrift), BatchSpanProcessor, `tracing.instrument_fastapi(app)` dans `main.py`. Variables : `OTEL_SDK_DISABLED`, `JAEGER_AGENT_HOST` (défaut `jaeger`), `JAEGER_AGENT_PORT` (défaut `6831`), `OTEL_SERVICE_NAME`. Dépendances : `opentelemetry-exporter-jaeger-thrift`, `opentelemetry-instrumentation-fastapi` (voir `services/ai-service/requirements.txt`). |
+| **Variables (NestJS)** | `OTEL_SDK_DISABLED`, `OTEL_EXPORTER_OTLP_ENDPOINT`, `OTEL_SERVICE_NAME`, `JAEGER_AGENT_ENDPOINT`. |
+| **Documentation** | `infrastructure/docs/opentelemetry-tracing.md` (fichiers, Jaeger UI, user-service, web-app). |
+
+### Validation globale infrastructure
+
+| Élément | Détail |
+| ------- | ------ |
+| **Script** | `.\infrastructure\scripts\validate-all.ps1` : enchaîne les validations Monitoring (Prometheus, Grafana, Loki, Tempo), Superset, Kafka, Kong. |
+| **Options** | `-SkipMonitoring`, `-SkipSuperset`, `-SkipKafka`, `-SkipKong` pour ignorer une stack. |
+| **Rapport** | Résumé OK / FAIL / SKIP par stack et liens utiles en fin d’exécution. Code de sortie 1 si au moins un échec. |
+| **Validation unitaire** | Monitoring seul : `.\infrastructure\scripts\validate-monitoring.ps1`. Voir `infrastructure/monitoring/README.md`. |
+
+### Tests de validation (CI)
+
+| Élément | Détail |
+| ------- | ------ |
+| **Commande** | `pnpm run validate` (typecheck + lint + format + test:ci) ; `pnpm run test:ci` (tests unitaires + coverage). |
+| **Tests d’intégration** | `tests/integration/full-service-flow.test.ts` : skip automatique des tests qui appellent l’API lorsque le service auth n’est pas joignable (CI sans services). |
+| **Logistics** | `src/app/data/logistics-operations.test.ts` : types `Coordinates` ([lat, lon]), `Load`/`Truck` alignés sur le module. |
+
+### CI/CD Pipelines (GitHub Actions)
+
+| Workflow | Déclenchement | Rôle |
+| -------- | -------------- | ----- |
+| **CI** (`ci.yml`) | PR / push `main` ou `develop` | Lint (turbo), typecheck, format:check, tests unitaires, tests d'intégration (Docker optionnel), build monorepo ; job Security : Trivy scan filesystem, upload SARIF (Security tab). |
+| **CD** (`cd.yml`) | Push `main` ou tag `v*` | Build image web-app (Dockerfile `apps/web-app`), push vers GHCR ; staging sur `main` (EKS + `kubectl set image`), production sur tag ; rollback + Slack en cas d'échec. Overlays K8s : `infrastructure/k8s/overlays/staging` et `production`. |
+| **Migrations** (`migrate.yml`) | Manuel (`workflow_dispatch`) | Choix environnement (staging/production) ; `prisma migrate deploy` auth-service et mission-service ; secrets `DATABASE_URL`, `DATABASE_URL_MISSION` (optionnel). |
+| **Backup** (`nightly-backup.yml`) | Cron 2h UTC + manuel | `pg_dump` depuis `DATABASE_URL`, compression, artifact (7 j) et optionnel S3 (`S3_BACKUP_BUCKET`). |
+
+**Script local de secours :** `scripts/deploy.sh [staging|production]` – install, validation, build, migrations si `DATABASE_URL` ; variables `SKIP_VALIDATE`, `SKIP_MIGRATE`. Voir [Installation & Déploiement – CI/CD](#-cicd--github-actions--script-local).
+
+### ESLint & qualité web-app
+
+| Élément | Détail |
+| ------- | ------ |
+| **Documentation** | `apps/web-app/docs/ESLINT_RULES.md` : règles ESLint modifiées, corrections (erreur `Plus` FleetCommander, `alt` img, hooks), désactivations ciblées (unescaped-entities, no-img-element, jsx-no-comment-textnodes) avec justification. |
+| **Config** | `apps/web-app/.eslintrc.json` : règles `react/no-unescaped-entities`, `@next/next/no-img-element`, `react/jsx-no-comment-textnodes` en `off` ; `react-hooks/exhaustive-deps` et `jsx-a11y/alt-text` en `warn`. |
+| **Résultat** | `pnpm run lint` dans `apps/web-app` : « No ESLint warnings or errors » (exit 0). |
+
+### Nettoyage du code source
+
+| Élément | Détail |
+| ------- | ------ |
+| **Rapport** | `docs/CLEANUP_REPORT.md` : inventaire, liste des suppressions (fichiers temporaires, scripts obsolètes), mise à jour `.gitignore`, recommandations. |
+| **Changelog** | `CHANGELOG.md` (racine) et `apps/web-app/CHANGELOG.md` : entrées 2026-02-03 pour le nettoyage. |
+
+### Migration Authentification (Fév 2026)
+
+| Élément | Détail |
+| ------- | ------ |
+| **Librairie** | **Better Auth** remplace NestJS Auth pour la web-app (Next.js 14+). Configuration dans `apps/web-app/src/auth.ts`. |
+| **Base de Données** | **Prisma 7** : Configuration centralisée dans `apps/web-app/prisma.config.ts`. Port local PostgreSQL : **5435**. |
+| **Sécurité** | Support OAuth (Google, Apple), Sessions DB avec expiration 24h, Rôles utilisateur (Admin, Farmer, Transporter, Buyer). |
+| **Setup dev** | Variables dans `apps/web-app/.env` (généré automatiquement). Commande schema : `npx prisma db push`. |
+
+#### Intégration Frontend & API
+
+| Composant | Description Technique |
+| --------- | --------------------- |
+| **API Backend** | Route Handler `app/api/auth/[...all]/route.ts` exposant les endpoints Better Auth. |
+| **Server Actions** | `app/actions/auth-actions.ts` : Wrappers séurisés pour `signUpEmail`, `signInEmail`, `signInSocial`. |
+| **Login UI** | `LoginForm.tsx` refactorisé pour utiliser les Server Actions + Bouton Google Sign-In. |
+| **Middleware** | `middleware.ts` adapté pour vérifier `better-auth.session_token` au lieu des tokens JWT manuels. |
+| **Nettoyage** | Suppression du service legacy `services/identity/auth-service`. |
+
+### 🔐 Configuration Auth
+
+Cette section décrit comment configurer l'authentification (Better Auth) pour la web-app : création de la base, variables d'environnement, migration des tables, et Google OAuth. Fichiers concernés : `apps/web-app/src/auth.ts`, `apps/web-app/src/app/actions/auth-actions.ts`, `apps/web-app/src/context/AuthContext.tsx`, `apps/web-app/src/components/auth/LoginForm.tsx`, `apps/web-app/.env.example`.
+
+#### 1. Créer la base de données
+
+1. **Démarrer PostgreSQL** (port **5435** par défaut) :
+   ```bash
+   docker compose up -d postgres
+   ```
+2. **Créer la base** si besoin (ex. `AgriLogistic`) :
+   ```bash
+   docker exec -it AgriLogistic-postgres psql -U AgriLogistic -d postgres -c "CREATE DATABASE AgriLogistic;"
+   ```
+3. En cas d'erreur de mot de passe : réinitialiser avec le même que dans `DATABASE_URL` (ex. `AgriLogistic_secure_2026`).
+
+#### 2. Définir les variables d'environnement
+
+1. Copier l'exemple dans la web-app :
+   ```bash
+   cp apps/web-app/.env.example apps/web-app/.env.local
+   # ou .env selon votre setup
+   ```
+2. Éditer `apps/web-app/.env.local` (ou `apps/web-app/.env`) et renseigner au minimum :
+   - **`DATABASE_URL`** : URL Postgres, ex. `postgresql://AgriLogistic:AgriLogistic_secure_2026@localhost:5435/AgriLogistic`
+   - **`BETTER_AUTH_SECRET`** : clé de signature (min 32 caractères). Générer : `openssl rand -base64 32`
+   - **`BETTER_AUTH_URL`** ou **`NEXTAUTH_URL`** : URL de base de l'app, ex. `http://localhost:3000`
+3. Optionnel : **`NEXT_PUBLIC_DEV_LOGIN_DELAY_MS`** (défaut 250) pour le délai d’accès rapide en ms ; **`GOOGLE_CLIENT_ID`** / **`GOOGLE_CLIENT_SECRET`** pour Google OAuth (voir §4).
+
+#### 3. Lancer la migration Better Auth
+
+Les tables Better Auth (`user`, `session`, `account`, `verification`) doivent être créées avant toute inscription. Dans le répertoire **`apps/web-app`** :
+
+```bash
+cd apps/web-app
+npx @better-auth/cli@latest migrate
+```
+
+Vérifier que `DATABASE_URL` est bien défini (dans `.env` ou `.env.local`) avant d’exécuter la commande. Si la base n’est pas migrée, l’inscription (email ou Google) affiche une erreur explicite : *« Base de données non migrée. Exécutez la migration Better Auth (voir README – Configuration Auth). »* (gestion d’erreur dans `apps/web-app/src/app/actions/auth-actions.ts`).
+
+#### 4. Configurer Google OAuth (Redirect URI, Consent Screen)
+
+Pour activer « Se connecter avec Google » (dégradation gracieuse si non configuré : pas d’erreur serveur, message utilisateur dans `apps/web-app/src/components/auth/LoginForm.tsx`).
+
+1. **Console Google Cloud** : [https://console.cloud.google.com/](https://console.cloud.google.com/).
+2. **Créer un projet** (ou en sélectionner un).
+3. **Écran de consentement OAuth** :  
+   **APIs & Services → OAuth consent screen**  
+   - Type d’application : **Externe** (ou Interne pour Workspace).  
+   - Renseigner : Nom de l’application, e-mail d’assistance, domaines autorisés si besoin.  
+   - Scopes : ajouter `.../auth/userinfo.email` et `.../auth/userinfo.profile` si nécessaire.  
+   - Enregistrer.
+4. **Identifiants** : **APIs & Services → Credentials → Create Credentials → OAuth client ID**  
+   - Type : **Application Web**.  
+   - **Origines JavaScript autorisées** : `http://localhost:3000` (et l’URL de prod si applicable).  
+   - **URI de redirection autorisés** : `http://localhost:3000/api/auth/callback/google` (adapter pour la prod, ex. `https://votredomaine.com/api/auth/callback/google`).  
+   - Créer ; copier le **Client ID** et le **Client Secret**.
+5. Dans **`apps/web-app/.env.local`** (ou `.env`) :
+   ```env
+   GOOGLE_CLIENT_ID=votre_client_id
+   GOOGLE_CLIENT_SECRET=votre_client_secret
+   ```
+   La config Better Auth dans `apps/web-app/src/auth.ts` n’enregistre le provider Google que si ces deux variables sont présentes et non placeholder (évite une erreur serveur si l’admin n’a pas encore configuré Google).
+
+#### 5. Livrables finaux attendus
+
+| Élément | Détail |
+|--------|--------|
+| **Fichiers .env.example** | Mis à jour dans `apps/web-app/.env.example` (DB, Better Auth, Google, `NEXT_PUBLIC_DEV_LOGIN_DELAY_MS`). |
+| **Tables Better Auth** | Créées en base via `npx @better-auth/cli@latest migrate` dans `apps/web-app`. |
+| **Inscription Email / Google** | Fonctionnelles avec gestion d’erreur (message clair si DB non migrée). |
+| **Accès rapide (test)** | Délai configurable, défaut **250 ms** via `NEXT_PUBLIC_DEV_LOGIN_DELAY_MS` dans `apps/web-app/src/context/AuthContext.tsx`. |
 
 ---
 

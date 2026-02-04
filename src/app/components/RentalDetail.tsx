@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   X,
   ChevronLeft,
@@ -13,13 +13,18 @@ import {
   Share2,
   AlertCircle,
   User,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 interface RentalDetailProps {
   equipmentId: string;
   onBack: () => void;
-  onReservationRequest: (equipmentId: string, startDate: Date, endDate: Date, totalPrice: number) => void;
+  onReservationRequest: (
+    equipmentId: string,
+    startDate: Date,
+    endDate: Date,
+    totalPrice: number
+  ) => void;
 }
 
 export function RentalDetail({ equipmentId, onBack, onReservationRequest }: RentalDetailProps) {
@@ -29,55 +34,55 @@ export function RentalDetail({ equipmentId, onBack, onReservationRequest }: Rent
 
   // Mock equipment data
   const equipment = {
-    id: "EQ-001",
-    name: "Tracteur John Deere 6250R",
-    model: "6250R - 250 CV",
-    category: "Tracteur",
+    id: 'EQ-001',
+    name: 'Tracteur John Deere 6250R',
+    model: '6250R - 250 CV',
+    category: 'Tracteur',
     pricePerDay: 450,
     pricePerWeek: 2800,
     deposit: 2000,
-    location: "Ferme du Soleil Levant, Lyon",
+    location: 'Ferme du Soleil Levant, Lyon',
     distance: 12.5,
     rating: 4.8,
     totalRentals: 23,
     owner: {
-      name: "Pierre Moreau",
-      memberSince: "2023",
+      name: 'Pierre Moreau',
+      memberSince: '2023',
       responseRate: 98,
       rating: 4.9,
       totalListings: 5,
     },
     description:
-      "Tracteur récent équipé GPS, idéal pour grandes surfaces. Moteur puissant de 250 CV avec transmission PowerShift. Cabine climatisée et sièges pneumatiques pour un confort optimal. Maintenance régulière assurée, disponible avec ou sans outils selon vos besoins.",
+      'Tracteur récent équipé GPS, idéal pour grandes surfaces. Moteur puissant de 250 CV avec transmission PowerShift. Cabine climatisée et sièges pneumatiques pour un confort optimal. Maintenance régulière assurée, disponible avec ou sans outils selon vos besoins.',
     features: [
-      "GPS intégré",
-      "Transmission PowerShift",
-      "Cabine climatisée",
-      "Chargeur frontal disponible",
-      "Attelage 3 points",
-      "Prise de force 540/1000 tr/min",
+      'GPS intégré',
+      'Transmission PowerShift',
+      'Cabine climatisée',
+      'Chargeur frontal disponible',
+      'Attelage 3 points',
+      'Prise de force 540/1000 tr/min',
     ],
     rules: [
-      "Permis de conduire valide requis",
-      "Carburant à la charge du locataire",
-      "Retour propre exigé",
-      "Assurance responsabilité civile requise",
+      'Permis de conduire valide requis',
+      'Carburant à la charge du locataire',
+      'Retour propre exigé',
+      'Assurance responsabilité civile requise',
     ],
     reviews: [
       {
         id: 1,
-        author: "Marc Dubois",
+        author: 'Marc Dubois',
         rating: 5,
-        date: "Il y a 2 semaines",
+        date: 'Il y a 2 semaines',
         comment:
-          "Excellent tracteur, très bien entretenu. Pierre est arrangeant et professionnel. Je recommande vivement !",
+          'Excellent tracteur, très bien entretenu. Pierre est arrangeant et professionnel. Je recommande vivement !',
       },
       {
         id: 2,
-        author: "Sophie Martin",
+        author: 'Sophie Martin',
         rating: 4,
-        date: "Il y a 1 mois",
-        comment: "Bon matériel, conforme à la description. Petit souci de GPS réglé rapidement.",
+        date: 'Il y a 1 mois',
+        comment: 'Bon matériel, conforme à la description. Petit souci de GPS réglé rapidement.',
       },
     ],
   };
@@ -108,19 +113,19 @@ export function RentalDetail({ equipmentId, onBack, onReservationRequest }: Rent
   const calculateTotalPrice = () => {
     const days = selectedDates.length;
     if (days === 0) return 0;
-    
+
     // Si 7 jours ou plus, utiliser le tarif semaine
     const weeks = Math.floor(days / 7);
     const remainingDays = days % 7;
-    
-    return (weeks * equipment.pricePerWeek) + (remainingDays * equipment.pricePerDay);
+
+    return weeks * equipment.pricePerWeek + remainingDays * equipment.pricePerDay;
   };
 
   const totalPrice = calculateTotalPrice();
 
   const handleReservationRequest = () => {
     if (selectedDates.length === 0) {
-      toast.error("Veuillez sélectionner au moins une date");
+      toast.error('Veuillez sélectionner au moins une date');
       return;
     }
 
@@ -128,17 +133,25 @@ export function RentalDetail({ equipmentId, onBack, onReservationRequest }: Rent
   };
 
   const confirmReservation = () => {
-    const startDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), selectedDates[0]);
-    const endDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), selectedDates[selectedDates.length - 1]);
-    
+    const startDate = new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth(),
+      selectedDates[0]
+    );
+    const endDate = new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth(),
+      selectedDates[selectedDates.length - 1]
+    );
+
     onReservationRequest(equipment.id, startDate, endDate, totalPrice);
     setShowConfirmModal(false);
-    toast.success("Demande de réservation envoyée !");
+    toast.success('Demande de réservation envoyée !');
   };
 
   const daysInMonth = getDaysInMonth(currentMonth);
   const firstDay = getFirstDayOfMonth(currentMonth);
-  const monthName = currentMonth.toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+  const monthName = currentMonth.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
 
   return (
     <div className="space-y-6">
@@ -198,14 +211,16 @@ export function RentalDetail({ equipmentId, onBack, onReservationRequest }: Rent
                         key={i}
                         className={`h-4 w-4 ${
                           i < Math.floor(equipment.rating)
-                            ? "fill-yellow-400 text-yellow-400"
-                            : "text-gray-300"
+                            ? 'fill-yellow-400 text-yellow-400'
+                            : 'text-gray-300'
                         }`}
                       />
                     ))}
                   </div>
                   <span className="text-sm font-medium">{equipment.rating}</span>
-                  <span className="text-sm text-muted-foreground">({equipment.totalRentals} avis)</span>
+                  <span className="text-sm text-muted-foreground">
+                    ({equipment.totalRentals} avis)
+                  </span>
                 </div>
               </div>
             </div>
@@ -243,7 +258,8 @@ export function RentalDetail({ equipmentId, onBack, onReservationRequest }: Rent
                   <span className="font-medium">Dépôt de garantie</span>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Un dépôt de <span className="font-semibold text-foreground">{equipment.deposit}€</span> sera
+                  Un dépôt de{' '}
+                  <span className="font-semibold text-foreground">{equipment.deposit}€</span> sera
                   demandé et remboursé après inspection du matériel.
                 </p>
               </div>
@@ -299,7 +315,9 @@ export function RentalDetail({ equipmentId, onBack, onReservationRequest }: Rent
                             <Star
                               key={i}
                               className={`h-3 w-3 ${
-                                i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+                                i < review.rating
+                                  ? 'fill-yellow-400 text-yellow-400'
+                                  : 'text-gray-300'
                               }`}
                             />
                           ))}
@@ -325,7 +343,9 @@ export function RentalDetail({ equipmentId, onBack, onReservationRequest }: Rent
               <div className="flex items-center justify-between mb-4">
                 <button
                   onClick={() =>
-                    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))
+                    setCurrentMonth(
+                      new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1)
+                    )
                   }
                   className="p-1 hover:bg-muted rounded transition-colors"
                 >
@@ -334,7 +354,9 @@ export function RentalDetail({ equipmentId, onBack, onReservationRequest }: Rent
                 <span className="font-medium capitalize">{monthName}</span>
                 <button
                   onClick={() =>
-                    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))
+                    setCurrentMonth(
+                      new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1)
+                    )
                   }
                   className="p-1 hover:bg-muted rounded transition-colors"
                 >
@@ -344,7 +366,7 @@ export function RentalDetail({ equipmentId, onBack, onReservationRequest }: Rent
 
               {/* Calendar */}
               <div className="grid grid-cols-7 gap-1 text-center">
-                {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day) => (
+                {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day) => (
                   <div key={day} className="text-xs font-medium text-muted-foreground py-2">
                     {day}
                   </div>
@@ -368,10 +390,10 @@ export function RentalDetail({ equipmentId, onBack, onReservationRequest }: Rent
                       disabled={isUnavailable}
                       className={`aspect-square flex items-center justify-center text-sm rounded-lg transition-colors ${
                         isUnavailable
-                          ? "bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed"
+                          ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
                           : isSelected
-                          ? "bg-[#2563eb] text-white font-semibold"
-                          : "hover:bg-muted cursor-pointer"
+                          ? 'bg-[#2563eb] text-white font-semibold'
+                          : 'hover:bg-muted cursor-pointer'
                       }`}
                     >
                       {day}
@@ -406,14 +428,16 @@ export function RentalDetail({ equipmentId, onBack, onReservationRequest }: Rent
                     <span className="text-sm text-muted-foreground">
                       {selectedDates.length} × {equipment.pricePerDay}€
                     </span>
-                    <span className="font-medium">{selectedDates.length * equipment.pricePerDay}€</span>
+                    <span className="font-medium">
+                      {selectedDates.length * equipment.pricePerDay}€
+                    </span>
                   </div>
 
                   {selectedDates.length >= 7 && (
                     <div className="flex items-center justify-between text-green-600">
                       <span className="text-sm">Remise semaine appliquée</span>
                       <span className="font-medium">
-                        -{(selectedDates.length * equipment.pricePerDay) - totalPrice}€
+                        -{selectedDates.length * equipment.pricePerDay - totalPrice}€
                       </span>
                     </div>
                   )}
@@ -495,8 +519,8 @@ export function RentalDetail({ equipmentId, onBack, onReservationRequest }: Rent
                 <div className="text-sm">
                   <p className="font-medium mb-1">Prochaines étapes</p>
                   <p className="text-muted-foreground">
-                    Votre demande sera envoyée à {equipment.owner.name}. Vous recevrez une réponse sous 24h.
-                    Le paiement ne sera demandé qu'après acceptation.
+                    Votre demande sera envoyée à {equipment.owner.name}. Vous recevrez une réponse
+                    sous 24h. Le paiement ne sera demandé qu'après acceptation.
                   </p>
                 </div>
               </div>

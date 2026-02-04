@@ -1,7 +1,7 @@
-"use client"
+'use client';
 
-import { AgriAcademyModule } from "@/components/dashboard/AgriAcademyModule"
+import { AgriAcademyModule } from '@/components/dashboard/AgriAcademyModule';
 
 export default function FormationPage() {
-  return <AgriAcademyModule />
+  return <AgriAcademyModule />;
 }

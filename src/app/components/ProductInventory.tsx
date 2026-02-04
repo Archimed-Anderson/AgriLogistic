@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, ChangeEvent } from "react";
+import { useState, useMemo, useRef, ChangeEvent } from 'react';
 import {
   Package,
   TrendingUp,
@@ -18,11 +18,11 @@ import {
   Check,
   Minus,
   BarChart3,
-  Truck 
-} from "lucide-react";
-import { AgriLogisticLink } from "./AgriLogisticLink";
-import { toast } from "sonner";
-import { downloadTextFile, parseCsvToObjects, toCsv } from "../../shared/utils/csv";
+  Truck,
+} from 'lucide-react';
+import { AgriLogisticLink } from './AgriLogisticLink';
+import { toast } from 'sonner';
+import { downloadTextFile, parseCsvToObjects, toCsv } from '../../shared/utils/csv';
 import {
   LineChart,
   Line,
@@ -34,7 +34,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
-} from "recharts";
+} from 'recharts';
 
 // Types
 export interface Product {
@@ -54,7 +54,7 @@ export interface Product {
 interface StockMovement {
   id: number;
   productId: number;
-  type: "Réception" | "Vente" | "Ajustement manuel" | "Perte";
+  type: 'Réception' | 'Vente' | 'Ajustement manuel' | 'Perte';
   quantity: number;
   date: string;
   user: string;
@@ -63,40 +63,24 @@ interface StockMovement {
 
 // Import/Export helpers
 export function mapInventoryRowToProduct(row: any, id: number) {
-  const name = (row.name ?? row.Nom ?? row["Nom"] ?? "").toString().trim();
-  const sku = (row.sku ?? row.SKU ?? "").toString().trim();
-  const category = (
-    row.category ??
-    row.Catégorie ??
-    row["Categorie"] ??
-    row["Catégorie"] ??
-    ""
-  )
+  const name = (row.name ?? row.Nom ?? row['Nom'] ?? '').toString().trim();
+  const sku = (row.sku ?? row.SKU ?? '').toString().trim();
+  const category = (row.category ?? row.Catégorie ?? row['Categorie'] ?? row['Catégorie'] ?? '')
     .toString()
     .trim();
 
   const currentStockRaw =
-    row.currentStock ??
-    row["Stock actuel"] ??
-    row.Stock ??
-    row.Quantité ??
-    row["Quantite"];
+    row.currentStock ?? row['Stock actuel'] ?? row.Stock ?? row.Quantité ?? row['Quantite'];
   const reorderPointRaw =
     row.reorderPoint ??
-    row["Point de réapprovisionnement"] ??
-    row["Point de réappro"] ??
+    row['Point de réapprovisionnement'] ??
+    row['Point de réappro'] ??
     row["Seuil d'alerte"];
-  const maxStockRaw =
-    row.maxStock ??
-    row["Stock maximum"] ??
-    row["Stock max"];
-  const unitPriceRaw =
-    row.unitPrice ??
-    row["Prix unitaire"] ??
-    row["Prix"];
+  const maxStockRaw = row.maxStock ?? row['Stock maximum'] ?? row['Stock max'];
+  const unitPriceRaw = row.unitPrice ?? row['Prix unitaire'] ?? row['Prix'];
 
-  const supplierValue = (row.supplier ?? row.Fournisseur ?? "").toString().trim();
-  const descriptionValue = (row.description ?? row.Description ?? "").toString().trim();
+  const supplierValue = (row.supplier ?? row.Fournisseur ?? '').toString().trim();
+  const descriptionValue = (row.description ?? row.Description ?? '').toString().trim();
 
   const supplier = supplierValue || undefined;
   const description = descriptionValue || undefined;
@@ -104,23 +88,23 @@ export function mapInventoryRowToProduct(row: any, id: number) {
   const hasNumericValues =
     currentStockRaw !== undefined &&
     currentStockRaw !== null &&
-    currentStockRaw !== "" &&
+    currentStockRaw !== '' &&
     reorderPointRaw !== undefined &&
     reorderPointRaw !== null &&
-    reorderPointRaw !== "" &&
+    reorderPointRaw !== '' &&
     maxStockRaw !== undefined &&
     maxStockRaw !== null &&
-    maxStockRaw !== "" &&
+    maxStockRaw !== '' &&
     unitPriceRaw !== undefined &&
     unitPriceRaw !== null &&
-    unitPriceRaw !== "";
+    unitPriceRaw !== '';
 
   if (!name || !sku || !category) {
-    return { error: "Champs obligatoires manquants" };
+    return { error: 'Champs obligatoires manquants' };
   }
 
   if (!hasNumericValues) {
-    return { error: "Valeurs numériques manquantes" };
+    return { error: 'Valeurs numériques manquantes' };
   }
 
   const currentStock = Number(currentStockRaw);
@@ -134,11 +118,11 @@ export function mapInventoryRowToProduct(row: any, id: number) {
     Number.isNaN(maxStock) ||
     Number.isNaN(unitPrice)
   ) {
-    return { error: "Valeurs numériques invalides" };
+    return { error: 'Valeurs numériques invalides' };
   }
 
   if (currentStock < 0 || reorderPoint < 0 || maxStock <= 0 || unitPrice < 0) {
-    return { error: "Valeurs numériques négatives ou nulles interdites" };
+    return { error: 'Valeurs numériques négatives ou nulles interdites' };
   }
 
   const product: Product = {
@@ -163,12 +147,12 @@ export function buildInventoryExportData(products: Product[]) {
     Nom: product.name,
     SKU: product.sku,
     Catégorie: product.category,
-    "Stock actuel": product.currentStock,
-    "Point de réapprovisionnement": product.reorderPoint,
-    "Stock maximum": product.maxStock,
-    "Prix unitaire (€)": product.unitPrice,
-    Fournisseur: product.supplier || "",
-    Description: product.description || "",
+    'Stock actuel': product.currentStock,
+    'Point de réapprovisionnement': product.reorderPoint,
+    'Stock maximum': product.maxStock,
+    'Prix unitaire (€)': product.unitPrice,
+    Fournisseur: product.supplier || '',
+    Description: product.description || '',
   }));
 }
 
@@ -176,180 +160,180 @@ export function buildInventoryExportData(products: Product[]) {
 const mockProducts: Product[] = [
   {
     id: 1,
-    name: "Tomates Bio",
-    sku: "VEG-TOM-001",
-    category: "Légumes",
+    name: 'Tomates Bio',
+    sku: 'VEG-TOM-001',
+    category: 'Légumes',
     currentStock: 45,
     reorderPoint: 20,
     maxStock: 100,
     unitPrice: 3.5,
-    supplier: "Ferme Martin",
-    description: "Tomates bio cultivées localement",
+    supplier: 'Ferme Martin',
+    description: 'Tomates bio cultivées localement',
   },
   {
     id: 2,
-    name: "Laitue Frisée",
-    sku: "VEG-LAI-002",
-    category: "Légumes",
+    name: 'Laitue Frisée',
+    sku: 'VEG-LAI-002',
+    category: 'Légumes',
     currentStock: 8,
     reorderPoint: 15,
     maxStock: 50,
     unitPrice: 2.0,
-    supplier: "Ferme Dubois",
-    description: "Laitue fraîche du jour",
+    supplier: 'Ferme Dubois',
+    description: 'Laitue fraîche du jour',
   },
   {
     id: 3,
-    name: "Pommes Golden",
-    sku: "FRU-POM-001",
-    category: "Fruits",
+    name: 'Pommes Golden',
+    sku: 'FRU-POM-001',
+    category: 'Fruits',
     currentStock: 120,
     reorderPoint: 30,
     maxStock: 200,
     unitPrice: 2.8,
-    supplier: "Verger des Collines",
-    description: "Pommes golden de qualité premium",
+    supplier: 'Verger des Collines',
+    description: 'Pommes golden de qualité premium',
   },
   {
     id: 4,
-    name: "Fromage de Chèvre",
-    sku: "DAI-FRO-001",
-    category: "Produits Laitiers",
+    name: 'Fromage de Chèvre',
+    sku: 'DAI-FRO-001',
+    category: 'Produits Laitiers',
     currentStock: 12,
     reorderPoint: 10,
     maxStock: 40,
     unitPrice: 8.5,
-    supplier: "Fromagerie Leroy",
-    description: "Fromage de chèvre artisanal",
+    supplier: 'Fromagerie Leroy',
+    description: 'Fromage de chèvre artisanal',
   },
   {
     id: 5,
-    name: "Carottes Bio",
-    sku: "VEG-CAR-003",
-    category: "Légumes",
+    name: 'Carottes Bio',
+    sku: 'VEG-CAR-003',
+    category: 'Légumes',
     currentStock: 0,
     reorderPoint: 25,
     maxStock: 80,
     unitPrice: 1.8,
-    supplier: "Ferme Martin",
-    description: "Carottes bio en vrac",
+    supplier: 'Ferme Martin',
+    description: 'Carottes bio en vrac',
   },
   {
     id: 6,
-    name: "Œufs Plein Air",
-    sku: "DAI-OEU-002",
-    category: "Produits Laitiers",
+    name: 'Œufs Plein Air',
+    sku: 'DAI-OEU-002',
+    category: 'Produits Laitiers',
     currentStock: 65,
     reorderPoint: 30,
     maxStock: 120,
     unitPrice: 0.5,
-    supplier: "Élevage Rousseau",
-    description: "Œufs de poules élevées en plein air",
+    supplier: 'Élevage Rousseau',
+    description: 'Œufs de poules élevées en plein air',
   },
   {
     id: 7,
-    name: "Fraises du Périgord",
-    sku: "FRU-FRA-002",
-    category: "Fruits",
+    name: 'Fraises du Périgord',
+    sku: 'FRU-FRA-002',
+    category: 'Fruits',
     currentStock: 15,
     reorderPoint: 20,
     maxStock: 60,
     unitPrice: 6.0,
-    supplier: "Verger des Collines",
-    description: "Fraises fraîches de saison",
+    supplier: 'Verger des Collines',
+    description: 'Fraises fraîches de saison',
   },
   {
     id: 8,
     name: "Miel d'Acacia",
-    sku: "AUT-MIE-001",
-    category: "Autres",
+    sku: 'AUT-MIE-001',
+    category: 'Autres',
     currentStock: 28,
     reorderPoint: 10,
     maxStock: 50,
     unitPrice: 12.0,
-    supplier: "Rucher Laurent",
+    supplier: 'Rucher Laurent',
     description: "Miel d'acacia 100% naturel",
   },
   {
     id: 9,
-    name: "Courgettes",
-    sku: "VEG-COU-004",
-    category: "Légumes",
+    name: 'Courgettes',
+    sku: 'VEG-COU-004',
+    category: 'Légumes',
     currentStock: 32,
     reorderPoint: 20,
     maxStock: 80,
     unitPrice: 2.2,
-    supplier: "Ferme Dubois",
-    description: "Courgettes fraîches",
+    supplier: 'Ferme Dubois',
+    description: 'Courgettes fraîches',
   },
   {
     id: 10,
-    name: "Yaourt Nature Bio",
-    sku: "DAI-YAO-003",
-    category: "Produits Laitiers",
+    name: 'Yaourt Nature Bio',
+    sku: 'DAI-YAO-003',
+    category: 'Produits Laitiers',
     currentStock: 5,
     reorderPoint: 20,
     maxStock: 60,
     unitPrice: 1.5,
-    supplier: "Fromagerie Leroy",
-    description: "Yaourt nature bio sans sucre ajouté",
+    supplier: 'Fromagerie Leroy',
+    description: 'Yaourt nature bio sans sucre ajouté',
   },
   {
     id: 11,
-    name: "Raisins Blancs",
-    sku: "FRU-RAI-003",
-    category: "Fruits",
+    name: 'Raisins Blancs',
+    sku: 'FRU-RAI-003',
+    category: 'Fruits',
     currentStock: 40,
     reorderPoint: 15,
     maxStock: 70,
     unitPrice: 4.5,
-    supplier: "Verger des Collines",
-    description: "Raisins blancs sans pépins",
+    supplier: 'Verger des Collines',
+    description: 'Raisins blancs sans pépins',
   },
   {
     id: 12,
     name: "Huile d'Olive",
-    sku: "AUT-HUI-002",
-    category: "Autres",
+    sku: 'AUT-HUI-002',
+    category: 'Autres',
     currentStock: 18,
     reorderPoint: 12,
     maxStock: 40,
     unitPrice: 15.0,
-    supplier: "Moulin Provençal",
+    supplier: 'Moulin Provençal',
     description: "Huile d'olive extra vierge",
   },
 ];
 
 const mockStockHistory = [
-  { date: "01/12", stock: 150 },
-  { date: "05/12", stock: 142 },
-  { date: "10/12", stock: 138 },
-  { date: "15/12", stock: 145 },
-  { date: "20/12", stock: 152 },
-  { date: "25/12", stock: 148 },
-  { date: "30/12", stock: 155 },
-  { date: "05/01", stock: 160 },
-  { date: "10/01", stock: 158 },
+  { date: '01/12', stock: 150 },
+  { date: '05/12', stock: 142 },
+  { date: '10/12', stock: 138 },
+  { date: '15/12', stock: 145 },
+  { date: '20/12', stock: 152 },
+  { date: '25/12', stock: 148 },
+  { date: '30/12', stock: 155 },
+  { date: '05/01', stock: 160 },
+  { date: '10/01', stock: 158 },
 ];
 
 const mockTopProducts = [
-  { name: "Tomates Bio", sales: 245 },
-  { name: "Pommes Golden", sales: 198 },
-  { name: "Œufs Plein Air", sales: 176 },
-  { name: "Fromage de Chèvre", sales: 142 },
-  { name: "Laitue Frisée", sales: 128 },
-  { name: "Carottes Bio", sales: 115 },
-  { name: "Courgettes", sales: 98 },
-  { name: "Fraises", sales: 87 },
-  { name: "Raisins", sales: 76 },
-  { name: "Miel", sales: 65 },
+  { name: 'Tomates Bio', sales: 245 },
+  { name: 'Pommes Golden', sales: 198 },
+  { name: 'Œufs Plein Air', sales: 176 },
+  { name: 'Fromage de Chèvre', sales: 142 },
+  { name: 'Laitue Frisée', sales: 128 },
+  { name: 'Carottes Bio', sales: 115 },
+  { name: 'Courgettes', sales: 98 },
+  { name: 'Fraises', sales: 87 },
+  { name: 'Raisins', sales: 76 },
+  { name: 'Miel', sales: 65 },
 ];
 
 export function ProductInventory() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [currentTab, setCurrentTab] = useState<"all" | "low" | "analytics" | "logistics">("all");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [currentTab, setCurrentTab] = useState<'all' | 'low' | 'analytics' | 'logistics'>('all');
   const [products, setProducts] = useState<Product[]>(mockProducts);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
   const [showEditProductModal, setShowEditProductModal] = useState(false);
@@ -358,7 +342,7 @@ export function ProductInventory() {
   const [showReorderModal, setShowReorderModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [adjustmentQuantity, setAdjustmentQuantity] = useState(0);
-  const [adjustmentReason, setAdjustmentReason] = useState("Réception");
+  const [adjustmentReason, setAdjustmentReason] = useState('Réception');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -366,7 +350,9 @@ export function ProductInventory() {
   // Calcul des KPIs
   const totalProducts = products.length;
   const totalValue = products.reduce((sum, p) => sum + p.currentStock * p.unitPrice, 0);
-  const lowStockCount = products.filter((p) => p.currentStock > 0 && p.currentStock <= p.reorderPoint).length;
+  const lowStockCount = products.filter(
+    (p) => p.currentStock > 0 && p.currentStock <= p.reorderPoint
+  ).length;
   const outOfStockCount = products.filter((p) => p.currentStock === 0).length;
 
   // Filtrage
@@ -384,23 +370,23 @@ export function ProductInventory() {
     }
 
     // Filtre par catégorie
-    if (categoryFilter !== "all") {
+    if (categoryFilter !== 'all') {
       filtered = filtered.filter((p) => p.category === categoryFilter);
     }
 
     // Filtre par statut
-    if (statusFilter !== "all") {
-      if (statusFilter === "in-stock") {
+    if (statusFilter !== 'all') {
+      if (statusFilter === 'in-stock') {
         filtered = filtered.filter((p) => p.currentStock > p.reorderPoint);
-      } else if (statusFilter === "low") {
+      } else if (statusFilter === 'low') {
         filtered = filtered.filter((p) => p.currentStock > 0 && p.currentStock <= p.reorderPoint);
-      } else if (statusFilter === "out") {
+      } else if (statusFilter === 'out') {
         filtered = filtered.filter((p) => p.currentStock === 0);
       }
     }
 
     // Filtre par onglet
-    if (currentTab === "low") {
+    if (currentTab === 'low') {
       filtered = filtered.filter((p) => p.currentStock <= p.reorderPoint);
     }
 
@@ -415,9 +401,9 @@ export function ProductInventory() {
   }, [filteredProducts, currentPage, itemsPerPage]);
 
   const getStockStatus = (product: Product) => {
-    if (product.currentStock === 0) return "out";
-    if (product.currentStock <= product.reorderPoint) return "low";
-    return "good";
+    if (product.currentStock === 0) return 'out';
+    if (product.currentStock <= product.reorderPoint) return 'low';
+    return 'good';
   };
 
   const getStockPercentage = (product: Product) => {
@@ -425,19 +411,19 @@ export function ProductInventory() {
   };
 
   const getProgressColor = (percentage: number) => {
-    if (percentage >= 75) return "bg-green-500";
-    if (percentage >= 25) return "bg-orange-500";
-    return "bg-red-500";
+    if (percentage >= 75) return 'bg-green-500';
+    if (percentage >= 25) return 'bg-orange-500';
+    return 'bg-red-500';
   };
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      Légumes: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-      Fruits: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
-      "Produits Laitiers": "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-      Autres: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
+      Légumes: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+      Fruits: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+      'Produits Laitiers': 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+      Autres: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
     };
-    return colors[category] || "bg-gray-100 text-gray-700";
+    return colors[category] || 'bg-gray-100 text-gray-700';
   };
 
   const handleAdjustStock = () => {
@@ -455,7 +441,9 @@ export function ProductInventory() {
 
     setProducts(updatedProducts);
     toast.success(
-      `Stock de ${selectedProduct.name} ${adjustmentQuantity > 0 ? "augmenté" : "diminué"} de ${Math.abs(adjustmentQuantity)} unités`
+      `Stock de ${selectedProduct.name} ${
+        adjustmentQuantity > 0 ? 'augmenté' : 'diminué'
+      } de ${Math.abs(adjustmentQuantity)} unités`
     );
     setShowStockAdjustModal(false);
     setAdjustmentQuantity(0);
@@ -463,12 +451,12 @@ export function ProductInventory() {
   };
 
   const handleRefresh = () => {
-    toast.success("Données de stock actualisées");
+    toast.success('Données de stock actualisées');
   };
 
   const handleImportClick = () => {
     if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+      fileInputRef.current.value = '';
       fileInputRef.current.click();
     }
   };
@@ -481,16 +469,16 @@ export function ProductInventory() {
 
     reader.onload = (e) => {
       try {
-        const data = (e.target?.result ?? "").toString();
+        const data = (e.target?.result ?? '').toString();
         if (!data) {
-          toast.error("Fichier vide ou illisible");
+          toast.error('Fichier vide ou illisible');
           return;
         }
 
         const jsonData = parseCsvToObjects(data);
 
         if (!Array.isArray(jsonData) || jsonData.length === 0) {
-          toast.error("Aucune donnée trouvée dans le fichier");
+          toast.error('Aucune donnée trouvée dans le fichier');
           return;
         }
 
@@ -510,7 +498,7 @@ export function ProductInventory() {
         });
 
         if (importedProducts.length === 0) {
-          toast.error("Aucun produit valide trouvé dans le fichier");
+          toast.error('Aucun produit valide trouvé dans le fichier');
           if (errorCount > 0) {
             toast.info(`${errorCount} ligne(s) ignorée(s) pour cause d'erreur`);
           }
@@ -523,12 +511,12 @@ export function ProductInventory() {
           toast.info(`${errorCount} ligne(s) ignorée(s) pour cause d'erreur`);
         }
       } catch (error) {
-        toast.error("Erreur lors de la lecture du fichier");
+        toast.error('Erreur lors de la lecture du fichier');
       }
     };
 
     reader.onerror = () => {
-      toast.error("Erreur lors de la lecture du fichier");
+      toast.error('Erreur lors de la lecture du fichier');
     };
 
     reader.readAsText(file);
@@ -536,7 +524,7 @@ export function ProductInventory() {
 
   const handleExport = () => {
     if (products.length === 0) {
-      toast.info("Aucun produit à exporter");
+      toast.info('Aucun produit à exporter');
       return;
     }
 
@@ -545,13 +533,13 @@ export function ProductInventory() {
     const rows = exportData.map((row) => headers.map((h) => (row as any)[h]));
     const csvContent = toCsv(headers, rows);
 
-    const filename = `AgroLogistic_Inventaire_${new Date().toISOString().split("T")[0]}.csv`;
-    downloadTextFile(filename, csvContent, "text/csv;charset=utf-8;");
+    const filename = `AgroLogistic_Inventaire_${new Date().toISOString().split('T')[0]}.csv`;
+    downloadTextFile(filename, csvContent, 'text/csv;charset=utf-8;');
 
     toast.success(`Export CSV réussi : ${products.length} produit(s)`);
   };
 
-  const categories = ["Légumes", "Fruits", "Produits Laitiers", "Autres"];
+  const categories = ['Légumes', 'Fruits', 'Produits Laitiers', 'Autres'];
 
   return (
     <div className="space-y-6">
@@ -559,9 +547,7 @@ export function ProductInventory() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Gestion des Stocks</h1>
-          <p className="text-muted-foreground mt-2">
-            Suivez et gérez vos stocks en temps réel
-          </p>
+          <p className="text-muted-foreground mt-2">Suivez et gérez vos stocks en temps réel</p>
         </div>
         <div className="flex items-center gap-3">
           <input
@@ -651,51 +637,51 @@ export function ProductInventory() {
         <div className="flex gap-6">
           <button
             onClick={() => {
-              setCurrentTab("all");
+              setCurrentTab('all');
               setCurrentPage(1);
             }}
             className={`pb-3 px-1 border-b-2 transition-colors ${
-              currentTab === "all"
-                ? "border-[#2563eb] text-[#2563eb] font-medium"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+              currentTab === 'all'
+                ? 'border-[#2563eb] text-[#2563eb] font-medium'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             Tous les Produits
           </button>
           <button
             onClick={() => {
-              setCurrentTab("low");
+              setCurrentTab('low');
               setCurrentPage(1);
             }}
             className={`pb-3 px-1 border-b-2 transition-colors flex items-center gap-2 ${
-              currentTab === "low"
-                ? "border-[#2563eb] text-[#2563eb] font-medium"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+              currentTab === 'low'
+                ? 'border-[#2563eb] text-[#2563eb] font-medium'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             Stock Faible & Alerte
-            {(lowStockCount + outOfStockCount) > 0 && (
+            {lowStockCount + outOfStockCount > 0 && (
               <span className="px-2 py-0.5 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 text-xs font-medium rounded-full">
                 {lowStockCount + outOfStockCount}
               </span>
             )}
           </button>
           <button
-            onClick={() => setCurrentTab("analytics")}
+            onClick={() => setCurrentTab('analytics')}
             className={`pb-3 px-1 border-b-2 transition-colors ${
-              currentTab === "analytics"
-                ? "border-[#2563eb] text-[#2563eb] font-medium"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+              currentTab === 'analytics'
+                ? 'border-[#2563eb] text-[#2563eb] font-medium'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             Analytiques
           </button>
           <button
-            onClick={() => setCurrentTab("logistics")}
+            onClick={() => setCurrentTab('logistics')}
             className={`pb-3 px-1 border-b-2 transition-colors flex items-center gap-2 ${
-              currentTab === "logistics"
-                ? "border-[#2563eb] text-[#2563eb] font-medium"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+              currentTab === 'logistics'
+                ? 'border-[#2563eb] text-[#2563eb] font-medium'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             <Truck className="h-4 w-4" />
@@ -705,7 +691,7 @@ export function ProductInventory() {
       </div>
 
       {/* Alert Banner for Low Stock Tab */}
-      {currentTab === "low" && (lowStockCount + outOfStockCount) > 0 && (
+      {currentTab === 'low' && lowStockCount + outOfStockCount > 0 && (
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-start gap-3">
           <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
           <div className="flex-1">
@@ -726,7 +712,7 @@ export function ProductInventory() {
       )}
 
       {/* Analytics View */}
-      {currentTab === "analytics" ? (
+      {currentTab === 'analytics' ? (
         <div className="space-y-6">
           {/* Charts Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -746,7 +732,9 @@ export function ProductInventory() {
 
             {/* Stock Value Line Chart */}
             <div className="bg-card border rounded-lg p-6 shadow-sm">
-              <h3 className="text-lg font-semibold mb-4">Valeur Totale du Stock (30 derniers jours)</h3>
+              <h3 className="text-lg font-semibold mb-4">
+                Valeur Totale du Stock (30 derniers jours)
+              </h3>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={mockStockHistory}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -754,7 +742,13 @@ export function ProductInventory() {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="stock" stroke="#2563eb" strokeWidth={2} name="Stock (unités)" />
+                  <Line
+                    type="monotone"
+                    dataKey="stock"
+                    stroke="#2563eb"
+                    strokeWidth={2}
+                    name="Stock (unités)"
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -763,18 +757,13 @@ export function ProductInventory() {
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-card border rounded-lg p-6 shadow-sm">
-              <h4 className="text-sm font-medium text-muted-foreground mb-4">Taux de Rotation Moyen</h4>
+              <h4 className="text-sm font-medium text-muted-foreground mb-4">
+                Taux de Rotation Moyen
+              </h4>
               <div className="flex items-center justify-center">
                 <div className="relative w-32 h-32">
                   <svg className="w-full h-full" viewBox="0 0 100 100">
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      fill="none"
-                      stroke="#e5e7eb"
-                      strokeWidth="8"
-                    />
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#e5e7eb" strokeWidth="8" />
                     <circle
                       cx="50"
                       cy="50"
@@ -792,26 +781,56 @@ export function ProductInventory() {
                   </div>
                 </div>
               </div>
-              <p className="text-center text-sm text-muted-foreground mt-4">Très bon taux de rotation</p>
+              <p className="text-center text-sm text-muted-foreground mt-4">
+                Très bon taux de rotation
+              </p>
             </div>
 
             <div className="bg-card border rounded-lg p-6 shadow-sm col-span-2">
               <h4 className="text-sm font-medium text-muted-foreground mb-4">Mouvements Récents</h4>
               <div className="space-y-3">
                 {[
-                  { product: "Tomates Bio", type: "Vente", quantity: -15, date: "10/01/2026 14:23" },
-                  { product: "Pommes Golden", type: "Réception", quantity: +50, date: "10/01/2026 10:15" },
-                  { product: "Fromage de Chèvre", type: "Vente", quantity: -8, date: "09/01/2026 16:45" },
-                  { product: "Laitue Frisée", type: "Ajustement manuel", quantity: -3, date: "09/01/2026 09:30" },
+                  {
+                    product: 'Tomates Bio',
+                    type: 'Vente',
+                    quantity: -15,
+                    date: '10/01/2026 14:23',
+                  },
+                  {
+                    product: 'Pommes Golden',
+                    type: 'Réception',
+                    quantity: +50,
+                    date: '10/01/2026 10:15',
+                  },
+                  {
+                    product: 'Fromage de Chèvre',
+                    type: 'Vente',
+                    quantity: -8,
+                    date: '09/01/2026 16:45',
+                  },
+                  {
+                    product: 'Laitue Frisée',
+                    type: 'Ajustement manuel',
+                    quantity: -3,
+                    date: '09/01/2026 09:30',
+                  },
                 ].map((movement, idx) => (
-                  <div key={idx} className="flex items-center justify-between py-2 border-b last:border-0">
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between py-2 border-b last:border-0"
+                  >
                     <div className="flex-1">
                       <p className="font-medium">{movement.product}</p>
                       <p className="text-sm text-muted-foreground">{movement.type}</p>
                     </div>
                     <div className="text-right">
-                      <p className={`font-semibold ${movement.quantity > 0 ? "text-green-600" : "text-red-600"}`}>
-                        {movement.quantity > 0 ? "+" : ""}{movement.quantity}
+                      <p
+                        className={`font-semibold ${
+                          movement.quantity > 0 ? 'text-green-600' : 'text-red-600'
+                        }`}
+                      >
+                        {movement.quantity > 0 ? '+' : ''}
+                        {movement.quantity}
                       </p>
                       <p className="text-xs text-muted-foreground">{movement.date}</p>
                     </div>
@@ -921,7 +940,7 @@ export function ProductInventory() {
                         <tr key={product.id} className="hover:bg-muted/30 transition-colors">
                           <td className="px-4 py-4">
                             <div className="flex items-center gap-3">
-                              {status === "low" || status === "out" ? (
+                              {status === 'low' || status === 'out' ? (
                                 <AlertTriangle className="h-4 w-4 text-red-600 flex-shrink-0" />
                               ) : null}
                               <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold flex-shrink-0">
@@ -934,7 +953,11 @@ export function ProductInventory() {
                             </div>
                           </td>
                           <td className="px-4 py-4">
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(product.category)}`}>
+                            <span
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(
+                                product.category
+                              )}`}
+                            >
                               {product.category}
                             </span>
                           </td>
@@ -943,7 +966,9 @@ export function ProductInventory() {
                               <div className="font-semibold">{product.currentStock} unités</div>
                               <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
                                 <div
-                                  className={`h-full rounded-full transition-all ${getProgressColor(percentage)}`}
+                                  className={`h-full rounded-full transition-all ${getProgressColor(
+                                    percentage
+                                  )}`}
                                   style={{ width: `${percentage}%` }}
                                 />
                               </div>
@@ -951,17 +976,17 @@ export function ProductInventory() {
                           </td>
                           <td className="px-4 py-4 text-sm">{product.reorderPoint}</td>
                           <td className="px-4 py-4">
-                            {status === "out" && (
+                            {status === 'out' && (
                               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
                                 Rupture
                               </span>
                             )}
-                            {status === "low" && (
+                            {status === 'low' && (
                               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">
                                 Stock Faible
                               </span>
                             )}
-                            {status === "good" && (
+                            {status === 'good' && (
                               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
                                 En Stock
                               </span>
@@ -1030,8 +1055,8 @@ export function ProductInventory() {
             {paginatedProducts.length > 0 && (
               <div className="px-4 py-3 border-t flex items-center justify-between">
                 <div className="text-sm text-muted-foreground">
-                  Affichage de {(currentPage - 1) * itemsPerPage + 1} à{" "}
-                  {Math.min(currentPage * itemsPerPage, filteredProducts.length)} sur{" "}
+                  Affichage de {(currentPage - 1) * itemsPerPage + 1} à{' '}
+                  {Math.min(currentPage * itemsPerPage, filteredProducts.length)} sur{' '}
                   {filteredProducts.length} produits
                 </div>
                 <div className="flex items-center gap-2">
@@ -1060,9 +1085,7 @@ export function ProductInventory() {
                           key={pageNum}
                           onClick={() => setCurrentPage(pageNum)}
                           className={`px-3 py-1.5 rounded-lg transition-colors ${
-                            currentPage === pageNum
-                              ? "bg-[#2563eb] text-white"
-                              : "hover:bg-accent"
+                            currentPage === pageNum ? 'bg-[#2563eb] text-white' : 'hover:bg-accent'
                           }`}
                         >
                           {pageNum}
@@ -1093,7 +1116,7 @@ export function ProductInventory() {
               <h2 className="text-xl font-bold">Ajuster le Stock</h2>
               <p className="text-sm text-muted-foreground mt-1">{selectedProduct.name}</p>
             </div>
-            
+
             <div className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2">Stock Actuel</label>
@@ -1175,7 +1198,7 @@ export function ProductInventory() {
           <div className="bg-card border rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-card border-b px-6 py-4 flex items-center justify-between">
               <h2 className="text-xl font-bold">
-                {showEditProductModal ? `Éditer - ${selectedProduct?.name}` : "Ajouter un Produit"}
+                {showEditProductModal ? `Éditer - ${selectedProduct?.name}` : 'Ajouter un Produit'}
               </h2>
               <button
                 onClick={() => {
@@ -1188,7 +1211,7 @@ export function ProductInventory() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            
+
             <div className="p-6">
               <div className="flex gap-1 border-b mb-6">
                 <button className="px-4 py-2 border-b-2 border-[#2563eb] text-[#2563eb] font-medium">
@@ -1208,7 +1231,7 @@ export function ProductInventory() {
                     <label className="block text-sm font-medium mb-1">Nom du Produit *</label>
                     <input
                       type="text"
-                      defaultValue={selectedProduct?.name || ""}
+                      defaultValue={selectedProduct?.name || ''}
                       placeholder="Ex: Tomates Bio"
                       className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
                     />
@@ -1217,7 +1240,7 @@ export function ProductInventory() {
                     <label className="block text-sm font-medium mb-1">SKU *</label>
                     <input
                       type="text"
-                      defaultValue={selectedProduct?.sku || ""}
+                      defaultValue={selectedProduct?.sku || ''}
                       placeholder="Ex: VEG-TOM-001"
                       className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
                     />
@@ -1228,7 +1251,7 @@ export function ProductInventory() {
                   <div>
                     <label className="block text-sm font-medium mb-1">Catégorie *</label>
                     <select
-                      defaultValue={selectedProduct?.category || "Légumes"}
+                      defaultValue={selectedProduct?.category || 'Légumes'}
                       className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
                     >
                       {categories.map((cat) => (
@@ -1243,7 +1266,7 @@ export function ProductInventory() {
                     <input
                       type="number"
                       step="0.01"
-                      defaultValue={selectedProduct?.unitPrice || ""}
+                      defaultValue={selectedProduct?.unitPrice || ''}
                       placeholder="0.00"
                       className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
                     />
@@ -1253,7 +1276,7 @@ export function ProductInventory() {
                 <div>
                   <label className="block text-sm font-medium mb-1">Description</label>
                   <textarea
-                    defaultValue={selectedProduct?.description || ""}
+                    defaultValue={selectedProduct?.description || ''}
                     rows={3}
                     placeholder="Description détaillée du produit..."
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2563eb] bg-background"
@@ -1275,14 +1298,18 @@ export function ProductInventory() {
               </button>
               <button
                 onClick={() => {
-                  toast.success(showEditProductModal ? "Produit modifié avec succès" : "Produit ajouté avec succès");
+                  toast.success(
+                    showEditProductModal
+                      ? 'Produit modifié avec succès'
+                      : 'Produit ajouté avec succès'
+                  );
                   setShowAddProductModal(false);
                   setShowEditProductModal(false);
                   setSelectedProduct(null);
                 }}
                 className="px-4 py-2 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors"
               >
-                {showEditProductModal ? "Enregistrer" : "Ajouter"}
+                {showEditProductModal ? 'Enregistrer' : 'Ajouter'}
               </button>
             </div>
           </div>
@@ -1320,7 +1347,9 @@ export function ProductInventory() {
                   </div>
                   <div>
                     <span className="text-muted-foreground">Prix:</span>
-                    <span className="ml-2 font-medium">{selectedProduct.unitPrice.toFixed(2)}€</span>
+                    <span className="ml-2 font-medium">
+                      {selectedProduct.unitPrice.toFixed(2)}€
+                    </span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Valeur:</span>
@@ -1349,40 +1378,40 @@ export function ProductInventory() {
                 <div className="space-y-3">
                   {[
                     {
-                      type: "Vente",
+                      type: 'Vente',
                       quantity: -15,
-                      date: "10/01/2026 14:23",
-                      user: "Sophie Leroy",
-                      reason: "Commande client #2301",
+                      date: '10/01/2026 14:23',
+                      user: 'Sophie Leroy',
+                      reason: 'Commande client #2301',
                     },
                     {
-                      type: "Réception",
+                      type: 'Réception',
                       quantity: +50,
-                      date: "08/01/2026 10:15",
-                      user: "Marc Dubois",
-                      reason: "Livraison fournisseur",
+                      date: '08/01/2026 10:15',
+                      user: 'Marc Dubois',
+                      reason: 'Livraison fournisseur',
                     },
                     {
-                      type: "Ajustement manuel",
+                      type: 'Ajustement manuel',
                       quantity: -3,
-                      date: "05/01/2026 16:30",
-                      user: "Julie Moreau",
-                      reason: "Produits endommagés",
+                      date: '05/01/2026 16:30',
+                      user: 'Julie Moreau',
+                      reason: 'Produits endommagés',
                     },
                     {
-                      type: "Vente",
+                      type: 'Vente',
                       quantity: -8,
-                      date: "03/01/2026 11:45",
-                      user: "Sophie Leroy",
-                      reason: "Commande client #2256",
+                      date: '03/01/2026 11:45',
+                      user: 'Sophie Leroy',
+                      reason: 'Commande client #2256',
                     },
                   ].map((movement, idx) => (
                     <div key={idx} className="flex gap-3 p-3 border rounded-lg">
                       <div
                         className={`flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center ${
                           movement.quantity > 0
-                            ? "bg-green-100 dark:bg-green-900/30"
-                            : "bg-red-100 dark:bg-red-900/30"
+                            ? 'bg-green-100 dark:bg-green-900/30'
+                            : 'bg-red-100 dark:bg-red-900/30'
                         }`}
                       >
                         {movement.quantity > 0 ? (
@@ -1399,10 +1428,10 @@ export function ProductInventory() {
                           </div>
                           <p
                             className={`font-semibold ${
-                              movement.quantity > 0 ? "text-green-600" : "text-red-600"
+                              movement.quantity > 0 ? 'text-green-600' : 'text-red-600'
                             }`}
                           >
-                            {movement.quantity > 0 ? "+" : ""}
+                            {movement.quantity > 0 ? '+' : ''}
                             {movement.quantity}
                           </p>
                         </div>
@@ -1431,7 +1460,7 @@ export function ProductInventory() {
                 Générer un bon de commande pour les produits en stock faible
               </p>
             </div>
-            
+
             <div className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2">Fournisseur</label>
@@ -1469,7 +1498,11 @@ export function ProductInventory() {
                             />
                           </td>
                           <td className="px-4 py-3 text-right font-semibold">
-                            {((product.maxStock - product.currentStock) * product.unitPrice).toFixed(2)}€
+                            {(
+                              (product.maxStock - product.currentStock) *
+                              product.unitPrice
+                            ).toFixed(2)}
+                            €
                           </td>
                         </tr>
                       ))}
@@ -1498,7 +1531,7 @@ export function ProductInventory() {
               </button>
               <button
                 onClick={() => {
-                  toast.success("Bon de commande généré avec succès");
+                  toast.success('Bon de commande généré avec succès');
                   setShowReorderModal(false);
                 }}
                 className="px-4 py-2 bg-[#2563eb] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors"

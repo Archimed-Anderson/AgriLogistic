@@ -45,15 +45,45 @@ const mockAnalytics: BuyerAnalytics = {
   spendingByCategory: [
     { category: 'Légumes', amount: 5200000, percentage: 42, trend: 5.2, color: '#10b981' },
     { category: 'Fruits', amount: 3800000, percentage: 30, trend: -2.1, color: '#f59e0b' },
-    { category: 'Produits laitiers', amount: 2100000, percentage: 17, trend: 8.5, color: '#3b82f6' },
+    {
+      category: 'Produits laitiers',
+      amount: 2100000,
+      percentage: 17,
+      trend: 8.5,
+      color: '#3b82f6',
+    },
     { category: 'Viande', amount: 900000, percentage: 7, trend: 1.2, color: '#ef4444' },
     { category: 'Céréales', amount: 500000, percentage: 4, trend: 12.0, color: '#8b5cf6' },
   ],
   spendingBySupplier: [
-    { supplierId: 's-001', supplierName: 'Ferme Bio Casamance', amount: 4500000, orderCount: 48, avgOrderValue: 93750 },
-    { supplierId: 's-002', supplierName: 'Coopérative Niayes', amount: 3200000, orderCount: 42, avgOrderValue: 76190 },
-    { supplierId: 's-004', supplierName: 'Ferme Kolda', amount: 2800000, orderCount: 35, avgOrderValue: 80000 },
-    { supplierId: 's-003', supplierName: 'Verger du Fleuve', amount: 2000000, orderCount: 31, avgOrderValue: 64516 },
+    {
+      supplierId: 's-001',
+      supplierName: 'Ferme Bio Casamance',
+      amount: 4500000,
+      orderCount: 48,
+      avgOrderValue: 93750,
+    },
+    {
+      supplierId: 's-002',
+      supplierName: 'Coopérative Niayes',
+      amount: 3200000,
+      orderCount: 42,
+      avgOrderValue: 76190,
+    },
+    {
+      supplierId: 's-004',
+      supplierName: 'Ferme Kolda',
+      amount: 2800000,
+      orderCount: 35,
+      avgOrderValue: 80000,
+    },
+    {
+      supplierId: 's-003',
+      supplierName: 'Verger du Fleuve',
+      amount: 2000000,
+      orderCount: 31,
+      avgOrderValue: 64516,
+    },
   ],
   monthlySpending: [
     { month: 'Août', amount: 980000, orderCount: 12 },
@@ -76,7 +106,7 @@ export function useBuyerAnalytics() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['buyer', 'analytics'],
     queryFn: async () => {
-      await new Promise(resolve => setTimeout(resolve, 600));
+      await new Promise((resolve) => setTimeout(resolve, 600));
       return mockAnalytics;
     },
   });

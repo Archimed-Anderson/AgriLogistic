@@ -1,41 +1,53 @@
-import { Sprout, Plus, Search, Filter, MoreHorizontal, Leaf, Calendar, Droplets } from 'lucide-react';
+import {
+  Sprout,
+  Plus,
+  Search,
+  Filter,
+  MoreHorizontal,
+  Leaf,
+  Calendar,
+  Droplets,
+} from 'lucide-react';
 
 const crops = [
-  { 
-    id: 1, 
-    name: 'Maïs Grain', 
-    variety: 'Pioneer P0937', 
-    area: '45 ha', 
+  {
+    id: 1,
+    name: 'Maïs Grain',
+    variety: 'Pioneer P0937',
+    area: '45 ha',
     plantingDate: '15/04/2023',
     harvestDate: '15/10/2023',
     status: 'transplanting', // growing, ready, harvested
     yield: '12.5 t/ha',
     health: 'good',
-    image: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60'
+    image:
+      'https://images.unsplash.com/photo-1551754655-cd27e38d2076?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
   },
-  { 
-    id: 2, 
-    name: 'Blé Tendre', 
-    variety: 'Chevignon', 
-    area: '32 ha', 
-    plantingDate: '20/10/2023', 
+  {
+    id: 2,
+    name: 'Blé Tendre',
+    variety: 'Chevignon',
+    area: '32 ha',
+    plantingDate: '20/10/2023',
     harvestDate: '15/07/2024',
     status: 'growing',
     yield: '--',
     health: 'excellent',
-    image: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60'
+    image:
+      'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
   },
-  { 
-    id: 3, 
-    name: 'Colza', 
-    variety: 'DK Expansion', 
-    area: '18 ha', 
-    plantingDate: '25/08/2023', 
+  {
+    id: 3,
+    name: 'Colza',
+    variety: 'DK Expansion',
+    area: '18 ha',
+    plantingDate: '25/08/2023',
     harvestDate: '01/07/2024',
     status: 'growing',
     yield: '--',
     health: 'average',
-    image: 'https://images.unsplash.com/photo-1516246843873-9d12356b6fab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60'
+    image:
+      'https://images.unsplash.com/photo-1516246843873-9d12356b6fab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
   },
 ];
 
@@ -127,7 +139,11 @@ export function CropManagement() {
               <tr key={crop.id} className="hover:bg-gray-50/50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <img src={crop.image} alt={crop.name} className="w-10 h-10 rounded-lg object-cover" />
+                    <img
+                      src={crop.image}
+                      alt={crop.name}
+                      className="w-10 h-10 rounded-lg object-cover"
+                    />
                     <div>
                       <p className="font-medium text-gray-900">{crop.name}</p>
                       <p className="text-xs text-gray-500">Parcelle Nord</p>
@@ -139,22 +155,35 @@ export function CropManagement() {
                 <td className="px-6 py-4 text-sm text-gray-600">{crop.plantingDate}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{crop.harvestDate}</td>
                 <td className="px-6 py-4">
-                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
-                    crop.health === 'excellent' ? 'bg-green-100 text-green-700' :
-                    crop.health === 'good' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'
-                  }`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${
-                      crop.health === 'excellent' ? 'bg-green-500' :
-                      crop.health === 'good' ? 'bg-blue-500' : 'bg-yellow-500'
-                    }`}></span>
-                    {crop.health === 'excellent' ? 'Excellente' :
-                     crop.health === 'good' ? 'Bonne' : 'Moyenne'}
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
+                      crop.health === 'excellent'
+                        ? 'bg-green-100 text-green-700'
+                        : crop.health === 'good'
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'bg-yellow-100 text-yellow-700'
+                    }`}
+                  >
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        crop.health === 'excellent'
+                          ? 'bg-green-500'
+                          : crop.health === 'good'
+                          ? 'bg-blue-500'
+                          : 'bg-yellow-500'
+                      }`}
+                    ></span>
+                    {crop.health === 'excellent'
+                      ? 'Excellente'
+                      : crop.health === 'good'
+                      ? 'Bonne'
+                      : 'Moyenne'}
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                   <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                      En cours
-                   </span>
+                  <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                    En cours
+                  </span>
                 </td>
                 <td className="px-6 py-4 text-right">
                   <button className="text-gray-400 hover:text-gray-600">

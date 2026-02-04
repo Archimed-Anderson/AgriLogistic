@@ -1,4 +1,4 @@
-﻿# Script de correction de l'authentification PostgreSQL
+# Script de correction de l'authentification PostgreSQL
 # Resout le probleme "password authentication failed"
 
 $ErrorActionPreference = "Stop"
@@ -22,7 +22,7 @@ Write-Host ""
 
 Write-Host "[2/4] Reinitialisation du mot de passe..." -ForegroundColor Yellow
 try {
-    docker exec AgriLogistic-postgres psql -U AgriLogistic -d AgriLogistic -c "ALTER USER AgriLogistic WITH PASSWORD 'AgriLogistic_secure_2026';" | Out-Null
+    docker exec AgriLogistic-postgres psql -U AgriLogistic -d AgriLogistic -c "ALTER USER \"AgriLogistic\" WITH PASSWORD 'AgriLogistic_secure_2026';" | Out-Null
     Write-Host "  OK - Mot de passe reinitialise" -ForegroundColor Green
 } catch {
     Write-Host "  ERREUR lors de la reinitialisation du mot de passe" -ForegroundColor Red
@@ -59,7 +59,7 @@ Write-Host "  Configuration terminee avec succes!" -ForegroundColor Green
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Vous pouvez maintenant lancer le service auth:" -ForegroundColor Cyan
-Write-Host "  cd services\auth-service" -ForegroundColor White
+Write-Host "  cd services" -ForegroundColor White
 Write-Host "  .\start-dev.ps1" -ForegroundColor White
 Write-Host ""
 

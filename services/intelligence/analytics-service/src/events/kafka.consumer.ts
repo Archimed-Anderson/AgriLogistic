@@ -17,8 +17,14 @@ export class KafkaConsumer {
       await consumer.connect();
       connected = true;
 
-      // Subscribe to topics
-      await consumer.subscribe({ topics: ['user-events', 'order-events', 'product-events'], fromBeginning: false });
+      // Cahier des charges 1.2: topics avec points + compatibilité legacy (tirets)
+      await consumer.subscribe({
+        topics: [
+          'user.events', 'order.events', 'logistics.events', 'payment.events', 'analytics.events', 'iot.telemetry',
+          'user-events', 'order-events', 'product-events', 'incident-events',
+        ],
+        fromBeginning: false,
+      });
 
       // Process messages
       await consumer.run({
@@ -55,14 +61,31 @@ export class KafkaConsumer {
       const event = JSON.parse(message.value.toString());
 
       switch (topic) {
+        case 'user.events':
         case 'user-events':
           await this.processUserEvent(event);
           break;
+        case 'order.events':
         case 'order-events':
           await this.processOrderEvent(event);
           break;
+        case 'logistics.events':
+          await this.processLogisticsEvent(event);
+          break;
+        case 'payment.events':
+          await this.processPaymentEvent(event);
+          break;
+        case 'analytics.events':
+          await this.processAnalyticsEvent(event);
+          break;
+        case 'iot.telemetry':
+          await this.processIotTelemetry(event);
+          break;
         case 'product-events':
           await this.processProductEvent(event);
+          break;
+        case 'incident-events':
+          await this.processIncidentEvent(event);
           break;
       }
     } catch (error) {
@@ -111,6 +134,79 @@ export class KafkaConsumer {
         views: 1,
         unique_users: 1,
       }]);
+    }
+  }
+
+  private static async processLogisticsEvent(event: any): Promise<void> {
+    try {
+      await ClickHouseClient.insert('logistics_events', [{
+        event_id: event.eventId || uuidv4(),
+        type: event.type || 'unknown',
+        order_id: event.orderId || '',
+        location_lat: event.location?.[0] || 0,
+        location_lng: event.location?.[1] || 0,
+        created_at: event.timestamp || new Date().toISOString(),
+      }]);
+    } catch (err) {
+      console.warn('ClickHouse logistics_events table may not exist:', err);
+    }
+  }
+
+  private static async processPaymentEvent(event: any): Promise<void> {
+    try {
+      await ClickHouseClient.insert('payment_events', [{
+        event_id: event.eventId || uuidv4(),
+        type: event.type || 'unknown',
+        order_id: event.orderId || '',
+        amount: event.amount ?? 0,
+        created_at: event.timestamp || new Date().toISOString(),
+      }]);
+    } catch (err) {
+      console.warn('ClickHouse payment_events table may not exist:', err);
+    }
+  }
+
+  private static async processAnalyticsEvent(event: any): Promise<void> {
+    try {
+      await ClickHouseClient.insert('analytics_events', [{
+        event_id: event.eventId || uuidv4(),
+        event_type: event.type || 'unknown',
+        event_data: JSON.stringify(event.data || {}),
+        created_at: event.timestamp || new Date().toISOString(),
+      }]);
+    } catch (err) {
+      console.warn('ClickHouse analytics_events table may not exist:', err);
+    }
+  }
+
+  private static async processIotTelemetry(event: any): Promise<void> {
+    try {
+      await ClickHouseClient.insert('iot_telemetry', [{
+        device_id: event.deviceId || '',
+        type: event.type || 'unknown',
+        payload: JSON.stringify(event.payload || {}),
+        created_at: event.timestamp || new Date().toISOString(),
+      }]);
+    } catch (err) {
+      console.warn('ClickHouse iot_telemetry table may not exist:', err);
+    }
+  }
+
+  private static async processIncidentEvent(event: any): Promise<void> {
+    // Incidents stockés en ClickHouse pour analytics War Room
+    try {
+      await ClickHouseClient.insert('incident_events', [{
+        incident_id: event.id || uuidv4(),
+        type: event.type || 'unknown',
+        severity: event.severity || 0,
+        region: event.region || '',
+        location_lat: event.location?.[0] || 0,
+        location_lng: event.location?.[1] || 0,
+        title: event.title || '',
+        created_at: event.timestamp || new Date().toISOString(),
+      }]);
+    } catch (err) {
+      console.warn('ClickHouse incident_events table may not exist:', err);
     }
   }
 }

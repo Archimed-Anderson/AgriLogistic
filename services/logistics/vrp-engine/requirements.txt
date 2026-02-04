@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+ortools
+pydantic
+python-multipart
+httpx
+geopy
+psycopg2-binary
+sqlalchemy

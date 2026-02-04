@@ -18,26 +18,26 @@ export function AdminHeader() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isDark, setIsDark] = useState(false);
-  
+
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
-  
+
   const toggleDarkMode = () => {
     setIsDark(!isDark);
     document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
   };
-  
+
   const getInitials = (name: string) => {
     return name
       .split(' ')
-      .map(n => n[0])
+      .map((n) => n[0])
       .join('')
       .toUpperCase()
       .slice(0, 2);
   };
-  
+
   return (
     <header className="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6">
       {/* Search */}
@@ -51,23 +51,14 @@ export function AdminHeader() {
           />
         </div>
       </div>
-      
+
       {/* Actions */}
       <div className="flex items-center gap-4">
         {/* Dark mode toggle */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleDarkMode}
-          aria-label="Toggle dark mode"
-        >
-          {isDark ? (
-            <Sun className="w-5 h-5" />
-          ) : (
-            <Moon className="w-5 h-5" />
-          )}
+        <Button variant="ghost" size="icon" onClick={toggleDarkMode} aria-label="Toggle dark mode">
+          {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
         </Button>
-        
+
         {/* Notifications */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -84,7 +75,7 @@ export function AdminHeader() {
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
-        
+
         {/* User menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

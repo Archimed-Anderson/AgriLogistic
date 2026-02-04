@@ -7,7 +7,6 @@
 import React, { useState } from 'react';
 import { Plus, Search, Filter, Eye, ShoppingCart, Star, MapPin } from 'lucide-react';
 import type { Product } from '@/types/farmer/marketplace';
-import Image from 'next/image';
 
 interface ProductCatalogProps {
   products: Product[];
@@ -41,13 +40,13 @@ export function ProductCatalog({ products, isLoading }: ProductCatalogProps) {
     }
   };
 
-  const filteredProducts = products.filter(p => {
+  const filteredProducts = products.filter((p) => {
     const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = filterCategory === 'all' || p.category === filterCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const categories = ['all', ...new Set(products.map(p => p.category))];
+  const categories = ['all', ...new Set(products.map((p) => p.category))];
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -132,7 +131,11 @@ export function ProductCatalog({ products, isLoading }: ProductCatalogProps) {
                     <h3 className="font-semibold text-gray-900">{product.name}</h3>
                     <p className="text-xs text-gray-500">{product.category}</p>
                   </div>
-                  <span className={`text-xs px-2 py-1 border rounded-full ${getStatusBadge(product.status)}`}>
+                  <span
+                    className={`text-xs px-2 py-1 border rounded-full ${getStatusBadge(
+                      product.status
+                    )}`}
+                  >
                     {product.stock} {product.unit}
                   </span>
                 </div>
@@ -164,7 +167,11 @@ export function ProductCatalog({ products, isLoading }: ProductCatalogProps) {
                   </div>
                   {product.suggestedPrice && product.suggestedPrice > product.price && (
                     <span className="text-xs text-green-600 font-medium">
-                      +{(((product.suggestedPrice - product.price) / product.price) * 100).toFixed(0)}% suggéré
+                      +
+                      {(((product.suggestedPrice - product.price) / product.price) * 100).toFixed(
+                        0
+                      )}
+                      % suggéré
                     </span>
                   )}
                 </div>

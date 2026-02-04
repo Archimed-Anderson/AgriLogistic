@@ -20,14 +20,14 @@ import { useEcoRoute } from './hooks/useEcoRoute';
 import { useLiveSimulation } from './hooks/useLiveSimulation';
 
 // Data & Helpers
-import { 
-  mockLoads, 
-  mockTrucks, 
+import {
+  mockLoads,
+  mockTrucks,
   mockAnalytics,
   calculateAIMatchScore,
   calculateDistance,
   type Load,
-  type Truck
+  type Truck,
 } from '../data/logistics-operations';
 
 const LinkHubPage: React.FC = () => {
@@ -45,14 +45,14 @@ const LinkHubPage: React.FC = () => {
 
   const { loads, trucks } = useLiveSimulation(mockLoads, mockTrucks);
   const { matchingResult, findBestMatchForTruck } = useSmartMatch(loads, trucks);
-  
+
   // Notification pour les nouvelles données
   useEffect(() => {
     const lastLoad = loads[0];
     if (lastLoad?.isNew) {
       toast.success(`Nouveau chargement de ${lastLoad.productType} disponible !`, {
-        description: `${lastLoad.origin.city} → ${lastLoad.destination.city}`,
-        icon: '🌱'
+        description: `${lastLoad.originCity ?? '-'} → ${lastLoad.destinationCity ?? '-'}`,
+        icon: '🌱',
       });
     }
   }, [loads]);
@@ -61,8 +61,8 @@ const LinkHubPage: React.FC = () => {
     const lastTruck = trucks[0];
     if (lastTruck?.isNew) {
       toast.info(`Nouveau transporteur disponible : ${lastTruck.driverName}`, {
-        description: `${lastTruck.truckType} à ${lastTruck.currentPosition.city}`,
-        icon: '🚛'
+        description: `${lastTruck.truckType} à ${lastTruck.currentLocationCity ?? '-'}`,
+        icon: '🚛',
       });
     }
   }, [trucks]);
@@ -98,14 +98,14 @@ const LinkHubPage: React.FC = () => {
 
   const handleSmartMatch = (truck: Truck) => {
     setSelectedTruck(truck);
-    
+
     // Utiliser le hook pour trouver le meilleur match
     const bestLoad = findBestMatchForTruck(truck);
-    
+
     if (bestLoad) {
       setSelectedLoad(bestLoad);
       setShowEcoPanel(true);
-      
+
       // Animation d'annonce
       console.log(`Match AI trouvé avec score: ${matchingResult?.score}%`);
     }
@@ -116,8 +116,6 @@ const LinkHubPage: React.FC = () => {
     // Logique d'envoi de proposition
     alert(`Proposition envoyée pour ${load.productType} (${load.quantity}t)`);
   };
-
-
 
   if (isLoading) {
     return (
@@ -134,8 +132,8 @@ const LinkHubPage: React.FC = () => {
       <StatsHeader analytics={mockAnalytics} />
 
       {/* Sidebar Gauche: Chargements */}
-      <LoadsSidebar 
-        loads={loads} 
+      <LoadsSidebar
+        loads={loads}
         selectedLoad={selectedLoad}
         onSelectLoad={handleSelectLoad}
         onProposeCourse={handleProposeCourse}
@@ -143,7 +141,7 @@ const LinkHubPage: React.FC = () => {
 
       {/* Main Map Content */}
       <main className="map-container">
-        <CommandMap 
+        <CommandMap
           loads={loads}
           trucks={trucks}
           selectedLoad={selectedLoad}
@@ -154,16 +152,13 @@ const LinkHubPage: React.FC = () => {
 
         {/* Panel Eco-Route (Flottant sur la carte) */}
         {showEcoPanel && selectedLoad && selectedTruck && (
-          <EcoRoutePanel 
-            ecoData={ecoData} 
-            onClose={() => setShowEcoPanel(false)} 
-          />
+          <EcoRoutePanel ecoData={ecoData} onClose={() => setShowEcoPanel(false)} />
         )}
       </main>
 
       {/* Sidebar Droite: Transporteurs */}
-      <TrucksSidebar 
-        trucks={trucks} 
+      <TrucksSidebar
+        trucks={trucks}
         selectedTruck={selectedTruck}
         onSelectTruck={handleSelectTruck}
         onSmartMatch={handleSmartMatch}

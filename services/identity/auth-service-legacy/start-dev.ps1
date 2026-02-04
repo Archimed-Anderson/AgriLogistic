@@ -1,4 +1,4 @@
-﻿# Script de demarrage du service auth en mode dev
+# Script de demarrage du service auth en mode dev
 # Utilise les services Docker existants (Redis, PostgreSQL)
 
 $ErrorActionPreference = "Stop"
@@ -36,7 +36,7 @@ if ($LASTEXITCODE -ne 0) {
     Write-Host "  Execution du script de fix automatique..." -ForegroundColor Yellow
     
     # Fix automatique
-    docker exec AgriLogistic-postgres psql -U AgriLogistic -d AgriLogistic -c "ALTER USER AgriLogistic WITH PASSWORD 'AgriLogistic_secure_2026';" | Out-Null
+    docker exec AgriLogistic-postgres psql -U AgriLogistic -d AgriLogistic -c "ALTER USER \"AgriLogistic\" WITH PASSWORD 'AgriLogistic_secure_2026';" | Out-Null
     docker exec AgriLogistic-postgres sh -c "sed -i 's/host    all             all             127.0.0.1\/32            trust/host    all             all             127.0.0.1\/32            scram-sha-256/' /var/lib/postgresql/data/pg_hba.conf" | Out-Null
     docker exec AgriLogistic-postgres psql -U AgriLogistic -c "SELECT pg_reload_conf();" | Out-Null
     
