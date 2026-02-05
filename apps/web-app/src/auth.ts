@@ -3,9 +3,16 @@ import { nextCookies } from "better-auth/next-js";
 import { oneTap } from "better-auth/plugins";
 import { Pool } from "pg";
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+let pool: Pool | null = null;
+
+function getPool(): Pool {
+  if (!pool) {
+    pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+    });
+  }
+  return pool;
+}
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
@@ -33,7 +40,7 @@ const isAppleConfigured =
 export const auth = betterAuth({
   baseURL: process.env.NEXTAUTH_URL || process.env.BETTER_AUTH_URL,
   secret: process.env.BETTER_AUTH_SECRET,
-  database: pool,
+  database: getPool(),
   user: {
     additionalFields: {
       role: {

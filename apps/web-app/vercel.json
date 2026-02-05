@@ -1,8 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "buildCommand": "pnpm run build",
-  "installCommand": "pnpm install",
+  "buildCommand": "cd ../.. && pnpm install --frozen-lockfile && pnpm --filter=@agrologistic/web-app build",
+  "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
   "regions": ["cdg1"],
   "env": {},
   "headers": [
