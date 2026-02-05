@@ -1,0 +1,65 @@
+
+> @agrologistic/web-app@0.1.0 build C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\apps\web-app
+> next build
+
+  Ôû▓ Next.js 14.2.35
+  - Environments: .env.local, .env
+  - Experiments (use with caution):
+    ┬À instrumentationHook
+
+   Creating an optimized production build ...
+Failed to compile.
+
+../../node_modules/.pnpm/@better-auth+core@1.4.18_@better-auth+utils@0.3.0_@better-fetch+fetch@1.1.21_better-call@1.1._bfyyxv3qctd46ukqrnkvks5eie/node_modules/@better-auth/core/dist/utils/ip.mjs
+Attempted import error: 'ipv4' is not exported from 'zod' (imported as 'z').
+
+Import trace for requested module:
+../../node_modules/.pnpm/@better-auth+core@1.4.18_@better-auth+utils@0.3.0_@better-fetch+fetch@1.1.21_better-call@1.1._bfyyxv3qctd46ukqrnkvks5eie/node_modules/@better-auth/core/dist/utils/ip.mjs
+../../node_modules/.pnpm/@better-auth+core@1.4.18_@better-auth+utils@0.3.0_@better-fetch+fetch@1.1.21_better-call@1.1._bfyyxv3qctd46ukqrnkvks5eie/node_modules/@better-auth/core/dist/utils/index.mjs
+../../node_modules/.pnpm/better-auth@1.4.18_@prisma+client@7.3.0_prisma@7.3.0_@types+react@18.2.43_magicast@0.5.1_reac_voxenrbnp37vdmfnxvydiy5q7e/node_modules/better-auth/dist/index.mjs
+./src/auth.ts
+./src/app/actions/auth-actions.ts
+
+../../node_modules/.pnpm/@better-auth+core@1.4.18_@better-auth+utils@0.3.0_@better-fetch+fetch@1.1.21_better-call@1.1._bfyyxv3qctd46ukqrnkvks5eie/node_modules/@better-auth/core/dist/utils/ip.mjs
+Attempted import error: 'ipv6' is not exported from 'zod' (imported as 'z').
+
+Import trace for requested module:
+../../node_modules/.pnpm/@better-auth+core@1.4.18_@better-auth+utils@0.3.0_@better-fetch+fetch@1.1.21_better-call@1.1._bfyyxv3qctd46ukqrnkvks5eie/node_modules/@better-auth/core/dist/utils/ip.mjs
+../../node_modules/.pnpm/@better-auth+core@1.4.18_@better-auth+utils@0.3.0_@better-fetch+fetch@1.1.21_better-call@1.1._bfyyxv3qctd46ukqrnkvks5eie/node_modules/@better-auth/core/dist/utils/index.mjs
+../../node_modules/.pnpm/better-auth@1.4.18_@prisma+client@7.3.0_prisma@7.3.0_@types+react@18.2.43_magicast@0.5.1_reac_voxenrbnp37vdmfnxvydiy5q7e/node_modules/better-auth/dist/index.mjs
+./src/auth.ts
+./src/app/actions/auth-actions.ts
+
+../../node_modules/.pnpm/@better-auth+core@1.4.18_@better-auth+utils@0.3.0_@better-fetch+fetch@1.1.21_better-call@1.1._bfyyxv3qctd46ukqrnkvks5eie/node_modules/@better-auth/core/dist/utils/ip.mjs
+Attempted import error: 'ipv6' is not exported from 'zod' (imported as 'z').
+
+Import trace for requested module:
+../../node_modules/.pnpm/@better-auth+core@1.4.18_@better-auth+utils@0.3.0_@better-fetch+fetch@1.1.21_better-call@1.1._bfyyxv3qctd46ukqrnkvks5eie/node_modules/@better-auth/core/dist/utils/ip.mjs
+../../node_modules/.pnpm/@better-auth+core@1.4.18_@better-auth+utils@0.3.0_@better-fetch+fetch@1.1.21_better-call@1.1._bfyyxv3qctd46ukqrnkvks5eie/node_modules/@better-auth/core/dist/utils/index.mjs
+../../node_modules/.pnpm/better-auth@1.4.18_@prisma+client@7.3.0_prisma@7.3.0_@types+react@18.2.43_magicast@0.5.1_reac_voxenrbnp37vdmfnxvydiy5q7e/node_modules/better-auth/dist/index.mjs
+./src/auth.ts
+./src/app/actions/auth-actions.ts
+
+../../node_modules/.pnpm/@better-auth+core@1.4.18_@better-auth+utils@0.3.0_@better-fetch+fetch@1.1.21_better-call@1.1._bfyyxv3qctd46ukqrnkvks5eie/node_modules/@better-auth/core/dist/utils/ip.mjs
+Attempted import error: 'ipv4' is not exported from 'zod' (imported as 'z').
+
+Import trace for requested module:
+../../node_modules/.pnpm/@better-auth+core@1.4.18_@better-auth+utils@0.3.0_@better-fetch+fetch@1.1.21_better-call@1.1._bfyyxv3qctd46ukqrnkvks5eie/node_modules/@better-auth/core/dist/utils/ip.mjs
+../../node_modules/.pnpm/@better-auth+core@1.4.18_@better-auth+utils@0.3.0_@better-fetch+fetch@1.1.21_better-call@1.1._bfyyxv3qctd46ukqrnkvks5eie/node_modules/@better-auth/core/dist/utils/index.mjs
+../../node_modules/.pnpm/better-auth@1.4.18_@prisma+client@7.3.0_prisma@7.3.0_@types+react@18.2.43_magicast@0.5.1_reac_voxenrbnp37vdmfnxvydiy5q7e/node_modules/better-auth/dist/index.mjs
+./src/auth.ts
+./src/app/actions/auth-actions.ts
+
+../../node_modules/.pnpm/@better-auth+core@1.4.18_@better-auth+utils@0.3.0_@better-fetch+fetch@1.1.21_better-call@1.1._bfyyxv3qctd46ukqrnkvks5eie/node_modules/@better-auth/core/dist/utils/ip.mjs
+Attempted import error: 'ipv4' is not exported from 'zod' (imported as 'z').
+
+Import trace for requested module:
+../../node_modules/.pnpm/@better-auth+core@1.4.18_@better-auth+utils@0.3.0_@better-fetch+fetch@1.1.21_better-call@1.1._bfyyxv3qctd46ukqrnkvks5eie/node_modules/@better-auth/core/dist/utils/ip.mjs
+../../node_modules/.pnpm/@better-auth+core@1.4.18_@better-auth+utils@0.3.0_@better-fetch+fetch@1.1.21_better-call@1.1._bfyyxv3qctd46ukqrnkvks5eie/node_modules/@better-auth/core/dist/utils/index.mjs
+../../node_modules/.pnpm/better-auth@1.4.18_@prisma+client@7.3.0_prisma@7.3.0_@types+react@18.2.43_magicast@0.5.1_reac_voxenrbnp37vdmfnxvydiy5q7e/node_modules/better-auth/dist/index.mjs
+./src/auth.ts
+./src/app/actions/auth-actions.ts
+
+
+> Build failed because of webpack errors
+ÔÇëELIFECYCLEÔÇë Command failed with exit code 1.

@@ -1,0 +1,204 @@
+
+> @agrologistic/web-app@0.1.0 build C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\apps\web-app
+> next build
+
+  Ôû▓ Next.js 14.2.35
+  - Environments: .env.local, .env
+  - Experiments (use with caution):
+    ┬À instrumentationHook
+
+   Creating an optimized production build ...
+ Ô£ô Compiled successfully
+   Skipping validation of types
+   Skipping linting
+   Collecting page data ...
+   Generating static pages (0/137) ...
+   Generating static pages (34/137) 
+   Generating static pages (68/137) 
+   Generating static pages (102/137) 
+ Ô£ô Generating static pages (137/137)
+   Finalizing page optimization ...
+   Collecting build traces ...
+ ÔÜá Failed to copy traced files for C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\apps\web-app\.next\server\pages\_app.js Error: EPERM: operation not permitted, symlink 'C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\react@18.3.1\node_modules\react' -> 'C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\apps\web-app\.next\standalone\node_modules\react'
+    at async Object.symlink (node:internal/fs/promises:999:10)
+    at async C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\build\utils.js:1402:25
+    at async Promise.all (index 1)
+    at async handleTraceFiles (C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\build\utils.js:1390:9)
+    at async copyTracedFiles (C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\build\utils.js:1451:9)
+    at async C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\build\index.js:224:9
+    at async Span.traceAsyncFn (C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\trace\trace.js:154:20)
+    at async writeStandaloneDirectory (C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\build\index.js:223:5)
+    at async C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\build\index.js:2143:17
+    at async Span.traceAsyncFn (C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\trace\trace.js:154:20) {
+  errno: -4048,
+  code: 'EPERM',
+  syscall: 'symlink',
+  path: 'C:\\Users\\ander\\Downloads\\Agrodeepwebapp-main\\AgroDeep\\node_modules\\.pnpm\\react@18.3.1\\node_modules\\react',
+  dest: 'C:\\Users\\ander\\Downloads\\Agrodeepwebapp-main\\AgroDeep\\apps\\web-app\\.next\\standalone\\node_modules\\react'
+}
+ ÔÜá Failed to copy traced files for C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\apps\web-app\.next\server\pages\_error.js Error: EPERM: operation not permitted, symlink 'C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next' -> 'C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\apps\web-app\.next\standalone\node_modules\next'
+    at async Object.symlink (node:internal/fs/promises:999:10)
+    at async C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\build\utils.js:1402:25
+    at async Promise.all (index 0)
+    at async handleTraceFiles (C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\build\utils.js:1390:9)
+    at async copyTracedFiles (C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\build\utils.js:1451:9)
+    at async C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\build\index.js:224:9
+    at async Span.traceAsyncFn (C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\trace\trace.js:154:20)
+    at async writeStandaloneDirectory (C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\build\index.js:223:5)
+    at async C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\build\index.js:2143:17
+    at async Span.traceAsyncFn (C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\trace\trace.js:154:20) {
+  errno: -4048,
+  code: 'EPERM',
+  syscall: 'symlink',
+  path: 'C:\\Users\\ander\\Downloads\\Agrodeepwebapp-main\\AgroDeep\\node_modules\\.pnpm\\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\\node_modules\\next',
+  dest: 'C:\\Users\\ander\\Downloads\\Agrodeepwebapp-main\\AgroDeep\\apps\\web-app\\.next\\standalone\\node_modules\\next'
+}
+ ÔÜá Failed to copy traced files for C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\apps\web-app\.next\server\app\api\auth\[...all]\route.js Error: EPERM: operation not permitted, symlink 'C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\pg@8.17.2\node_modules\pg' -> 'C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\apps\web-app\.next\standalone\node_modules\pg'
+    at async Object.symlink (node:internal/fs/promises:999:10)
+    at async C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\build\utils.js:1402:25
+    at async Promise.all (index 1)
+    at async handleTraceFiles (C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\build\utils.js:1390:9)
+    at async copyTracedFiles (C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\build\utils.js:1464:13)
+    at async C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\build\index.js:224:9
+    at async Span.traceAsyncFn (C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\trace\trace.js:154:20)
+    at async writeStandaloneDirectory (C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\build\index.js:223:5)
+    at async C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\build\index.js:2143:17
+    at async Span.traceAsyncFn (C:\Users\ander\Downloads\Agrodeepwebapp-main\AgroDeep\node_modules\.pnpm\next@14.2.35_@babel+core@7.28.6_@opentelemetry+api@1.9.0_@playwright+test@1.58.0_react-dom@18_y7vsgbwzmazh2j4hgs77scxkmm\node_modules\next\dist\trace\trace.js:154:20) {
+  errno: -4048,
+  code: 'EPERM',
+  syscall: 'symlink',
+  path: 'C:\\Users\\ander\\Downloads\\Agrodeepwebapp-main\\AgroDeep\\node_modules\\.pnpm\\pg@8.17.2\\node_modules\\pg',
+  dest: 'C:\\Users\\ander\\Downloads\\Agrodeepwebapp-main\\AgroDeep\\apps\\web-app\\.next\\standalone\\node_modules\\pg'
+}
+
+Route (app)                                       Size     First Load JS
+Ôöî Ôùï /                                             15.1 kB         156 kB
+Ôö£ Ôùï /_not-found                                   160 B          89.3 kB
+Ôö£ ãÆ /admin                                        160 B          89.3 kB
+Ôö£ ãÆ /admin/affiliation-manager                    18.2 kB         254 kB
+Ôö£ ãÆ /admin/affiliations                           209 B          98.1 kB
+Ôö£ ãÆ /admin/ai-insights                            209 B          98.1 kB
+Ôö£ ãÆ /admin/ai-models                              10.8 kB         246 kB
+Ôö£ ãÆ /admin/ai-predictions                         10.9 kB         243 kB
+Ôö£ ãÆ /admin/analytics/flux-map                     9.86 kB         135 kB
+Ôö£ ãÆ /admin/analytics/global                       8.81 kB         196 kB
+Ôö£ ãÆ /admin/analytics/performance                  8.66 kB         205 kB
+Ôö£ ãÆ /admin/blog-events                            10.9 kB         151 kB
+Ôö£ ãÆ /admin/communication/notifications            9.02 kB        98.1 kB
+Ôö£ ãÆ /admin/community/forum                        4.57 kB          98 kB
+Ôö£ ãÆ /admin/construction                           1.9 kB         99.8 kB
+Ôö£ ãÆ /admin/crop-intelligence                      10.8 kB         203 kB
+Ôö£ ãÆ /admin/dashboard                              10.9 kB         251 kB
+Ôö£ ãÆ /admin/data-quality                           5.33 kB         237 kB
+Ôö£ ãÆ /admin/developer/platform                     8.46 kB        97.6 kB
+Ôö£ ãÆ /admin/device-management                      8.78 kB        97.9 kB
+Ôö£ ãÆ /admin/digital-twin                           6.18 kB         150 kB
+Ôö£ ãÆ /admin/equipment                              209 B          98.1 kB
+Ôö£ ãÆ /admin/expansion/global-footprint             8.45 kB        97.6 kB
+Ôö£ ãÆ /admin/expansion/partnerships                 8.25 kB         133 kB
+Ôö£ ãÆ /admin/finance                                10.8 kB         248 kB
+Ôö£ ãÆ /admin/finance/agri-score                     11 kB           248 kB
+Ôö£ ãÆ /admin/finance/credit-history                 2.74 kB         106 kB
+Ôö£ ãÆ /admin/finance/escrow                         6.19 kB         135 kB
+Ôö£ ãÆ /admin/finance/loans                          5.42 kB         257 kB
+Ôö£ ãÆ /admin/finance/monetization                   9.79 kB         243 kB
+Ôö£ ãÆ /admin/finance/payments                       9.14 kB         134 kB
+Ôö£ ãÆ /admin/finance/pricing                        9.54 kB        98.7 kB
+Ôö£ ãÆ /admin/finance/risk-analysis                  7.43 kB         245 kB
+Ôö£ ãÆ /admin/fraud-detection                        4.73 kB         236 kB
+Ôö£ ãÆ /admin/governance/blockchain                  7.79 kB         156 kB
+Ôö£ ãÆ /admin/governance/kyc                         5.9 kB          157 kB
+Ôö£ ãÆ /admin/governance/rbac                        8.61 kB         157 kB
+Ôö£ ãÆ /admin/iot-hub                                5.26 kB         236 kB
+Ôö£ ãÆ /admin/labor-management                       209 B          98.1 kB
+Ôö£ ãÆ /admin/link-manager                           218 B           258 kB
+Ôö£ ãÆ /admin/logistics/command-center               14.8 kB         154 kB
+Ôö£ ãÆ /admin/logistics/fleet                        5.14 kB         144 kB
+Ôö£ ãÆ /admin/logistics/freight                      4.8 kB          108 kB
+Ôö£ ãÆ /admin/logistics/iot                          10.9 kB         252 kB
+Ôö£ ãÆ /admin/logistics/missions                     26.7 kB         197 kB
+Ôö£ ãÆ /admin/logistics/vrp                          9.31 kB         148 kB
+Ôö£ ãÆ /admin/loueur-manager                         5.26 kB         101 kB
+Ôö£ ãÆ /admin/marketplace                            6.38 kB         107 kB
+Ôö£ ãÆ /admin/network-health                         8.29 kB         200 kB
+Ôö£ ãÆ /admin/notifications                          8.31 kB         149 kB
+Ôö£ ãÆ /admin/operations/fleet                       12.5 kB         248 kB
+Ôö£ ãÆ /admin/operations/marketplace                 7.3 kB          143 kB
+Ôö£ ãÆ /admin/operations/productions                 79.1 kB         334 kB
+Ôö£ ãÆ /admin/products                               1.51 kB         268 kB
+Ôö£ ãÆ /admin/reports                                209 B          98.1 kB
+Ôö£ ãÆ /admin/reports/compliance                     8.43 kB        97.6 kB
+Ôö£ ãÆ /admin/satellite-imagery                      8.99 kB         197 kB
+Ôö£ ãÆ /admin/security/backups                       10.4 kB         202 kB
+Ôö£ ãÆ /admin/security/soc                           8.35 kB        97.5 kB
+Ôö£ ãÆ /admin/settings                               10.8 kB         144 kB
+Ôö£ ãÆ /admin/soil-water                             209 B          98.1 kB
+Ôö£ ãÆ /admin/support                                10.3 kB         149 kB
+Ôö£ ãÆ /admin/support/help-center                    4.87 kB        98.3 kB
+Ôö£ ãÆ /admin/system/feature-flags                   8.51 kB        97.6 kB
+Ôö£ ãÆ /admin/system/maintenance                     5.01 kB         201 kB
+Ôö£ ãÆ /admin/system/tenants                         9.56 kB         197 kB
+Ôö£ ãÆ /admin/task-management                        209 B          98.1 kB
+Ôö£ ãÆ /admin/traceability/certifications            8.19 kB         147 kB
+Ôö£ ãÆ /admin/traceability/esg                       4.96 kB         221 kB
+Ôö£ ãÆ /admin/traceability/lots                      7.72 kB         147 kB
+Ôö£ ãÆ /admin/traceability/verification              3.29 kB         101 kB
+Ôö£ ãÆ /admin/transport-calculators                  209 B          98.1 kB
+Ôö£ ãÆ /admin/users                                  7.87 kB         149 kB
+Ôö£ ãÆ /admin/war-room                               1.35 kB        90.5 kB
+Ôö£ ãÆ /admin/weather                                209 B          98.1 kB
+Ôö£ Ôùï /affiliation                                  7.27 kB         118 kB
+Ôö£ ãÆ /affiliation/[slug]                           3.09 kB         114 kB
+Ôö£ ãÆ /api/auth/[...all]                            0 B                0 B
+Ôö£ Ôùï /blog                                         10.6 kB         183 kB
+Ôö£ ÔùÅ /blog/[slug]                                  223 B           137 kB
+Ôö£   Ôö£ /blog/ia-transformation-rendements-afrique
+Ôö£   Ôö£ /blog/digital-twins-agriculture
+Ôö£   Ôö£ /blog/cooperatives-digitalisation
+Ôö£   Ôöö [+21 more paths]
+Ôö£ ãÆ /dashboard                                    160 B          89.3 kB
+Ôö£ ãÆ /dashboard/admin                              2.35 kB        99.6 kB
+Ôö£ ãÆ /dashboard/agriculteur                        9.57 kB         335 kB
+Ôö£ ãÆ /dashboard/agriculteur/ai                     3.09 kB         251 kB
+Ôö£ ãÆ /dashboard/agriculteur/formation              6.34 kB         167 kB
+Ôö£ ãÆ /dashboard/agriculteur/logistique             4.85 kB         155 kB
+Ôö£ ãÆ /dashboard/agriculteur/marketplace            4.86 kB         172 kB
+Ôö£ ãÆ /dashboard/agriculteur/parcelles              2.31 kB        99.5 kB
+Ôö£ ãÆ /dashboard/agriculteur/saisie                 6.72 kB         178 kB
+Ôö£ ãÆ /dashboard/buyer                              2.06 kB         185 kB
+Ôö£ ãÆ /dashboard/buyer/analytics                    8.67 kB         209 kB
+Ôö£ ãÆ /dashboard/buyer/contracts                    6.88 kB         153 kB
+Ôö£ ãÆ /dashboard/buyer/negotiations                 5.64 kB         161 kB
+Ôö£ ãÆ /dashboard/buyer/rfq                          1.66 kB         184 kB
+Ôö£ ãÆ /dashboard/buyer/suppliers                    5.71 kB         103 kB
+Ôö£ ãÆ /dashboard/buyer/tracking                     6.87 kB         243 kB
+Ôö£ ãÆ /dashboard/transporter                        10.6 kB         153 kB
+Ôö£ ãÆ /dashboard/transporter/analytics              4.79 kB         211 kB
+Ôö£ ãÆ /dashboard/transporter/documents              1.29 kB        90.4 kB
+Ôö£ ãÆ /dashboard/transporter/fleet                  1.57 kB        90.7 kB
+Ôö£ ãÆ /dashboard/transporter/market                 1.32 kB        90.4 kB
+Ôö£ ãÆ /dashboard/transporter/optimizer              1.55 kB        90.7 kB
+Ôö£ ãÆ /dashboard/transporter/settings               8.66 kB         115 kB
+Ôö£ Ôùï /login                                        15.8 kB         180 kB
+Ôö£ Ôùï /loueur                                       4.11 kB         111 kB
+Ôö£ ãÆ /loueur/[id]                                  2.95 kB         110 kB
+Ôö£ Ôùï /marketplace                                  3.24 kB         138 kB
+Ôö£ ãÆ /marketplace/[id]                             3.27 kB         138 kB
+Ôö£ Ôùï /marketplace/cart                             2.73 kB         134 kB
+Ôö£ Ôùï /products/agrilogistic-farm                   12.4 kB         123 kB
+Ôö£ Ôùï /products/agrilogistic-link                   9.37 kB         125 kB
+Ôö£ Ôùï /register                                     10.1 kB         140 kB
+Ôö£ Ôùï /request-demo                                 5.65 kB         166 kB
+Ôö£ Ôùï /unauthorized                                 3.32 kB         109 kB
+Ôö£ ãÆ /verify/[id]                                  4.51 kB         138 kB
+Ôöö Ôùï /verify/[id/]                                 4.51 kB         138 kB
++ First Load JS shared by all                     89.1 kB
+  Ôö£ chunks/3d65390d-5572500fcc077bd4.js           53.6 kB
+  Ôö£ chunks/8335-4512e97b83c31794.js               31.9 kB
+  Ôöö other shared chunks (total)                   3.6 kB
+
+
+Ôùï  (Static)   prerendered as static content
+ÔùÅ  (SSG)      prerendered as static HTML (uses getStaticProps)
+ãÆ  (Dynamic)  server-rendered on demand
+
