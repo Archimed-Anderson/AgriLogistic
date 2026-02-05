@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 import { ClientProviders } from '@/components/providers/ClientProviders';
 
@@ -29,6 +30,7 @@ export default function RootLayout({
     <html lang="fr" suppressHydrationWarning>
       <body className={`${inter.variable} ${jakarta.variable} font-jakarta antialiased`}>
         <ClientProviders>{children}</ClientProviders>
+        <SpeedInsights />
       </body>
     </html>
   );
