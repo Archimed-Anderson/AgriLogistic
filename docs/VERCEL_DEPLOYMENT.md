@@ -1,22 +1,54 @@
 # Déploiement AgroLogistic Web App sur Vercel
 
-Ce document décrit la configuration pour déployer **apps/web-app** (Next.js) sur Vercel, en environnement **Preview** (branches / PR) et **Production** (branche principale).
+Ce document décrit la configuration pour déployer **apps/web-app** (Next.js) sur Vercel, en environnement **Preview** (branches / PR) et **Production** (branche principale). Il correspond aux écrans **Configure Project** (Root Directory, Build/Install) et **Environment Variables** de l’interface Vercel.
 
 ---
 
-## 1. Configuration projet Vercel
+**Si le build Vercel échoue à chaque fois** : suivez la procédure pas à pas **[docs/VERCEL_REDEPLOY_STEPS.md](VERCEL_REDEPLOY_STEPS.md)** (Root Directory, variables d'environnement, redeploy, dépannage).
 
-### 1.1 Importer le dépôt
+---
+
+## 1. Configuration projet Vercel (écran par écran)
+
+### 1.1 Écran « Configure Project » (première configuration)
+
+Remplir **exactement** comme suit :
+
+| Champ Vercel | Valeur à saisir | Note |
+|--------------|-----------------|------|
+| **Project Name** | `agrilogistic` (ou le nom souhaité) | Optionnel, Vercel propose un nom. |
+| **Root Directory** | `apps/web-app` | **Obligatoire.** Cliquer sur « Edit », cocher « Include source files outside of the Root Directory », puis saisir `apps/web-app`. |
+| **Framework Preset** | `Next.js` | Détecté automatiquement si Root Directory = `apps/web-app`. |
+| **Build Command** | `pnpm run build` | Ou laisser vide (le `vercel.json` du repo le définit). |
+| **Output Directory** | *(laisser vide)* | Next.js gère tout seul. |
+| **Install Command** | `pnpm install` | Ou laisser vide (idem `vercel.json`). |
+| **Development Command** | *(vide ou)* `pnpm run dev` | Optionnel. |
+| **Node.js Version** | `20.x` (recommandé) | Dans **Settings → General → Node.js Version** si besoin. |
+
+**Important :** Si « Root Directory » n’est pas configuré, le build échouera (Vercel cherchera un `package.json` à la racine du monorepo). Toujours définir **Root Directory** = **`apps/web-app`**.
+
+### 1.2 Environment Variables (avant ou après le premier déploiement)
+
+**Settings** → **Environment Variables**. Ajouter au minimum pour **Production** :
+
+| Name | Value | Environment |
+|------|--------|-------------|
+| `DATABASE_URL` | `postgresql://USER:PASSWORD@HOST:5432/DATABASE` | Production (et Preview si vous utilisez une DB) |
+| `BETTER_AUTH_SECRET` | Une chaîne ≥ 32 caractères (ex. `openssl rand -base64 32`) | Production, Preview |
+| `BETTER_AUTH_URL` | **Production :** `https://votre-domaine.vercel.app` — **Preview :** `https://$VERCEL_URL` | Production / Preview |
+| `NEXTAUTH_URL` | Même valeur que `BETTER_AUTH_URL` | Production / Preview |
+
+Pour **Preview**, vous pouvez définir `BETTER_AUTH_URL` = `https://$VERCEL_URL` et `NEXTAUTH_URL` = `https://$VERCEL_URL` (Vercel remplace `$VERCEL_URL` par l’URL du déploiement, ex. `votre-projet-xxx.vercel.app`).
+
+### 1.3 Importer le dépôt (rappel)
 
 1. [Vercel](https://vercel.com) → **Add New** → **Project**.
-2. Importer le dépôt GitHub (AgroLogistic / agrodeepwebapp ou équivalent).
-3. **Root Directory** : définir `apps/web-app` (obligatoire pour ce monorepo).
-4. **Framework Preset** : Next.js (détecté automatiquement si `vercel.json` présent).
-5. **Build Command** : `pnpm run build` (ou laisser vide pour utiliser `vercel.json`).
-6. **Output Directory** : laisser par défaut (Next.js gère).
-7. **Install Command** : `pnpm install`.
+2. Importer le dépôt GitHub (ex. **Archimed-Anderson/AgriLogistic**).
+3. **Root Directory** : `apps/web-app` (voir tableau ci-dessus).
+4. **Build / Install** : `pnpm run build` et `pnpm install` (ou laisser vides si `vercel.json` est utilisé).
+5. Cliquer sur **Deploy**.
 
-### 1.2 Fichier `vercel.json`
+### 1.4 Fichier `vercel.json`
 
 Le fichier `apps/web-app/vercel.json` contient déjà :
 
@@ -34,7 +66,19 @@ Aucune modification nécessaire sauf besoin spécifique (domaine, redirections, 
 
 À configurer dans **Vercel** → **Project** → **Settings** → **Environment Variables**.
 
-### 2.1 Production (Production)
+### 2.1 Checklist rapide (en suivant vos écrans Vercel)
+
+- [ ] **Root Directory** = `apps/web-app` (pas de slash au début, pas de slash à la fin).
+- [ ] **Framework** = Next.js.
+- [ ] **Build Command** = `pnpm run build` (ou vide).
+- [ ] **Install Command** = `pnpm install` (ou vide).
+- [ ] **Environment Variables** : au moins `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `NEXTAUTH_URL` pour l'environnement ciblé (Production / Preview).
+
+**Si le build échoue** avec « Cannot find module » ou « package.json not found », c'est en général que **Root Directory** n'est pas `apps/web-app`. Vérifier dans **Settings → General → Root Directory**.
+
+---
+
+### 2.2 Production (Production)
 
 | Variable | Obligatoire | Description | Exemple |
 |----------|-------------|-------------|--------|
@@ -47,7 +91,7 @@ Aucune modification nécessaire sauf besoin spécifique (domaine, redirections, 
 | `GOOGLE_CLIENT_SECRET` | Optionnel | OAuth Google | Client Secret |
 | `NEXT_PUBLIC_DEV_LOGIN_DELAY_MS` | Optionnel | Délai accès rapide (ms) | `250` |
 
-### 2.2 Preview (Preview / Déploiements de branches)
+### 2.3 Preview (Preview / Déploiements de branches)
 
 Mêmes variables que Production, avec des valeurs dédiées :
 
@@ -57,7 +101,7 @@ Mêmes variables que Production, avec des valeurs dédiées :
 - **DATABASE_URL** : base dédiée Preview (recommandé) ou même base avec préfixe de schéma.
 - **BETTER_AUTH_SECRET** : secret différent pour Preview (recommandé).
 
-### 2.3 Variables sensibles
+### 2.4 Variables sensibles
 
 - Ne jamais committer `DATABASE_URL`, `BETTER_AUTH_SECRET`, `GOOGLE_CLIENT_SECRET`, etc.
 - Les définir uniquement dans l’interface Vercel (ou via Vercel CLI / API).
@@ -65,7 +109,7 @@ Mêmes variables que Production, avec des valeurs dédiées :
 
 ---
 
-## 3. Migrations base de données
+## 4. Migrations base de données
 
 Better Auth utilise des tables créées par ses migrations.
 
@@ -76,7 +120,7 @@ Better Auth utilise des tables créées par ses migrations.
 
 ---
 
-## 4. Environnements recommandés (résumé)
+## 5. Environnements recommandés (résumé)
 
 | Environnement | Branche | BETTER_AUTH_URL | DATABASE_URL |
 |---------------|---------|------------------|--------------|
@@ -85,7 +129,7 @@ Better Auth utilise des tables créées par ses migrations.
 
 ---
 
-## 5. Vérifications après déploiement
+## 6. Vérifications après déploiement
 
 - Page d’accueil et navigation.
 - Connexion / inscription (email + optionnel Google).
@@ -95,7 +139,7 @@ Better Auth utilise des tables créées par ses migrations.
 
 ---
 
-## 6. Références
+## 7. Références
 
 - [Vercel – Monorepos](https://vercel.com/docs/monorepos)
 - [Next.js on Vercel](https://vercel.com/docs/frameworks/nextjs)

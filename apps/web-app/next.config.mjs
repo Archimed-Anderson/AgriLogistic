@@ -6,6 +6,7 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone', // requis pour Docker / Cloud Run
   reactStrictMode: true,
   swcMinify: true,
   experimental: {

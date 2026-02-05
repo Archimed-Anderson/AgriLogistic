@@ -8,7 +8,7 @@ import {
   Grid,
   Stars,
   Float,
-  Html,
+  Html as DreiHtml,
   MeshDistortMaterial,
 } from '@react-three/drei';
 import * as THREE from 'three';
@@ -120,7 +120,7 @@ function IoTSensorNode({ position, label, data, isActive }: IoTSensorNodeProps) 
       {isActive && <pointLight ref={lightRef} color="#D4A017" distance={3} intensity={1.5} />}
 
       {(hovered || clicked) && (
-        <Html distanceFactor={10} position={[0, 0.8, 0]} center zIndexRange={[10, 0]}>
+        <DreiHtml distanceFactor={10} position={[0, 0.8, 0]} center zIndexRange={[10, 0]}>
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -164,7 +164,7 @@ function IoTSensorNode({ position, label, data, isActive }: IoTSensorNodeProps) 
               </div>
             </div>
           </motion.div>
-        </Html>
+        </DreiHtml>
       )}
     </group>
   );
@@ -221,7 +221,7 @@ function TerrainMesh({ seasonValue, ndviValue }: { seasonValue: number; ndviValu
 
       <AnimatePresence>
         {clicked && (
-          <Html position={[0, 1.5, 0]} center distanceFactor={12}>
+          <DreiHtml position={[0, 1.5, 0]} center distanceFactor={12}>
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -285,7 +285,7 @@ function TerrainMesh({ seasonValue, ndviValue }: { seasonValue: number; ndviValu
                 </div>
               </div>
             </motion.div>
-          </Html>
+          </DreiHtml>
         )}
       </AnimatePresence>
 

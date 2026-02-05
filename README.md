@@ -1685,7 +1685,13 @@ Les services **incident-service** et **production-service** (et d’autres) se c
 4. **Si vous voyez "Bind for 0.0.0.0:5435 failed: port is already allocated"** : définir `POSTGRES_PORT=5436` dans `.env` à la racine, puis `DB_PORT=5436` (et `DATABASE_URL=...@localhost:5436/productions_db` pour production-service) dans les `.env` des services concernés.
    - **Option A – Libérer le port** : trouver le processus (PowerShell : `Get-NetTCPConnection -LocalPort 5433`) ou un conteneur (`docker ps -a`), puis arrêter le conteneur qui utilise 5433 (`docker stop <container_id>`) ou l’autre instance PostgreSQL.
 ### ▲ Déploiement Vercel (Web App)
-La web-app Next.js (`apps/web-app`) peut être déployée sur [Vercel](https://vercel.com). Configuration et variables d'environnement (Production / Preview) : voir **[docs/VERCEL_DEPLOYMENT.md](docs/VERCEL_DEPLOYMENT.md)**. Dans Vercel, définir **Root Directory** = `apps/web-app`.
+La web-app Next.js (`apps/web-app`) peut être déployée sur [Vercel](https://vercel.com). Configuration et variables d'environnement (Production / Preview) : voir **[docs/VERCEL_DEPLOYMENT.md](docs/VERCEL_DEPLOYMENT.md)**. Dans Vercel, définir **Root Directory** = `apps/web-app`. **Si le build échoue** : procédure pas à pas **[docs/VERCEL_REDEPLOY_STEPS.md](docs/VERCEL_REDEPLOY_STEPS.md)**.
+
+### ☁️ Déploiement Google Cloud (Web App)
+La web-app peut être déployée sur **Google Cloud** (Cloud Run + Cloud SQL). Guide **étape par étape** : **[docs/GOOGLE_CLOUD_DEPLOYMENT.md](docs/GOOGLE_CLOUD_DEPLOYMENT.md)** (création projet, APIs, Cloud SQL, Artifact Registry, build Docker, déploiement Cloud Run, variables d'environnement, migrations Better Auth).
+
+### 🆓 Phase test – options gratuites (Vercel, Render, AWS, GCP)
+Pour une phase test sans coût : **[docs/FREE_TIER_DEPLOYMENT.md](docs/FREE_TIER_DEPLOYMENT.md)** compare **Vercel + Neon**, **Render**, **AWS Amplify + Neon** et **Google Cloud Run + Neon**, et recommande le meilleur choix (recommandation : **Vercel + Neon** pour 0 € et simplicité). Configuration Neon pas à pas : **[docs/NEON_SETUP.md](docs/NEON_SETUP.md)**.
 
 ### 🐳 Déploiement Docker (Production)
 L'application est conteneurisée et prête pour le déploiement (Kubernetes/ECS/Cloud Run). Le workflow CD construit l'image avec le contexte `apps/web-app` et pousse vers GHCR.

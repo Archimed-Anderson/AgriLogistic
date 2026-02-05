@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
   OrbitControls,
-  Html,
+  Html as DreiHtml,
   PresentationControls,
   Float,
   Text,
@@ -86,11 +86,11 @@ function TruckModel({
       >
         <boxGeometry args={[2, 2.5, 2.2]} />
         {hovered === 'Moteur' && (
-          <Html position={[0, 1.5, 0]} center distanceFactor={10}>
+          <DreiHtml position={[0, 1.5, 0]} center distanceFactor={10}>
             <div className="bg-emerald-500 text-white text-[10px] uppercase font-black px-2 py-1 rounded-md shadow-lg whitespace-nowrap">
               Moteur V8 Turbo
             </div>
-          </Html>
+          </DreiHtml>
         )}
       </mesh>
 

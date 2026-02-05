@@ -2,6 +2,9 @@ import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { AdminNavbar } from '@/components/admin/AdminNavbar';
 import { ThemeProvider } from '@/context/ThemeContext';
 
+// Avoid static prerender: admin uses client context (Theme, Auth) which can break during build.
+export const dynamic = 'force-dynamic';
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>

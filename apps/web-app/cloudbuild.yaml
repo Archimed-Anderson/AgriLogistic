@@ -1,0 +1,28 @@
+# Cloud Build - Build et push de l'image Docker pour Cloud Run
+# À lancer depuis la RACINE du monorepo (AgroDeep) avec :
+#   gcloud builds submit --config apps/web-app/cloudbuild.yaml .
+# Ou depuis apps/web-app avec : gcloud builds submit --config cloudbuild.yaml ..
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/agrilogistic/web-app:$SHORT_SHA'
+      - '-t'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/agrilogistic/web-app:latest'
+      - '-f'
+      - 'apps/web-app/Dockerfile'
+      - 'apps/web-app'
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/agrilogistic/web-app:$SHORT_SHA'
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/agrilogistic/web-app:latest'
+images:
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/agrilogistic/web-app:$SHORT_SHA'
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/agrilogistic/web-app:latest'
+options:
+  logging: CLOUD_LOGGING_ONLY

@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   description: "Plateforme IA & Blockchain pour la chaîne d'approvisionnement agricole",
 };
 
+// Disable static prerender app-wide: client context (Auth, Theme, Cart) breaks during build.
+export const dynamic = 'force-dynamic';
+
 export default function RootLayout({
   children,
 }: Readonly<{

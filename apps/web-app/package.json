@@ -19,6 +19,7 @@
     "analyze": "ANALYZE=true pnpm build"
   },
   "dependencies": {
+    "axios": "^1.7.0",
     "@casl/ability": "^6.8.0",
     "@casl/react": "^5.0.1",
     "@hookform/resolvers": "^3.9.0",

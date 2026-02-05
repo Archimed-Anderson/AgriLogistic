@@ -2,7 +2,7 @@
 
 import React, { Suspense, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, Grid, Html, Stars } from '@react-three/drei';
+import { OrbitControls, Environment, Grid, Html as DreiHtml, Stars } from '@react-three/drei';
 import { Sprout, Droplets, Activity } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { FarmPlot } from '@/data/farm-data';
@@ -63,7 +63,7 @@ function FarmModel({ plot, onClick }: { plot: FarmPlot | null; onClick: () => vo
       ))}
 
       {/* Label Flottant 3D Cyber */}
-      <Html position={[0, 2.5, 0]} center zIndexRange={[100, 0]}>
+      <DreiHtml position={[0, 2.5, 0]} center zIndexRange={[100, 0]}>
         <div className="bg-black/80 backdrop-blur-md p-4 rounded-xl shadow-2xl min-w-[180px] text-center pointer-events-none border border-green-500/30 animate-in fade-in zoom-in duration-500">
           <div className="flex items-center justify-center gap-2 mb-2 pb-2 border-b border-white/10">
             <Activity className="h-4 w-4 text-green-400 animate-pulse" />
@@ -82,7 +82,7 @@ function FarmModel({ plot, onClick }: { plot: FarmPlot | null; onClick: () => vo
             </div>
           </div>
         </div>
-      </Html>
+      </DreiHtml>
     </group>
   );
 }
@@ -117,11 +117,11 @@ export function Farm3DViewer({ selectedPlot }: Farm3DViewerProps) {
       <Canvas camera={{ position: [8, 8, 8], fov: 50 }} shadows>
         <Suspense
           fallback={
-            <Html center>
+            <DreiHtml center>
               <span className="text-cyan-500 font-mono tracking-widest text-xs animate-pulse">
                 INITIALIZING SENSORS...
               </span>
-            </Html>
+            </DreiHtml>
           }
         >
           <color attach="background" args={['#020617']} />
