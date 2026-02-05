@@ -1,5 +1,9 @@
 'use client';
 
+// Avoid static prerender: dashboard pages use client context (Auth, etc.) which can break during build.
+export const dynamic = 'force-dynamic';
+
+
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {

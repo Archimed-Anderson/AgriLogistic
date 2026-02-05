@@ -1,0 +1,53 @@
+steps:
+  # 1. Installation des dépendances (via pnpm)
+  - name: 'node:20'
+    entrypoint: 'npm'
+    args: ['install', '-g', 'pnpm']
+
+  - name: 'node:20'
+    entrypoint: 'pnpm'
+    args: ['install']
+
+  # 2. Build de l'image Docker pour la Web-App
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'build',
+        '-t',
+        'europe-west1-docker.pkg.dev/$PROJECT_ID/agrilogistic-repo/web-app:$COMMIT_SHA',
+        '-t',
+        'europe-west1-docker.pkg.dev/$PROJECT_ID/agrilogistic-repo/web-app:latest',
+        '-f',
+        'apps/web-app/Dockerfile',
+        '.',
+      ]
+
+  # 3. Push de l'image vers Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'europe-west1-docker.pkg.dev/$PROJECT_ID/agrilogistic-repo/web-app:$COMMIT_SHA']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'europe-west1-docker.pkg.dev/$PROJECT_ID/agrilogistic-repo/web-app:latest']
+
+  # 4. Déploiement sur Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      [
+        'run',
+        'deploy',
+        'agrilogistic-web',
+        '--image',
+        'europe-west1-docker.pkg.dev/$PROJECT_ID/agrilogistic-repo/web-app:$COMMIT_SHA',
+        '--region',
+        'europe-west1',
+        '--platform',
+        'managed',
+        '--allow-unauthenticated',
+      ]
+
+images:
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/agrilogistic-repo/web-app:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY

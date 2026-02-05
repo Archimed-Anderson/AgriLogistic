@@ -45,55 +45,15 @@ export class AuthApiError extends Error {
   }
 }
 
+import api from '@/lib/axios';
+
 /**
- * Fonction helper pour faire des requêtes HTTP
+ * Fonction helper pour faire des requêtes HTTP (Legacy replaced by axios)
  */
 async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint}`;
-  const defaultHeaders: HeadersInit = {
-    'Content-Type': 'application/json',
-  };
-
-  const config: RequestInit = {
-    ...options,
-    headers: {
-      ...defaultHeaders,
-      ...options.headers,
-    },
-  };
-
-  try {
-    const response = await fetch(url, config);
-
-    // Gestion des erreurs HTTP
-    if (!response.ok) {
-      let errorData: ApiError;
-      try {
-        errorData = await response.json();
-      } catch {
-        errorData = {
-          error: 'Erreur inconnue',
-          message: `Erreur ${response.status}: ${response.statusText}`,
-          statusCode: response.status,
-        };
-      }
-
-      throw new AuthApiError(response.status, errorData.error || 'Erreur API', errorData.message);
-    }
-
-    return await response.json();
-  } catch (error) {
-    if (error instanceof AuthApiError) {
-      throw error;
-    }
-
-    // Erreur réseau ou autre
-    throw new AuthApiError(
-      0,
-      'Erreur réseau',
-      error instanceof Error ? error.message : 'Impossible de contacter le serveur'
-    );
-  }
+  const method = (options.method || 'GET').toLowerCase();
+  const response = await (api as any)[method](endpoint, options.body ? JSON.parse(options.body as string) : undefined);
+  return response.data;
 }
 
 /**

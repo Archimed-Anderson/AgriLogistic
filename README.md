@@ -22,6 +22,7 @@
 9. [Installation & Déploiement](#-installation--déploiement) (incl. [CI/CD GitHub Actions](#-cicd--github-actions--script-local))
 10. [Configuration Auth](#-configuration-auth) (DB, variables d'env, migration Better Auth, Google OAuth)
 11. [Implémentations Récentes (2025)](#-implémentations-récentes-2025)
+12. [Stabilisation Build & Déploiement (2026)](#-stabilisation-build--déploiement-2026)
 
 ---
 
@@ -2090,6 +2091,21 @@ Pour activer « Se connecter avec Google » (dégradation gracieuse si non confi
 | **Tables Better Auth** | Créées en base via `npx @better-auth/cli@latest migrate` dans `apps/web-app`. |
 | **Inscription Email / Google** | Fonctionnelles avec gestion d’erreur (message clair si DB non migrée). |
 | **Accès rapide (test)** | Délai configurable, défaut **250 ms** via `NEXT_PUBLIC_DEV_LOGIN_DELAY_MS` dans `apps/web-app/src/context/AuthContext.tsx`. |
+
+---
+
+## 12. Stabilisation Build & Déploiement (2026)
+
+### 🛠️ État de Maintenance & Correctifs CI/CD
+
+| Élément | Détail | État |
+| ------- | ------ | ---- |
+| **Axios Upgrade** | Passage en version `^latest` dans `apps/web-app` pour supporter les dernières fonctionnalités de sécurité et d'interception. | ✅ OK |
+| **Conflits de Composants** | Aliasing systématique de `Html` en `DreiHtml` (`@react-three/drei`) pour éviter les collisions avec le composant natif de Next.js dans l'App Router. | ✅ Fixé |
+| **useContext Runtime Fix** | Forçage du mode dynamique (`force-dynamic`) sur les layouts transverses pour sécuriser l'hydratation des Context Providers (Auth, Theme, Cart). | ✅ Fixé |
+| **Installation Fixes** | Documentation de dépannage pour les erreurs de tokens npm et pnpm (`INSTALL_FIX.md`). | ✅ Dispo |
+| **Error Handing (404/500)** | Pages `not-found.tsx` et `error.tsx` légères (0 dépendance 3D) pour garantir l'affichage même en cas de crash critique. | ✅ Fixé |
+| **Deployment Intelligence** | Guides complets pour Vercel, GCP, Cloud Build, Neon et alternatives Free Tier dans `/docs`. | ✅ Dispo |
 
 ---
 
