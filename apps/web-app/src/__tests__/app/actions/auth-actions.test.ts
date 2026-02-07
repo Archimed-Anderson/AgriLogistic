@@ -6,15 +6,15 @@
  * - Normalisation des rôles (farmer → Farmer avant appel API)
  */
 
-import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { signUpEmail } from '@/app/actions/auth-actions';
 
 // Utilise le mock manuel src/__mocks__/auth.ts (évite de charger better-auth en tests)
-jest.mock('@/auth');
+vi.mock('@/auth');
 
-function getMockSignUpEmail(): jest.Mock {
-  const { auth } = require('@/auth');
-  return auth.api.signUpEmail as jest.Mock;
+async function getMockSignUpEmail() {
+  const { auth } = await import('@/auth');
+  return vi.mocked(auth.api.signUpEmail);
 }
 
 function buildFormData(overrides: Record<string, string> = {}): FormData {
@@ -32,8 +32,8 @@ function buildFormData(overrides: Record<string, string> = {}): FormData {
 
 describe('auth-actions (Server Actions)', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    vi.clearAllMocks();
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   describe('signUpEmail', () => {

@@ -1,202 +1,152 @@
-# =============================================================================
-# Script de Démarrage "Simple" pour AgriLogistic V3.0 (Monorepo)
-# =============================================================================
-# Orchestration : prérequis, dépendances pnpm, infrastructure Docker complète,
-# configuration base de données (Prisma) puis lancement TurboRepo.
-#
-# Services démarrés (Docker - compose principal) :
-#   - Bases : postgres, redis, mongodb, minio, elasticsearch, clickhouse
-#   - API Gateway : kong-database, kong-migrations, kong
-#   - Message queue : zookeeper, kafka
-#   - Observabilité : prometheus, grafana (sauf si AGRI_START_MONITORING=1)
-#
-# Stacks optionnelles (variables d'environnement) :
-#   AGRI_START_MONITORING=1  → Stack monitoring (Prometheus, Grafana, Alertmanager, Loki, Tempo, cAdvisor)
-#   AGRI_START_SUPERSET=1    → Apache Superset (BI, http://localhost:8088)
-#   AGRI_START_FULL=1        → Monitoring + Superset
-#   AGRI_START_KONG_INFRA=1  → Kong dédié (infrastructure/docker-compose.kong.yml)
-#
-# Application : pnpm dev (frontend + microservices via TurboRepo)
-# NOUVEAU : Authentification via Better Auth + Prisma (Postgres : 5435)
-# =============================================================================
+# ==============================================================================
+# DEMARRAGE COMPLET - AGRILOGISTIC PLATFORM (CLOUD NATIVE 6.0.0)
+# Updated 2026-02-07 - "The Final Orchestrator"
+# ==============================================================================
+# Ce script orchestre le démarrage de l'écosystème complet (Prompts 1-Final) :
+# 1. Validation de l'environnement (Node, pnpm, Docker)
+# 2. Démarrage de l'Infrastructure (Postgres, Redis, Kong, Auth, AI) via Docker
+# 3. Démarrage du Frontend (Next.js)
+# 4. Validation Globale (Checklist Prompts 1-8)
+# ==============================================================================
 
-$ErrorActionPreference = "Stop"
-
-Write-Host ""
-Write-Host "======================================================" -ForegroundColor Cyan
-Write-Host "  AgriLogistic V3.0 - Démarrage Automatique" -ForegroundColor Cyan
-Write-Host "======================================================" -ForegroundColor Cyan
-Write-Host ""
-
-# -----------------------------------------------------------------------------
-# [1/6] Vérification des prérequis
-# -----------------------------------------------------------------------------
-Write-Host "[1/6] Vérification de l'environnement..." -ForegroundColor Yellow
-
-if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
-    Write-Host "  ERREUR: Node.js n'est pas installé." -ForegroundColor Red
-    exit 1
-}
-if (-not (Get-Command pnpm -ErrorAction SilentlyContinue)) {
-    Write-Host "  ATTENTION: 'pnpm' n'est pas détecté." -ForegroundColor Yellow
-    Write-Host "  Installation automatique via npm..." -ForegroundColor Gray
-    try {
-        npm install -g pnpm
-    }
-    catch {
-        Write-Host "  ERREUR: Impossible d'installer pnpm. Veuillez l'installer manuellement." -ForegroundColor Red
-        exit 1
-    }
-}
-if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-    Write-Host "  ERREUR: Docker Desktop n'est pas installé/détecté." -ForegroundColor Red
-    exit 1
-}
-try {
-    docker ps | Out-Null
-}
-catch {
-    Write-Host "  ERREUR: Le daemon Docker n'est pas lancé. Démarrez Docker Desktop." -ForegroundColor Red
-    exit 1
-}
-
-Write-Host "  OK - Environnement validé (Node, pnpm, Docker)" -ForegroundColor Green
-
-# -----------------------------------------------------------------------------
-# [2/6] Emplacement et dépendances
-# -----------------------------------------------------------------------------
-$scriptPath = $PSScriptRoot
-Set-Location $scriptPath
-
-Write-Host ""
-Write-Host "[2/6] Installation des dépendances (pnpm)..." -ForegroundColor Yellow
-pnpm install
-Write-Host "  OK - Node modules hydratés" -ForegroundColor Green
-
-# -----------------------------------------------------------------------------
-# [3/6] Infrastructure Docker - Compose principal
-# -----------------------------------------------------------------------------
-Write-Host ""
-Write-Host "[3/6] Démarrage de l'infrastructure Docker (compose principal)..." -ForegroundColor Yellow
-
-# Services essentiels : bases de données + API Gateway (ordre respecté par depends_on)
-$coreServices = @(
-    "postgres",
-    "redis",
-    "mongodb",
-    "minio",
-    "elasticsearch",
-    "clickhouse",
-    "kong-database",
-    "kong-migrations",
-    "kong"
+param(
+    [switch]$SkipInstall,
+    [switch]$NoBrowser,
+    [switch]$FullStack,  # Démarre l'infrastructure Docker complète
+    [switch]$Validate,   # Lance la validation globale des prompts
+    [switch]$Help
 )
-docker-compose up -d $coreServices 2>&1 | Out-Null
-Write-Host "  OK - Core : Postgres, Redis, MongoDB, MinIO, Elasticsearch, ClickHouse, Kong" -ForegroundColor Green
 
-# Attente Kong prêt (migrations + gateway)
-Write-Host "  Attente de la stabilisation (8s)..." -ForegroundColor Gray
-Start-Sleep -Seconds 8
-
-# Message queue (Kafka) + observabilité de base (Prometheus/Grafana du compose principal)
-$extraServices = @("zookeeper", "kafka")
-if ($env:AGRI_START_MONITORING -ne "1" -and $env:AGRI_START_FULL -ne "1") {
-    $extraServices += "prometheus", "grafana"
-}
-docker-compose up -d $extraServices 2>&1 | Out-Null
-Write-Host "  OK - Kafka (Zookeeper + broker)" -NoNewline -ForegroundColor Green
-if ($extraServices -contains "prometheus") {
-    Write-Host ", Prometheus, Grafana" -ForegroundColor Green
-}
-else {
-    Write-Host " (Prometheus/Grafana via stack Monitoring en [5/6])" -ForegroundColor Green
+if ($Help) {
+    Write-Host "Usage: .\START_APP_SIMPLE.ps1 [Options]"
+    Write-Host "  -FullStack    : Lance toute l'infrastructure (Docker DB, Redis, Auth, AI)"
+    Write-Host "  -Validate     : Lance les scripts de validation (Prompts 1-8)"
+    Write-Host "  -SkipInstall  : Saute l'étape pnpm install"
+    Write-Host "  -NoBrowser    : N'ouvre pas le navigateur à la fin"
+    exit 0
 }
 
-# -----------------------------------------------------------------------------
-# [4/6] Initialisation Base de Données (Prisma / Better Auth)
-# -----------------------------------------------------------------------------
-Write-Host ""
-Write-Host "[4/6] Initialisation de la base de données (Prisma)..." -ForegroundColor Yellow
+$Host.UI.RawUI.WindowTitle = "AgriLogistic Cloud Native v6.0.0"
 
-$webAppPath = Join-Path $scriptPath "apps\web-app"
-if (Test-Path $webAppPath) {
-    Push-Location $webAppPath
-    
-    # Check .env existence check could be here, but usually generated/managed
-    
-    Write-Host "  Synchronisation du schéma (npx prisma db push)..." -ForegroundColor Cyan
+# ==============================================================================
+# CONFIGURATION
+# ==============================================================================
+$RootPath = $PSScriptRoot
+$WebAppPath = (Join-Path $RootPath "apps\web-app")
+$ScriptsPath = (Join-Path $RootPath "scripts")
+
+function Write-Header { 
+    param($Text) 
+    Write-Host "`n========================================" -ForegroundColor Cyan
+    Write-Host " $Text" -ForegroundColor Cyan
+    Write-Host "========================================`n" -ForegroundColor Cyan 
+}
+
+function Write-Step { 
+    param($Num, $Text) 
+    Write-Host "`n[$Num] $Text`n" -ForegroundColor Cyan 
+}
+
+function Write-Success { param($Text) Write-Host "  ✓ $Text" -ForegroundColor Green }
+function Write-ErrorMsg { param($Text) Write-Host "  ✗ $Text" -ForegroundColor Red }
+function Write-Info { param($Text) Write-Host "  ℹ $Text" -ForegroundColor Yellow }
+
+Write-Header "DEMARRAGE AGRILOGISTIC CLOUD NATIVE v6.0.0"
+
+# ==============================================================================
+# 1. INSTALLATION DEPENDANCES
+# ==============================================================================
+
+if (-not $SkipInstall) {
+    Write-Step 1 "Installation des dépendances (pnpm install)"
+    Set-Location $RootPath
     try {
-        # On utilise cmd /c pour s'assurer que npx est bien résolu sur Windows
-        cmd /c "npx prisma db push" 2>&1 | Write-Host -ForegroundColor Gray
-        Write-Host "  OK - Base de données synchronisée (Port 5435)." -ForegroundColor Green
+        pnpm install
+        Write-Success "Dépendances installées"
     }
     catch {
-        Write-Host "  ATTENTION: Erreur lors de la synchro Prisma. Vérifiez les logs ci-dessus." -ForegroundColor Red
+        Write-ErrorMsg "Erreur installation. Continue..."
     }
-    
-    Pop-Location
 }
 else {
-    Write-Host "  ERREUR: Dossier apps/web-app introuvable." -ForegroundColor Red
+    Write-Step 1 "Installation (IGNORÉE)"
 }
 
-# -----------------------------------------------------------------------------
-# [5/6] Stacks optionnelles (infrastructure/)
-# -----------------------------------------------------------------------------
-Write-Host ""
-Write-Host "[5/6] Stacks optionnelles (Kong dédié, Monitoring, Superset)..." -ForegroundColor Yellow
+# ==============================================================================
+# 2. VALIDATION GLOBALE (OPTIONNEL)
+# ==============================================================================
 
-$infraPath = Join-Path $scriptPath "infrastructure"
-$runOptional = $env:AGRI_START_FULL -eq "1" -or $env:AGRI_START_SUPERSET -eq "1" -or $env:AGRI_START_MONITORING -eq "1"
+if ($Validate) {
+    Write-Step 2 "Validation Globale (Prompts 1-8)"
+    Set-Location $RootPath
+    try {
+        node scripts/validate-all-prompts.js
+        Write-Success "Validation Terminée"
+    }
+    catch {
+        Write-ErrorMsg "Echecs détectés lors de la validation"
+    }
+    Read-Host "Appuyez sur Entrée pour continuer le démarrage..."
+}
 
-# Monitoring technique (Prometheus, Grafana, Alertmanager, Loki, Tempo, Node Exporter, cAdvisor)
-if ($env:AGRI_START_MONITORING -eq "1" -or $env:AGRI_START_FULL -eq "1") {
-    if (Test-Path (Join-Path $infraPath "docker-compose.monitoring.yml")) {
-        Push-Location $infraPath
-        docker compose -f docker-compose.monitoring.yml up -d 2>&1 | Out-Null
-        Pop-Location
-        Write-Host "  OK - Stack Monitoring (Prometheus, Grafana, Alertmanager, Loki, Tempo, cAdvisor)" -ForegroundColor Green
+# ==============================================================================
+# 3. DEMARRAGE INFRASTRUCTURE (FULLSTACK)
+# ==============================================================================
+
+if ($FullStack) {
+    Write-Step 3 "Démarrage Infrastructure (Docker)"
+    Write-Info "Lancement de scripts/start-all.ps1..."
+    
+    # Lancer start-all.ps1 dans une nouvelle fenêtre pour ne pas bloquer
+    $StartAllPath = (Join-Path $ScriptsPath "start-all.ps1")
+    if (Test-Path $StartAllPath) {
+        Start-Process powershell -ArgumentList "-NoExit", "-File", "`"$StartAllPath`"" -WindowStyle Normal
+        Write-Success "Fenêtre Infrastructure lancée (DB, Redis, Auth, AI)"
+    }
+    else {
+        Write-ErrorMsg "Script start-all.ps1 introuvable: $StartAllPath"
     }
 }
-# Superset (BI / monitoring métier)
-if ($env:AGRI_START_SUPERSET -eq "1" -or $env:AGRI_START_FULL -eq "1") {
-    if (Test-Path (Join-Path $infraPath "docker-compose.superset.yml")) {
-        Push-Location $infraPath
-        docker compose -f docker-compose.superset.yml up -d 2>&1 | Out-Null
-        Pop-Location
-        Write-Host "  OK - Apache Superset (http://localhost:8088, admin/admin)" -ForegroundColor Green
-    }
-}
-# Kong dédié (infrastructure) : généralement le compose principal suffit
-if ($env:AGRI_START_KONG_INFRA -eq "1") {
-    if (Test-Path (Join-Path $infraPath "docker-compose.kong.yml")) {
-        Push-Location $infraPath
-        docker compose -f docker-compose.kong.yml up -d 2>&1 | Out-Null
-        Pop-Location
-        Write-Host "  OK - Kong (stack infrastructure)" -ForegroundColor Green
-    }
+else {
+    Write-Step 3 "Infrastructure Backend (IGNORÉE - Mode Frontend Only)"
 }
 
-if (-not $runOptional) {
-    Write-Host "  (Optionnel) Pour démarrer Monitoring : AGRI_START_MONITORING=1 ; Superset : AGRI_START_SUPERSET=1 ; tout : AGRI_START_FULL=1" -ForegroundColor Gray
+# ==============================================================================
+# 4. DEMARRAGE FRONTEND & MICROSERVICES
+# ==============================================================================
+
+Write-Step 4 "Démarrage Frontend & Microservices (Turbo)"
+
+if (Test-Path $WebAppPath) {
+    # On lance Turbo au root pour démarrer tous les services filtrés
+    Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$RootPath'; pnpm dev; Read-Host 'Services Stopped'" -WindowStyle Normal
+    Write-Success "Fenêtre Services lancée (Web-App + Microservices)"
+}
+else {
+    Write-ErrorMsg "Dossier Frontend introuvable: $WebAppPath"
 }
 
-# -----------------------------------------------------------------------------
-# [6/6] Lancement TurboRepo (frontend + microservices)
-# -----------------------------------------------------------------------------
-Write-Host ""
-Write-Host "[6/6] Lancement de l'écosystème (TurboRepo)..." -ForegroundColor Yellow
-Write-Host ""
-Write-Host "  URLs principales :" -ForegroundColor Cyan
-Write-Host "    - Frontend    : http://localhost:3000" -ForegroundColor White
-Write-Host "    - Auth/API    : http://localhost:3000/api/auth" -ForegroundColor White
-Write-Host "    - API Gateway : http://localhost:8000 (Kong)" -ForegroundColor White
-Write-Host "    - Kong Admin  : http://localhost:8001" -ForegroundColor White
-Write-Host "    - Grafana     : http://localhost:4001 (admin / GRAFANA_PASSWORD)" -ForegroundColor White
-Write-Host "    - Prometheus  : http://localhost:9090" -ForegroundColor White
-Write-Host ""
-Write-Host "  Appuyez sur Ctrl+C pour quitter proprement." -ForegroundColor Gray
-Write-Host ""
+# ==============================================================================
+# 5. CONCLUSION
+# ==============================================================================
 
-# Lancement de la commande dev racine qui orchestre tout
-pnpm dev
+Write-Header "PLATFORME EN COURS DE DÉMARRAGE"
+
+Write-Host "`n📍 ACCÈS :" -ForegroundColor Cyan
+Write-Host "   Frontend:      http://localhost:3000" -ForegroundColor White
+if ($FullStack) {
+    Write-Host "   Auth API:      http://localhost:3001" -ForegroundColor White
+    Write-Host "   User Service:  http://localhost:3013" -ForegroundColor White
+    Write-Host "   AI Main:       http://localhost:8003" -ForegroundColor White
+    Write-Host "   AI LLM:        http://localhost:8004" -ForegroundColor White
+    Write-Host "   AI Vision:     http://localhost:8005" -ForegroundColor White
+}
+
+if (-not $NoBrowser) {
+    Write-Info "Ouverture du navigateur dans 5s..."
+    Start-Sleep -Seconds 5
+    Start-Process "http://localhost:3000"
+}
+
+Set-Location $RootPath
+Write-Host "`n✅ Terminé. Les services tournent en arrière-plan." -ForegroundColor Green

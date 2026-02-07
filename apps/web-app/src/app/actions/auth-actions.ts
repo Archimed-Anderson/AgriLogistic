@@ -98,7 +98,7 @@ export async function signInEmail(formData: FormData) {
 
 export async function signInSocial(provider: "google" | "apple") {
     try {
-        const data = await auth.api.signInSocial({
+        const data = await getAuth().api.signInSocial({
             body: {
                 provider: provider,
                 callbackURL: "/", // Redirect after login

@@ -10,7 +10,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.enableCors();
   
-  const port = process.env.PORT || 3006;
+  const port = process.env.PORT || 3004;
   await app.listen(port);
   console.log(`🚀 Mission Service is running on: http://localhost:${port}`);
 }

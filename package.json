@@ -1,7 +1,7 @@
 {
   "name": "agrologistic-platform",
   "description": "Plateforme SaaS complète pour la chaîne d'approvisionnement agricole",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "packageManager": "pnpm@9.0.0",
   "private": true,
   "type": "module",
@@ -31,7 +31,7 @@
     "infrastructure/api-gateway"
   ],
   "scripts": {
-    "dev": "turbo run dev --filter=!@agrologistic/auth-service",
+    "dev": "turbo run dev --concurrency=25 --filter=!@agrologistic/auth-service --filter=!@agrologistic/ai-service",
     "dev:host": "turbo run dev --filter=!@agrologistic/auth-service -- --host",
     "dev:web-app": "turbo run dev --filter=@agrologistic/web-app",
     "services:dev": "turbo run dev --filter=./services/*/*",
@@ -62,6 +62,7 @@
     "validate": "pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm run test:ci",
     "validate:env": "node scripts/validate-env.js",
     "check:health": "node scripts/check-health.js",
+    "check:all": "node scripts/validate-all-prompts.js",
     "test:all": "node scripts/run-all-tests.js",
     "pre-deploy": "node scripts/pre-deploy-check.js",
     "analyze:homepage": "node scripts/run-homepage-analysis.js",

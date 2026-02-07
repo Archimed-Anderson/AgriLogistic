@@ -6,7 +6,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
   app.enableCors();
   
-  const port = process.env.PORT || 3008;
+  const port = process.env.PORT || 3006;
   await app.listen(port);
   console.log(`IoT Fleet Tracking Service running on: http://localhost:${port}/api/v1`);
 }

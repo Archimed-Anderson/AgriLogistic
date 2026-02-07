@@ -11,7 +11,7 @@ import { NotificationQueue } from './services/queue.service';
 dotenv.config();
 
 const app: Application = express();
-const PORT = process.env.PORT || 3006;
+const PORT = process.env.PORT || 3019;
 
 app.use(helmet());
 app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:5173', credentials: true }));

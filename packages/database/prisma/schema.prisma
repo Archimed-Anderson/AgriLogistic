@@ -1,0 +1,485 @@
+generator client {
+    provider        = "prisma-client-js"
+    output          = "../src/generated/client"
+    previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+    provider   = "postgresql"
+    // url removed for Prisma 7 compatibility - now passed via PrismaClient constructor
+    extensions = [postgis(schema: "public")]
+}
+
+// --- USER & IDENTITY ---
+
+enum UserRole {
+    ADMIN
+    FARMER
+    TRANSPORTER
+    BUYER
+    ANALYST
+}
+
+model User {
+    id        String   @id @default(cuid())
+    email     String   @unique
+    name      String?
+    phone     String?
+    password  String?
+    role      UserRole @default(FARMER)
+    image     String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // Profile Relationships
+    farmerProfile FarmerProfile?
+
+    // Logistics Relationships
+    missions       Mission[]   @relation("AssignedDriver")
+    postedMissions Mission[]   @relation("MissionRequester")
+    ownedEquipment Equipment[] @relation("EquipmentOwner")
+
+    // Finance & Marketplace
+    orders       Order[]       @relation("BuyerOrders")
+    sales        Order[]       @relation("SellerOrders")
+    loans        Loan[]
+    investments  Investment[]
+    bankAccounts BankAccount[]
+
+    // Monitoring
+    devices  IoTDevice[]
+    bookings Booking[]   @relation("RenterBookings")
+
+    @@index([email])
+    @@index([role])
+    @@map("users")
+}
+
+// --- LOGISTICS & FLEET ---
+
+enum MissionStatus {
+    PENDING
+    ASSIGNED
+    IN_TRANSIT
+    COMPLETED
+    CANCELLED
+}
+
+enum MissionType {
+    COLLECTION
+    DELIVERY
+    DISTRIBUTION
+}
+
+model Mission {
+    id               String        @id @default(cuid())
+    type             MissionType   @default(COLLECTION)
+    status           MissionStatus @default(PENDING)
+    priority         Int           @default(1) // 1-5
+    cargoValue       Decimal?      @db.Decimal(12, 2)
+    cargoDescription String?
+
+    origin       String
+    destination  String
+    originCoords Unsupported("geometry(Point, 4326)")?
+    destCoords   Unsupported("geometry(Point, 4326)")?
+
+    scheduledAt DateTime?
+    startedAt   DateTime?
+    completedAt DateTime?
+
+    // Relations
+    requesterId String
+    requester   User     @relation("MissionRequester", fields: [requesterId], references: [id])
+    driverId    String?
+    driver      User?    @relation("AssignedDriver", fields: [driverId], references: [id])
+    vehicleId   String?
+    vehicle     Vehicle? @relation(fields: [vehicleId], references: [id])
+
+    events MissionEvent[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([status])
+    @@index([requesterId])
+    @@map("missions")
+}
+
+model Vehicle {
+    id            String @id @default(cuid())
+    plateNumber   String @unique
+    model         String
+    type          String // Refrigirated, Truck, Van
+    capacity      Float // in kg or liters
+    currentStatus String @default("AVAILABLE")
+
+    missions Mission[]
+    devices  IoTDevice[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("vehicles")
+}
+
+model MissionEvent {
+    id        String  @id @default(cuid())
+    missionId String
+    mission   Mission @relation(fields: [missionId], references: [id])
+    type      String // LOCATION_UPDATE, STATUS_CHANGE, DELAY_ALERT
+    message   String
+    metadata  Json?
+
+    createdAt DateTime @default(now())
+
+    @@map("mission_events")
+}
+
+// --- RENTALS (POSTGIS) ---
+
+model Equipment {
+    id          String  @id @default(cuid())
+    name        String
+    type        String // tractor, harvester, seeder
+    description String?
+    pricePerDay Decimal @db.Decimal(10, 2)
+
+    // PostGIS location
+    location  Unsupported("geometry(Point, 4326)")
+    latitude  Decimal                              @db.Decimal(10, 8)
+    longitude Decimal                              @db.Decimal(11, 8)
+    address   String?
+
+    available Boolean @default(true)
+    status    String  @default("active")
+
+    ownerId String
+    owner   User   @relation("EquipmentOwner", fields: [ownerId], references: [id])
+
+    bookings Booking[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([ownerId])
+    @@index([status])
+    @@index([available])
+    @@map("equipment")
+}
+
+model Booking {
+    id          String    @id @default(cuid())
+    equipmentId String
+    equipment   Equipment @relation(fields: [equipmentId], references: [id])
+
+    renterId String
+    renter   User   @relation("RenterBookings", fields: [renterId], references: [id])
+
+    startDate  DateTime
+    endDate    DateTime
+    totalPrice Decimal  @db.Decimal(10, 2)
+    status     String   @default("pending")
+
+    paidAt    DateTime?
+    paymentId String?
+    escrowTx  String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([equipmentId])
+    @@index([renterId])
+    @@map("bookings")
+}
+
+// --- AGRICULTURE & PRODUCTION ---
+
+model FarmerProfile {
+    id     String @id @default(cuid())
+    userId String @unique
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    location   String?
+    farmSize   Float? // in hectares
+    mainCrops  String[]
+    experience Int? // years
+
+    harvests     Harvest[]
+    agriScore    AgriScore?
+    creditEvents CreditEvent[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("farmer_profiles")
+}
+
+model Harvest {
+    id             String        @id @default(cuid())
+    farmerId       String
+    farmer         FarmerProfile @relation(fields: [farmerId], references: [id])
+    cropType       String
+    quantity       Float // in tons/kg
+    qualityGrade   String? // A, B, C
+    harvestDate    DateTime
+    estimatedValue Decimal?      @db.Decimal(12, 2)
+
+    createdAt DateTime @default(now())
+
+    @@index([cropType])
+    @@map("harvests")
+}
+
+// --- MARKETPLACE ---
+
+model Product {
+    id          String   @id @default(cuid())
+    title       String
+    description String
+    price       Decimal  @db.Decimal(12, 2)
+    currency    String   @default("XOF")
+    quantity    Float
+    unit        String // kg, sack, ton
+    category    String
+    images      String[]
+
+    sellerId   String
+    orderItems OrderItem[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([category])
+    @@map("products")
+}
+
+model Order {
+    id       String @id @default(cuid())
+    buyerId  String
+    buyer    User   @relation("BuyerOrders", fields: [buyerId], references: [id])
+    sellerId String
+    seller   User   @relation("SellerOrders", fields: [sellerId], references: [id])
+
+    status      String  @default("PENDING")
+    totalAmount Decimal @db.Decimal(12, 2)
+
+    items   OrderItem[]
+    payment Payment?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("orders")
+}
+
+model OrderItem {
+    id        String  @id @default(cuid())
+    orderId   String
+    order     Order   @relation(fields: [orderId], references: [id])
+    productId String
+    product   Product @relation(fields: [productId], references: [id])
+    quantity  Float
+    price     Decimal @db.Decimal(12, 2)
+
+    @@map("order_items")
+}
+
+// --- FINANCE & ML SCORING ---
+
+model Loan {
+    id     String @id @default(cuid())
+    userId String
+    user   User   @relation(fields: [userId], references: [id])
+
+    amount     Decimal @db.Decimal(10, 2)
+    interest   Float
+    termMonths Int
+    status     String  @default("REQUESTED") // REQUESTED, APPROVED, REJECTED, PAID
+
+    purpose     String?
+    approvedAt  DateTime?
+    disbursedAt DateTime?
+    dueDate     DateTime?
+
+    repayments Repayment[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("loans")
+}
+
+model Repayment {
+    id       String    @id @default(cuid())
+    loanId   String
+    loan     Loan      @relation(fields: [loanId], references: [id])
+    amount   Decimal   @db.Decimal(10, 2)
+    dueDate  DateTime
+    paidDate DateTime?
+    status   String    @default("PENDING")
+
+    @@map("repayments")
+}
+
+model AgriScore {
+    id       String        @id @default(cuid())
+    farmerId String        @unique
+    farmer   FarmerProfile @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+
+    score     Int // 0-1000
+    riskLevel String // low, medium, high
+
+    // Components
+    paymentHistory     Int @default(0)
+    yieldPerformance   Int @default(0)
+    financialStability Int @default(0)
+    marketEngagement   Int @default(0)
+
+    factors      Json? // ML contributing factors
+    modelVersion String?
+    confidence   Float?
+
+    history   Json[] // Trend data
+    updatedAt DateTime @updatedAt
+
+    @@map("agri_scores")
+}
+
+model Transaction {
+    id          String  @id @default(cuid())
+    userId      String
+    type        String // sale, purchase, loan_repayment
+    amount      Decimal @db.Decimal(12, 2)
+    status      String
+    description String?
+    metadata    Json?
+
+    createdAt   DateTime  @default(now())
+    completedAt DateTime?
+
+    @@index([userId])
+    @@map("transactions")
+}
+
+model BankAccount {
+    id         String  @id @default(cuid())
+    userId     String
+    user       User    @relation(fields: [userId], references: [id])
+    provider   String // Stripe, MobileMoney
+    accountRef String
+    isDefault  Boolean @default(false)
+
+    @@map("bank_accounts")
+}
+
+model MLModel {
+    id         String    @id @default(cuid())
+    version    String    @unique
+    algorithm  String
+    accuracy   Float
+    precision  Float
+    recall     Float
+    f1Score    Float
+    isActive   Boolean   @default(false)
+    trainedAt  DateTime  @default(now())
+    deployedAt DateTime?
+
+    @@map("ml_models")
+}
+
+model CreditEvent {
+    id        String        @id @default(cuid())
+    farmerId  String
+    farmer    FarmerProfile @relation(fields: [farmerId], references: [id])
+    eventType String
+    oldValue  Json?
+    newValue  Json?
+    metadata  Json?
+    timestamp DateTime      @default(now())
+
+    @@map("credit_events")
+}
+
+model Investment {
+    id         String  @id @default(cuid())
+    investorId String
+    investor   User    @relation(fields: [investorId], references: [id])
+    amount     Decimal @db.Decimal(12, 2)
+    targetType String // PROJECT, COOP, FARMER
+    targetId   String
+
+    createdAt DateTime @default(now())
+
+    @@map("investments")
+}
+
+model Payment {
+    id      String @id @default(cuid())
+    orderId String @unique
+    order   Order  @relation(fields: [orderId], references: [id])
+
+    transactionId String? @unique
+    provider      String
+    method        String
+    amount        Decimal @db.Decimal(12, 2)
+    status        String
+
+    createdAt DateTime @default(now())
+
+    @@map("payments")
+}
+
+// --- INFRASTRUCTURE & MONITORING ---
+
+model IoTDevice {
+    id     String @id @default(cuid())
+    uid    String @unique
+    type   String
+    status String @default("ACTIVE")
+
+    userId    String?
+    user      User?    @relation(fields: [userId], references: [id])
+    vehicleId String?
+    vehicle   Vehicle? @relation(fields: [vehicleId], references: [id])
+
+    telemetry Telemetry[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("iot_devices")
+}
+
+model Telemetry {
+    id       String    @id @default(cuid())
+    deviceId String
+    device   IoTDevice @relation(fields: [deviceId], references: [id])
+
+    data      Json
+    createdAt DateTime @default(now())
+
+    @@index([createdAt])
+    @@map("telemetry_logs")
+}
+
+model Incident {
+    id          String @id @default(cuid())
+    type        String
+    severity    Int
+    title       String
+    description String
+    status      String @default("PENDING")
+
+    location String?
+    region   String?
+
+    meta Json?
+
+    createdAt  DateTime  @default(now())
+    resolvedAt DateTime?
+
+    @@index([status])
+    @@index([severity])
+    @@map("incidents")
+}

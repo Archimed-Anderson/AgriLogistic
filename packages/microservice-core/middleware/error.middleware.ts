@@ -207,7 +207,7 @@ export function asyncHandler(
 
 // Validation helper
 export function validateRequest<T>(
-  schema: { validate: (data: any) => { error?: any; value: T } },
+  schema: { validate: (data: any, options?: any) => { error?: any; value: T } },
   data: any
 ): T {
   const { error, value } = schema.validate(data, { abortEarly: false });

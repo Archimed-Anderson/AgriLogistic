@@ -1,0 +1,89 @@
+// Prisma schema for Agri-Rentals Service with PostGIS support
+
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+    provider   = "postgresql"
+    extensions = [postgis(schema: "public")]
+}
+
+model Equipment {
+    id          String  @id @default(uuid())
+    name        String
+    type        String // tractor, harvester, seeder, etc.
+    description String?
+    pricePerDay Decimal @db.Decimal(10, 2)
+
+    // PostGIS geometry column for location
+    // Stored as Point with SRID 4326 (WGS84 - GPS coordinates)
+    location Unsupported("geometry(Point, 4326)")
+
+    // Denormalized lat/lon for easier querying
+    latitude  Decimal @db.Decimal(10, 8)
+    longitude Decimal @db.Decimal(11, 8)
+
+    address String?
+
+    ownerId String
+    owner   User   @relation(fields: [ownerId], references: [id])
+
+    available Boolean @default(true)
+    status    String  @default("active") // active, maintenance, retired
+
+    bookings Booking[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    // GIST index for spatial queries (created in migration)
+
+    @@index([ownerId])
+    @@index([status])
+    @@index([available])
+}
+
+model User {
+    id    String  @id @default(uuid())
+    email String  @unique
+    name  String
+    phone String?
+
+    equipment Equipment[]
+    bookings  Booking[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Booking {
+    id String @id @default(uuid())
+
+    equipmentId String
+    equipment   Equipment @relation(fields: [equipmentId], references: [id])
+
+    renterId String
+    renter   User   @relation(fields: [renterId], references: [id])
+
+    startDate DateTime
+    endDate   DateTime
+
+    totalPrice Decimal @db.Decimal(10, 2)
+    status     String  @default("pending") // pending, confirmed, cancelled, completed
+
+    // Payment tracking
+    paidAt    DateTime?
+    paymentId String?
+
+    // Smart contract escrow
+    escrowTxHash String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([equipmentId])
+    @@index([renterId])
+    @@index([status])
+    @@index([startDate, endDate])
+}

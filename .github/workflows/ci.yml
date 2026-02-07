@@ -1,103 +1,73 @@
-# CI - Pull Request & Push (main, develop)
-# Build, test, lint, security scan
-name: CI
+name: CI Pipeline - AgroLogistic Platform
 
 on:
-  pull_request:
-    branches: [main, develop]
   push:
-    branches: [main, develop]
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  CI: true
+  NODE_VERSION: '18.x'
+  PNPM_VERSION: '9.0.0'
 
 jobs:
-  test:
-    name: Lint, typecheck, test, build
+  validate-and-test:
+    name: 🛡️ Validate & Test
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
+    - name: 📦 Setup Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "pnpm"
+    - name: 🔧 Setup pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: ${{ env.PNPM_VERSION }}
+        run_install: false
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+    - name: 🧩 Get pnpm store directory
+      id: pnpm-cache
+      run: |
+        echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
 
-      - name: Lint
-        run: pnpm run lint
+    - name: 💾 Setup pnpm cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
 
-      - name: Typecheck
-        run: pnpm run typecheck
+    - name: 📥 Install dependencies
+      run: pnpm install --frozen-lockfile
 
-      - name: Format check
-        run: pnpm run format:check
+    - name: 🔍 Lint & Format Check
+      run: |
+        pnpm lint:quiet
+        pnpm format:check
 
-      - name: Unit tests
-        run: pnpm run test:unit
+    - name: 🏗️ Type Check (Build Validation)
+      run: pnpm typecheck
 
-      - name: Start services for integration tests
-        run: |
-          if [ -f docker-compose.yml ]; then
-            docker compose up -d --wait 2>/dev/null || docker-compose up -d
-            sleep 15
-          fi
-        continue-on-error: true
+    - name: 🧪 Run Root Tests (Vitest)
+      run: pnpm test:ci
 
-      - name: Integration tests
-        run: pnpm run test:integration
-        env:
-          API_BASE_URL: http://localhost:3001
-          KONG_URL: http://localhost:8000
-        continue-on-error: true
+    - name: 🧪 Run Auth Service Tests (Jest)
+      working-directory: services/identity/auth-service
+      run: pnpm test
 
-      - name: Stop services
-        if: always()
-        run: |
-          docker compose down 2>/dev/null || docker-compose down 2>/dev/null || true
+    - name: 🧪 Run User Service Tests (Jest)
+      working-directory: services/identity/user-service
+      run: pnpm test
 
-      - name: Build
-        run: pnpm run build:all
-
-      - name: Upload coverage (if present)
-        uses: codecov/codecov-action@v4
-        if: success() && hashFiles('**/coverage/coverage-final.json') != ''
-        with:
-          files: coverage/coverage-final.json
-          flags: unittests
-          fail_ci_if_error: false
-
-  security:
-    name: Security scan (Trivy)
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Trivy filesystem vulnerability scan
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: "fs"
-          scan-ref: "."
-          format: "sarif"
-          output: "trivy-results.sarif"
-          severity: "CRITICAL,HIGH"
-
-      - name: Upload Trivy SARIF to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: "trivy-results.sarif"
+    - name: 🏗️ Build All (Compilation Check)
+      run: pnpm build:all

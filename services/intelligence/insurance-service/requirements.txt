@@ -1,0 +1,10 @@
+langgraph
+langchain-community
+langchain-core
+ollama
+fastapi
+uvicorn
+httpx
+twilio
+python-dotenv
+pydantic>=2.0

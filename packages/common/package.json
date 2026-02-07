@@ -1,0 +1,43 @@
+{
+  "name": "@agrologistic/common",
+  "version": "1.0.2",
+  "description": "Common utilities for AgroDeep microservices (Logging, Validation, Security, Swagger)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "nestjs",
+    "validation",
+    "cors",
+    "security",
+    "logging",
+    "pino",
+    "swagger",
+    "openapi"
+  ],
+  "author": "AgroDeep Team",
+  "license": "MIT",
+  "dependencies": {
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/core": "^11.0.1",
+    "@nestjs/swagger": "^8.0.0",
+    "swagger-ui-express": "^5.0.0",
+    "class-validator": "^0.14.0",
+    "class-transformer": "^0.5.1",
+    "nestjs-pino": "^4.0.0",
+    "pino-http": "^9.0.0",
+    "pino-pretty": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.7.2"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0"
+  }
+}

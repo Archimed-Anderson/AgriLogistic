@@ -2,7 +2,7 @@
  * Tests unitaires et d'intégration pour le composant LoginForm
  */
 
-import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
@@ -11,23 +11,23 @@ import { AuthProvider } from '@/lib/hooks/use-auth';
 import * as authApi from '@/lib/api/auth';
 
 // Mock du module API
-jest.mock('@/lib/api/auth', () => ({
-  login: jest.fn(),
-  forgotPassword: jest.fn(),
-  resetPassword: jest.fn(),
-  storeTokens: jest.fn(),
-  clearTokens: jest.fn(),
-  isAuthenticated: jest.fn(() => false),
-  getAccessToken: jest.fn(() => null),
-  getRefreshToken: jest.fn(() => null),
+vi.mock('@/lib/api/auth', () => ({
+  login: vi.fn(),
+  forgotPassword: vi.fn(),
+  resetPassword: vi.fn(),
+  storeTokens: vi.fn(),
+  clearTokens: vi.fn(),
+  isAuthenticated: vi.fn(() => false),
+  getAccessToken: vi.fn(() => null),
+  getRefreshToken: vi.fn(() => null),
 }));
 
 // Mock de next/navigation
-jest.mock('next/navigation', () => ({
+vi.mock('next/navigation', () => ({
   useRouter: () => ({
-    push: jest.fn(),
-    replace: jest.fn(),
-    prefetch: jest.fn(),
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
   }),
 }));
 
@@ -40,7 +40,7 @@ const LoginFormWrapper = () => (
 
 describe('LoginForm', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Rendu du formulaire', () => {
@@ -121,7 +121,7 @@ describe('LoginForm', () => {
   describe('Soumission du formulaire', () => {
     it('devrait appeler la fonction login avec les bonnes données', async () => {
       const user = userEvent.setup();
-      const mockLogin = jest.mocked(authApi.login);
+      const mockLogin = vi.mocked(authApi.login);
       mockLogin.mockResolvedValue({
         accessToken: 'token',
         refreshToken: 'refresh',
@@ -145,7 +145,7 @@ describe('LoginForm', () => {
 
     it('devrait afficher un indicateur de chargement pendant la soumission', async () => {
       const user = userEvent.setup();
-      const mockLogin = jest.mocked(authApi.login);
+      const mockLogin = vi.mocked(authApi.login);
       mockLogin.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
 
       render(<LoginFormWrapper />);
@@ -162,7 +162,7 @@ describe('LoginForm', () => {
   describe('Gestion des erreurs API', () => {
     it("devrait afficher un message d'erreur pour une erreur 401", async () => {
       const user = userEvent.setup();
-      const mockLogin = jest.mocked(authApi.login);
+      const mockLogin = vi.mocked(authApi.login);
       const error = new Error('Unauthorized');
       error.name = 'AuthApiError';
       (error as any).statusCode = 401;
@@ -182,7 +182,7 @@ describe('LoginForm', () => {
 
     it("devrait afficher un message d'erreur pour une erreur 429 (rate limiting)", async () => {
       const user = userEvent.setup();
-      const mockLogin = jest.mocked(authApi.login);
+      const mockLogin = vi.mocked(authApi.login);
       const error = new Error('Too Many Requests');
       error.name = 'AuthApiError';
       (error as any).statusCode = 429;

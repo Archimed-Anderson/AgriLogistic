@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/v1/admin', routes);
 
 // Root endpoint
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response) => {
   res.json({
     service: 'admin-service',
     version: '1.0.0',
@@ -36,7 +36,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // Error handling
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error('Error:', err);
   res.status(500).json({
     error: 'Internal server error',
@@ -45,7 +45,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 // 404 handler
-app.use((req: Request, res: Response) => {
+app.use((_req: Request, res: Response) => {
   res.status(404).json({ error: 'Not found' });
 });
 

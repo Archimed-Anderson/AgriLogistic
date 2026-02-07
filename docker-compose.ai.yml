@@ -1,0 +1,265 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🧠 NEURAL LINK REPAIR - Docker Compose AI Services
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# Objectif: Isolation et stabilisation des services AI
+# Capacité: Rétablissement de la connexion neuronale
+#
+# Services:
+#   - ai-main: Service AI principal (Port 8003)
+#   - ai-llm: Service LLM (Port 8004)
+#   - ai-vision: Service Vision/Disease Detection (Port 8005)
+#
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+version: '3.8'
+services:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # AI MAIN SERVICE - Service AI Principal
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ai-main:
+    build:
+      context: ./services/ai-service
+      dockerfile: Dockerfile
+      args:
+        - SERVICE_DIR=src
+    container_name: agrodeep-ai-main
+    restart: unless-stopped
+    ports:
+      - "8003:8000"
+    environment:
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      # 🛡️ FIX ENCODAGE UTF-8 WINDOWS
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      - PYTHONIOENCODING=utf-8
+      - PYTHONUNBUFFERED=1
+      - LANG=C.UTF-8
+      - LC_ALL=C.UTF-8
+      
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      # APPLICATION
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      - PORT=8000
+      - HOST=0.0.0.0
+      - WORKERS=2
+      - LOG_LEVEL=info
+      
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      # ML MODELS
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      - MODEL_PATH=/app/models
+      - MODEL_CACHE_DIR=/app/cache/models
+      - PRELOAD_MODELS=true
+      
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      # CORS
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      - CORS_ORIGIN=http://localhost:3000,https://agrodeep.vercel.app
+    
+    volumes:
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      # VOLUMES PERSISTANTS POUR MODÈLES ML
+      # Évite de retélécharger les modèles à chaque restart
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      - ai-models:/app/models
+      - ai-cache:/app/cache
+      - ./services/ai-service/src:/app/src:ro
+    
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; r = requests.get('http://localhost:8000/health'); assert r.json()['model_ready'] == True"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    
+    networks:
+      - ai-network
+    
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # AI LLM SERVICE - Service LLM
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ai-llm:
+    build:
+      context: ./services/ai-service
+      dockerfile: Dockerfile
+      args:
+        - SERVICE_DIR=llm_service
+    container_name: agrodeep-ai-llm
+    restart: unless-stopped
+    ports:
+      - "8004:8001"
+    environment:
+      # 🛡️ FIX ENCODAGE UTF-8
+      - PYTHONIOENCODING=utf-8
+      - PYTHONUNBUFFERED=1
+      - LANG=C.UTF-8
+      - LC_ALL=C.UTF-8
+      
+      # APPLICATION
+      - PORT=8001
+      - HOST=0.0.0.0
+      - WORKERS=1
+      - LOG_LEVEL=info
+      
+      # LLM CONFIGURATION
+      - LLM_MODEL=llama-2-7b
+      - LLM_MAX_TOKENS=2048
+      - LLM_TEMPERATURE=0.7
+      - MODEL_PATH=/app/models/llm
+      - MODEL_CACHE_DIR=/app/cache/llm
+      
+      # CORS
+      - CORS_ORIGIN=http://localhost:3000,https://agrodeep.vercel.app
+    
+    volumes:
+      - llm-models:/app/models
+      - llm-cache:/app/cache
+      - ./services/ai-service/llm_service:/app/llm_service:ro
+    
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; r = requests.get('http://localhost:8001/health'); assert r.json()['model_ready'] == True"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s  # LLM prend plus de temps à charger
+    
+    networks:
+      - ai-network
+    
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 8G
+        reservations:
+          cpus: '2.0'
+          memory: 4G
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # AI VISION SERVICE - Service Vision/Disease Detection
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ai-vision:
+    build:
+      context: ./services/ai-service
+      dockerfile: Dockerfile
+      args:
+        - SERVICE_DIR=vision_service
+    container_name: agrodeep-ai-vision
+    restart: unless-stopped
+    ports:
+      - "8005:8002"
+    environment:
+      # 🛡️ FIX ENCODAGE UTF-8
+      - PYTHONIOENCODING=utf-8
+      - PYTHONUNBUFFERED=1
+      - LANG=C.UTF-8
+      - LC_ALL=C.UTF-8
+      
+      # APPLICATION
+      - PORT=8002
+      - HOST=0.0.0.0
+      - WORKERS=2
+      - LOG_LEVEL=info
+      
+      # VISION CONFIGURATION
+      - VISION_MODEL=resnet50
+      - DISEASE_MODEL=efficientnet-b3
+      - MAX_IMAGE_SIZE_MB=10
+      - MODEL_PATH=/app/models/vision
+      - MODEL_CACHE_DIR=/app/cache/vision
+      
+      # CORS
+      - CORS_ORIGIN=http://localhost:3000,https://agrodeep.vercel.app
+    
+    volumes:
+      - vision-models:/app/models
+      - vision-cache:/app/cache
+      - vision-uploads:/app/uploads
+      - ./services/ai-service/vision_service:/app/vision_service:ro
+    
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; r = requests.get('http://localhost:8002/health'); assert r.json()['model_ready'] == True"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    
+    networks:
+      - ai-network
+    
+    deploy:
+      resources:
+        limits:
+          cpus: '3.0'
+          memory: 6G
+        reservations:
+          cpus: '1.5'
+          memory: 3G
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# VOLUMES PERSISTANTS
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+volumes:
+  # AI Main Service
+  ai-models:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/ai-models
+  
+  ai-cache:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/ai-cache
+  
+  # LLM Service
+  llm-models:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/llm-models
+  
+  llm-cache:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/llm-cache
+  
+  # Vision Service
+  vision-models:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/vision-models
+  
+  vision-cache:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/vision-cache
+  
+  vision-uploads:
+    driver: local
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# NETWORKS
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+networks:
+  ai-network:
+    driver: bridge

@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "concurrency": "20",
+  "concurrency": "10",
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -15,7 +15,8 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "dependsOn": ["^build"]
     },
     "clean": {
       "cache": false
@@ -24,5 +25,10 @@
   "globalDependencies": [
     "tsconfig.json",
     "pnpm-workspace.yaml"
+  ],
+  "globalEnv": [
+    "NODE_ENV",
+    "DATABASE_URL",
+    "JWT_SECRET"
   ]
 }

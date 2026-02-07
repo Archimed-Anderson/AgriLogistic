@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # MQTT Broker (Mosquitto)
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: coldchain-mqtt
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    networks:
+      - coldchain-network
+
+  # Time Series Database (InfluxDB)
+  influxdb:
+    image: influxdb:2
+    container_name: coldchain-influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=AgriLogistic_secure_2026
+      - DOCKER_INFLUXDB_INIT_ORG=agrilogistic
+      - DOCKER_INFLUXDB_INIT_BUCKET=coldchain
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-auth-token
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+      - influxdb-config:/etc/influxdb2
+    networks:
+      - coldchain-network
+
+  # Cold Chain Service API
+  api:
+    build: .
+    container_name: coldchain-service
+    ports:
+      - "3009:3009"
+    environment:
+      - NODE_ENV=development
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_TOKEN=my-super-secret-auth-token
+      - INFLUXDB_ORG=agrilogistic
+      - INFLUXDB_BUCKET=coldchain
+      - MQTT_BROKER_URL=mqtt://mosquitto:1883
+    depends_on:
+      - influxdb
+      - mosquitto
+    networks:
+      - coldchain-network
+
+networks:
+  coldchain-network:
+    driver: bridge
+
+volumes:
+  influxdb-data:
+  influxdb-config:

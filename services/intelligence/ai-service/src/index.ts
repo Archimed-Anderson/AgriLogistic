@@ -11,7 +11,7 @@ import { ForecastService } from './services/forecast.service';
 dotenv.config();
 
 const app: Application = express();
-const PORT = process.env.PORT || 3007;
+const PORT = process.env.PORT || 8000;
 
 app.use(helmet());
 app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:5173', credentials: true }));

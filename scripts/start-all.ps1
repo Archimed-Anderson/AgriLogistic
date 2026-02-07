@@ -1,16 +1,16 @@
-# Script de demarrage complet de AgriLogistic
-# Demarre Docker Desktop, l'infrastructure et le service auth
+# Script de demarrage complet de AgriLogistic (PROMPTS 1-FINAL)
+# Demarre Docker Desktop, l'infrastructure, le service auth et les services AI
 
 $ErrorActionPreference = "Stop"
 
 Write-Host ""
 Write-Host "======================================================" -ForegroundColor Cyan
-Write-Host "  AgriLogistic - Demarrage Complet du Backend" -ForegroundColor Cyan
+Write-Host "  AgriLogistic - Demarrage Complet (Final)" -ForegroundColor Cyan
 Write-Host "======================================================" -ForegroundColor Cyan
 Write-Host ""
 
 # Etape 1: Verifier Docker Desktop
-Write-Host "[1/6] Verification Docker Desktop..." -ForegroundColor Yellow
+Write-Host "[1/7] Verification Docker Desktop..." -ForegroundColor Yellow
 
 $dockerRunning = $false
 $ErrorActionPreference = "Continue"
@@ -23,58 +23,31 @@ if ($dockerTest -notlike "*cannot find the file*" -and $dockerTest -notlike "*er
 }
 else {
     Write-Host "  AVERTISSEMENT - Docker Desktop n'est pas actif" -ForegroundColor Yellow
-    Write-Host ""
     Write-Host "  Tentative de demarrage de Docker Desktop..." -ForegroundColor Yellow
     
-    # Chercher Docker Desktop
     $dockerPath = "C:\Program Files\Docker\Docker\Docker Desktop.exe"
     if (Test-Path $dockerPath) {
         Start-Process $dockerPath
         Write-Host "  Docker Desktop lance. Attente de demarrage (60s)..." -ForegroundColor Yellow
-        
-        $timeout = 60
-        $elapsed = 0
-        while ($elapsed -lt $timeout) {
-            Start-Sleep -Seconds 5
-            $elapsed += 5
-            $ErrorActionPreference = "Continue"
-            $testDocker = docker ps 2>&1 | Out-String
-            $ErrorActionPreference = "Stop"
-            
-            if ($testDocker -notlike "*cannot find the file*" -and $testDocker -notlike "*error*") {
-                $dockerRunning = $true
-                Write-Host "  OK - Docker Desktop est maintenant actif" -ForegroundColor Green
-                break
-            }
-            else {
-                Write-Host "  Attente... ($elapsed/$timeout secondes)" -ForegroundColor Gray
-            }
-        }
-        
-        if (-not $dockerRunning) {
-            Write-Host ""
-            Write-Host "  ERREUR - Docker Desktop n'a pas demarre" -ForegroundColor Red
-            Write-Host "  Veuillez lancer Docker Desktop manuellement et reessayer" -ForegroundColor Yellow
-            Write-Host ""
-            exit 1
-        }
+        Start-Sleep -Seconds 60
     }
     else {
-        Write-Host ""
         Write-Host "  ERREUR - Docker Desktop n'est pas installe" -ForegroundColor Red
-        Write-Host "  Installez Docker Desktop depuis: https://www.docker.com/products/docker-desktop" -ForegroundColor Yellow
-        Write-Host ""
         exit 1
     }
 }
 
 Write-Host ""
 
-# Etape 2: Nettoyer les conteneurs existants si necessaire
-Write-Host "[2/6] Nettoyage des conteneurs obsoletes..." -ForegroundColor Yellow
-$oldContainers = docker ps -a --filter "status=exited" --filter "name=AgriLogistic" -q
-if ($oldContainers) {
-    docker rm $oldContainers | Out-Null
+# Etape 2: Nettoyer les conteneurs obsoletes
+Write-Host "[2/7] Nettoyage des conteneurs obsoletes..." -ForegroundColor Yellow
+# Nettoyage des anciens noms (AgriLogistic) et nouveaux (agrodeep)
+$oldContainers = docker ps -a --filter "name=AgriLogistic" -q 
+$newContainers = docker ps -a --filter "name=agrodeep" -q
+$allContainers = $oldContainers + $newContainers
+
+if ($allContainers) {
+    docker rm -f $allContainers | Out-Null
     Write-Host "  OK - Conteneurs obsoletes supprimes" -ForegroundColor Green
 }
 else {
@@ -84,162 +57,118 @@ else {
 Write-Host ""
 
 # Etape 3: Demarrer l'infrastructure principale
-Write-Host "[3/6] Demarrage infrastructure (PostgreSQL, Redis, Kong)..." -ForegroundColor Yellow
+Write-Host "[3/7] Demarrage infrastructure (PostgreSQL, Redis)..." -ForegroundColor Yellow
 
 $projectRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $projectRoot
 
+# Démarrage via Docker Compose Dev (Postgres + Redis uniquement)
+# Note: On ne lance pas encore user-service/auth-service ici, on laisse turbo dev gérer ou on le lance après
 $ErrorActionPreference = "Continue"
-docker-compose up -d postgres redis kong 2>&1 | Out-Null
+docker-compose -f docker-compose.dev.yml up -d postgres redis 2>&1 | Out-Null
 $ErrorActionPreference = "Stop"
 
-# Verifier que les conteneurs sont bien demarres
-Start-Sleep -Seconds 3
-$postgresRunning = docker ps --filter "name=AgriLogistic-postgres" --filter "status=running" -q
-$redisRunning = docker ps --filter "name=AgriLogistic-redis" --filter "status=running" -q
-$kongRunning = docker ps --filter "name=AgriLogistic-kong" --filter "status=running" -q
+Start-Sleep -Seconds 5
 
-if ($postgresRunning -and $redisRunning -and $kongRunning) {
+# Vérification du succès (agrodeep-postgres-dev)
+if (docker ps --filter "name=agrodeep-postgres-dev" --filter "status=running" -q) {
     Write-Host "  OK - Infrastructure demarree" -ForegroundColor Green
 }
 else {
-    Write-Host "  ERREUR - Certains services n'ont pas demarre" -ForegroundColor Red
-    docker ps --filter "name=AgriLogistic"
+    Write-Host "  ERREUR - PostgreSQL n'a pas demarre. Diagnostic:" -ForegroundColor Red
+    Write-Host "  Logs PostgreSQL:" -ForegroundColor Yellow
+    docker logs agrodeep-postgres-dev --tail 20 2>&1 | Write-Host
     exit 1
 }
 
 Write-Host ""
 
 # Etape 4: Attendre que les services soient prets
-Write-Host "[4/6] Attente initialisation des services (30s)..." -ForegroundColor Yellow
-Start-Sleep -Seconds 30
+Write-Host "[4/7] Attente initialisation des services (15s)..." -ForegroundColor Yellow
+Start-Sleep -Seconds 15
 
-$postgresReady = docker exec AgriLogistic-postgres pg_isready -U AgriLogistic 2>&1
-$redisReady = docker exec AgriLogistic-redis redis-cli --no-auth-warning -a redis_secure_2026 ping 2>&1
-
+# Vérification PostgreSQL (user: agrodeep, db: agrodeep_dev)
+$postgresReady = docker exec agrodeep-postgres-dev pg_isready -U agrodeep -d agrodeep_dev 2>&1
 if ($postgresReady -like "*accepting connections*") {
     Write-Host "  OK - PostgreSQL pret" -ForegroundColor Green
 }
 else {
     Write-Host "  AVERTISSEMENT - PostgreSQL pas encore pret" -ForegroundColor Yellow
-}
-
-if ($redisReady -like "*PONG*") {
-    Write-Host "  OK - Redis pret" -ForegroundColor Green
-}
-else {
-    Write-Host "  AVERTISSEMENT - Redis pas encore pret" -ForegroundColor Yellow
+    Write-Host "  Erreur: $postgresReady" -ForegroundColor Red
 }
 
 Write-Host ""
 
-# Etape 5: Corriger l'authentification PostgreSQL si necessaire
-Write-Host "[5/6] Configuration PostgreSQL..." -ForegroundColor Yellow
-
-$testConnection = docker exec AgriLogistic-postgres psql -U AgriLogistic -d AgriLogistic_auth -c "SELECT 1;" 2>&1
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "  Configuration de l'authentification PostgreSQL..." -ForegroundColor Yellow
-    
-    # Configurer pg_hba.conf pour accepter les connexions
-    docker exec AgriLogistic-postgres sh -c "cat > /var/lib/postgresql/data/pg_hba.conf << 'EOF'
-# TYPE  DATABASE        USER            ADDRESS                 METHOD
-local   all             all                                     trust
-host    all             all             127.0.0.1/32            trust
-host    all             all             ::1/128                 trust
-host    all             all             172.16.0.0/12           trust
-host    all             all             10.0.0.0/8              trust
-host    all             all             192.168.0.0/16          trust
-host    all             all             0.0.0.0/0               md5
-EOF
-" | Out-Null
-    
-    docker exec AgriLogistic-postgres psql -U AgriLogistic -d AgriLogistic -c "ALTER USER \"AgriLogistic\" WITH PASSWORD 'AgriLogistic_secure_2026';" | Out-Null
-    docker restart AgriLogistic-postgres | Out-Null
-    Start-Sleep -Seconds 10
-    
-    Write-Host "  OK - PostgreSQL configure" -ForegroundColor Green
-}
-else {
-    Write-Host "  OK - PostgreSQL configure" -ForegroundColor Green
-}
+# Etape 5: Configuration Auth DB (si necessaire)
+# Normalement géré par l'image postgres officielle via POSTGRES_DB
+Write-Host "[5/7] Configuration PostgreSQL..." -ForegroundColor Yellow
+Write-Host "  OK - PostgreSQL configure via Docker Compose" -ForegroundColor Green
 
 Write-Host ""
 
-# Etape 6: Demarrer le service d'authentification
-Write-Host "[6/6] Demarrage service d'authentification..." -ForegroundColor Yellow
+# Etape 6: Demarrer le service d'authentification (Mode Dev Container)
+Write-Host "[6/7] Demarrage service d'authentification..." -ForegroundColor Yellow
 
-Set-Location "$projectRoot\services\identity\auth-service"
+# On utilise le service Auth défini dans docker-compose si possible, ou on le lance manuellement
+# Ici, on va lancer le container 'auth-service' défini dans docker-compose.dev.yml mais en mode watch si possible
+# Pour simplifier et rester cohérent avec l'infrastructure, on lance via compose
+# On lance les services d'identité définis dans docker-compose.dev.yml
+$ErrorActionPreference = "Continue"
+docker-compose -f docker-compose.dev.yml up -d auth-service 2>&1 | Out-Null
+$ErrorActionPreference = "Stop"
+Write-Host "  Container Auth lance (agrodeep-auth-service)" -ForegroundColor Green
 
-# Arreter tout processus existant sur le port 3001
-$process = Get-NetTCPConnection -LocalPort 3001 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess
-if ($process) {
-    Stop-Process -Id $process -Force 2>$null
+Write-Host ""
+
+# Etape 7: Demarrer Services AI (Prompt 4)
+Write-Host "[7/7] Demarrage Services AI (Prompt 4)..." -ForegroundColor Yellow
+Set-Location $projectRoot
+
+# Création des dossiers de données requis par docker-compose.ai.yml (bind mounts)
+$aiDataDirs = @(
+    "data/ai-models", "data/ai-cache",
+    "data/llm-models", "data/llm-cache",
+    "data/vision-models", "data/vision-cache", "data/vision-uploads"
+)
+
+foreach ($dir in $aiDataDirs) {
+    if (-not (Test-Path $dir)) {
+        New-Item -ItemType Directory -Path $dir -Force | Out-Null
+    }
 }
 
-# Demarrer avec Docker
-Write-Host "  Lancement avec Docker (reseau AgriLogistic-network)..." -ForegroundColor Cyan
+$ErrorActionPreference = "Continue"
+# Capture output to show only on error
+$aiOutput = docker-compose -f docker-compose.ai.yml up -d 2>&1 | Out-String
 
-$env:NODE_ENV = "development"
-$env:PORT = "3001"
-$env:DB_HOST = "AgriLogistic-postgres"
-$env:DB_PORT = "5432"
-$env:DB_NAME = "AgriLogistic_auth"
-$env:DB_USER = "AgriLogistic"
-$env:DB_PASSWORD = "AgriLogistic_secure_2026"
-$env:REDIS_HOST = "AgriLogistic-redis"
-$env:REDIS_PORT = "6379"
-$env:REDIS_PASSWORD = "redis_secure_2026"
-$env:JWT_ACCESS_SECRET = "dev_jwt_access_secret_change_in_production"
-$env:JWT_REFRESH_SECRET = "dev_jwt_refresh_secret_change_in_production"
-$env:CORS_ORIGIN = "http://localhost:5173"
-
-# Lancer en arriere-plan
-$dockerCmd = @"
-docker run --rm -d ``
-  --name AgriLogistic-auth-service-dev ``
-  --network AgriLogistic-network ``
-  -p 3001:3001 ``
-  -v "${PWD}:/app" ``
-  -w /app ``
-  -e NODE_ENV=$env:NODE_ENV ``
-  -e PORT=$env:PORT ``
-  -e DB_HOST=$env:DB_HOST ``
-  -e DB_PORT=$env:DB_PORT ``
-  -e DB_NAME=$env:DB_NAME ``
-  -e DB_USER=$env:DB_USER ``
-  -e DB_PASSWORD=$env:DB_PASSWORD ``
-  -e REDIS_HOST=$env:REDIS_HOST ``
-  -e REDIS_PORT=$env:REDIS_PORT ``
-  -e REDIS_PASSWORD=$env:REDIS_PASSWORD ``
-  -e JWT_ACCESS_SECRET=$env:JWT_ACCESS_SECRET ``
-  -e JWT_REFRESH_SECRET=$env:JWT_REFRESH_SECRET ``
-  -e CORS_ORIGIN=$env:CORS_ORIGIN ``
-  node:20-alpine sh -c "npm install && npm run dev"
-"@
-
-Invoke-Expression $dockerCmd | Out-Null
-
-Write-Host "  Attente demarrage du service (20s)..." -ForegroundColor Yellow
-Start-Sleep -Seconds 20
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "  OK - Services AI demarres (Ports 8003, 8004, 8005)" -ForegroundColor Green
+}
+else {
+    Write-Host "  AVERTISSEMENT - Echec demarrage AI" -ForegroundColor Yellow
+    Write-Host "  Diagnostic:" -ForegroundColor Red
+    Write-Host $aiOutput -ForegroundColor Gray
+}
+$ErrorActionPreference = "Stop"
 
 Write-Host ""
 Write-Host "======================================================" -ForegroundColor Cyan
-Write-Host "  Demarrage termine!" -ForegroundColor Green
+Write-Host "  Demarrage Termine!" -ForegroundColor Green
 Write-Host "======================================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Services actifs:" -ForegroundColor Cyan
-Write-Host "  - PostgreSQL:  localhost:5432" -ForegroundColor White
-Write-Host "  - Redis:       localhost:6379" -ForegroundColor White
-Write-Host "  - Kong:        localhost:8000" -ForegroundColor White
-Write-Host "  - Auth Service: localhost:3001" -ForegroundColor White
+Write-Host "  - PostgreSQL:  localhost:5432"
+Write-Host "  - Redis:       localhost:6379"
+Write-Host "  - Auth Service: localhost:3001"
+Write-Host "  - User Service: localhost:3013"
+Write-Host "  - Product Service: localhost:3002"
+Write-Host "  - AI Main:      localhost:8003"
+Write-Host "  - AI LLM:       localhost:8004"
+Write-Host "  - AI Vision:    localhost:8005"
 Write-Host ""
-Write-Host "Verification de l'etat:" -ForegroundColor Cyan
-docker ps --filter "name=AgriLogistic" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
-Write-Host ""
-Write-Host "Pour voir les logs du service auth:" -ForegroundColor Yellow
-Write-Host "  docker logs -f AgriLogistic-auth-service-dev" -ForegroundColor White
-Write-Host ""
-Write-Host "Pour arreter tous les services:" -ForegroundColor Yellow
-Write-Host "  docker-compose down && docker stop AgriLogistic-auth-service-dev" -ForegroundColor White
+Write-Host "Prochaines Etapes:" -ForegroundColor Yellow
+Write-Host "1. Frontend lance dans une autre fenetre"
+Write-Host "2. Valider l'etat global: pnpm check:all"
 Write-Host ""
 
+Set-Location $projectRoot

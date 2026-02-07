@@ -6,7 +6,7 @@ import {
   UserCheck,
   ShieldCheck,
   Sprout,
-  Cuboid as DigitalTwin,
+  Box as DigitalTwin,
   Droplets,
   CloudSun,
   Truck,
@@ -29,7 +29,6 @@ import {
   ClipboardCheck,
   UsersRound,
   Package,
-  Layout,
   QrCode,
   Leaf,
   Globe,
@@ -208,7 +207,7 @@ export const adminRoutes: AdminGroup[] = [
   {
     group: '📊 ANALYTICS',
     items: [
-      { label: 'Global Explorer', path: '/admin/analytics/global', icon: BarChart3, badge: 'OLAP' },
+      { label: 'Global Explorer', path: '/admin/analytics', icon: BarChart3, badge: 'OLAP' },
       { label: 'Flux Map 3D', path: '/admin/analytics/flux-map', icon: Globe, badge: 'LIVE' },
       { label: 'Performance & SLA', path: '/admin/analytics/performance', icon: Zap, badge: 'KPI' },
       { label: 'Compliance Exports', path: '/admin/reports/compliance', icon: FileCheck2 },

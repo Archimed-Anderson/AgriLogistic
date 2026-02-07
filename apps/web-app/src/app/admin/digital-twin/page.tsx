@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Cuboid as DigitalTwin,
+  Box as DigitalTwin,
   Map as MapIcon,
   Layers,
   Activity,

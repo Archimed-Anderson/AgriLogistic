@@ -6,7 +6,7 @@ import productionsRoutes from './routes/productions.routes';
 import irrigationRoutes from './routes/irrigation.routes';
 
 const app = express();
-const PORT = process.env.PORT || 3018;
+const PORT = process.env.PORT || 3005;
 
 app.use(helmet());
 app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));

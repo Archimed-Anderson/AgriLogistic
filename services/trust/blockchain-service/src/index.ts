@@ -9,7 +9,7 @@ import { BlockchainService } from './services/blockchain.service';
 dotenv.config();
 
 const app: Application = express();
-const PORT = process.env.PORT || 3009;
+const PORT = process.env.PORT || 3020;
 
 app.use(helmet());
 app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:5173', credentials: true }));

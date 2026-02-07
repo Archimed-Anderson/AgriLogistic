@@ -15,12 +15,12 @@
     "prisma:migrate": "prisma migrate dev"
   },
   "dependencies": {
+    "@agrologistic/database": "workspace:*",
     "@agrologistic/microservice-core": "workspace:*",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
-    "@prisma/client": "^7.3.0",
     "minio": "^7.1.3",
     "axios": "^1.6.2",
     "firebase-admin": "^12.0.0",

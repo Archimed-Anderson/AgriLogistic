@@ -1,0 +1,33 @@
+{
+  "name": "@agrologistic/config",
+  "version": "1.0.0",
+  "description": "Centralized configuration module for AgroDeep microservices",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "nestjs",
+    "config",
+    "validation",
+    "environment"
+  ],
+  "author": "AgroDeep Team",
+  "license": "MIT",
+  "dependencies": {
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
+    "joi": "^17.13.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0"
+  }
+}

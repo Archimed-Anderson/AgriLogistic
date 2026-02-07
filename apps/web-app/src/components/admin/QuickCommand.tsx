@@ -51,7 +51,7 @@ const workflows = [
   { id: 'reroute', icon: Map, label: 'Reroute Fleet', desc: 'Recalcul VRP pour éviter zone météo dangereuse', color: 'bg-orange-600', keywords: 'reroute vrp météo' },
 ];
 
-export function QuickCommand() {
+export default function QuickCommand() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');

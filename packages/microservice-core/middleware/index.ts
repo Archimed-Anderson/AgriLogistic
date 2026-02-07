@@ -11,7 +11,7 @@ export {
   metricsEndpoint,
   incrementMetric,
   setMetricGauge,
-} from './metrics.middleware';
+} from './metrics.middleware.js';
 
 // Error Handling
 export {
@@ -28,7 +28,7 @@ export {
   notFoundHandler,
   asyncHandler,
   validateRequest,
-} from './error.middleware';
+} from './error.middleware.js';
 
 // Logging
 export {
@@ -38,11 +38,11 @@ export {
   createChildLogger,
   getRequestLogger,
   LogLevel,
-} from './logger.middleware';
+} from './logger.middleware.js';
 
 // Health Check
 export {
   createHealthEndpoints,
   HealthStatus,
   DependencyCheck,
-} from './health.middleware';
+} from './health.middleware.js';

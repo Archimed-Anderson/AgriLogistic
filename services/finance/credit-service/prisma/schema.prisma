@@ -1,0 +1,189 @@
+// AgriCredit Database Schema
+// Credit scoring and loan management
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+// Farmer profile for credit scoring
+model Farmer {
+    id              String   @id @default(uuid())
+    userId          String   @unique
+    name            String
+    email           String   @unique
+    phone           String?
+    location        String?
+    farmSize        Float? // in hectares
+    cropTypes       String[] // Array of crop types
+    yearsExperience Int?
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+
+    creditScore  CreditScore?
+    transactions Transaction[]
+    loans        Loan[]
+
+    @@index([email])
+    @@index([userId])
+}
+
+// Credit score model
+model CreditScore {
+    id        String @id @default(uuid())
+    farmerId  String @unique
+    score     Int // 0-1000 scale
+    riskLevel String // low, medium, high, very_high
+
+    // Score components (0-100 each)
+    paymentHistory     Int @default(0)
+    yieldPerformance   Int @default(0)
+    financialStability Int @default(0)
+    marketEngagement   Int @default(0)
+
+    // ML model metadata
+    modelVersion String
+    confidence   Float // 0-1
+    factors      Json // Contributing factors breakdown
+
+    lastCalculated DateTime @default(now())
+    createdAt      DateTime @default(now())
+    updatedAt      DateTime @updatedAt
+
+    farmer Farmer @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+
+    @@index([farmerId])
+    @@index([score])
+    @@index([riskLevel])
+}
+
+// Transaction history
+model Transaction {
+    id          String  @id @default(uuid())
+    farmerId    String
+    type        String // sale, purchase, payment, loan_repayment
+    amount      Decimal @db.Decimal(10, 2)
+    status      String // pending, completed, failed
+    description String?
+    metadata    Json? // Additional transaction details
+
+    createdAt   DateTime  @default(now())
+    completedAt DateTime?
+
+    farmer Farmer @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+
+    @@index([farmerId])
+    @@index([type])
+    @@index([status])
+    @@index([createdAt])
+}
+
+// Loan model
+model Loan {
+    id       String @id @default(uuid())
+    farmerId String
+
+    // Loan details
+    amount       Decimal @db.Decimal(10, 2)
+    interestRate Decimal @db.Decimal(5, 2) // Annual percentage
+    duration     Int // Duration in months
+    purpose      String // seeds, equipment, fertilizer, etc.
+
+    // Status tracking
+    status     String // pending, approved, rejected, active, completed, defaulted
+    approvedBy String? // Admin/system ID
+
+    // Repayment
+    monthlyPayment   Decimal @db.Decimal(10, 2)
+    totalRepaid      Decimal @default(0) @db.Decimal(10, 2)
+    remainingBalance Decimal @db.Decimal(10, 2)
+
+    // Dates
+    appliedAt   DateTime  @default(now())
+    approvedAt  DateTime?
+    disbursedAt DateTime?
+    dueDate     DateTime?
+    completedAt DateTime?
+
+    // Risk assessment
+    creditScoreAtApproval Int?
+    riskAssessment        Json? // Detailed risk factors
+
+    farmer     Farmer          @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+    repayments LoanRepayment[]
+
+    @@index([farmerId])
+    @@index([status])
+    @@index([appliedAt])
+}
+
+// Loan repayment tracking
+model LoanRepayment {
+    id     String @id @default(uuid())
+    loanId String
+
+    amount   Decimal   @db.Decimal(10, 2)
+    dueDate  DateTime
+    paidDate DateTime?
+    status   String // pending, paid, late, missed
+
+    lateFee       Decimal? @db.Decimal(10, 2)
+    transactionId String? // Reference to Transaction
+
+    createdAt DateTime @default(now())
+
+    loan Loan @relation(fields: [loanId], references: [id], onDelete: Cascade)
+
+    @@index([loanId])
+    @@index([status])
+    @@index([dueDate])
+}
+
+// ML Model metadata and versioning
+model MLModel {
+    id        String @id @default(uuid())
+    version   String @unique
+    algorithm String // xgboost, random_forest, etc.
+
+    // Performance metrics
+    accuracy  Float
+    precision Float
+    recall    Float
+    f1Score   Float
+
+    // Training metadata
+    trainingDataSize Int
+    features         String[] // List of features used
+    hyperparameters  Json
+
+    // Status
+    isActive   Boolean   @default(false)
+    trainedAt  DateTime  @default(now())
+    deployedAt DateTime?
+
+    notes String?
+
+    @@index([version])
+    @@index([isActive])
+}
+
+// Credit history events for audit trail
+model CreditEvent {
+    id        String @id @default(uuid())
+    farmerId  String
+    eventType String // score_calculated, loan_applied, loan_approved, payment_made, etc.
+
+    oldValue Json?
+    newValue Json?
+    metadata Json?
+
+    triggeredBy String? // user_id or 'system'
+    timestamp   DateTime @default(now())
+
+    @@index([farmerId])
+    @@index([eventType])
+    @@index([timestamp])
+}

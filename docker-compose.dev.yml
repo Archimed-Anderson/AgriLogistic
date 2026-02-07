@@ -1,0 +1,161 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🛸 LIFT-OFF PROTOCOL - Docker Compose Dev (Mode Diagnostique)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# Objectif: Lancer UNIQUEMENT les 3 services critiques pour tester le démarrage
+# Services: User, Product, Auth (+ Database)
+#
+# Usage:
+#   docker-compose -f docker-compose.dev.yml up
+#   docker-compose -f docker-compose.dev.yml down
+#
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+services:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🗄️ DATABASE (PostgreSQL)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  postgres:
+    image: postgres:16-alpine
+    container_name: agrodeep-postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: agrodeep_dev
+      POSTGRES_USER: agrodeep
+      POSTGRES_PASSWORD: agrodeep_dev_password_2026
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agrodeep -d agrodeep_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - agrodeep-network
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🧠 CACHE (Redis)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  redis:
+    image: redis:alpine
+    container_name: agrodeep-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - agrodeep-network
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 👥 USER SERVICE (Port 3013)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  user-service:
+    build:
+      context: .
+      dockerfile: services/identity/user-service/Dockerfile
+    container_name: agrodeep-user-service
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3013
+      DATABASE_URL: postgresql://agrodeep:agrodeep_dev_password_2026@postgres:5432/agrodeep_dev
+      JWT_SECRET: dev-secret-key-min-32-characters-long-for-testing
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - "3013:3013"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./services/identity/user-service:/app
+      - /app/node_modules
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3013/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - agrodeep-network
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🛒 PRODUCT SERVICE (Port 3002)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  product-service:
+    build:
+      context: .
+      dockerfile: services/marketplace/product-service/Dockerfile
+    container_name: agrodeep-product-service
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3002
+      DATABASE_URL: postgresql://agrodeep:agrodeep_dev_password_2026@postgres:5432/agrodeep_dev
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - "3002:3002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./services/marketplace/product-service:/app
+      - /app/node_modules
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - agrodeep-network
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🔐 AUTH SERVICE (Port 3001)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  auth-service:
+    build:
+      context: .
+      dockerfile: services/identity/auth-service-legacy/Dockerfile
+    container_name: agrodeep-auth-service
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      DATABASE_URL: postgresql://agrodeep:agrodeep_dev_password_2026@postgres:5432/agrodeep_dev
+      JWT_SECRET: dev-secret-key-min-32-characters-long-for-testing
+      JWT_EXPIRES_IN: 1h
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+    volumes:
+      - ./services/identity/auth-service-legacy:/app
+      - /app/node_modules
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - agrodeep-network
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 📦 VOLUMES
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+volumes:
+  postgres_data:
+    driver: local
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🌐 NETWORKS
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+networks:
+  agrodeep-network:
+    driver: bridge

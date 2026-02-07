@@ -1,36 +1,86 @@
-# 🐘 Configuration Neon Postgres (Serverless)
+# Neon PostgreSQL Setup Guide
 
-Neon est idéal pour AgriLogistic en raison de son architecture serverless et de ses capacités de branchement.
+## Quick Start
 
-## 1. Création du Projet Neon
-1. Inscrivez-vous sur [Neon.tech](https://neon.tech).
-2. Créez un nouveau projet nommé `AgriLogistic`.
-3. Choisissez la région la plus proche de votre déploiement (ex: `AWS Frankfurt` pour l'Europe).
+### 1. Create Neon Account
+1. Go to [https://neon.tech](https://neon.tech)
+2. Sign up with GitHub or email
+3. Create a new project: "agrilogistic-prod"
+4. Select region: **EU (Frankfurt)** (closest to Render/Vercel EU)
 
-## 2. Récupération de la Chaîne de Connexion
-Dans votre dashboard Neon :
-1. Allez dans **Connection Details**.
-2. Sélectionnez **"Connection string"**.
-3. **TRÈS IMPORTANT** : Pour les environnements de type Serverless (Vercel, Cloud Run), cochez l'option **"Pooled connection"**.
-   - Sans le pooling, vous risquez d'épuiser les connexions Postgres rapidement ("Maximum connections reached").
-   - La chaîne de connexion ressemblera à : `postgresql://user:pass@ep-cool-ice-123-pooler.aws.neon.tech/db?sslmode=require`
+### 2. Get Connection String
+From your Neon dashboard:
+1. Click "Connection Details"
+2. Copy the **Pooled connection** string (recommended for serverless)
+3. Format: `postgresql://user:password@ep-name-123.eu-central-1.aws.neon.tech/agrilogistic?sslmode=require`
 
-## 3. Configuration dans AgriLogistic
-Mettez à jour votre fichier `.env.local` ou vos paramètres Vercel :
-```env
-DATABASE_URL="postgresql://...-pooler.aws.neon.tech/neondb?sslmode=require"
-```
+### 3. Configure Environment
 
-## 4. Branchement (Database Branching)
-Pour vos pipelines de CI/CD, vous pouvez créer des branches de base de données :
-- `main` : Production.
-- `staging` : Copie de prod pour les tests.
-- `dev` : Pour le développement local.
-
-## 5. Migration des Tables
-Une fois connecté, lancez la migration Better Auth :
+**Local Development** (`.env`):
 ```bash
-cd apps/web-app
-npx @better-auth/cli@latest migrate --yes
+DATABASE_URL="postgresql://user:password@ep-name-123.eu-central-1.aws.neon.tech/agrilogistic?sslmode=require"
 ```
-*(Optionnel) Utilisez l'Editeur SQL de Neon pour vérifier que les tables `user`, `session` et `account` sont bien créées.*
+
+**Production** (Render/Vercel):
+- Add `DATABASE_URL` in dashboard environment variables
+- Use the same Neon connection string
+
+### 4. Push Schema to Neon
+
+```bash
+# From packages/database directory
+DATABASE_URL="<your-neon-url>" npx prisma db push
+
+# Verify tables created
+DATABASE_URL="<your-neon-url>" npx prisma studio
+```
+
+### 5. Seed Production Data
+
+```bash
+DATABASE_URL="<your-neon-url>" pnpm --filter @agrologistic/database run seed
+```
+
+## Neon Features
+
+### Database Branching
+Create preview databases for each PR:
+```bash
+# Create branch
+neonctl branches create --name preview-pr-123
+
+# Get branch connection string
+neonctl connection-string preview-pr-123
+```
+
+### Autoscaling
+Neon automatically scales compute based on load:
+- **Free Tier**: 0.25 CU (1 vCPU, 1GB RAM)
+- **Autoscale**: Up to 1 CU during peak load
+- **Scale-to-zero**: Pauses after 5 minutes of inactivity
+
+### Monitoring
+Check usage in Neon dashboard:
+- **Storage**: 0.5GB limit (free tier)
+- **Compute**: 100 CU-hours/month (free tier)
+- **Data transfer**: Unlimited
+
+## Troubleshooting
+
+### Connection Timeout
+If you see `connection timeout`, check:
+1. Firewall allows outbound connections to `*.neon.tech`
+2. Using **pooled connection** string (not direct)
+3. SSL mode is set to `require`
+
+### Migration Errors
+For Prisma 7.x deprecation warnings about `url` in schema:
+- **Safe to ignore** - This is a known Prisma issue
+- The `url` property is still required for `db push`
+- Will be fixed in future Prisma versions
+
+### Performance
+Optimize for serverless:
+1. Use connection pooling (included in Neon pooled URL)
+2. Set `pool_timeout = 5` in Prisma config
+3. Close connections after each request

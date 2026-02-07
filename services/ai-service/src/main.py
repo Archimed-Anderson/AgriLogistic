@@ -9,8 +9,17 @@ from pydantic import BaseModel
 import uvicorn
 import os
 
+# 🧠 Import du health check robuste
+try:
+    from .health import register_health_endpoints
+except ImportError:
+    from health import register_health_endpoints
+
 app = FastAPI(title="AgroDeep AI Service", version="1.0.0")
 tracing.instrument_fastapi(app)
+
+# ✅ Enregistrer les endpoints de health check robustes
+register_health_endpoints(app)
 
 class ModelMetadata(BaseModel):
     id: str

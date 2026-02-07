@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # Qdrant Vector Database
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: agrilogistic-qdrant
+    ports:
+      - '6333:6333' # REST API
+      - '6334:6334' # gRPC API
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__GRPC_PORT=6334
+    restart: unless-stopped
+    networks:
+      - agri-ai-network
+
+  # Ollama LLM Server
+  ollama:
+    image: ollama/ollama:latest
+    container_name: agrilogistic-ollama
+    ports:
+      - '11434:11434'
+    volumes:
+      - ollama_models:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    restart: unless-stopped
+    networks:
+      - agri-ai-network
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  # FastAPI LLM Service
+  llm-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agrilogistic-llm-service
+    ports:
+      - '8000:8000'
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - QDRANT_COLLECTION=agri_knowledge_base
+      - EMBEDDING_MODEL=nomic-embed-text
+      - LLM_MODEL=glm4:9b
+    depends_on:
+      - qdrant
+      - ollama
+    restart: unless-stopped
+    networks:
+      - agri-ai-network
+    volumes:
+      - ./data:/app/data
+
+volumes:
+  qdrant_storage:
+    driver: local
+  ollama_models:
+    driver: local
+
+networks:
+  agri-ai-network:
+    driver: bridge
